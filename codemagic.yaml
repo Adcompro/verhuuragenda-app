@@ -4,10 +4,16 @@ workflows:
     max_build_duration: 60
     instance_type: mac_mini_m1
 
+    integrations:
+      app_store_connect: Codemagic
+
     environment:
       flutter: stable
       xcode: latest
       cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: nl.verhuuragenda.app
 
     scripts:
       - name: Create Flutter project structure
@@ -24,22 +30,30 @@ workflows:
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
 
+          # Update bundle identifier in iOS project
+          cd ios
+          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.verhuuragenda.app;/g' Runner.xcodeproj/project.pbxproj
+
       - name: Get Flutter packages
         script: |
           flutter pub get
 
-      - name: iOS code signing
+      - name: Set up code signing
         script: |
           xcode-project use-profiles
 
       - name: Build iOS App
         script: |
-          flutter build ios --release --no-codesign
+          flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:
       - build/ios/ipa/*.ipa
-      - build/ios/archive/*.xcarchive
       - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
 
   android-workflow:
     name: Android Build
