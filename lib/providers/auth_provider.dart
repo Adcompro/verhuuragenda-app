@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 import 'dart:convert';
 import '../core/api/api_client.dart';
 import '../core/storage/secure_storage.dart';
@@ -93,10 +94,32 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       return true;
+    } on DioException catch (e) {
+      String errorMessage = 'Inloggen mislukt. Controleer je gegevens.';
+
+      if (e.response?.data != null) {
+        final data = e.response!.data;
+        if (data is Map && data['message'] != null) {
+          errorMessage = data['message'];
+        } else if (data is Map && data['errors'] != null) {
+          final errors = data['errors'] as Map;
+          errorMessage = errors.values.first?.first ?? errorMessage;
+        }
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = 'Verbinding timeout. Controleer je internet.';
+      } else if (e.type == DioExceptionType.connectionError) {
+        errorMessage = 'Kan geen verbinding maken met de server.';
+      }
+
+      state = state.copyWith(
+        isLoading: false,
+        error: errorMessage,
+      );
+      return false;
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Inloggen mislukt. Controleer je gegevens.',
+        error: 'Er is een fout opgetreden: ${e.toString()}',
       );
       return false;
     }
