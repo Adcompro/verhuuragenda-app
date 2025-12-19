@@ -13,7 +13,7 @@ workflows:
       cocoapods: default
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: nl.verhuuragenda.app
+        bundle_identifier: nl.vakantiewoningverhuur.app
 
     scripts:
       - name: Create Flutter project structure
@@ -28,8 +28,8 @@ workflows:
       - name: Update iOS bundle identifier
         script: |
           cd ios
-          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier nl.verhuuragenda.app" Runner/Info.plist
-          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.verhuuragenda.app;/g' Runner.xcodeproj/project.pbxproj
+          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier nl.vakantiewoningverhuur.app" Runner/Info.plist
+          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.vakantiewoningverhuur.app;/g' Runner.xcodeproj/project.pbxproj
 
       - name: Get Flutter packages
         script: |
