@@ -48,15 +48,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
         '${ApiConfig.calendar}?start=${_formatDate(_startDate)}&end=${_formatDate(endDate)}',
       );
 
+      final data = response.data;
+      List<dynamic> accommodations = [];
+      List<dynamic> bookings = [];
+      List<dynamic> blockedDates = [];
+
+      if (data is Map) {
+        accommodations = data['accommodations'] ?? [];
+        bookings = data['bookings'] ?? [];
+        blockedDates = data['blocked_dates'] ?? [];
+      }
+
       setState(() {
-        _accommodations = response.data['accommodations'] ?? [];
-        _bookings = response.data['bookings'] ?? [];
-        _blockedDates = response.data['blocked_dates'] ?? [];
+        _accommodations = accommodations;
+        _bookings = bookings;
+        _blockedDates = blockedDates;
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
-        _error = 'Kon kalender niet laden';
+        _error = 'Kon kalender niet laden: $e';
         _isLoading = false;
       });
     }
@@ -150,11 +161,58 @@ class _CalendarScreenState extends State<CalendarScreen> {
       (i) => _startDate.add(Duration(days: i)),
     );
 
+    // Build month spans
+    final monthSpans = _buildMonthSpans(dates);
+
     return Column(
       children: [
+        // Month header row
+        SizedBox(
+          height: 24,
+          child: Row(
+            children: [
+              Container(
+                width: accommodationColumnWidth,
+                color: AppTheme.primaryColor,
+                alignment: Alignment.center,
+                child: const Text(
+                  'Accommodatie',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: Row(
+                    children: monthSpans.map((span) {
+                      return Container(
+                        width: span['days'] * dayCellWidth,
+                        color: AppTheme.primaryColor,
+                        alignment: Alignment.center,
+                        child: Text(
+                          '${_getMonthNameFull(span['month'])} ${span['year']}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
         // Header with dates
         SizedBox(
-          height: 50,
+          height: 40,
           child: Row(
             children: [
               // Empty corner cell
@@ -177,21 +235,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     children: dates.map((date) {
                       final isToday = _isToday(date);
                       final isWeekend = date.weekday >= 6;
+                      final isMonday = date.weekday == 1;
                       return Container(
                         width: dayCellWidth,
                         decoration: BoxDecoration(
                           color: isToday
-                              ? AppTheme.primaryColor.withOpacity(0.1)
+                              ? AppTheme.primaryColor.withOpacity(0.15)
                               : isWeekend
-                                  ? Colors.grey[50]
+                                  ? Colors.grey[100]
                                   : Colors.white,
                           border: Border(
                             bottom: BorderSide(color: Colors.grey[300]!),
-                            right: BorderSide(
-                              color: date.weekday == 7
-                                  ? AppTheme.primaryColor
-                                  : Colors.grey[300]!,
-                            ),
+                            left: isMonday
+                                ? BorderSide(color: AppTheme.primaryColor, width: 2)
+                                : BorderSide.none,
+                            right: BorderSide(color: Colors.grey[300]!),
                           ),
                         ),
                         child: Column(
@@ -201,9 +259,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               _getDayName(date.weekday),
                               style: TextStyle(
                                 fontSize: 10,
+                                fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                                 color: isToday
                                     ? AppTheme.primaryColor
-                                    : Colors.grey[600],
+                                    : isWeekend
+                                        ? Colors.grey[500]
+                                        : Colors.grey[600],
                               ),
                             ),
                             Text(
@@ -218,14 +279,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     : Colors.black,
                               ),
                             ),
-                            if (date.day == 1)
-                              Text(
-                                _getMonthName(date.month),
-                                style: const TextStyle(
-                                  fontSize: 8,
-                                  color: Colors.grey,
-                                ),
-                              ),
                           ],
                         ),
                       );
@@ -641,6 +694,38 @@ class _CalendarScreenState extends State<CalendarScreen> {
       'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'
     ];
     return months[month];
+  }
+
+  String _getMonthNameFull(int month) {
+    const months = [
+      '', 'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni',
+      'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'
+    ];
+    return months[month];
+  }
+
+  List<Map<String, dynamic>> _buildMonthSpans(List<DateTime> dates) {
+    final spans = <Map<String, dynamic>>[];
+    if (dates.isEmpty) return spans;
+
+    int currentMonth = dates.first.month;
+    int currentYear = dates.first.year;
+    int dayCount = 0;
+
+    for (final date in dates) {
+      if (date.month == currentMonth && date.year == currentYear) {
+        dayCount++;
+      } else {
+        spans.add({'month': currentMonth, 'year': currentYear, 'days': dayCount});
+        currentMonth = date.month;
+        currentYear = date.year;
+        dayCount = 1;
+      }
+    }
+    // Add the last span
+    spans.add({'month': currentMonth, 'year': currentYear, 'days': dayCount});
+
+    return spans;
   }
 
   String _getStatusLabel(String? status) {
