@@ -14,12 +14,22 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
+    Host? host;
+    try {
+      if (json['host'] != null && json['host'] is Map<String, dynamic>) {
+        host = Host.fromJson(json['host']);
+      }
+    } catch (e) {
+      // Ignore host parsing errors
+      host = null;
+    }
+
     return User(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
       role: json['role'],
-      host: json['host'] != null ? Host.fromJson(json['host']) : null,
+      host: host,
     );
   }
 
@@ -64,8 +74,17 @@ class Host {
   });
 
   factory Host.fromJson(Map<String, dynamic> json) {
+    DateTime? subscriptionEndsAt;
+    try {
+      if (json['subscription_ends_at'] != null) {
+        subscriptionEndsAt = DateTime.parse(json['subscription_ends_at']);
+      }
+    } catch (e) {
+      subscriptionEndsAt = null;
+    }
+
     return Host(
-      id: json['id'],
+      id: json['id'] ?? 0,
       companyName: json['company_name'],
       phone: json['phone'],
       address: json['address'],
@@ -76,9 +95,7 @@ class Host {
       photoUrl: json['photo_url'],
       subscriptionStatus: json['subscription_status'] ?? 'free',
       subscriptionPlan: json['subscription_plan'],
-      subscriptionEndsAt: json['subscription_ends_at'] != null
-          ? DateTime.parse(json['subscription_ends_at'])
-          : null,
+      subscriptionEndsAt: subscriptionEndsAt,
     );
   }
 
