@@ -37,19 +37,10 @@ dependencies:
   # Navigation
   go_router: ^13.0.0
 
-  # Forms
-  flutter_form_builder: ^9.1.1
-  form_builder_validators: ^9.1.0
-
   # Utils
   url_launcher: ^6.2.1
   share_plus: ^7.2.1
   package_info_plus: ^5.0.1
-
-  # Push Notifications
-  firebase_core: ^2.24.0
-  firebase_messaging: ^14.7.0
-  flutter_local_notifications: ^16.3.0
 
   # Biometrics
   local_auth: ^2.1.8
