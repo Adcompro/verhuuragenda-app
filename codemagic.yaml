@@ -13,7 +13,7 @@ workflows:
       cocoapods: default
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: nl.verhuuragenda.app
+        bundle_identifier: verhuuragenda.nl
 
     scripts:
       - name: Create Flutter project structure
@@ -32,7 +32,7 @@ workflows:
 
           # Update bundle identifier in iOS project
           cd ios
-          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.verhuuragenda.app;/g' Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = verhuuragenda.nl;/g' Runner.xcodeproj/project.pbxproj
 
       - name: Get Flutter packages
         script: |
