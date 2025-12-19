@@ -14,24 +14,26 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: verhuuragenda.nl
+        provisioning_profiles:
+          - profile_type: IOS_APP_STORE
+            bundle_identifier: verhuuragenda.nl
+        certificates:
+          - certificate_type: IOS_DISTRIBUTION
 
     scripts:
       - name: Create Flutter project structure
         script: |
-          # Save our source code
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
-
-          # Create fresh Flutter project
           flutter create --org nl.verhuuragenda --project-name verhuuragenda_app .
-
-          # Restore our source code
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
 
-          # Update bundle identifier in iOS project
+      - name: Update iOS bundle identifier
+        script: |
           cd ios
+          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier verhuuragenda.nl" Runner/Info.plist
           sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = verhuuragenda.nl;/g' Runner.xcodeproj/project.pbxproj
 
       - name: Get Flutter packages
@@ -44,7 +46,8 @@ workflows:
 
       - name: Build iOS App
         script: |
-          flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:
       - build/ios/ipa/*.ipa
@@ -67,14 +70,9 @@ workflows:
     scripts:
       - name: Create Flutter project structure
         script: |
-          # Save our source code
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
-
-          # Create fresh Flutter project
           flutter create --org nl.verhuuragenda --project-name verhuuragenda_app .
-
-          # Restore our source code
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
