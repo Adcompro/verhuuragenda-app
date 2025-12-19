@@ -1,0 +1,78 @@
+workflows:
+  ios-workflow:
+    name: iOS Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      - name: Create Flutter project structure
+        script: |
+          # Save our source code
+          cp -r lib lib_backup
+          cp pubspec.yaml pubspec_backup.yaml
+
+          # Create fresh Flutter project
+          flutter create --org nl.verhuuragenda --project-name verhuuragenda_app .
+
+          # Restore our source code
+          rm -rf lib
+          mv lib_backup lib
+          mv pubspec_backup.yaml pubspec.yaml
+
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+
+      - name: iOS code signing
+        script: |
+          xcode-project use-profiles
+
+      - name: Build iOS App
+        script: |
+          flutter build ios --release --no-codesign
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/archive/*.xcarchive
+      - /tmp/xcodebuild_logs/*.log
+
+  android-workflow:
+    name: Android Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+
+    environment:
+      flutter: stable
+      java: 17
+
+    scripts:
+      - name: Create Flutter project structure
+        script: |
+          # Save our source code
+          cp -r lib lib_backup
+          cp pubspec.yaml pubspec_backup.yaml
+
+          # Create fresh Flutter project
+          flutter create --org nl.verhuuragenda --project-name verhuuragenda_app .
+
+          # Restore our source code
+          rm -rf lib
+          mv lib_backup lib
+          mv pubspec_backup.yaml pubspec.yaml
+
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+
+      - name: Build APK
+        script: |
+          flutter build apk --release
+
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/*.aab
