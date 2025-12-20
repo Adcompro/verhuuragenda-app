@@ -1,6 +1,27 @@
 import 'guest.dart';
 import 'accommodation.dart';
 
+// Helper function to parse values that could be String, int, double, or null
+double _parseDouble(dynamic value, [double defaultValue = 0.0]) {
+  if (value == null) return defaultValue;
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  if (value is String) {
+    return double.tryParse(value) ?? defaultValue;
+  }
+  return defaultValue;
+}
+
+double? _parseDoubleNullable(dynamic value) {
+  if (value == null) return null;
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  if (value is String) {
+    return double.tryParse(value);
+  }
+  return null;
+}
+
 class Booking {
   final int id;
   final String? bookingNumber;
@@ -95,11 +116,11 @@ class Booking {
       babies: json['babies'],
       status: json['status'] ?? 'inquiry',
       source: json['source'] ?? 'direct',
-      totalAmount: (json['total_amount'] ?? 0).toDouble(),
-      depositAmount: json['deposit_amount']?.toDouble(),
-      cleaningFee: json['cleaning_fee']?.toDouble(),
-      paidAmount: (json['paid_amount'] ?? 0).toDouble(),
-      remainingAmount: (json['remaining_amount'] ?? 0).toDouble(),
+      totalAmount: _parseDouble(json['total_amount']),
+      depositAmount: _parseDoubleNullable(json['deposit_amount']),
+      cleaningFee: _parseDoubleNullable(json['cleaning_fee']),
+      paidAmount: _parseDouble(json['paid_amount']),
+      remainingAmount: _parseDouble(json['remaining_amount']),
       paymentStatus: json['payment_status'] ?? 'unpaid',
       internalNotes: json['internal_notes'],
       portalUrl: json['portal_url'],
@@ -170,8 +191,8 @@ class Payment {
 
   factory Payment.fromJson(Map<String, dynamic> json) {
     return Payment(
-      id: json['id'],
-      amount: (json['amount'] ?? 0).toDouble(),
+      id: json['id'] ?? 0,
+      amount: _parseDouble(json['amount']),
       method: json['method'],
       paidAt: json['paid_at'] != null ? DateTime.parse(json['paid_at']) : null,
     );

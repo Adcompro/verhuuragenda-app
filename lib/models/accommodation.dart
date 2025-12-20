@@ -1,3 +1,14 @@
+// Helper function to parse values that could be String, int, double, or null
+double? _parseDoubleNullable(dynamic value) {
+  if (value == null) return null;
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  if (value is String) {
+    return double.tryParse(value);
+  }
+  return null;
+}
+
 class Accommodation {
   final int id;
   final String name;
@@ -71,10 +82,10 @@ class Accommodation {
       bedrooms: json['bedrooms'],
       bathrooms: json['bathrooms'],
       color: json['color'],
-      basePriceLow: json['base_price_low']?.toDouble(),
-      basePriceMid: json['base_price_mid']?.toDouble(),
-      basePriceHigh: json['base_price_high']?.toDouble(),
-      cleaningFee: json['cleaning_fee']?.toDouble(),
+      basePriceLow: _parseDoubleNullable(json['base_price_low']),
+      basePriceMid: _parseDoubleNullable(json['base_price_mid']),
+      basePriceHigh: _parseDoubleNullable(json['base_price_high']),
+      cleaningFee: _parseDoubleNullable(json['cleaning_fee']),
       isActive: json['is_active'] ?? true,
       isPublished: json['is_published'] ?? false,
       address: json['address'],
