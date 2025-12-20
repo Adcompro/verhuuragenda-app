@@ -190,7 +190,7 @@ class SettingsScreen extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 32),
               child: Text(
-                'VerhuurAgenda v1.0.0 (build 24)',
+                'VerhuurAgenda v1.0.0 (build 25)',
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[400],

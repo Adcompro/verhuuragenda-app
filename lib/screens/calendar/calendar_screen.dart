@@ -680,72 +680,477 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   void _showBookingDetails(dynamic booking) {
     final color = _parseColor(booking['color']);
+    final adults = booking['adults'] ?? 0;
+    final children = booking['children'] ?? 0;
+    final babies = booking['babies'] ?? 0;
+    final hasPet = booking['has_pet'] == true;
+    final petDescription = booking['pet_description'];
+    final totalAmount = (booking['total_amount'] ?? 0).toDouble();
+    final paidAmount = (booking['paid_amount'] ?? 0).toDouble();
+    final remainingAmount = (booking['remaining_amount'] ?? 0).toDouble();
+    final notes = booking['internal_notes'];
+    final nights = booking['nights'] ?? 0;
+    final accommodationName = booking['accommodation_name'] ?? '';
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
+        return DraggableScrollableSheet(
+          initialChildSize: 0.7,
+          minChildSize: 0.5,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
-              const SizedBox(height: 24),
-
-              Row(
+              child: Column(
                 children: [
+                  // Handle
                   Container(
-                    width: 50,
-                    height: 50,
+                    margin: const EdgeInsets.only(top: 12),
+                    width: 40,
+                    height: 4,
                     decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(14),
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
                     ),
-                    child: const Icon(Icons.person, color: Colors.white, size: 26),
                   ),
-                  const SizedBox(width: 16),
+
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          booking['guest_name'] ?? 'Onbekend',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Header
+                          Row(
+                            children: [
+                              Container(
+                                width: 56,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: const Icon(Icons.person, color: Colors.white, size: 28),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      booking['guest_name'] ?? 'Onbekend',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      accommodationName,
+                                      style: TextStyle(color: Colors.grey[600]),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              _buildStatusBadge(booking['status']),
+                            ],
                           ),
-                        ),
-                        Text(
-                          _getStatusLabel(booking['status']),
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ],
+
+                          const SizedBox(height: 24),
+
+                          // Dates section
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      Icon(Icons.login_rounded, color: AppTheme.successColor),
+                                      const SizedBox(height: 8),
+                                      const Text('Check-in', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        _formatDisplayDate(booking['check_in']),
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primaryColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    '$nights nachten',
+                                    style: TextStyle(
+                                      color: AppTheme.primaryColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      Icon(Icons.logout_rounded, color: AppTheme.accentColor),
+                                      const SizedBox(height: 8),
+                                      const Text('Check-out', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        _formatDisplayDate(booking['check_out']),
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Guests section
+                          const Text(
+                            'Gasten',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 8,
+                            children: [
+                              _guestChip(Icons.person, '$adults volwassenen'),
+                              if (children > 0) _guestChip(Icons.child_care, '$children kinderen'),
+                              if (babies > 0) _guestChip(Icons.baby_changing_station, '$babies baby\'s'),
+                              if (hasPet) _guestChip(Icons.pets, petDescription ?? 'Huisdier'),
+                            ],
+                          ),
+
+                          const SizedBox(height: 24),
+
+                          // Payment section
+                          const Text(
+                            'Betaling',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey[200]!),
+                            ),
+                            child: Column(
+                              children: [
+                                _paymentRow('Totaalbedrag', totalAmount, isBold: true),
+                                const Divider(height: 20),
+                                _paymentRow('Betaald', paidAmount, color: AppTheme.successColor),
+                                _paymentRow('Nog te betalen', remainingAmount,
+                                  color: remainingAmount > 0 ? Colors.red : AppTheme.successColor,
+                                  isBold: true,
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Add payment button
+                          if (remainingAmount > 0) ...[
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  _showAddPaymentDialog(booking);
+                                },
+                                icon: const Icon(Icons.add),
+                                label: const Text('Betaling toevoegen'),
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  backgroundColor: AppTheme.successColor,
+                                  foregroundColor: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+
+                          // Notes section
+                          if (notes != null && notes.toString().isNotEmpty) ...[
+                            const SizedBox(height: 24),
+                            const Text(
+                              'Notities',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.amber[50],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.amber[200]!),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.note, color: Colors.amber[700], size: 20),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      notes.toString(),
+                                      style: TextStyle(color: Colors.amber[900]),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+
+                          const SizedBox(height: 24),
+
+                          // View full details button
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                // Navigate to booking detail
+                                final bookingId = booking['id'];
+                                if (bookingId != null) {
+                                  Navigator.pushNamed(context, '/bookings/$bookingId');
+                                }
+                              },
+                              icon: const Icon(Icons.open_in_full),
+                              label: const Text('Bekijk volledige boeking'),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
-
-              _detailTile(Icons.login_rounded, 'Check-in', _formatDisplayDate(booking['check_in'])),
-              _detailTile(Icons.logout_rounded, 'Check-out', _formatDisplayDate(booking['check_out'])),
-              _detailTile(Icons.euro_rounded, 'Betaling', _getPaymentLabel(booking['payment_status'])),
-
-              const SizedBox(height: 16),
-            ],
-          ),
+            );
+          },
         );
       },
+    );
+  }
+
+  Widget _buildStatusBadge(String? status) {
+    Color color;
+    String label;
+    switch (status) {
+      case 'confirmed':
+        color = AppTheme.successColor;
+        label = 'Bevestigd';
+        break;
+      case 'option':
+        color = Colors.orange;
+        label = 'Optie';
+        break;
+      case 'inquiry':
+        color = Colors.blue;
+        label = 'Aanvraag';
+        break;
+      default:
+        color = Colors.grey;
+        label = status ?? 'Onbekend';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _guestChip(IconData icon, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: Colors.grey[700]),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.grey[800],
+              fontSize: 13,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _paymentRow(String label, double amount, {Color? color, bool isBold = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(color: Colors.grey[600])),
+          Text(
+            '€ ${amount.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              color: color,
+              fontSize: isBold ? 16 : 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddPaymentDialog(dynamic booking) {
+    final amountController = TextEditingController();
+    final remainingAmount = (booking['remaining_amount'] ?? 0).toDouble();
+    String paymentMethod = 'bank_transfer';
+    bool isLoading = false;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Betaling toevoegen'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Nog te betalen: € ${remainingAmount.toStringAsFixed(2)}',
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: amountController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  labelText: 'Bedrag',
+                  prefixText: '€ ',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: paymentMethod,
+                decoration: const InputDecoration(
+                  labelText: 'Betaalmethode',
+                  border: OutlineInputBorder(),
+                ),
+                items: const [
+                  DropdownMenuItem(value: 'bank_transfer', child: Text('Bankoverschrijving')),
+                  DropdownMenuItem(value: 'cash', child: Text('Contant')),
+                  DropdownMenuItem(value: 'ideal', child: Text('iDEAL')),
+                  DropdownMenuItem(value: 'creditcard', child: Text('Creditcard')),
+                  DropdownMenuItem(value: 'other', child: Text('Anders')),
+                ],
+                onChanged: (value) {
+                  setState(() => paymentMethod = value ?? 'bank_transfer');
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isLoading ? null : () => Navigator.pop(context),
+              child: const Text('Annuleren'),
+            ),
+            ElevatedButton(
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      final amount = double.tryParse(
+                        amountController.text.replaceAll(',', '.'),
+                      );
+                      if (amount == null || amount <= 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Voer een geldig bedrag in'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      setState(() => isLoading = true);
+
+                      try {
+                        await ApiClient.instance.post(
+                          '${ApiConfig.bookings}/${booking['id']}/payments',
+                          data: {
+                            'amount': amount,
+                            'method': paymentMethod,
+                            'paid_at': DateTime.now().toIso8601String(),
+                          },
+                        );
+
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Betaling toegevoegd'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                          // Reload calendar data
+                          _loadCalendarData();
+                        }
+                      } catch (e) {
+                        setState(() => isLoading = false);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Kon betaling niet toevoegen'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
+              child: isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Toevoegen'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
