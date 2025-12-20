@@ -560,10 +560,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
         final cellWidth = constraints.maxWidth / _daysToShow;
 
         return Stack(
+          clipBehavior: Clip.none,
           children: [
-            // Day indicators
-            Row(
-              children: dates.asMap().entries.map((entry) {
+            // Day indicators (IgnorePointer allows touches to pass through to booking bars)
+            IgnorePointer(
+              child: Row(
+                children: dates.asMap().entries.map((entry) {
                 final date = entry.value;
                 final isToday = _isToday(date);
                 final isWeekend = date.weekday >= 6;
@@ -598,6 +600,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ),
                 );
               }).toList(),
+              ),
             ),
 
             // Booking bars (positioned on top)
@@ -653,6 +656,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       left: visibleStart * cellWidth,
       top: 16,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: isBlocked ? null : () => _showBookingDetails(event),
         child: Container(
           width: visibleDuration * cellWidth - 2,
