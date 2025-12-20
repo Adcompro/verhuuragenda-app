@@ -462,14 +462,64 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           ),
 
-          // Timeline - tappable booking bars
+          // Timeline - visual only
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: SizedBox(
-              height: 60, // Increased height for bars + day numbers
+              height: 50,
               child: _buildTimeline(accBookings, accBlocked),
             ),
           ),
+
+          // Tappable booking chips
+          if (accBookings.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: accBookings.map((booking) {
+                  final color = _parseColor(booking['color']);
+                  final guestName = booking['guest_name'] ?? 'Onbekend';
+                  final checkIn = booking['check_in'] ?? '';
+                  final checkOut = booking['check_out'] ?? '';
+
+                  return GestureDetector(
+                    onTap: () => _showBookingDetails(booking),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.person, color: Colors.white, size: 16),
+                          const SizedBox(width: 6),
+                          Text(
+                            guestName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${_formatShortDate(checkIn)} - ${_formatShortDate(checkOut)}',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
         ],
       ),
     );
@@ -588,23 +638,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
               }).toList(),
             ),
             const SizedBox(height: 4),
-            // Booking bars - using a simple Row-based layout
+            // Booking bars - visual only (tap via chips below)
             Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTapUp: (details) {
-                  _handleTimelineTap(details.localPosition, cellWidth, dates, allEvents);
-                },
-                child: CustomPaint(
-                  painter: _TimelinePainter(
-                    dates: dates,
-                    events: allEvents,
-                    cellWidth: cellWidth,
-                    primaryColor: AppTheme.primaryColor,
-                    parseColor: _parseColor,
-                  ),
-                  child: Container(),
+              child: CustomPaint(
+                painter: _TimelinePainter(
+                  dates: dates,
+                  events: allEvents,
+                  cellWidth: cellWidth,
+                  primaryColor: AppTheme.primaryColor,
+                  parseColor: _parseColor,
                 ),
+                child: Container(),
               ),
             ),
           ],
@@ -613,54 +657,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  void _handleTimelineTap(Offset position, double cellWidth, List<DateTime> dates, List<Map<String, dynamic>> events) {
-    final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
-
-    // Count bookings (non-blocked events)
-    final bookings = events.where((e) => e['_isBlocked'] != true).toList();
-
-    // Show debug info as snackbar
-    String debugInfo = 'Tap: (${position.dx.toInt()}, ${position.dy.toInt()}) | ${bookings.length} boekingen';
-
-    for (final event in events) {
-      final isBlocked = event['_isBlocked'] == true;
-      if (isBlocked) continue;
-
-      if (!event.containsKey('check_in')) continue;
-
-      final eventStart = DateTime.parse(event['check_in']);
-      final eventEnd = DateTime.parse(event['check_out']);
-
-      final startOffset = eventStart.difference(startDay).inDays;
-      final duration = eventEnd.difference(eventStart).inDays;
-
-      if (startOffset + duration < 0 || startOffset >= _daysToShow) continue;
-
-      final visibleStart = startOffset < 0 ? 0 : startOffset;
-      final visibleEnd = (startOffset + duration) > _daysToShow ? _daysToShow : (startOffset + duration);
-
-      final left = visibleStart * cellWidth;
-      final right = visibleEnd * cellWidth;
-
-      // Check if tap is within this booking bar (full height of Expanded area)
-      if (position.dx >= left && position.dx <= right) {
-        // Found a booking at this x position - show details!
-        _showBookingDetails(event);
-        return;
-      }
-    }
-
-    // No booking found - show debug snackbar
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(debugInfo),
-          duration: const Duration(seconds: 2),
-          backgroundColor: Colors.orange,
-        ),
-      );
-    }
-  }
+  // Timeline is now visual only - bookings are tapped via chips below
 
   void _showBookingDetails(dynamic booking) {
     final color = _parseColor(booking['color']);
@@ -1176,6 +1173,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
       final date = DateTime.parse(dateStr);
       const weekdays = ['', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
       return '${weekdays[date.weekday]} ${date.day}/${date.month}';
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
+  String _formatShortDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return '';
+    try {
+      final date = DateTime.parse(dateStr);
+      return '${date.day}/${date.month}';
     } catch (e) {
       return dateStr;
     }
