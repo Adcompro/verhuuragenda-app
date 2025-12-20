@@ -558,9 +558,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
 
     // Combine all events for easier rendering
-    final allEvents = [
-      ...blocked.map((b) => {...b, '_isBlocked': true}),
-      ...bookings.map((b) => {...b, '_isBlocked': false}),
+    final List<Map<String, dynamic>> allEvents = [
+      ...blocked.map((b) => <String, dynamic>{...Map<String, dynamic>.from(b), '_isBlocked': true}),
+      ...bookings.map((b) => <String, dynamic>{...Map<String, dynamic>.from(b), '_isBlocked': false}),
     ];
 
     return LayoutBuilder(
