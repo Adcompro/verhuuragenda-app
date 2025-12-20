@@ -462,11 +462,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           ),
 
-          // Timeline
-          Container(
-            height: 60,
+          // Timeline - tappable booking bars
+          Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: _buildTimeline(accBookings, accBlocked),
+            child: SizedBox(
+              height: 50,
+              child: _buildTimeline(accBookings, accBlocked),
+            ),
           ),
         ],
       ),
@@ -655,31 +657,29 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Positioned(
       left: visibleStart * cellWidth,
       top: 16,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: isBlocked ? null : () => _showBookingDetails(event),
-          borderRadius: BorderRadius.circular(6),
-          child: Ink(
-            width: visibleDuration * cellWidth - 2,
-            height: 28,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(6),
+      width: visibleDuration * cellWidth - 2,
+      height: 28,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: isBlocked ? null : () {
+          debugPrint('Booking tapped: ${event['guest_name']}');
+          _showBookingDetails(event);
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
