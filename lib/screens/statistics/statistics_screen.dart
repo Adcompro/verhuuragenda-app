@@ -43,63 +43,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       setState(() {
         _error = 'Kon statistieken niet laden';
         _isLoading = false;
-        // Use demo data for now
-        _stats = _getDemoData();
       });
     }
-  }
-
-  Map<String, dynamic> _getDemoData() {
-    return {
-      'kpis': {
-        'total_revenue': 45680.00,
-        'total_bookings': 87,
-        'average_stay': 5.2,
-        'occupancy_rate': 72.5,
-        'revenue_change': 12.5,
-        'bookings_change': 8.3,
-      },
-      'revenue_by_month': [
-        {'month': 1, 'revenue': 2450.0},
-        {'month': 2, 'revenue': 1890.0},
-        {'month': 3, 'revenue': 3200.0},
-        {'month': 4, 'revenue': 4100.0},
-        {'month': 5, 'revenue': 5600.0},
-        {'month': 6, 'revenue': 6800.0},
-        {'month': 7, 'revenue': 8200.0},
-        {'month': 8, 'revenue': 7900.0},
-        {'month': 9, 'revenue': 4200.0},
-        {'month': 10, 'revenue': 3100.0},
-        {'month': 11, 'revenue': 2800.0},
-        {'month': 12, 'revenue': 3440.0},
-      ],
-      'occupancy_by_month': [
-        {'month': 1, 'rate': 45.0},
-        {'month': 2, 'rate': 38.0},
-        {'month': 3, 'rate': 52.0},
-        {'month': 4, 'rate': 65.0},
-        {'month': 5, 'rate': 78.0},
-        {'month': 6, 'rate': 92.0},
-        {'month': 7, 'rate': 98.0},
-        {'month': 8, 'rate': 95.0},
-        {'month': 9, 'rate': 72.0},
-        {'month': 10, 'rate': 58.0},
-        {'month': 11, 'rate': 48.0},
-        {'month': 12, 'rate': 55.0},
-      ],
-      'bookings_by_source': [
-        {'source': 'Direct', 'count': 35, 'percentage': 40.2},
-        {'source': 'Airbnb', 'count': 28, 'percentage': 32.2},
-        {'source': 'Booking.com', 'count': 18, 'percentage': 20.7},
-        {'source': 'Anders', 'count': 6, 'percentage': 6.9},
-      ],
-      'top_accommodations': [
-        {'name': 'Villa Zeezicht', 'revenue': 18500.0, 'bookings': 32},
-        {'name': 'Appartement Haven', 'revenue': 12300.0, 'bookings': 28},
-        {'name': 'Huisje Duinen', 'revenue': 9800.0, 'bookings': 18},
-        {'name': 'Studio Centrum', 'revenue': 5080.0, 'bookings': 9},
-      ],
-    };
   }
 
   @override
@@ -141,41 +86,67 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadStatistics,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // KPI Cards
-                    _buildKPICards(),
-                    const SizedBox(height: 24),
+          : _error != null
+              ? _buildError()
+              : RefreshIndicator(
+                  onRefresh: _loadStatistics,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // KPI Cards
+                        _buildKPICards(),
+                        const SizedBox(height: 24),
 
-                    // Revenue chart
-                    _buildSectionTitle('Omzet per maand'),
-                    _buildRevenueChart(),
-                    const SizedBox(height: 24),
+                        // Revenue chart
+                        _buildSectionTitle('Omzet per maand'),
+                        _buildRevenueChart(),
+                        const SizedBox(height: 24),
 
-                    // Occupancy chart
-                    _buildSectionTitle('Bezettingsgraad'),
-                    _buildOccupancyChart(),
-                    const SizedBox(height: 24),
+                        // Occupancy chart
+                        _buildSectionTitle('Bezettingsgraad'),
+                        _buildOccupancyChart(),
+                        const SizedBox(height: 24),
 
-                    // Bookings by source
-                    _buildSectionTitle('Boekingen per bron'),
-                    _buildSourceChart(),
-                    const SizedBox(height: 24),
+                        // Bookings by source
+                        _buildSectionTitle('Boekingen per bron'),
+                        _buildSourceChart(),
+                        const SizedBox(height: 24),
 
-                    // Top accommodations
-                    _buildSectionTitle('Top accommodaties'),
-                    _buildTopAccommodations(),
-                    const SizedBox(height: 32),
-                  ],
+                        // Top accommodations
+                        _buildSectionTitle('Top accommodaties'),
+                        _buildTopAccommodations(),
+                        const SizedBox(height: 32),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+    );
+  }
+
+  Widget _buildError() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              _error!,
+              textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadStatistics,
+              child: const Text('Opnieuw proberen'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -195,6 +166,20 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   Widget _buildKPICards() {
     final kpis = _stats['kpis'] as Map<String, dynamic>? ?? {};
 
+    // Helper to safely convert to double
+    double toDouble(dynamic value) {
+      if (value == null) return 0.0;
+      if (value is double) return value;
+      if (value is int) return value.toDouble();
+      if (value is String) return double.tryParse(value) ?? 0.0;
+      return 0.0;
+    }
+
+    final totalRevenue = toDouble(kpis['total_revenue']);
+    final revenueChange = kpis['revenue_change'] != null ? toDouble(kpis['revenue_change']) : null;
+    final averageStay = toDouble(kpis['average_stay']);
+    final occupancyRate = toDouble(kpis['occupancy_rate']);
+
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
@@ -205,27 +190,26 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       children: [
         _buildKPICard(
           'Totale Omzet',
-          _formatCurrency(kpis['total_revenue'] ?? 0),
+          _formatCurrency(totalRevenue),
           Icons.euro,
           AppTheme.primaryColor,
-          change: kpis['revenue_change'],
+          change: revenueChange,
         ),
         _buildKPICard(
           'Boekingen',
           '${kpis['total_bookings'] ?? 0}',
           Icons.calendar_today,
           Colors.blue,
-          change: kpis['bookings_change'],
         ),
         _buildKPICard(
           'Gem. Verblijf',
-          '${(kpis['average_stay'] ?? 0).toStringAsFixed(1)} nachten',
+          '${averageStay.toStringAsFixed(1)} nachten',
           Icons.nights_stay,
           Colors.purple,
         ),
         _buildKPICard(
           'Bezetting',
-          '${(kpis['occupancy_rate'] ?? 0).toStringAsFixed(1)}%',
+          '${occupancyRate.toStringAsFixed(1)}%',
           Icons.home,
           Colors.orange,
         ),
