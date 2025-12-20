@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../providers/auth_provider.dart';
+import 'subscription_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -73,7 +75,10 @@ class SettingsScreen extends ConsumerWidget {
             icon: Icons.credit_card_outlined,
             title: 'Abonnement',
             onTap: () {
-              // TODO: Navigate to subscription
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
+              );
             },
           ),
           const Divider(),
@@ -92,8 +97,11 @@ class SettingsScreen extends ConsumerWidget {
           _SettingsItem(
             icon: Icons.help_outline,
             title: 'Help & Support',
-            onTap: () {
-              // TODO: Open help website
+            onTap: () async {
+              final url = Uri.parse('https://verhuuragenda.nl/help');
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url, mode: LaunchMode.externalApplication);
+              }
             },
           ),
           const Divider(),
