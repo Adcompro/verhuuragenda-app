@@ -466,7 +466,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: SizedBox(
-              height: 50,
+              height: 60, // Increased height for bars + day numbers
               child: _buildTimeline(accBookings, accBlocked),
             ),
           ),
@@ -614,7 +614,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   void _handleTimelineTap(Offset position, double cellWidth, List<DateTime> dates, List<Map<String, dynamic>> events) {
+    debugPrint('=== TAP DETECTED ===');
+    debugPrint('Position: (${position.dx.toStringAsFixed(1)}, ${position.dy.toStringAsFixed(1)})');
+    debugPrint('CellWidth: ${cellWidth.toStringAsFixed(1)}, Events count: ${events.length}');
+
     final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
+    debugPrint('Start day: $startDay');
+
+    // Count bookings (non-blocked events)
+    final bookings = events.where((e) => e['_isBlocked'] != true).toList();
+    debugPrint('Bookings count: ${bookings.length}');
 
     for (final event in events) {
       final isBlocked = event['_isBlocked'] == true;
@@ -627,13 +636,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
         eventStart = DateTime.parse(event['check_in']);
         eventEnd = DateTime.parse(event['check_out']);
       } else {
+        debugPrint('Event missing check_in: $event');
         continue;
       }
 
       final startOffset = eventStart.difference(startDay).inDays;
       final duration = eventEnd.difference(eventStart).inDays;
 
-      if (startOffset + duration < 0 || startOffset >= _daysToShow) continue;
+      debugPrint('Booking "${event['guest_name']}": offset=$startOffset, duration=$duration');
+
+      if (startOffset + duration < 0 || startOffset >= _daysToShow) {
+        debugPrint('  -> Out of visible range');
+        continue;
+      }
 
       final visibleStart = startOffset < 0 ? 0 : startOffset;
       final visibleEnd = (startOffset + duration) > _daysToShow ? _daysToShow : (startOffset + duration);
@@ -641,14 +656,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
       final left = visibleStart * cellWidth;
       final right = visibleEnd * cellWidth;
 
+      debugPrint('  -> Bar bounds: x=${left.toStringAsFixed(1)}-${right.toStringAsFixed(1)}, y=0-28');
+      debugPrint('  -> Tap in range? x: ${position.dx >= left && position.dx <= right}, y: ${position.dy >= 0 && position.dy <= 28}');
+
       // Check if tap is within this booking bar (y: 0-28, x: left-right)
       if (position.dx >= left && position.dx <= right && position.dy >= 0 && position.dy <= 28) {
-        debugPrint('Tapped on booking: ${event['guest_name']}');
+        debugPrint('  -> HIT! Showing details...');
         _showBookingDetails(event);
         return;
       }
     }
-    debugPrint('Tap at ${position.dx}, ${position.dy} - no booking found');
+    debugPrint('=== NO BOOKING FOUND ===');
   }
 
   void _showBookingDetails(dynamic booking) {
