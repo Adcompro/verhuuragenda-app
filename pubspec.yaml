@@ -3,7 +3,7 @@ description: VerhuurAgenda - Vakantieverhuur Beheer App
 
 publish_to: 'none'
 
-version: 1.0.0+16
+version: 1.0.0+17
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
@@ -50,6 +50,9 @@ dependencies:
 
   # JSON Serialization
   json_annotation: ^4.8.1
+
+  # Image Picker
+  image_picker: ^1.0.7
 
   # Other
   connectivity_plus: ^5.0.2
