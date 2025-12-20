@@ -424,7 +424,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Future<void> _openPaymentPage() async {
-    final url = Uri.parse('https://verhuuragenda.nl/abonnement/verlengen');
+    final url = Uri.parse('https://verhuuragenda.nl/verhuurder/abonnement');
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
@@ -437,7 +437,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Future<void> _openInvoicesPage() async {
-    final url = Uri.parse('https://verhuuragenda.nl/verhuurder/facturen');
+    // Invoices are shown on the main subscription page
+    final url = Uri.parse('https://verhuuragenda.nl/verhuurder/abonnement');
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {

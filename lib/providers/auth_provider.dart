@@ -126,15 +126,23 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> logout() async {
+    // Clear local state first to prevent UI hanging
+    await SecureStorage.clearAll();
+
+    // Try to notify server (with short timeout, don't wait)
     try {
-      await ApiClient.instance.post(ApiConfig.logout);
+      await ApiClient.instance.post(
+        ApiConfig.logout,
+        options: Options(
+          sendTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
+        ),
+      );
     } catch (e) {
-      // Ignore errors during logout
+      // Ignore errors during logout - we already cleared local state
     }
 
-    await SecureStorage.clearAll();
     ApiClient.reset();
-
     state = const AuthState(isLoading: false);
   }
 
