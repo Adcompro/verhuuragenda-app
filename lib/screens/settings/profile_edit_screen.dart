@@ -37,7 +37,10 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
   Future<void> _loadProfile() async {
     try {
       final response = await ApiClient.instance.get(ApiConfig.profile);
-      final data = response.data is Map ? response.data as Map<String, dynamic> : {};
+      final rawData = response.data;
+      final data = rawData is Map
+          ? Map<String, dynamic>.from(rawData)
+          : <String, dynamic>{};
 
       setState(() {
         _profile = data;

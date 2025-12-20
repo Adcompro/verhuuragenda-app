@@ -141,6 +141,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
   void clearError() {
     state = state.copyWith(error: null);
   }
+
+  Future<void> refreshUser() async {
+    try {
+      final response = await ApiClient.instance.get(ApiConfig.user);
+      final user = User.fromJson(response.data);
+      await SecureStorage.saveUserData(jsonEncode(user.toJson()));
+      state = state.copyWith(user: user);
+    } catch (e) {
+      // Silently fail - user data will be refreshed on next app start
+    }
+  }
 }
 
 // Providers
