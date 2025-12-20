@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
@@ -340,19 +341,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
 
   Widget _buildDateField(String label, DateTime? value, Function(DateTime) onChanged) {
     return InkWell(
-      onTap: () async {
-        final now = DateTime.now();
-        final picked = await showDatePicker(
-          context: context,
-          initialDate: value ?? now,
-          firstDate: DateTime(2020),
-          lastDate: DateTime(now.year + 3),
-          locale: const Locale('nl', 'NL'),
-        );
-        if (picked != null) {
-          onChanged(picked);
-        }
-      },
+      onTap: () => _showCupertinoDatePicker(value, onChanged),
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: label,
@@ -366,6 +355,60 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showCupertinoDatePicker(DateTime? initialDate, Function(DateTime) onChanged) {
+    DateTime tempDate = initialDate ?? DateTime.now();
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 300,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              // Header with cancel and done buttons
+              Container(
+                height: 50,
+                color: CupertinoColors.systemGrey6.resolveFrom(context),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      child: const Text('Annuleren'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    CupertinoButton(
+                      child: const Text(
+                        'Gereed',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        onChanged(tempDate);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              // Date picker wheel
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: initialDate ?? DateTime.now(),
+                  minimumDate: DateTime(2020),
+                  maximumDate: DateTime(DateTime.now().year + 3),
+                  onDateTimeChanged: (DateTime newDate) {
+                    tempDate = newDate;
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
