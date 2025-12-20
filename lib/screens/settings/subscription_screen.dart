@@ -108,16 +108,40 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildSubscriptionCard() {
-    final planName = _subscription['plan_name'] ?? 'Onbekend';
-    final status = _subscription['status'] ?? 'unknown';
-    final expiresAt = _subscription['expires_at'];
-    final isActive = status == 'active';
-    final daysRemaining = _subscription['days_remaining'] ?? 0;
+    // API field names
+    final tier = _subscription['subscription_tier'] ?? 'free';
+    final isPremium = _subscription['is_premium'] == true;
+    final isOnTrial = _subscription['is_on_trial'] == true;
+    final subscriptionEndsAt = _subscription['subscription_ends_at'];
+    final trialEndsAt = _subscription['trial_ends_at'];
+    final trialDaysRemaining = _subscription['trial_days_remaining'];
 
-    DateTime? expiryDate;
-    if (expiresAt != null) {
-      expiryDate = DateTime.tryParse(expiresAt);
+    // Determine plan name
+    String planName;
+    if (isPremium) {
+      planName = 'Premium';
+    } else if (isOnTrial) {
+      planName = 'Proefperiode';
+    } else {
+      planName = 'Gratis';
     }
+
+    // Determine expiry date and days remaining
+    DateTime? expiryDate;
+    int daysRemaining = 0;
+
+    if (subscriptionEndsAt != null) {
+      expiryDate = DateTime.tryParse(subscriptionEndsAt);
+      if (expiryDate != null) {
+        daysRemaining = expiryDate.difference(DateTime.now()).inDays;
+        if (daysRemaining < 0) daysRemaining = 0;
+      }
+    } else if (trialEndsAt != null) {
+      expiryDate = DateTime.tryParse(trialEndsAt);
+      daysRemaining = trialDaysRemaining ?? 0;
+    }
+
+    final isActive = isPremium || isOnTrial;
 
     return Card(
       elevation: 4,
@@ -168,7 +192,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    isActive ? 'Actief' : 'Verlopen',
+                    isActive ? (isOnTrial ? 'Proef' : 'Actief') : 'Gratis',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -178,56 +202,58 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-            const Divider(color: Colors.white30),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Geldig tot',
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        expiryDate != null
-                            ? _formatDate(expiryDate)
-                            : 'Onbekend',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+            if (expiryDate != null || daysRemaining > 0) ...[
+              const SizedBox(height: 24),
+              const Divider(color: Colors.white30),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isOnTrial ? 'Proef eindigt' : 'Geldig tot',
+                          style: const TextStyle(color: Colors.white70, fontSize: 12),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Dagen resterend',
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '$daysRemaining dagen',
-                        style: TextStyle(
-                          color: daysRemaining < 30 ? Colors.amber[200] : Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                        const SizedBox(height: 4),
+                        Text(
+                          expiryDate != null
+                              ? _formatDate(expiryDate)
+                              : 'Onbekend',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            if (daysRemaining < 30 && daysRemaining > 0) ...[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Dagen resterend',
+                          style: TextStyle(color: Colors.white70, fontSize: 12),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '$daysRemaining dagen',
+                          style: TextStyle(
+                            color: daysRemaining < 30 ? Colors.amber[200] : Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (daysRemaining > 0 && daysRemaining < 30) ...[
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -242,7 +268,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Je abonnement verloopt binnenkort. Verleng op tijd om toegang te behouden.',
+                        isOnTrial
+                            ? 'Je proefperiode verloopt binnenkort. Upgrade naar Premium!'
+                            : 'Je abonnement verloopt binnenkort. Verleng op tijd.',
                         style: TextStyle(color: Colors.amber[100], fontSize: 13),
                       ),
                     ),
@@ -257,12 +285,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildLimitsCard() {
-    final accommodationsUsed = _limits['accommodations_used'] ?? 0;
-    final accommodationsLimit = _limits['accommodations_limit'] ?? 0;
-    final bookingsUsed = _limits['bookings_used'] ?? 0;
-    final bookingsLimit = _limits['bookings_limit'] ?? 0;
-    final teamMembersUsed = _limits['team_members_used'] ?? 0;
-    final teamMembersLimit = _limits['team_members_limit'] ?? 0;
+    // API returns nested structure: limits.accommodations.used, etc.
+    final limitsData = _limits['limits'] as Map<String, dynamic>? ?? {};
+    final isPremium = _limits['is_premium'] == true;
+
+    final accommodations = limitsData['accommodations'] as Map<String, dynamic>? ?? {};
+    final bookings = limitsData['bookings_per_year'] as Map<String, dynamic>? ?? {};
+    final users = limitsData['users'] as Map<String, dynamic>? ?? {};
+
+    final accommodationsUsed = accommodations['used'] ?? 0;
+    final accommodationsLimit = accommodations['limit'];
+    final bookingsUsed = bookings['used'] ?? 0;
+    final bookingsLimit = bookings['limit'];
+    final usersUsed = users['used'] ?? 0;
+    final usersLimit = users['limit'];
 
     return Card(
       child: Padding(
@@ -307,19 +343,43 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             const SizedBox(height: 16),
             _buildLimitItem(
               'Teamleden',
-              teamMembersUsed,
-              teamMembersLimit,
+              usersUsed,
+              usersLimit,
               Icons.people,
             ),
+            if (!isPremium) ...[
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.blue[700]),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Upgrade naar Premium voor onbeperkt gebruik!',
+                        style: TextStyle(color: Colors.blue[800], fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildLimitItem(String label, int used, int limit, IconData icon) {
-    final isUnlimited = limit == -1 || limit == 0;
-    final percentage = isUnlimited ? 0.0 : (used / limit).clamp(0.0, 1.0);
+  Widget _buildLimitItem(String label, int used, dynamic limit, IconData icon) {
+    final isUnlimited = limit == null;
+    final limitInt = limit is int ? limit : 0;
+    final percentage = isUnlimited ? 0.0 : (used / limitInt).clamp(0.0, 1.0);
     final isNearLimit = percentage > 0.8;
 
     return Column(
@@ -363,6 +423,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildPaymentSection() {
+    final isPremium = _limits['is_premium'] == true;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -380,9 +442,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   child: const Icon(Icons.payment, color: Colors.green),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'Betaling & Verlengen',
-                  style: TextStyle(
+                Text(
+                  isPremium ? 'Abonnement beheren' : 'Upgrade naar Premium',
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -391,7 +453,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Verleng je abonnement of bekijk je facturen op de website.',
+              isPremium
+                  ? 'Beheer je abonnement of bekijk je facturen op de website.'
+                  : 'Krijg toegang tot alle functies zonder beperkingen.',
               style: TextStyle(color: Colors.grey[600]),
             ),
             const SizedBox(height: 20),
@@ -399,22 +463,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _openPaymentPage,
-                icon: const Icon(Icons.open_in_new),
-                label: const Text('Naar betaling op website'),
+                icon: Icon(isPremium ? Icons.settings : Icons.star),
+                label: Text(isPremium ? 'Beheer abonnement' : 'Upgrade nu'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
                 ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _openInvoicesPage,
-                icon: const Icon(Icons.receipt_long),
-                label: const Text('Bekijk facturen'),
               ),
             ),
           ],
@@ -424,20 +479,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Future<void> _openPaymentPage() async {
-    final url = Uri.parse('https://verhuuragenda.nl/verhuurder/abonnement');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Kon website niet openen')),
-        );
-      }
-    }
-  }
-
-  Future<void> _openInvoicesPage() async {
-    // Invoices are shown on the main subscription page
     final url = Uri.parse('https://verhuuragenda.nl/verhuurder/abonnement');
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
