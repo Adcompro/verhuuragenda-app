@@ -22,10 +22,22 @@ class Guest {
   });
 
   factory Guest.fromJson(Map<String, dynamic> json) {
+    // Handle both 'name' field (from list API) and 'first_name'/'last_name' (from detail API)
+    String? firstName = json['first_name'];
+    String? lastName = json['last_name'];
+
+    // If we only have a 'name' field, split it into first/last
+    if (json['name'] != null && firstName == null) {
+      final name = json['name'] as String;
+      final parts = name.trim().split(' ');
+      firstName = parts.first;
+      lastName = parts.length > 1 ? parts.sublist(1).join(' ') : null;
+    }
+
     return Guest(
-      id: json['id'],
-      firstName: json['first_name'],
-      lastName: json['last_name'],
+      id: json['id'] ?? 0,
+      firstName: firstName,
+      lastName: lastName,
       email: json['email'],
       phone: json['phone'],
       countryCode: json['country_code'],

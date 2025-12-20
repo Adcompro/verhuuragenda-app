@@ -51,13 +51,43 @@ class Booking {
   });
 
   factory Booking.fromJson(Map<String, dynamic> json) {
+    // Parse guest safely
+    Guest? guest;
+    try {
+      if (json['guest'] != null && json['guest'] is Map<String, dynamic>) {
+        guest = Guest.fromJson(json['guest']);
+      }
+    } catch (e) {
+      guest = null;
+    }
+
+    // Parse accommodation safely
+    Accommodation? accommodation;
+    try {
+      if (json['accommodation'] != null && json['accommodation'] is Map<String, dynamic>) {
+        accommodation = Accommodation.fromJson(json['accommodation']);
+      }
+    } catch (e) {
+      accommodation = null;
+    }
+
+    // Parse payments safely
+    List<Payment> payments = [];
+    try {
+      if (json['payments'] != null && json['payments'] is List) {
+        payments = (json['payments'] as List)
+            .map((p) => Payment.fromJson(p))
+            .toList();
+      }
+    } catch (e) {
+      payments = [];
+    }
+
     return Booking(
-      id: json['id'],
+      id: json['id'] ?? 0,
       bookingNumber: json['booking_number'],
-      guest: json['guest'] != null ? Guest.fromJson(json['guest']) : null,
-      accommodation: json['accommodation'] != null
-          ? Accommodation.fromJson(json['accommodation'])
-          : null,
+      guest: guest,
+      accommodation: accommodation,
       checkIn: DateTime.parse(json['check_in']),
       checkOut: DateTime.parse(json['check_out']),
       adults: json['adults'] ?? 1,
@@ -74,11 +104,7 @@ class Booking {
       internalNotes: json['internal_notes'],
       portalUrl: json['portal_url'],
       portalPin: json['portal_pin'],
-      payments: json['payments'] != null
-          ? (json['payments'] as List)
-              .map((p) => Payment.fromJson(p))
-              .toList()
-          : [],
+      payments: payments,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : null,

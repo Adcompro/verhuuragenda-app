@@ -41,14 +41,23 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
         queryParameters: queryParams,
       );
 
-      final data = response.data['data'] as List;
+      // Handle both paginated and non-paginated responses
+      List<dynamic> data;
+      if (response.data is Map && response.data['data'] != null) {
+        data = response.data['data'] as List;
+      } else if (response.data is List) {
+        data = response.data as List;
+      } else {
+        data = [];
+      }
+
       setState(() {
         _bookings = data.map((json) => Booking.fromJson(json)).toList();
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
-        _error = 'Kon boekingen niet laden';
+        _error = 'Kon boekingen niet laden: ${e.toString()}';
         _isLoading = false;
       });
     }

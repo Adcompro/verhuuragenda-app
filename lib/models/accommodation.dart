@@ -63,7 +63,7 @@ class Accommodation {
 
   factory Accommodation.fromJson(Map<String, dynamic> json) {
     return Accommodation(
-      id: json['id'],
+      id: json['id'] ?? 0,
       name: json['name'] ?? '',
       slug: json['slug'],
       propertyType: json['property_type'],
