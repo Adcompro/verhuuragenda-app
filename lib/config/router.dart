@@ -32,19 +32,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthRoute = path == '/login' || path == '/register' || path == '/forgot-password';
       final isSplash = path == '/';
 
-      // Still loading auth state
-      if (isLoading && isSplash) return null;
+      // Still loading auth state - stay on splash
+      if (isLoading) {
+        return isSplash ? null : '/';
+      }
 
-      // Not logged in and not on auth page
-      if (!isLoggedIn && !isAuthRoute && !isSplash) return '/login';
-
-      // Logged in but on auth page
-      if (isLoggedIn && isAuthRoute) return '/dashboard';
-
-      // Logged in and on splash
-      if (isLoggedIn && isSplash) return '/dashboard';
-
-      return null;
+      // Not loading anymore - handle redirects
+      if (!isLoggedIn) {
+        // Not logged in: go to login (unless already on auth route)
+        return isAuthRoute ? null : '/login';
+      } else {
+        // Logged in: go to dashboard (unless already in app)
+        return (isSplash || isAuthRoute) ? '/dashboard' : null;
+      }
     },
     routes: [
       // Splash Screen
