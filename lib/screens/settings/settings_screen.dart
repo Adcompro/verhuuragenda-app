@@ -9,6 +9,7 @@ import 'subscription_screen.dart';
 import 'notifications_screen.dart';
 import 'about_screen.dart';
 import 'help_screen.dart';
+import 'profile_edit_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -94,9 +95,9 @@ class SettingsScreen extends ConsumerWidget {
             title: 'Profiel bewerken',
             subtitle: 'Naam, foto en contactgegevens',
             onTap: () {
-              // TODO: Navigate to profile edit
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Profiel bewerken komt binnenkort')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileEditScreen()),
               );
             },
           ),
@@ -189,7 +190,7 @@ class SettingsScreen extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 32),
               child: Text(
-                'VerhuurAgenda v1.0.0',
+                'VerhuurAgenda v1.0.0 (build 20)',
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[400],

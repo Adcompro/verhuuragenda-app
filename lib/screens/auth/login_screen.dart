@@ -179,9 +179,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const Text('Onthoud mij'),
                     const Spacer(),
                     TextButton(
-                      onPressed: () {
-                        // TODO: Open forgot password in browser
-                      },
+                      onPressed: () => context.go('/forgot-password'),
                       child: const Text('Wachtwoord vergeten?'),
                     ),
                   ],
@@ -212,15 +210,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                 const SizedBox(height: 24),
 
-                // Footer
-                Center(
-                  child: Text(
-                    'Geen account? Registreer op verhuuragenda.nl',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
+                // Register link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Nog geen account? ',
+                      style: TextStyle(color: Colors.grey[600]),
                     ),
-                  ),
+                    TextButton(
+                      onPressed: () => context.go('/register'),
+                      child: const Text('Gratis registreren'),
+                    ),
+                  ],
                 ),
               ],
             ),

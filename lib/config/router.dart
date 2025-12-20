@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../screens/auth/login_screen.dart';
+import '../screens/auth/register_screen.dart';
+import '../screens/auth/forgot_password_screen.dart';
 import '../screens/auth/splash_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/calendar/calendar_screen.dart';
@@ -26,17 +28,18 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final isLoggedIn = authState.isLoggedIn;
       final isLoading = authState.isLoading;
-      final isLoginRoute = state.matchedLocation == '/login';
-      final isSplash = state.matchedLocation == '/';
+      final path = state.matchedLocation;
+      final isAuthRoute = path == '/login' || path == '/register' || path == '/forgot-password';
+      final isSplash = path == '/';
 
       // Still loading auth state
       if (isLoading && isSplash) return null;
 
-      // Not logged in and not on login page
-      if (!isLoggedIn && !isLoginRoute) return '/login';
+      // Not logged in and not on auth page
+      if (!isLoggedIn && !isAuthRoute && !isSplash) return '/login';
 
-      // Logged in but on login page
-      if (isLoggedIn && isLoginRoute) return '/dashboard';
+      // Logged in but on auth page
+      if (isLoggedIn && isAuthRoute) return '/dashboard';
 
       // Logged in and on splash
       if (isLoggedIn && isSplash) return '/dashboard';
@@ -54,6 +57,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
+      ),
+
+      // Register
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
+
+      // Forgot Password
+      GoRoute(
+        path: '/forgot-password',
+        builder: (context, state) => const ForgotPasswordScreen(),
       ),
 
       // Main Shell with Bottom Navigation
