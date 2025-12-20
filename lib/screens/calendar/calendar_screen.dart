@@ -557,133 +557,98 @@ class _CalendarScreenState extends State<CalendarScreen> {
       (i) => _startDate.add(Duration(days: i)),
     );
 
+    // Combine all events for easier rendering
+    final allEvents = [
+      ...blocked.map((b) => {...b, '_isBlocked': true}),
+      ...bookings.map((b) => {...b, '_isBlocked': false}),
+    ];
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final cellWidth = constraints.maxWidth / _daysToShow;
 
-        return Stack(
-          clipBehavior: Clip.none,
+        return Column(
           children: [
-            // Day indicators (IgnorePointer allows touches to pass through to booking bars)
-            IgnorePointer(
-              child: Row(
-                children: dates.asMap().entries.map((entry) {
-                final date = entry.value;
+            // Day numbers row
+            Row(
+              children: dates.map((date) {
                 final isToday = _isToday(date);
-                final isWeekend = date.weekday >= 6;
-
                 return SizedBox(
                   width: cellWidth,
-                  child: Column(
-                    children: [
-                      Text(
-                        '${date.day}',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
-                          color: isToday ? AppTheme.primaryColor : Colors.grey[500],
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 1),
-                          decoration: BoxDecoration(
-                            color: isToday
-                                ? AppTheme.primaryColor.withOpacity(0.2)
-                                : isWeekend
-                                    ? Colors.grey[200]
-                                    : Colors.grey[100],
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    '${date.day}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
+                      color: isToday ? AppTheme.primaryColor : Colors.grey[500],
+                    ),
                   ),
                 );
               }).toList(),
+            ),
+            const SizedBox(height: 4),
+            // Booking bars - using a simple Row-based layout
+            Expanded(
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTapUp: (details) {
+                  _handleTimelineTap(details.localPosition, cellWidth, dates, allEvents);
+                },
+                child: CustomPaint(
+                  painter: _TimelinePainter(
+                    dates: dates,
+                    events: allEvents,
+                    cellWidth: cellWidth,
+                    primaryColor: AppTheme.primaryColor,
+                    parseColor: _parseColor,
+                  ),
+                  child: Container(),
+                ),
               ),
             ),
-
-            // Booking bars (positioned on top)
-            ...blocked.map((b) => _buildTimelineBar(b, dates, cellWidth, isBlocked: true)),
-            ...bookings.map((b) => _buildTimelineBar(b, dates, cellWidth, isBlocked: false)),
           ],
         );
       },
     );
   }
 
-  Widget _buildTimelineBar(
-    dynamic event,
-    List<DateTime> dates,
-    double cellWidth, {
-    required bool isBlocked,
-  }) {
-    final DateTime startDate;
-    final DateTime endDate;
-    final Color color;
-    final String label;
-
-    if (isBlocked) {
-      startDate = DateTime.parse(event['start_date']);
-      endDate = DateTime.parse(event['end_date']);
-      final source = event['source'] ?? '';
-      color = source == 'airbnb' ? AppTheme.sourceAirbnb :
-              source == 'booking' ? AppTheme.sourceBooking : Colors.grey;
-      label = source == 'airbnb' ? 'Airbnb' :
-              source == 'booking' ? 'Booking' : 'Geblokkeerd';
-    } else {
-      startDate = DateTime.parse(event['check_in']);
-      endDate = DateTime.parse(event['check_out']);
-      color = _parseColor(event['color']);
-      label = event['guest_name'] ?? '';
-    }
-
+  void _handleTimelineTap(Offset position, double cellWidth, List<DateTime> dates, List<Map<String, dynamic>> events) {
     final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
-    final startOffset = startDate.difference(startDay).inDays;
-    final duration = endDate.difference(startDate).inDays + (isBlocked ? 1 : 0);
 
-    if (startOffset + duration < 0 || startOffset >= _daysToShow) {
-      return const SizedBox.shrink();
+    for (final event in events) {
+      final isBlocked = event['_isBlocked'] == true;
+      if (isBlocked) continue; // Skip blocked dates
+
+      final DateTime eventStart;
+      final DateTime eventEnd;
+
+      if (event.containsKey('check_in')) {
+        eventStart = DateTime.parse(event['check_in']);
+        eventEnd = DateTime.parse(event['check_out']);
+      } else {
+        continue;
+      }
+
+      final startOffset = eventStart.difference(startDay).inDays;
+      final duration = eventEnd.difference(eventStart).inDays;
+
+      if (startOffset + duration < 0 || startOffset >= _daysToShow) continue;
+
+      final visibleStart = startOffset < 0 ? 0 : startOffset;
+      final visibleEnd = (startOffset + duration) > _daysToShow ? _daysToShow : (startOffset + duration);
+
+      final left = visibleStart * cellWidth;
+      final right = visibleEnd * cellWidth;
+
+      // Check if tap is within this booking bar (y: 0-28, x: left-right)
+      if (position.dx >= left && position.dx <= right && position.dy >= 0 && position.dy <= 28) {
+        debugPrint('Tapped on booking: ${event['guest_name']}');
+        _showBookingDetails(event);
+        return;
+      }
     }
-
-    final visibleStart = startOffset < 0 ? 0 : startOffset;
-    final visibleEnd = (startOffset + duration) > _daysToShow ? _daysToShow : (startOffset + duration);
-    final visibleDuration = visibleEnd - visibleStart;
-
-    if (visibleDuration <= 0) return const SizedBox.shrink();
-
-    return Positioned(
-      left: visibleStart * cellWidth,
-      top: 16,
-      width: visibleDuration * cellWidth - 2,
-      height: 28,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: isBlocked ? null : () {
-          debugPrint('Booking tapped: ${event['guest_name']}');
-          _showBookingDetails(event);
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ),
-    );
+    debugPrint('Tap at ${position.dx}, ${position.dy} - no booking found');
   }
 
   void _showBookingDetails(dynamic booking) {
@@ -1221,5 +1186,136 @@ class _CalendarScreenState extends State<CalendarScreen> {
       case 'unpaid': return 'Openstaand';
       default: return status ?? '-';
     }
+  }
+}
+
+// Custom painter for drawing timeline booking bars
+class _TimelinePainter extends CustomPainter {
+  final List<DateTime> dates;
+  final List<Map<String, dynamic>> events;
+  final double cellWidth;
+  final Color primaryColor;
+  final Color Function(String?) parseColor;
+
+  _TimelinePainter({
+    required this.dates,
+    required this.events,
+    required this.cellWidth,
+    required this.primaryColor,
+    required this.parseColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final daysToShow = dates.length;
+    final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
+
+    // Draw day backgrounds first
+    for (int i = 0; i < daysToShow; i++) {
+      final date = dates[i];
+      final isToday = _isToday(date);
+      final isWeekend = date.weekday >= 6;
+
+      final bgPaint = Paint()
+        ..color = isToday
+            ? primaryColor.withOpacity(0.2)
+            : isWeekend
+                ? Colors.grey[200]!
+                : Colors.grey[100]!;
+
+      final rect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(i * cellWidth + 1, 0, cellWidth - 2, size.height),
+        const Radius.circular(4),
+      );
+      canvas.drawRRect(rect, bgPaint);
+    }
+
+    // Draw booking/blocked bars
+    for (final event in events) {
+      final isBlocked = event['_isBlocked'] == true;
+
+      final DateTime eventStart;
+      final DateTime eventEnd;
+      final Color color;
+      final String label;
+
+      if (isBlocked) {
+        eventStart = DateTime.parse(event['start_date']);
+        eventEnd = DateTime.parse(event['end_date']);
+        final source = event['source'] ?? '';
+        color = source == 'airbnb'
+            ? const Color(0xFFFF5A5F)
+            : source == 'booking'
+                ? const Color(0xFF003580)
+                : Colors.grey;
+        label = source == 'airbnb'
+            ? 'Airbnb'
+            : source == 'booking'
+                ? 'Booking'
+                : 'Geblokkeerd';
+      } else {
+        if (!event.containsKey('check_in')) continue;
+        eventStart = DateTime.parse(event['check_in']);
+        eventEnd = DateTime.parse(event['check_out']);
+        color = parseColor(event['color']);
+        label = event['guest_name'] ?? '';
+      }
+
+      final startOffset = eventStart.difference(startDay).inDays;
+      final duration = eventEnd.difference(eventStart).inDays + (isBlocked ? 1 : 0);
+
+      if (startOffset + duration < 0 || startOffset >= daysToShow) continue;
+
+      final visibleStart = startOffset < 0 ? 0 : startOffset;
+      final visibleEnd = (startOffset + duration) > daysToShow ? daysToShow : (startOffset + duration);
+      final visibleDuration = visibleEnd - visibleStart;
+
+      if (visibleDuration <= 0) continue;
+
+      // Draw the bar
+      final barPaint = Paint()..color = color;
+      final barRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          visibleStart * cellWidth,
+          0,
+          visibleDuration * cellWidth - 2,
+          28,
+        ),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(barRect, barPaint);
+
+      // Draw the label
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+        maxLines: 1,
+        ellipsis: '...',
+      );
+      textPainter.layout(maxWidth: visibleDuration * cellWidth - 14);
+      textPainter.paint(
+        canvas,
+        Offset(visibleStart * cellWidth + 6, 9),
+      );
+    }
+  }
+
+  bool _isToday(DateTime date) {
+    final now = DateTime.now();
+    return date.year == now.year && date.month == now.month && date.day == now.day;
+  }
+
+  @override
+  bool shouldRepaint(covariant _TimelinePainter oldDelegate) {
+    return oldDelegate.dates != dates ||
+        oldDelegate.events != events ||
+        oldDelegate.cellWidth != cellWidth;
   }
 }
