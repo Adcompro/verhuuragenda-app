@@ -655,27 +655,31 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Positioned(
       left: visibleStart * cellWidth,
       top: 16,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: isBlocked ? null : () => _showBookingDetails(event),
-        child: Container(
-          width: visibleDuration * cellWidth - 2,
-          height: 28,
-          margin: const EdgeInsets.symmetric(horizontal: 1),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isBlocked ? null : () => _showBookingDetails(event),
+          borderRadius: BorderRadius.circular(6),
+          child: Ink(
+            width: visibleDuration * cellWidth - 2,
+            height: 28,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(6),
             ),
-            overflow: TextOverflow.ellipsis,
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ),
         ),
       ),
