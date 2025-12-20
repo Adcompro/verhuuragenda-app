@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../config/theme.dart';
+import 'privacy_screen.dart';
+import 'terms_screen.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -216,9 +218,9 @@ class _AboutScreenState extends State<AboutScreen> {
                     children: [
                       _buildLinkButton('Website', 'https://verhuuragenda.nl'),
                       const SizedBox(width: 16),
-                      _buildLinkButton('Privacy', 'https://verhuuragenda.nl/privacy'),
+                      _buildNavButton(context, 'Privacy', const PrivacyScreen()),
                       const SizedBox(width: 16),
-                      _buildLinkButton('Voorwaarden', 'https://verhuuragenda.nl/voorwaarden'),
+                      _buildNavButton(context, 'Voorwaarden', const TermsScreen()),
                     ],
                   ),
                   const SizedBox(height: 32),
@@ -306,6 +308,24 @@ class _AboutScreenState extends State<AboutScreen> {
         if (await canLaunchUrl(uri)) {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
         }
+      },
+      child: Text(
+        label,
+        style: TextStyle(
+          color: AppTheme.primaryColor,
+          fontSize: 13,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavButton(BuildContext context, String label, Widget screen) {
+    return TextButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => screen),
+        );
       },
       child: Text(
         label,
