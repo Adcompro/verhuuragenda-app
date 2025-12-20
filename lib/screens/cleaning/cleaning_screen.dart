@@ -1,17 +1,1125 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
+import '../../core/api/api_client.dart';
+import '../../config/api_config.dart';
 
-class CleaningScreen extends StatelessWidget {
+class CleaningScreen extends StatefulWidget {
   const CleaningScreen({super.key});
+
+  @override
+  State<CleaningScreen> createState() => _CleaningScreenState();
+}
+
+class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  List<CleaningTask> _tasks = [];
+  CleaningStats? _stats;
+  bool _isLoading = true;
+  String? _error;
+  String _currentPeriod = 'week';
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        switch (_tabController.index) {
+          case 0:
+            _loadTasks('today');
+            break;
+          case 1:
+            _loadTasks('week');
+            break;
+          case 2:
+            _loadTasks('all');
+            break;
+        }
+      }
+    });
+    _loadTasks('week');
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadTasks(String period) async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+      _currentPeriod = period;
+    });
+
+    try {
+      final response = await ApiClient.instance.get(
+        ApiConfig.cleaning,
+        queryParameters: {'period': period},
+      );
+
+      final data = response.data;
+      final tasksData = data['data'] as List? ?? [];
+      final statsData = data['stats'] as Map<String, dynamic>?;
+
+      setState(() {
+        _tasks = tasksData.map((json) => CleaningTask.fromJson(json)).toList();
+        _stats = statsData != null ? CleaningStats.fromJson(statsData) : null;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Kon schoonmaakschema niet laden: $e';
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text('Schoonmaak'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'Vandaag'),
+            Tab(text: 'Deze week'),
+            Tab(text: 'Alles'),
+          ],
+        ),
       ),
-      body: const Center(
-        child: Text('Schoonmaak planning - te implementeren'),
+      body: Column(
+        children: [
+          // Stats header
+          if (_stats != null) _buildStatsHeader(),
+          // Tasks list
+          Expanded(child: _buildBody()),
+        ],
       ),
     );
   }
+
+  Widget _buildStatsHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          _buildStatCard(
+            'Totaal',
+            _stats!.total.toString(),
+            Icons.cleaning_services,
+            Colors.blue,
+          ),
+          _buildStatCard(
+            'Vandaag',
+            _stats!.today.toString(),
+            Icons.today,
+            Colors.orange,
+          ),
+          _buildStatCard(
+            'Spoed',
+            _stats!.urgent.toString(),
+            Icons.priority_high,
+            Colors.red,
+          ),
+          _buildStatCard(
+            'Klaar',
+            _stats!.completed.toString(),
+            Icons.check_circle,
+            Colors.green,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                color: color.withOpacity(0.8),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
+              const SizedBox(height: 16),
+              Text(_error!, textAlign: TextAlign.center),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () => _loadTasks(_currentPeriod),
+                icon: const Icon(Icons.refresh),
+                label: const Text('Opnieuw proberen'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_tasks.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.cleaning_services_outlined, size: 80, color: Colors.grey[300]),
+            const SizedBox(height: 16),
+            Text(
+              'Geen schoonmaaktaken',
+              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _getPeriodDescription(),
+              style: TextStyle(color: Colors.grey[500]),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Group tasks by status
+    final pendingTasks = _tasks.where((t) => !t.cleaningCompleted).toList();
+    final completedTasks = _tasks.where((t) => t.cleaningCompleted).toList();
+
+    return RefreshIndicator(
+      onRefresh: () => _loadTasks(_currentPeriod),
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Pending tasks
+          if (pendingTasks.isNotEmpty) ...[
+            _buildSectionHeader('Te doen', pendingTasks.length, Colors.orange),
+            ...pendingTasks.map((task) => _CleaningTaskCard(
+              task: task,
+              onComplete: () => _showCompleteDialog(task),
+            )),
+          ],
+          // Completed tasks
+          if (completedTasks.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            _buildSectionHeader('Afgerond', completedTasks.length, Colors.green),
+            ...completedTasks.map((task) => _CleaningTaskCard(
+              task: task,
+              onUndo: () => _undoComplete(task),
+            )),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, int count, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  title == 'Afgerond' ? Icons.check_circle : Icons.schedule,
+                  size: 16,
+                  color: color,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '$title ($count)',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getPeriodDescription() {
+    switch (_currentPeriod) {
+      case 'today':
+        return 'voor vandaag';
+      case 'week':
+        return 'deze week';
+      default:
+        return '';
+    }
+  }
+
+  void _showCompleteDialog(CleaningTask task) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _CleaningCompleteSheet(
+        task: task,
+        onComplete: (notes, issues) async {
+          await _completeCleaning(task, notes, issues);
+          if (mounted) Navigator.pop(context);
+        },
+      ),
+    );
+  }
+
+  Future<void> _completeCleaning(CleaningTask task, String? notes, List<CleaningIssue> issues) async {
+    try {
+      // Build notes with issues
+      final allNotes = StringBuffer();
+      if (issues.isNotEmpty) {
+        for (final issue in issues) {
+          allNotes.writeln('[${issue.type}] ${issue.description}');
+        }
+      }
+      if (notes != null && notes.isNotEmpty) {
+        if (allNotes.isNotEmpty) allNotes.writeln();
+        allNotes.write(notes);
+      }
+
+      await ApiClient.instance.post(
+        '${ApiConfig.cleaning}/${task.id}/complete',
+        data: {
+          'notes': allNotes.toString().isEmpty ? null : allNotes.toString(),
+        },
+      );
+
+      _loadTasks(_currentPeriod);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 8),
+                Text('${task.accommodationName} schoongemaakt!'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fout: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  Future<void> _undoComplete(CleaningTask task) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Schoonmaak ongedaan maken?'),
+        content: Text('Weet je zeker dat je de schoonmaak van ${task.accommodationName} wilt resetten?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuleren'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Ja, reset'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      await ApiClient.instance.post('${ApiConfig.cleaning}/${task.id}/uncomplete');
+      _loadTasks(_currentPeriod);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Schoonmaakstatus gereset')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fout: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+}
+
+class _CleaningTaskCard extends StatelessWidget {
+  final CleaningTask task;
+  final VoidCallback? onComplete;
+  final VoidCallback? onUndo;
+
+  const _CleaningTaskCard({
+    required this.task,
+    this.onComplete,
+    this.onUndo,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isCompleted = task.cleaningCompleted;
+    final isUrgent = task.hasSameDayCheckin;
+    final isToday = task.isToday;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: isUrgent && !isCompleted
+            ? const BorderSide(color: Colors.red, width: 2)
+            : BorderSide.none,
+      ),
+      child: Column(
+        children: [
+          // Header with accommodation
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: task.accommodationColor?.withOpacity(0.1) ?? Colors.grey[100],
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            child: Row(
+              children: [
+                // Color dot
+                Container(
+                  width: 16,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: task.accommodationColor ?? AppTheme.primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Accommodation name
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        task.accommodationName,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Gast: ${task.guestName}',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+                // Status badges
+                if (isUrgent && !isCompleted)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.warning, size: 14, color: Colors.white),
+                        SizedBox(width: 4),
+                        Text(
+                          'SPOED',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else if (isToday && !isCompleted)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      'VANDAAG',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                else if (isCompleted)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.check, size: 14, color: Colors.white),
+                        SizedBox(width: 4),
+                        Text(
+                          'KLAAR',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                // Time window visualization
+                _buildTimeWindow(),
+                const SizedBox(height: 16),
+                // Notes if completed
+                if (isCompleted && task.cleaningNotes != null && task.cleaningNotes!.isNotEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.amber.withOpacity(0.3)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.note, size: 16, color: Colors.amber[700]),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Notities',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.amber[700],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          task.cleaningNotes!,
+                          style: TextStyle(color: Colors.grey[700]),
+                        ),
+                      ],
+                    ),
+                  ),
+                // Completed time
+                if (isCompleted && task.cleaningCompletedAt != null)
+                  Row(
+                    children: [
+                      Icon(Icons.check_circle, size: 16, color: Colors.green[600]),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Afgerond: ${task.cleaningCompletedAt}',
+                        style: TextStyle(color: Colors.green[600], fontSize: 13),
+                      ),
+                    ],
+                  ),
+                // Action button
+                if (!isCompleted)
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: onComplete,
+                      icon: const Icon(Icons.cleaning_services),
+                      label: const Text('Schoonmaak afronden'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        padding: const EdgeInsets.all(14),
+                      ),
+                    ),
+                  )
+                else
+                  TextButton.icon(
+                    onPressed: onUndo,
+                    icon: const Icon(Icons.undo, size: 18),
+                    label: const Text('Ongedaan maken'),
+                    style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeWindow() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          // Check-out
+          Expanded(
+            child: Column(
+              children: [
+                Icon(Icons.logout, color: Colors.red[400], size: 24),
+                const SizedBox(height: 4),
+                const Text(
+                  'Check-out',
+                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  task.checkOut,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  task.checkOutTime,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+          // Arrow with duration
+          Expanded(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 2,
+                      color: task.hasSameDayCheckin ? Colors.red : AppTheme.primaryColor,
+                    ),
+                    Icon(
+                      Icons.cleaning_services,
+                      color: task.hasSameDayCheckin ? Colors.red : AppTheme.primaryColor,
+                    ),
+                    Container(
+                      width: 40,
+                      height: 2,
+                      color: task.hasSameDayCheckin ? Colors.red : AppTheme.primaryColor,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  task.hasSameDayCheckin ? 'Zelfde dag!' : 'Schoonmaakvenster',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: task.hasSameDayCheckin ? Colors.red : Colors.grey[600],
+                    fontWeight: task.hasSameDayCheckin ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Next check-in
+          Expanded(
+            child: Column(
+              children: [
+                Icon(Icons.login, color: Colors.green[400], size: 24),
+                const SizedBox(height: 4),
+                const Text(
+                  'Check-in',
+                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  task.hasSameDayCheckin ? task.checkOut : 'Flexibel',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: task.hasSameDayCheckin ? Colors.red : Colors.grey[600],
+                  ),
+                ),
+                if (task.hasSameDayCheckin)
+                  Text(
+                    '15:00', // Default check-in time
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CleaningCompleteSheet extends StatefulWidget {
+  final CleaningTask task;
+  final Function(String?, List<CleaningIssue>) onComplete;
+
+  const _CleaningCompleteSheet({
+    required this.task,
+    required this.onComplete,
+  });
+
+  @override
+  State<_CleaningCompleteSheet> createState() => _CleaningCompleteSheetState();
+}
+
+class _CleaningCompleteSheetState extends State<_CleaningCompleteSheet> {
+  final _notesController = TextEditingController();
+  final List<CleaningIssue> _issues = [];
+  bool _isLoading = false;
+
+  // Quick issue types
+  final List<Map<String, dynamic>> _issueTypes = [
+    {'type': 'Extra vies', 'icon': Icons.dirty_lens, 'color': Colors.brown},
+    {'type': 'Schade', 'icon': Icons.broken_image, 'color': Colors.red},
+    {'type': 'Ontbrekend', 'icon': Icons.search_off, 'color': Colors.orange},
+    {'type': 'Reparatie nodig', 'icon': Icons.build, 'color': Colors.blue},
+    {'type': 'Anders', 'icon': Icons.more_horiz, 'color': Colors.grey},
+  ];
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 16,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Header
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.cleaning_services, color: Colors.green, size: 28),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Schoonmaak afronden',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          widget.task.accommodationName,
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Quick issue buttons
+              const Text(
+                'Iets te melden?',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _issueTypes.map((type) {
+                  final hasIssue = _issues.any((i) => i.type == type['type']);
+                  return FilterChip(
+                    label: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(type['icon'] as IconData, size: 16, color: type['color'] as Color),
+                        const SizedBox(width: 6),
+                        Text(type['type'] as String),
+                      ],
+                    ),
+                    selected: hasIssue,
+                    onSelected: (selected) {
+                      if (selected) {
+                        _showAddIssueDialog(type['type'] as String);
+                      } else {
+                        setState(() {
+                          _issues.removeWhere((i) => i.type == type['type']);
+                        });
+                      }
+                    },
+                    selectedColor: (type['color'] as Color).withOpacity(0.2),
+                  );
+                }).toList(),
+              ),
+
+              // Issues list
+              if (_issues.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.red.withOpacity(0.2)),
+                  ),
+                  child: Column(
+                    children: _issues.asMap().entries.map((entry) {
+                      final issue = entry.value;
+                      return ListTile(
+                        dense: true,
+                        leading: Icon(
+                          _getIssueIcon(issue.type),
+                          color: _getIssueColor(issue.type),
+                          size: 20,
+                        ),
+                        title: Text(issue.type, style: const TextStyle(fontWeight: FontWeight.w500)),
+                        subtitle: Text(issue.description),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.close, size: 18),
+                          onPressed: () {
+                            setState(() => _issues.removeAt(entry.key));
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 24),
+
+              // Notes
+              const Text(
+                'Notities (optioneel)',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _notesController,
+                maxLines: 3,
+                decoration: InputDecoration(
+                  hintText: 'Extra opmerkingen over de schoonmaak...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[50],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Submit button
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton.icon(
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                          setState(() => _isLoading = true);
+                          widget.onComplete(
+                            _notesController.text.isEmpty ? null : _notesController.text,
+                            _issues,
+                          );
+                        },
+                  icon: _isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Icon(Icons.check_circle, size: 24),
+                  label: Text(
+                    _isLoading ? 'Bezig...' : 'Schoonmaak afronden',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAddIssueDialog(String type) {
+    final descController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(_getIssueIcon(type), color: _getIssueColor(type)),
+            const SizedBox(width: 8),
+            Text(type),
+          ],
+        ),
+        content: TextField(
+          controller: descController,
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: _getIssueHint(type),
+            border: const OutlineInputBorder(),
+          ),
+          maxLines: 2,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annuleren'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (descController.text.isNotEmpty) {
+                setState(() {
+                  _issues.add(CleaningIssue(type: type, description: descController.text));
+                });
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Toevoegen'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _getIssueIcon(String type) {
+    switch (type) {
+      case 'Extra vies':
+        return Icons.dirty_lens;
+      case 'Schade':
+        return Icons.broken_image;
+      case 'Ontbrekend':
+        return Icons.search_off;
+      case 'Reparatie nodig':
+        return Icons.build;
+      default:
+        return Icons.more_horiz;
+    }
+  }
+
+  Color _getIssueColor(String type) {
+    switch (type) {
+      case 'Extra vies':
+        return Colors.brown;
+      case 'Schade':
+        return Colors.red;
+      case 'Ontbrekend':
+        return Colors.orange;
+      case 'Reparatie nodig':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _getIssueHint(String type) {
+    switch (type) {
+      case 'Extra vies':
+        return 'Wat was extra vies? (bijv. keuken, badkamer)';
+      case 'Schade':
+        return 'Wat is er beschadigd?';
+      case 'Ontbrekend':
+        return 'Wat ontbreekt er?';
+      case 'Reparatie nodig':
+        return 'Wat moet gerepareerd worden?';
+      default:
+        return 'Beschrijf het probleem...';
+    }
+  }
+}
+
+// Data models
+
+class CleaningTask {
+  final int id;
+  final String? bookingNumber;
+  final String checkOut;
+  final String checkOutTime;
+  final bool isToday;
+  final bool cleaningCompleted;
+  final String? cleaningCompletedAt;
+  final String? cleaningNotes;
+  final String guestName;
+  final String accommodationName;
+  final Color? accommodationColor;
+  final bool hasSameDayCheckin;
+
+  CleaningTask({
+    required this.id,
+    this.bookingNumber,
+    required this.checkOut,
+    required this.checkOutTime,
+    required this.isToday,
+    required this.cleaningCompleted,
+    this.cleaningCompletedAt,
+    this.cleaningNotes,
+    required this.guestName,
+    required this.accommodationName,
+    this.accommodationColor,
+    required this.hasSameDayCheckin,
+  });
+
+  factory CleaningTask.fromJson(Map<String, dynamic> json) {
+    Color? color;
+    final colorStr = json['accommodation']?['color'];
+    if (colorStr != null && colorStr is String && colorStr.startsWith('#')) {
+      try {
+        color = Color(int.parse(colorStr.substring(1), radix: 16) + 0xFF000000);
+      } catch (_) {}
+    }
+
+    return CleaningTask(
+      id: json['id'] ?? 0,
+      bookingNumber: json['booking_number'],
+      checkOut: json['check_out'] ?? '',
+      checkOutTime: json['check_out_time'] ?? '10:00',
+      isToday: json['is_today'] ?? false,
+      cleaningCompleted: json['cleaning_completed'] ?? false,
+      cleaningCompletedAt: json['cleaning_completed_at'],
+      cleaningNotes: json['cleaning_notes'],
+      guestName: json['guest']?['name'] ?? 'Onbekend',
+      accommodationName: json['accommodation']?['name'] ?? 'Onbekend',
+      accommodationColor: color,
+      hasSameDayCheckin: json['has_same_day_checkin'] ?? false,
+    );
+  }
+}
+
+class CleaningStats {
+  final int total;
+  final int today;
+  final int urgent;
+  final int completed;
+
+  CleaningStats({
+    required this.total,
+    required this.today,
+    required this.urgent,
+    required this.completed,
+  });
+
+  factory CleaningStats.fromJson(Map<String, dynamic> json) {
+    return CleaningStats(
+      total: json['total'] ?? 0,
+      today: json['today'] ?? 0,
+      urgent: json['urgent'] ?? 0,
+      completed: json['completed'] ?? 0,
+    );
+  }
+}
+
+class CleaningIssue {
+  final String type;
+  final String description;
+
+  CleaningIssue({required this.type, required this.description});
 }
