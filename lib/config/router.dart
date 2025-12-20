@@ -8,6 +8,7 @@ import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/calendar/calendar_screen.dart';
 import '../screens/bookings/bookings_list_screen.dart';
 import '../screens/bookings/booking_detail_screen.dart';
+import '../screens/bookings/booking_form_screen.dart';
 import '../screens/accommodations/accommodations_list_screen.dart';
 import '../screens/guests/guests_list_screen.dart';
 import '../screens/cleaning/cleaning_screen.dart';
@@ -76,6 +77,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/bookings',
             builder: (context, state) => const BookingsListScreen(),
             routes: [
+              GoRoute(
+                path: 'new',
+                builder: (context, state) => const BookingFormScreen(),
+              ),
               GoRoute(
                 path: ':id',
                 builder: (context, state) => BookingDetailScreen(

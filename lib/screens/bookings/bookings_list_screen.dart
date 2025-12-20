@@ -17,6 +17,9 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
   bool _isLoading = true;
   String? _error;
   String _statusFilter = 'all';
+  String _periodFilter = 'upcoming'; // 'upcoming', 'all', 'past', 'custom'
+  DateTime? _startDate;
+  DateTime? _endDate;
 
   @override
   void initState() {
@@ -31,9 +34,35 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
     });
 
     try {
-      final queryParams = <String, dynamic>{};
+      final queryParams = <String, dynamic>{
+        'per_page': '100', // Load more bookings
+      };
+
       if (_statusFilter != 'all') {
         queryParams['status'] = _statusFilter;
+      }
+
+      // Add date filters based on period
+      final now = DateTime.now();
+      switch (_periodFilter) {
+        case 'upcoming':
+          queryParams['from'] = _formatDateForApi(now.subtract(const Duration(days: 7)));
+          break;
+        case 'past':
+          queryParams['to'] = _formatDateForApi(now);
+          break;
+        case 'custom':
+          if (_startDate != null) {
+            queryParams['from'] = _formatDateForApi(_startDate!);
+          }
+          if (_endDate != null) {
+            queryParams['to'] = _formatDateForApi(_endDate!);
+          }
+          break;
+        case 'all':
+        default:
+          // No date filter
+          break;
       }
 
       final response = await ApiClient.instance.get(
@@ -53,6 +82,8 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
 
       setState(() {
         _bookings = data.map((json) => Booking.fromJson(json)).toList();
+        // Sort by check-in date
+        _bookings.sort((a, b) => a.checkIn.compareTo(b.checkIn));
         _isLoading = false;
       });
     } catch (e) {
@@ -63,12 +94,21 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
     }
   }
 
+  String _formatDateForApi(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Boekingen'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.date_range),
+            onPressed: _showPeriodFilter,
+            tooltip: 'Periode filter',
+          ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.filter_list),
             onSelected: (value) {
@@ -78,22 +118,185 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
               _loadBookings();
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'all', child: Text('Alle')),
-              const PopupMenuItem(value: 'confirmed', child: Text('Bevestigd')),
-              const PopupMenuItem(value: 'option', child: Text('Optie')),
-              const PopupMenuItem(value: 'inquiry', child: Text('Aanvraag')),
+              _buildFilterMenuItem('all', 'Alle statussen'),
+              _buildFilterMenuItem('confirmed', 'Bevestigd'),
+              _buildFilterMenuItem('option', 'Optie'),
+              _buildFilterMenuItem('inquiry', 'Aanvraag'),
+              _buildFilterMenuItem('cancelled', 'Geannuleerd'),
             ],
           ),
         ],
+        bottom: _buildFilterChips(),
       ),
       body: _buildBody(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Navigate to create booking
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/bookings/new'),
+        icon: const Icon(Icons.add),
+        label: const Text('Nieuwe boeking'),
       ),
     );
+  }
+
+  PopupMenuItem<String> _buildFilterMenuItem(String value, String label) {
+    final isSelected = _statusFilter == value;
+    return PopupMenuItem(
+      value: value,
+      child: Row(
+        children: [
+          if (isSelected)
+            Icon(Icons.check, size: 18, color: AppTheme.primaryColor)
+          else
+            const SizedBox(width: 18),
+          const SizedBox(width: 8),
+          Text(label),
+        ],
+      ),
+    );
+  }
+
+  PreferredSize _buildFilterChips() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(50),
+      child: Container(
+        height: 50,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: [
+            _buildPeriodChip('upcoming', 'Aankomend'),
+            const SizedBox(width: 8),
+            _buildPeriodChip('all', 'Alles'),
+            const SizedBox(width: 8),
+            _buildPeriodChip('past', 'Afgelopen'),
+            const SizedBox(width: 8),
+            _buildPeriodChip('custom', 'Aangepast'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPeriodChip(String value, String label) {
+    final isSelected = _periodFilter == value;
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (selected) {
+        if (value == 'custom') {
+          _showDateRangePicker();
+        } else {
+          setState(() {
+            _periodFilter = value;
+            _startDate = null;
+            _endDate = null;
+          });
+          _loadBookings();
+        }
+      },
+      selectedColor: AppTheme.primaryColor.withOpacity(0.2),
+      checkmarkColor: AppTheme.primaryColor,
+    );
+  }
+
+  void _showPeriodFilter() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Periode selecteren',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.upcoming),
+              title: const Text('Aankomende boekingen'),
+              subtitle: const Text('Vanaf vandaag'),
+              selected: _periodFilter == 'upcoming',
+              onTap: () {
+                Navigator.pop(context);
+                setState(() => _periodFilter = 'upcoming');
+                _loadBookings();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.all_inclusive),
+              title: const Text('Alle boekingen'),
+              subtitle: const Text('Zonder datumfilter'),
+              selected: _periodFilter == 'all',
+              onTap: () {
+                Navigator.pop(context);
+                setState(() => _periodFilter = 'all');
+                _loadBookings();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.history),
+              title: const Text('Afgelopen boekingen'),
+              subtitle: const Text('Tot vandaag'),
+              selected: _periodFilter == 'past',
+              onTap: () {
+                Navigator.pop(context);
+                setState(() => _periodFilter = 'past');
+                _loadBookings();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.date_range),
+              title: const Text('Aangepaste periode'),
+              subtitle: Text(_startDate != null && _endDate != null
+                  ? '${_formatDate(_startDate!)} - ${_formatDate(_endDate!)}'
+                  : 'Kies een datumbereik'),
+              selected: _periodFilter == 'custom',
+              onTap: () {
+                Navigator.pop(context);
+                _showDateRangePicker();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showDateRangePicker() async {
+    final now = DateTime.now();
+    final picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(now.year + 2),
+      initialDateRange: _startDate != null && _endDate != null
+          ? DateTimeRange(start: _startDate!, end: _endDate!)
+          : DateTimeRange(
+              start: now.subtract(const Duration(days: 365)),
+              end: now.add(const Duration(days: 365)),
+            ),
+      locale: const Locale('nl', 'NL'),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(primary: AppTheme.primaryColor),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        _periodFilter = 'custom';
+        _startDate = picked.start;
+        _endDate = picked.end;
+      });
+      _loadBookings();
+    }
   }
 
   Widget _buildBody() {
@@ -103,23 +306,44 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
 
     if (_error != null) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(_error!),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadBookings,
-              child: const Text('Opnieuw proberen'),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
+              const SizedBox(height: 16),
+              Text(_error!, textAlign: TextAlign.center),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: _loadBookings,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Opnieuw proberen'),
+              ),
+            ],
+          ),
         ),
       );
     }
 
     if (_bookings.isEmpty) {
-      return const Center(
-        child: Text('Geen boekingen gevonden'),
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.event_busy, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              'Geen boekingen gevonden',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _getPeriodDescription(),
+              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            ),
+          ],
+        ),
       );
     }
 
@@ -127,16 +351,45 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
       onRefresh: _loadBookings,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: _bookings.length,
+        itemCount: _bookings.length + 1, // +1 for the count header
         itemBuilder: (context, index) {
-          final booking = _bookings[index];
+          if (index == 0) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                '${_bookings.length} boeking${_bookings.length == 1 ? '' : 'en'}',
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              ),
+            );
+          }
+          final booking = _bookings[index - 1];
           return _BookingCard(
             booking: booking,
-            onTap: () => context.go('/bookings/${booking.id}'),
+            onTap: () => context.push('/bookings/${booking.id}'),
           );
         },
       ),
     );
+  }
+
+  String _getPeriodDescription() {
+    switch (_periodFilter) {
+      case 'upcoming':
+        return 'voor aankomende periode';
+      case 'past':
+        return 'in afgelopen periode';
+      case 'custom':
+        if (_startDate != null && _endDate != null) {
+          return 'van ${_formatDate(_startDate!)} tot ${_formatDate(_endDate!)}';
+        }
+        return '';
+      default:
+        return '';
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}-${date.month}-${date.year}';
   }
 }
 
@@ -148,6 +401,10 @@ class _BookingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isUpcoming = booking.checkIn.isAfter(DateTime.now());
+    final isOngoing = booking.checkIn.isBefore(DateTime.now()) &&
+                      booking.checkOut.isAfter(DateTime.now());
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -174,11 +431,24 @@ class _BookingCard extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
+                  if (booking.accommodation?.color != null)
+                    Container(
+                      width: 10,
+                      height: 10,
+                      margin: const EdgeInsets.only(right: 6),
+                      decoration: BoxDecoration(
+                        color: _parseColor(booking.accommodation!.color!),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
                   Icon(Icons.home, size: 16, color: Colors.grey[600]),
                   const SizedBox(width: 4),
-                  Text(
-                    booking.accommodation?.name ?? 'Onbekend',
-                    style: TextStyle(color: Colors.grey[600]),
+                  Expanded(
+                    child: Text(
+                      booking.accommodation?.name ?? 'Onbekend',
+                      style: TextStyle(color: Colors.grey[600]),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),
@@ -192,10 +462,35 @@ class _BookingCard extends StatelessWidget {
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    '(${booking.nights} nachten)',
-                    style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '${booking.nights}n',
+                      style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                    ),
                   ),
+                  if (isOngoing) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'Nu',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
               const Divider(height: 24),
@@ -220,6 +515,17 @@ class _BookingCard extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     return '${date.day}-${date.month}-${date.year}';
+  }
+
+  Color _parseColor(String colorString) {
+    try {
+      if (colorString.startsWith('#')) {
+        return Color(int.parse(colorString.substring(1), radix: 16) + 0xFF000000);
+      }
+      return AppTheme.primaryColor;
+    } catch (e) {
+      return AppTheme.primaryColor;
+    }
   }
 }
 
@@ -249,6 +555,10 @@ class _StatusBadge extends StatelessWidget {
       case 'cancelled':
         color = AppTheme.statusCancelled;
         label = 'Geannuleerd';
+        break;
+      case 'completed':
+        color = Colors.purple;
+        label = 'Afgerond';
         break;
       default:
         color = Colors.grey;
