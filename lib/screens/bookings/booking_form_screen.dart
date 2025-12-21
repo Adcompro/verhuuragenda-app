@@ -35,6 +35,13 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
   final _cleaningFeeController = TextEditingController();
   final _notesController = TextEditingController();
 
+  // Availability check
+  bool _isCheckingAvailability = false;
+  bool? _isAvailable;
+  List<Map<String, dynamic>> _conflicts = [];
+  List<Map<String, dynamic>> _blockedDates = [];
+  List<Map<String, dynamic>> _alternatives = [];
+
   // Data
   List<Accommodation> _accommodations = [];
   List<Guest> _guests = [];
@@ -96,6 +103,60 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     }
   }
 
+  Future<void> _checkAvailability() async {
+    if (_selectedAccommodationId == null || _checkIn == null || _checkOut == null) {
+      setState(() {
+        _isAvailable = null;
+        _conflicts = [];
+        _blockedDates = [];
+        _alternatives = [];
+      });
+      return;
+    }
+
+    setState(() => _isCheckingAvailability = true);
+
+    try {
+      final response = await ApiClient.instance.post(
+        '/bookings/check-availability',
+        data: {
+          'accommodation_id': _selectedAccommodationId,
+          'check_in': _formatDateForApi(_checkIn!),
+          'check_out': _formatDateForApi(_checkOut!),
+        },
+      );
+
+      setState(() {
+        _isAvailable = response.data['is_available'] ?? true;
+        _conflicts = List<Map<String, dynamic>>.from(response.data['conflicts'] ?? []);
+        _blockedDates = List<Map<String, dynamic>>.from(response.data['blocked_dates'] ?? []);
+        _alternatives = List<Map<String, dynamic>>.from(response.data['alternatives'] ?? []);
+        _isCheckingAvailability = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isCheckingAvailability = false;
+      });
+    }
+  }
+
+  void _selectAlternative(int accommodationId) {
+    setState(() {
+      _selectedAccommodationId = accommodationId;
+      _isAvailable = null;
+      _conflicts = [];
+      _blockedDates = [];
+      _alternatives = [];
+    });
+    // Auto-fill cleaning fee for the new accommodation
+    final acc = _accommodations.firstWhere((a) => a.id == accommodationId, orElse: () => _accommodations.first);
+    if (acc.cleaningFee != null) {
+      _cleaningFeeController.text = acc.cleaningFee!.toStringAsFixed(2);
+    }
+    // Check availability for the new selection
+    _checkAvailability();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,9 +203,15 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           _buildSectionTitle('Periode'),
           Row(
             children: [
-              Expanded(child: _buildDateField('Check-in', _checkIn, (date) => setState(() => _checkIn = date))),
+              Expanded(child: _buildDateField('Check-in', _checkIn, (date) {
+                setState(() => _checkIn = date);
+                _checkAvailability();
+              })),
               const SizedBox(width: 16),
-              Expanded(child: _buildDateField('Check-out', _checkOut, (date) => setState(() => _checkOut = date))),
+              Expanded(child: _buildDateField('Check-out', _checkOut, (date) {
+                setState(() => _checkOut = date);
+                _checkAvailability();
+              })),
             ],
           ),
           if (_checkIn != null && _checkOut != null)
@@ -155,6 +222,129 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                 style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.w500),
               ),
             ),
+
+          // Availability check result
+          if (_isCheckingAvailability)
+            const Padding(
+              padding: EdgeInsets.only(top: 12),
+              child: Row(
+                children: [
+                  SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                  SizedBox(width: 8),
+                  Text('Beschikbaarheid controleren...'),
+                ],
+              ),
+            )
+          else if (_isAvailable == true)
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green[50],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.green[200]!),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green[700]),
+                  const SizedBox(width: 8),
+                  Text('Beschikbaar!', style: TextStyle(color: Colors.green[800], fontWeight: FontWeight.w500)),
+                ],
+              ),
+            )
+          else if (_isAvailable == false) ...[
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.red[50],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.red[200]!),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.warning, color: Colors.red[700]),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Niet beschikbaar',
+                          style: TextStyle(color: Colors.red[800], fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (_conflicts.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text('Overlappende boekingen:', style: TextStyle(color: Colors.red[700], fontSize: 12)),
+                    ..._conflicts.map((c) => Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        '• ${c['guest_name']} (${_formatDateShort(c['check_in'])} - ${_formatDateShort(c['check_out'])})',
+                        style: TextStyle(color: Colors.red[700], fontSize: 12),
+                      ),
+                    )),
+                  ],
+                  if (_blockedDates.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text('Geblokkeerde periodes:', style: TextStyle(color: Colors.red[700], fontSize: 12)),
+                    ..._blockedDates.map((bd) => Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        '• ${bd['source'] ?? 'Extern'}: ${_formatDateShort(bd['start_date'])} - ${_formatDateShort(bd['end_date'])}',
+                        style: TextStyle(color: Colors.red[700], fontSize: 12),
+                      ),
+                    )),
+                  ],
+                ],
+              ),
+            ),
+            // Show alternatives
+            if (_alternatives.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue[200]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.lightbulb_outline, color: Colors.blue[700]),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Beschikbare alternatieven:',
+                          style: TextStyle(color: Colors.blue[800], fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _alternatives.map((alt) => ActionChip(
+                        avatar: Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: _parseColor(alt['color'] ?? '#3B82F6'),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        label: Text(alt['name']),
+                        onPressed: () => _selectAlternative(alt['id']),
+                      )).toList(),
+                    ),
+                  ],
+                ),
+              ),
+          ],
           const SizedBox(height: 24),
 
           // Guests count
@@ -311,6 +501,8 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
         if (acc.cleaningFee != null) {
           _cleaningFeeController.text = acc.cleaningFee!.toStringAsFixed(2);
         }
+        // Check availability
+        _checkAvailability();
       },
       validator: (value) => value == null ? 'Selecteer een accommodatie' : null,
     );
@@ -670,6 +862,16 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
 
   String _formatDateForApi(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
+  String _formatDateShort(String? dateStr) {
+    if (dateStr == null) return '';
+    try {
+      final date = DateTime.parse(dateStr);
+      return '${date.day}-${date.month}';
+    } catch (e) {
+      return dateStr;
+    }
   }
 
   Color _parseColor(String colorString) {
