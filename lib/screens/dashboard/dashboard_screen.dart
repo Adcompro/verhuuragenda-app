@@ -671,9 +671,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.5,
-        minChildSize: 0.3,
-        maxChildSize: 0.8,
+        initialChildSize: 0.7,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
         builder: (context, scrollController) => Container(
           decoration: const BoxDecoration(
             color: Colors.white,
@@ -724,11 +724,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                booking['accommodation'] ?? '',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                ),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 10,
+                                    height: 10,
+                                    decoration: BoxDecoration(
+                                      color: _parseColor(booking['accommodation_color']),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      booking['accommodation'] ?? '',
+                                      style: TextStyle(color: Colors.grey[600]),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -736,7 +749,32 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         _buildStatusBadge(booking['status']),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
+
+                    // Source badge
+                    if (booking['source'] != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: _getSourceColor(booking['source']).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(_getSourceIcon(booking['source']), size: 16, color: _getSourceColor(booking['source'])),
+                            const SizedBox(width: 6),
+                            Text(
+                              _getSourceLabel(booking['source']),
+                              style: TextStyle(
+                                color: _getSourceColor(booking['source']),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: 16),
 
                     // Dates
                     Container(
@@ -750,17 +788,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           Expanded(
                             child: Column(
                               children: [
-                                const Text(
-                                  'Check-in',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
+                                const Text('Check-in', style: TextStyle(color: Colors.grey)),
                                 const SizedBox(height: 4),
                                 Text(
                                   _formatDate(booking['check_in']),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                                 ),
                               ],
                             ),
@@ -773,26 +805,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             ),
                             child: Text(
                               '${booking['nights'] ?? 0} nachten',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: AppTheme.primaryColor,
-                              ),
+                              style: const TextStyle(fontWeight: FontWeight.w500, color: AppTheme.primaryColor),
                             ),
                           ),
                           Expanded(
                             child: Column(
                               children: [
-                                const Text(
-                                  'Check-out',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
+                                const Text('Check-out', style: TextStyle(color: Colors.grey)),
                                 const SizedBox(height: 4),
                                 Text(
                                   _formatDate(booking['check_out']),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                                 ),
                               ],
                             ),
@@ -802,17 +825,150 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                     const SizedBox(height: 16),
 
+                    // Guests info
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Column(
+                            children: [
+                              Icon(Icons.person, color: Colors.grey[600]),
+                              const SizedBox(height: 4),
+                              Text('${booking['adults'] ?? 0}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                              Text('Volwassenen', style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Icon(Icons.child_care, color: Colors.grey[600]),
+                              const SizedBox(height: 4),
+                              Text('${booking['children'] ?? 0}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                              Text('Kinderen', style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Payment info
+                    if (booking['total_amount'] != null)
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: _getPaymentStatusColor(booking['payment_status']).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: _getPaymentStatusColor(booking['payment_status']).withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Totaalbedrag', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '€${_formatAmount(booking['total_amount'])}',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text('Betaald', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '€${_formatAmount(booking['paid_amount'] ?? 0)}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: _getPaymentStatusColor(booking['payment_status']),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: 20),
+
+                    // Contact info
+                    if (booking['guest_email'] != null && booking['guest_email'].toString().isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          children: [
+                            Icon(Icons.email_outlined, size: 18, color: Colors.grey[600]),
+                            const SizedBox(width: 8),
+                            Expanded(child: Text(booking['guest_email'], style: TextStyle(color: Colors.grey[700]))),
+                          ],
+                        ),
+                      ),
+                    if (booking['guest_phone'] != null && booking['guest_phone'].toString().isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Row(
+                          children: [
+                            Icon(Icons.phone_outlined, size: 18, color: Colors.grey[600]),
+                            const SizedBox(width: 8),
+                            Text(booking['guest_phone'], style: TextStyle(color: Colors.grey[700])),
+                          ],
+                        ),
+                      ),
+
                     // Actions
                     if (booking['guest_phone'] != null && booking['guest_phone'].toString().isNotEmpty)
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          _callPhone(booking['guest_phone']);
-                        },
-                        icon: const Icon(Icons.phone),
-                        label: Text('Bel ${booking['guest_name']}'),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                _callPhone(booking['guest_phone']);
+                              },
+                              icon: const Icon(Icons.phone),
+                              label: const Text('Bellen'),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                _openWhatsApp(booking['guest_phone']);
+                              },
+                              icon: const Icon(Icons.message, color: Color(0xFF25D366)),
+                              label: const Text('WhatsApp'),
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (booking['guest_email'] != null && booking['guest_email'].toString().isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _sendEmail(booking['guest_email']);
+                          },
+                          icon: const Icon(Icons.email),
+                          label: const Text('Email versturen'),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
                         ),
                       ),
                   ],
@@ -823,6 +979,71 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
       ),
     );
+  }
+
+  Color _getPaymentStatusColor(String? status) {
+    switch (status) {
+      case 'paid':
+        return AppTheme.successColor;
+      case 'partial':
+        return Colors.orange;
+      default:
+        return Colors.red;
+    }
+  }
+
+  String _getSourceLabel(String? source) {
+    switch (source) {
+      case 'direct':
+        return 'Direct';
+      case 'airbnb':
+        return 'Airbnb';
+      case 'booking':
+        return 'Booking.com';
+      case 'vrbo':
+        return 'VRBO';
+      default:
+        return source ?? 'Onbekend';
+    }
+  }
+
+  Color _getSourceColor(String? source) {
+    switch (source) {
+      case 'airbnb':
+        return const Color(0xFFFF5A5F);
+      case 'booking':
+        return const Color(0xFF003580);
+      case 'vrbo':
+        return const Color(0xFF3D67CC);
+      default:
+        return AppTheme.primaryColor;
+    }
+  }
+
+  IconData _getSourceIcon(String? source) {
+    switch (source) {
+      case 'airbnb':
+        return Icons.house;
+      case 'booking':
+        return Icons.hotel;
+      default:
+        return Icons.calendar_today;
+    }
+  }
+
+  Future<void> _openWhatsApp(String phone) async {
+    final cleanPhone = phone.replaceAll(RegExp(r'[^\d+]'), '');
+    final uri = Uri.parse('https://wa.me/$cleanPhone');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  Future<void> _sendEmail(String email) async {
+    final uri = Uri.parse('mailto:$email');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
   }
 }
 

@@ -25,11 +25,16 @@ workflows:
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
 
-      - name: Update iOS bundle identifier
+      - name: Update iOS bundle identifier and permissions
         script: |
           cd ios
           /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier nl.vakantiewoningverhuur.app" Runner/Info.plist
           sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.vakantiewoningverhuur.app;/g' Runner.xcodeproj/project.pbxproj
+
+          # Add camera and photo library permissions for image_picker
+          /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string 'VerhuurAgenda heeft toegang nodig tot je camera om foto'"'"'s van onderhoudstaken te maken.'" Runner/Info.plist || true
+          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string 'VerhuurAgenda heeft toegang nodig tot je fotobibliotheek om foto'"'"'s te selecteren.'" Runner/Info.plist || true
+          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string 'VerhuurAgenda wil foto'"'"'s opslaan in je fotobibliotheek.'" Runner/Info.plist || true
 
       - name: Get Flutter packages
         script: |

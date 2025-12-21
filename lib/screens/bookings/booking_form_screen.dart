@@ -414,10 +414,10 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
 
   Widget _buildCounterField(String label, int value, Function(int) onChanged, {int min = 0, int max = 20}) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey[400]!),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
@@ -426,26 +426,55 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                icon: const Icon(Icons.remove_circle_outline),
-                onPressed: value > min ? () => onChanged(value - 1) : null,
-                iconSize: 20,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(
-                  '$value',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              // Minus button
+              SizedBox(
+                width: 32,
+                height: 32,
+                child: Material(
+                  color: value > min ? AppTheme.primaryColor.withOpacity(0.1) : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                  child: InkWell(
+                    onTap: value > min ? () => onChanged(value - 1) : null,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Center(
+                      child: Icon(
+                        Icons.remove,
+                        size: 18,
+                        color: value > min ? AppTheme.primaryColor : Colors.grey[400],
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.add_circle_outline),
-                onPressed: value < max ? () => onChanged(value + 1) : null,
-                iconSize: 20,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
+              // Value
+              SizedBox(
+                width: 36,
+                child: Center(
+                  child: Text(
+                    '$value',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              // Plus button
+              SizedBox(
+                width: 32,
+                height: 32,
+                child: Material(
+                  color: value < max ? AppTheme.primaryColor.withOpacity(0.1) : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                  child: InkWell(
+                    onTap: value < max ? () => onChanged(value + 1) : null,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Center(
+                      child: Icon(
+                        Icons.add,
+                        size: 18,
+                        color: value < max ? AppTheme.primaryColor : Colors.grey[400],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

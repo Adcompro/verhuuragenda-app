@@ -462,64 +462,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           ),
 
-          // Timeline - visual only
+          // Timeline with tappable booking bars
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: SizedBox(
               height: 50,
               child: _buildTimeline(accBookings, accBlocked),
             ),
           ),
-
-          // Tappable booking chips
-          if (accBookings.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: accBookings.map((booking) {
-                  final color = _parseColor(booking['color']);
-                  final guestName = booking['guest_name'] ?? 'Onbekend';
-                  final checkIn = booking['check_in'] ?? '';
-                  final checkOut = booking['check_out'] ?? '';
-
-                  return GestureDetector(
-                    onTap: () => _showBookingDetails(booking),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.person, color: Colors.white, size: 16),
-                          const SizedBox(width: 6),
-                          Text(
-                            guestName,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '${_formatShortDate(checkIn)} - ${_formatShortDate(checkOut)}',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.9),
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
         ],
       ),
     );
@@ -607,15 +557,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
       (i) => _startDate.add(Duration(days: i)),
     );
 
-    // Combine all events for easier rendering
-    final List<Map<String, dynamic>> allEvents = [
-      ...blocked.map((b) => <String, dynamic>{...Map<String, dynamic>.from(b), '_isBlocked': true}),
-      ...bookings.map((b) => <String, dynamic>{...Map<String, dynamic>.from(b), '_isBlocked': false}),
-    ];
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final cellWidth = constraints.maxWidth / _daysToShow;
+        final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
 
         return Column(
           children: [
@@ -638,17 +583,35 @@ class _CalendarScreenState extends State<CalendarScreen> {
               }).toList(),
             ),
             const SizedBox(height: 4),
-            // Booking bars - visual only (tap via chips below)
+            // Timeline bars
             Expanded(
-              child: CustomPaint(
-                painter: _TimelinePainter(
-                  dates: dates,
-                  events: allEvents,
-                  cellWidth: cellWidth,
-                  primaryColor: AppTheme.primaryColor,
-                  parseColor: _parseColor,
-                ),
-                child: Container(),
+              child: Stack(
+                children: [
+                  // Day backgrounds
+                  Row(
+                    children: dates.map((date) {
+                      final isToday = _isToday(date);
+                      final isWeekend = date.weekday >= 6;
+                      return Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 1),
+                          decoration: BoxDecoration(
+                            color: isToday
+                                ? AppTheme.primaryColor.withOpacity(0.2)
+                                : isWeekend
+                                    ? Colors.grey[200]
+                                    : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  // Blocked dates
+                  ...blocked.map((b) => _buildBar(b, startDay, cellWidth, isBlocked: true)),
+                  // Bookings
+                  ...bookings.map((b) => _buildBar(b, startDay, cellWidth, isBlocked: false)),
+                ],
               ),
             ),
           ],
@@ -657,7 +620,69 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  // Timeline is now visual only - bookings are tapped via chips below
+  Widget _buildBar(dynamic event, DateTime startDay, double cellWidth, {required bool isBlocked}) {
+    final DateTime eventStart;
+    final DateTime eventEnd;
+    final Color color;
+    final String label;
+
+    if (isBlocked) {
+      eventStart = DateTime.parse(event['start_date']);
+      eventEnd = DateTime.parse(event['end_date']);
+      final source = event['source'] ?? '';
+      color = source == 'airbnb' ? const Color(0xFFFF5A5F) :
+              source == 'booking' ? const Color(0xFF003580) : Colors.grey;
+      label = source == 'airbnb' ? 'Airbnb' :
+              source == 'booking' ? 'Booking' : 'Geblokkeerd';
+    } else {
+      eventStart = DateTime.parse(event['check_in']);
+      eventEnd = DateTime.parse(event['check_out']);
+      color = _parseColor(event['color']);
+      label = event['guest_name'] ?? '';
+    }
+
+    final startOffset = eventStart.difference(startDay).inDays;
+    final duration = eventEnd.difference(eventStart).inDays + (isBlocked ? 1 : 0);
+
+    if (startOffset + duration < 0 || startOffset >= _daysToShow) {
+      return const SizedBox.shrink();
+    }
+
+    final visibleStart = startOffset < 0 ? 0 : startOffset;
+    final visibleEnd = (startOffset + duration) > _daysToShow ? _daysToShow : (startOffset + duration);
+    final visibleDuration = visibleEnd - visibleStart;
+
+    if (visibleDuration <= 0) return const SizedBox.shrink();
+
+    final barWidth = visibleDuration * cellWidth - 2;
+
+    return Positioned(
+      left: visibleStart * cellWidth + 1,
+      top: 2,
+      bottom: 2,
+      child: GestureDetector(
+        onTap: isBlocked ? null : () => _showBookingDetails(event),
+        child: Container(
+          width: barWidth,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 9,
+              fontWeight: FontWeight.w600,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+    );
+  }
 
   void _showBookingDetails(dynamic booking) {
     final color = _parseColor(booking['color']);
@@ -1204,136 +1229,5 @@ class _CalendarScreenState extends State<CalendarScreen> {
       case 'unpaid': return 'Openstaand';
       default: return status ?? '-';
     }
-  }
-}
-
-// Custom painter for drawing timeline booking bars
-class _TimelinePainter extends CustomPainter {
-  final List<DateTime> dates;
-  final List<Map<String, dynamic>> events;
-  final double cellWidth;
-  final Color primaryColor;
-  final Color Function(String?) parseColor;
-
-  _TimelinePainter({
-    required this.dates,
-    required this.events,
-    required this.cellWidth,
-    required this.primaryColor,
-    required this.parseColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final daysToShow = dates.length;
-    final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
-
-    // Draw day backgrounds first
-    for (int i = 0; i < daysToShow; i++) {
-      final date = dates[i];
-      final isToday = _isToday(date);
-      final isWeekend = date.weekday >= 6;
-
-      final bgPaint = Paint()
-        ..color = isToday
-            ? primaryColor.withOpacity(0.2)
-            : isWeekend
-                ? Colors.grey[200]!
-                : Colors.grey[100]!;
-
-      final rect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(i * cellWidth + 1, 0, cellWidth - 2, size.height),
-        const Radius.circular(4),
-      );
-      canvas.drawRRect(rect, bgPaint);
-    }
-
-    // Draw booking/blocked bars
-    for (final event in events) {
-      final isBlocked = event['_isBlocked'] == true;
-
-      final DateTime eventStart;
-      final DateTime eventEnd;
-      final Color color;
-      final String label;
-
-      if (isBlocked) {
-        eventStart = DateTime.parse(event['start_date']);
-        eventEnd = DateTime.parse(event['end_date']);
-        final source = event['source'] ?? '';
-        color = source == 'airbnb'
-            ? const Color(0xFFFF5A5F)
-            : source == 'booking'
-                ? const Color(0xFF003580)
-                : Colors.grey;
-        label = source == 'airbnb'
-            ? 'Airbnb'
-            : source == 'booking'
-                ? 'Booking'
-                : 'Geblokkeerd';
-      } else {
-        if (!event.containsKey('check_in')) continue;
-        eventStart = DateTime.parse(event['check_in']);
-        eventEnd = DateTime.parse(event['check_out']);
-        color = parseColor(event['color']);
-        label = event['guest_name'] ?? '';
-      }
-
-      final startOffset = eventStart.difference(startDay).inDays;
-      final duration = eventEnd.difference(eventStart).inDays + (isBlocked ? 1 : 0);
-
-      if (startOffset + duration < 0 || startOffset >= daysToShow) continue;
-
-      final visibleStart = startOffset < 0 ? 0 : startOffset;
-      final visibleEnd = (startOffset + duration) > daysToShow ? daysToShow : (startOffset + duration);
-      final visibleDuration = visibleEnd - visibleStart;
-
-      if (visibleDuration <= 0) continue;
-
-      // Draw the bar
-      final barPaint = Paint()..color = color;
-      final barRect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-          visibleStart * cellWidth,
-          0,
-          visibleDuration * cellWidth - 2,
-          28,
-        ),
-        const Radius.circular(6),
-      );
-      canvas.drawRRect(barRect, barPaint);
-
-      // Draw the label
-      final textPainter = TextPainter(
-        text: TextSpan(
-          text: label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-        maxLines: 1,
-        ellipsis: '...',
-      );
-      textPainter.layout(maxWidth: visibleDuration * cellWidth - 14);
-      textPainter.paint(
-        canvas,
-        Offset(visibleStart * cellWidth + 6, 9),
-      );
-    }
-  }
-
-  bool _isToday(DateTime date) {
-    final now = DateTime.now();
-    return date.year == now.year && date.month == now.month && date.day == now.day;
-  }
-
-  @override
-  bool shouldRepaint(covariant _TimelinePainter oldDelegate) {
-    return oldDelegate.dates != dates ||
-        oldDelegate.events != events ||
-        oldDelegate.cellWidth != cellWidth;
   }
 }
