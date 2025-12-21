@@ -510,8 +510,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   Widget _buildRecentBookingCard(dynamic booking) {
     final accommodationColor = _parseColor(booking['accommodation_color']);
-    final totalAmount = (booking['total_amount'] as num?)?.toDouble() ?? 0;
-    final paidAmount = (booking['paid_amount'] as num?)?.toDouble() ?? 0;
+    final totalAmount = _parseAmount(booking['total_amount']);
+    final paidAmount = _parseAmount(booking['paid_amount']);
     final openAmount = totalAmount - paidAmount;
     final hasWishes = booking['special_requests'] != null &&
                        booking['special_requests'].toString().isNotEmpty;
@@ -765,8 +765,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   String _formatAmount(dynamic amount) {
     if (amount == null) return '0';
-    final num value = amount is num ? amount : 0;
+    final value = _parseAmount(amount);
     return value.toStringAsFixed(0);
+  }
+
+  double _parseAmount(dynamic amount) {
+    if (amount == null) return 0.0;
+    if (amount is num) return amount.toDouble();
+    if (amount is String) {
+      return double.tryParse(amount) ?? 0.0;
+    }
+    return 0.0;
   }
 
   Future<void> _callPhone(String phone) async {
