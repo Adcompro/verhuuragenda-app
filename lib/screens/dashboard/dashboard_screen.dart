@@ -95,7 +95,26 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       );
     }
 
-    final stats = _dashboardData?['stats'] ?? {};
+    // Safety check for null dashboard data
+    if (_dashboardData == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text('Geen data beschikbaar', style: TextStyle(color: Colors.grey[600])),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadDashboard,
+              child: const Text('Vernieuwen'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final stats = _dashboardData?['stats'] as Map<String, dynamic>? ?? {};
     final upcomingCheckins = (_dashboardData?['upcoming_checkins_list'] as List?) ?? [];
     final upcomingCheckouts = (_dashboardData?['upcoming_checkouts_list'] as List?) ?? [];
     final recentBookings = (_dashboardData?['recent_bookings'] as List?) ?? [];
