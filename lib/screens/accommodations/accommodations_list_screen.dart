@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
 import '../../models/accommodation.dart';
+import 'accommodation_edit_screen.dart';
 
 class AccommodationsListScreen extends StatefulWidget {
   const AccommodationsListScreen({super.key});
@@ -54,6 +56,18 @@ class _AccommodationsListScreenState extends State<AccommodationsListScreen> {
     }
   }
 
+  Future<void> _navigateToEdit(int? accommodationId) async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AccommodationEditScreen(accommodationId: accommodationId),
+      ),
+    );
+    if (result == true) {
+      _loadAccommodations();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +75,11 @@ class _AccommodationsListScreenState extends State<AccommodationsListScreen> {
         title: const Text('Accommodaties'),
       ),
       body: _buildBody(),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _navigateToEdit(null),
+        icon: const Icon(Icons.add),
+        label: const Text('Nieuw'),
+      ),
     );
   }
 
@@ -118,7 +137,10 @@ class _AccommodationsListScreenState extends State<AccommodationsListScreen> {
         itemCount: _accommodations.length,
         itemBuilder: (context, index) {
           final accommodation = _accommodations[index];
-          return _AccommodationCard(accommodation: accommodation);
+          return _AccommodationCard(
+            accommodation: accommodation,
+            onTap: () => _navigateToEdit(accommodation.id),
+          );
         },
       ),
     );
@@ -127,15 +149,18 @@ class _AccommodationsListScreenState extends State<AccommodationsListScreen> {
 
 class _AccommodationCard extends StatelessWidget {
   final Accommodation accommodation;
+  final VoidCallback? onTap;
 
-  const _AccommodationCard({required this.accommodation});
+  const _AccommodationCard({required this.accommodation, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       clipBehavior: Clip.antiAlias,
-      child: Column(
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Image header
@@ -235,6 +260,7 @@ class _AccommodationCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

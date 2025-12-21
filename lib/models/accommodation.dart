@@ -39,6 +39,11 @@ class Accommodation {
   final String? localTips;
   final String? thumbnailUrl;
   final List<String> photos;
+  final String? icalAirbnbUrl;
+  final String? icalBookingUrl;
+  final String? icalOtherUrl;
+  final String? icalExportUrl;
+  final String? description;
 
   Accommodation({
     required this.id,
@@ -70,6 +75,11 @@ class Accommodation {
     this.localTips,
     this.thumbnailUrl,
     this.photos = const [],
+    this.icalAirbnbUrl,
+    this.icalBookingUrl,
+    this.icalOtherUrl,
+    this.icalExportUrl,
+    this.description,
   });
 
   factory Accommodation.fromJson(Map<String, dynamic> json) {
@@ -101,10 +111,15 @@ class Accommodation {
       houseRules: json['house_rules'],
       arrivalInstructions: json['arrival_instructions'],
       localTips: json['local_tips'],
-      thumbnailUrl: json['thumbnail_url'],
+      thumbnailUrl: json['thumbnail_url'] ?? json['primary_photo'],
       photos: json['photos'] != null
           ? List<String>.from(json['photos'])
           : [],
+      icalAirbnbUrl: json['ical_airbnb_url'],
+      icalBookingUrl: json['ical_booking_url'],
+      icalOtherUrl: json['ical_other_url'],
+      icalExportUrl: json['ical_export_url'],
+      description: json['description'],
     );
   }
 
