@@ -10,6 +10,7 @@ import 'notifications_screen.dart';
 import 'about_screen.dart';
 import 'help_screen.dart';
 import 'profile_edit_screen.dart';
+import '../seasons/seasons_list_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -120,6 +121,19 @@ class SettingsScreen extends ConsumerWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
+              );
+            },
+          ),
+
+          const _SectionHeader(title: 'Beheer'),
+          _SettingsItem(
+            icon: Icons.calendar_month_outlined,
+            title: 'Seizoenen',
+            subtitle: 'Laag-, midden- en hoogseizoen periodes',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SeasonsListScreen()),
               );
             },
           ),
