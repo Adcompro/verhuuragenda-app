@@ -109,39 +109,50 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Widget _buildSubscriptionCard() {
     // API field names
-    final tier = _subscription['subscription_tier'] ?? 'free';
     final isPremium = _subscription['is_premium'] == true;
     final isOnTrial = _subscription['is_on_trial'] == true;
     final subscriptionEndsAt = _subscription['subscription_ends_at'];
     final trialEndsAt = _subscription['trial_ends_at'];
     final trialDaysRemaining = _subscription['trial_days_remaining'];
 
-    // Determine plan name
+    // Determine plan name and colors
     String planName;
+    String statusText;
+    List<Color> gradientColors;
+    Color statusBgColor;
+
     if (isPremium) {
       planName = 'Premium';
+      statusText = 'Actief';
+      gradientColors = [AppTheme.primaryColor, AppTheme.primaryColor.withOpacity(0.8)];
+      statusBgColor = Colors.white24;
     } else if (isOnTrial) {
-      planName = 'Proefperiode';
+      planName = 'Premium Proef';
+      statusText = 'Proefperiode';
+      gradientColors = [Colors.purple[600]!, Colors.purple[400]!];
+      statusBgColor = Colors.white24;
     } else {
+      // Free plan - this is a valid permanent plan!
       planName = 'Gratis';
+      statusText = 'Actief';
+      gradientColors = [Colors.teal[600]!, Colors.teal[400]!];
+      statusBgColor = Colors.white24;
     }
 
-    // Determine expiry date and days remaining
+    // Determine expiry date and days remaining (only for premium/trial)
     DateTime? expiryDate;
     int daysRemaining = 0;
 
-    if (subscriptionEndsAt != null) {
+    if (isPremium && subscriptionEndsAt != null) {
       expiryDate = DateTime.tryParse(subscriptionEndsAt);
       if (expiryDate != null) {
         daysRemaining = expiryDate.difference(DateTime.now()).inDays;
         if (daysRemaining < 0) daysRemaining = 0;
       }
-    } else if (trialEndsAt != null) {
+    } else if (isOnTrial && trialEndsAt != null) {
       expiryDate = DateTime.tryParse(trialEndsAt);
       daysRemaining = trialDaysRemaining ?? 0;
     }
-
-    final isActive = isPremium || isOnTrial;
 
     return Card(
       elevation: 4,
@@ -151,9 +162,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
-            colors: isActive
-                ? [AppTheme.primaryColor, AppTheme.primaryColor.withOpacity(0.8)]
-                : [Colors.grey[600]!, Colors.grey[500]!],
+            colors: gradientColors,
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -188,11 +197,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: isActive ? Colors.white24 : Colors.red[400],
+                    color: statusBgColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    isActive ? (isOnTrial ? 'Proef' : 'Actief') : 'Gratis',
+                    statusText,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -202,7 +211,37 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ),
               ],
             ),
-            if (expiryDate != null || daysRemaining > 0) ...[
+            // Show free plan features
+            if (!isPremium && !isOnTrial) ...[
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Inbegrepen:',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildFeatureRow(Icons.home, '1 accommodatie'),
+                    _buildFeatureRow(Icons.calendar_today, '10 boekingen per jaar'),
+                    _buildFeatureRow(Icons.sync, 'iCal synchronisatie'),
+                    _buildFeatureRow(Icons.person, 'Gastenportaal'),
+                  ],
+                ),
+              ),
+            ],
+            // Show trial/premium expiry info
+            if ((isPremium || isOnTrial) && expiryDate != null) ...[
               const SizedBox(height: 24),
               const Divider(color: Colors.white30),
               const SizedBox(height: 16),
@@ -218,9 +257,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          expiryDate != null
-                              ? _formatDate(expiryDate)
-                              : 'Onbekend',
+                          _formatDate(expiryDate),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -253,7 +290,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ],
               ),
             ],
-            if (daysRemaining > 0 && daysRemaining < 30) ...[
+            // Warning for expiring subscriptions
+            if ((isPremium || isOnTrial) && daysRemaining > 0 && daysRemaining < 30) ...[
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -280,6 +318,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFeatureRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: Colors.white70),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          ),
+        ],
       ),
     );
   }
@@ -424,7 +478,61 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Widget _buildPaymentSection() {
     final isPremium = _limits['is_premium'] == true;
+    final isOnTrial = _subscription['is_on_trial'] == true;
 
+    if (isPremium) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.settings, color: Colors.green),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Abonnement beheren',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Beheer je abonnement of bekijk je facturen op de website.',
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _openPaymentPage,
+                  icon: const Icon(Icons.open_in_new),
+                  label: const Text('Beheer abonnement'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Show upgrade options for free users and trial users
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -436,14 +544,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
+                    color: Colors.amber.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.payment, color: Colors.green),
+                  child: const Icon(Icons.star, color: Colors.amber),
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  isPremium ? 'Abonnement beheren' : 'Upgrade naar Premium',
+                  isOnTrial ? 'Upgrade naar Premium' : 'Meer mogelijkheden nodig?',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -452,28 +560,148 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            Text(
-              isPremium
-                  ? 'Beheer je abonnement of bekijk je facturen op de website.'
-                  : 'Krijg toegang tot alle functies zonder beperkingen.',
-              style: TextStyle(color: Colors.grey[600]),
+            // Premium benefits
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Premium voordelen:',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildBenefitRow('Onbeperkt accommodaties'),
+                  _buildBenefitRow('Onbeperkt boekingen'),
+                  _buildBenefitRow('Meerdere teamleden'),
+                  _buildBenefitRow('E-mailcampagnes'),
+                  _buildBenefitRow('Prioriteit support'),
+                ],
+              ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+            // Pricing options
+            Row(
+              children: [
+                Expanded(
+                  child: _buildPricingOption(
+                    'Maandelijks',
+                    '\u20AC9,99',
+                    '/maand',
+                    'Flexibel opzegbaar',
+                    false,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildPricingOption(
+                    'Jaarlijks',
+                    '\u20AC99',
+                    '/jaar',
+                    '17% korting',
+                    true,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _openPaymentPage,
-                icon: Icon(isPremium ? Icons.settings : Icons.star),
-                label: Text(isPremium ? 'Beheer abonnement' : 'Upgrade nu'),
+                icon: const Icon(Icons.rocket_launch),
+                label: const Text('Bekijk alle opties'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  backgroundColor: Colors.green,
+                  backgroundColor: Colors.amber[700],
                   foregroundColor: Colors.white,
                 ),
               ),
             ),
+            if (!isOnTrial) ...[
+              const SizedBox(height: 8),
+              Center(
+                child: Text(
+                  '14 dagen gratis proberen',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                ),
+              ),
+            ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildBenefitRow(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Icon(Icons.check_circle, size: 16, color: Colors.green[600]),
+          const SizedBox(width: 8),
+          Text(text, style: const TextStyle(fontSize: 13)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPricingOption(String title, String price, String period, String subtitle, bool isPopular) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isPopular ? AppTheme.primaryColor.withOpacity(0.1) : Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isPopular ? AppTheme.primaryColor : Colors.grey[300]!,
+          width: isPopular ? 2 : 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          if (isPopular)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Text(
+                'Populair',
+                style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+              ),
+            ),
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+          ),
+          const SizedBox(height: 4),
+          RichText(
+            text: TextSpan(
+              style: TextStyle(color: Colors.grey[800]),
+              children: [
+                TextSpan(
+                  text: price,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text: period,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: TextStyle(fontSize: 11, color: isPopular ? AppTheme.primaryColor : Colors.grey[600]),
+          ),
+        ],
       ),
     );
   }

@@ -659,22 +659,25 @@ class _TaskDetailSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    // Priority and status row
-                    Row(
+                    // Priority, category and status row
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 8,
                       children: [
                         _buildInfoChip(
                           task.priorityLabel,
                           _getPriorityColor(task.priority),
                         ),
-                        const SizedBox(width: 12),
+                        _buildInfoChip(
+                          task.categoryLabel,
+                          AppTheme.primaryColor,
+                        ),
                         _buildInfoChip(
                           task.statusLabel,
                           _getStatusColor(task.status),
                         ),
-                        if (task.isOverdue) ...[
-                          const SizedBox(width: 12),
+                        if (task.isOverdue)
                           _buildInfoChip('Verlopen', Colors.red),
-                        ],
                       ],
                     ),
                     const SizedBox(height: 20),

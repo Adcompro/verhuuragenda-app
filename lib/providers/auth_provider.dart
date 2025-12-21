@@ -66,9 +66,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<bool> login(String email, String password) async {
-    state = state.copyWith(isLoading: true, error: null);
+    // Reset any previous error state
+    state = const AuthState(isLoading: true);
 
     try {
+      // Ensure clean state before login
+      await SecureStorage.deleteToken();
+      ApiClient.reset();
+
       final response = await ApiClient.instance.post(
         ApiConfig.login,
         data: {
@@ -79,9 +84,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       final token = response.data['token'];
+      if (token == null || token.isEmpty) {
+        throw Exception('Geen token ontvangen van server');
+      }
+
       await SecureStorage.saveToken(token);
 
-      // Get user info
+      // Reset client to pick up new token
+      ApiClient.reset();
+
+      // Get user info with new token
       final userResponse = await ApiClient.instance.get(ApiConfig.user);
       final user = User.fromJson(userResponse.data);
 
@@ -111,13 +123,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
         errorMessage = 'Kan geen verbinding maken met de server.';
       }
 
-      state = state.copyWith(
+      state = AuthState(
         isLoading: false,
         error: errorMessage,
       );
       return false;
     } catch (e) {
-      state = state.copyWith(
+      state = AuthState(
         isLoading: false,
         error: 'Er is een fout opgetreden: ${e.toString()}',
       );
@@ -126,10 +138,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> logout() async {
-    // Clear local state first to prevent UI hanging
-    await SecureStorage.clearAll();
-
-    // Try to notify server (with short timeout, don't wait)
+    // Try to notify server first (while we still have the token)
     try {
       await ApiClient.instance.post(
         ApiConfig.logout,
@@ -139,10 +148,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
         ),
       );
     } catch (e) {
-      // Ignore errors during logout - we already cleared local state
+      // Ignore errors during logout - we'll clear local state anyway
     }
 
+    // Now clear local state
+    await SecureStorage.clearAll();
     ApiClient.reset();
+
+    // Reset to initial state (not logged in, not loading)
     state = const AuthState(isLoading: false);
   }
 

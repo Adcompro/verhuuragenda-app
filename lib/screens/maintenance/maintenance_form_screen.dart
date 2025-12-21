@@ -31,6 +31,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   // Form values
   int? _selectedAccommodationId;
   String _priority = 'medium';
+  String _category = 'maintenance';
   DateTime? _dueDate;
   List<Accommodation> _accommodations = [];
 
@@ -59,6 +60,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
     _notesController.text = task.notes ?? '';
     _selectedAccommodationId = task.accommodationId;
     _priority = task.priority;
+    _category = task.category;
     _dueDate = task.dueDate;
     _existingPhotos.addAll(task.photos);
   }
@@ -183,6 +185,11 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
           _buildPrioritySelector(),
           const SizedBox(height: 24),
 
+          // Category
+          _buildSectionTitle('Categorie'),
+          _buildCategorySelector(),
+          const SizedBox(height: 24),
+
           // Due date
           _buildSectionTitle('Deadline'),
           _buildDateField(),
@@ -294,6 +301,58 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCategorySelector() {
+    final categories = [
+      {'value': 'repair', 'label': 'Reparatie', 'icon': Icons.build},
+      {'value': 'maintenance', 'label': 'Onderhoud', 'icon': Icons.settings},
+      {'value': 'cleaning', 'label': 'Schoonmaak', 'icon': Icons.cleaning_services},
+      {'value': 'inventory', 'label': 'Inventaris', 'icon': Icons.inventory},
+      {'value': 'inspection', 'label': 'Inspectie', 'icon': Icons.search},
+      {'value': 'other', 'label': 'Overig', 'icon': Icons.more_horiz},
+    ];
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: categories.map((cat) {
+        final isSelected = _category == cat['value'];
+        return GestureDetector(
+          onTap: () => setState(() => _category = cat['value'] as String),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: isSelected ? AppTheme.primaryColor.withOpacity(0.15) : Colors.grey[100],
+              border: Border.all(
+                color: isSelected ? AppTheme.primaryColor : Colors.grey[300]!,
+                width: isSelected ? 2 : 1,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  cat['icon'] as IconData,
+                  size: 16,
+                  color: isSelected ? AppTheme.primaryColor : Colors.grey[600],
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  cat['label'] as String,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected ? AppTheme.primaryColor : Colors.grey[700],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -590,6 +649,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
         'description': _descriptionController.text.isEmpty ? null : _descriptionController.text,
         'accommodation_id': _selectedAccommodationId,
         'priority': _priority,
+        'category': _category,
         'due_date': _dueDate?.toIso8601String().split('T')[0],
         'notes': _notesController.text.isEmpty ? null : _notesController.text,
       };

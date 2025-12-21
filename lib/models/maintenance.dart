@@ -6,6 +6,7 @@ class MaintenanceTask {
   final String? description;
   final String priority; // low, medium, high, urgent
   final String status; // pending, in_progress, completed, cancelled
+  final String category; // repair, maintenance, cleaning, inventory, inspection, other
   final DateTime? dueDate;
   final DateTime? completedAt;
   final String? completedBy;
@@ -22,6 +23,7 @@ class MaintenanceTask {
     this.description,
     required this.priority,
     required this.status,
+    this.category = 'maintenance',
     this.dueDate,
     this.completedAt,
     this.completedBy,
@@ -47,6 +49,7 @@ class MaintenanceTask {
       description: json['description'],
       priority: json['priority'] ?? 'medium',
       status: json['status'] ?? 'pending',
+      category: json['category'] ?? 'maintenance',
       dueDate: json['due_date'] != null ? DateTime.tryParse(json['due_date']) : null,
       completedAt: json['completed_at'] != null ? DateTime.tryParse(json['completed_at']) : null,
       completedBy: json['completed_by'],
@@ -68,6 +71,7 @@ class MaintenanceTask {
       'description': description,
       'priority': priority,
       'status': status,
+      'category': category,
       'due_date': dueDate?.toIso8601String().split('T')[0],
       'notes': notes,
     };
@@ -100,6 +104,25 @@ class MaintenanceTask {
         return 'Geannuleerd';
       default:
         return status;
+    }
+  }
+
+  String get categoryLabel {
+    switch (category) {
+      case 'repair':
+        return 'Reparatie';
+      case 'maintenance':
+        return 'Onderhoud';
+      case 'cleaning':
+        return 'Schoonmaak';
+      case 'inventory':
+        return 'Inventaris';
+      case 'inspection':
+        return 'Inspectie';
+      case 'other':
+        return 'Overig';
+      default:
+        return category;
     }
   }
 

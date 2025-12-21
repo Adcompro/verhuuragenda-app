@@ -25,11 +25,34 @@ workflows:
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
 
-      - name: Update iOS bundle identifier and permissions
+      - name: Update iOS bundle identifier, version and permissions
         script: |
           cd ios
+
+          # Extract version from pubspec.yaml more robustly
+          FULL_VERSION=$(grep '^version:' ../pubspec.yaml | awk '{print $2}')
+          VERSION=$(echo $FULL_VERSION | cut -d'+' -f1)
+          BUILD_NUMBER=$(echo $FULL_VERSION | cut -d'+' -f2)
+
+          echo "=== Version Info ==="
+          echo "Full version: $FULL_VERSION"
+          echo "Marketing version: $VERSION"
+          echo "Build number: $BUILD_NUMBER"
+          echo "===================="
+
+          # Update bundle identifier
           /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier nl.vakantiewoningverhuur.app" Runner/Info.plist
           sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.vakantiewoningverhuur.app;/g' Runner.xcodeproj/project.pbxproj
+
+          # Update version numbers in Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" Runner/Info.plist
+
+          # Verify plist was updated
+          echo "=== Info.plist versions ==="
+          /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Print :CFBundleVersion" Runner/Info.plist
+          echo "==========================="
 
           # Add camera and photo library permissions for image_picker
           /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string VerhuurAgenda heeft toegang nodig tot je camera om fotos van onderhoudstaken te maken." Runner/Info.plist || true
@@ -46,7 +69,16 @@ workflows:
 
       - name: Build iOS App
         script: |
+          # Extract version from pubspec.yaml
+          FULL_VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          VERSION=$(echo $FULL_VERSION | cut -d'+' -f1)
+          BUILD_NUMBER=$(echo $FULL_VERSION | cut -d'+' -f2)
+
+          echo "Building with version $VERSION build $BUILD_NUMBER"
+
           flutter build ipa --release \
+            --build-name=$VERSION \
+            --build-number=$BUILD_NUMBER \
             --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:
