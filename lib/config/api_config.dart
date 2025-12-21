@@ -26,4 +26,5 @@ class ApiConfig {
   static const String profile = '/profile';
   static const String subscription = '/subscription';
   static const String notifications = '/notifications';
+  static const String users = '/users';
 }

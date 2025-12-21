@@ -11,6 +11,7 @@ import 'about_screen.dart';
 import 'help_screen.dart';
 import 'profile_edit_screen.dart';
 import '../seasons/seasons_list_screen.dart';
+import '../team/team_list_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -134,6 +135,17 @@ class SettingsScreen extends ConsumerWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const SeasonsListScreen()),
+              );
+            },
+          ),
+          _SettingsItem(
+            icon: Icons.group_outlined,
+            title: 'Team',
+            subtitle: 'Teamleden beheren (Premium)',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const TeamListScreen()),
               );
             },
           ),
