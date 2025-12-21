@@ -252,6 +252,7 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
             ...completedTasks.map((task) => _CleaningTaskCard(
               task: task,
               onUndo: () => _undoComplete(task),
+              onViewDetails: () => _showCompletedDetails(task),
             )),
           ],
         ],
@@ -366,6 +367,21 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
     }
   }
 
+  void _showCompletedDetails(CleaningTask task) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _CleaningDetailsSheet(
+        task: task,
+        onUndo: () {
+          Navigator.pop(context);
+          _undoComplete(task);
+        },
+      ),
+    );
+  }
+
   Future<void> _undoComplete(CleaningTask task) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -410,11 +426,13 @@ class _CleaningTaskCard extends StatelessWidget {
   final CleaningTask task;
   final VoidCallback? onComplete;
   final VoidCallback? onUndo;
+  final VoidCallback? onViewDetails;
 
   const _CleaningTaskCard({
     required this.task,
     this.onComplete,
     this.onUndo,
+    this.onViewDetails,
   });
 
   @override
@@ -545,55 +563,111 @@ class _CleaningTaskCard extends StatelessWidget {
                 // Time window visualization
                 _buildTimeWindow(),
                 const SizedBox(height: 16),
-                // Notes if completed
-                if (isCompleted && task.cleaningNotes != null && task.cleaningNotes!.isNotEmpty)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.amber.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.amber.withOpacity(0.3)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                // Completed summary for completed tasks
+                if (isCompleted) ...[
+                  // Show quick preview of issues if any
+                  if (task.cleaningNotes != null && task.cleaningNotes!.isNotEmpty)
+                    GestureDetector(
+                      onTap: onViewDetails,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: _hasIssues(task.cleaningNotes!)
+                              ? Colors.red.withOpacity(0.05)
+                              : Colors.amber.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: _hasIssues(task.cleaningNotes!)
+                                ? Colors.red.withOpacity(0.3)
+                                : Colors.amber.withOpacity(0.3)
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.note, size: 16, color: Colors.amber[700]),
-                            const SizedBox(width: 6),
+                            Row(
+                              children: [
+                                Icon(
+                                  _hasIssues(task.cleaningNotes!)
+                                      ? Icons.warning_amber
+                                      : Icons.note,
+                                  size: 16,
+                                  color: _hasIssues(task.cleaningNotes!)
+                                      ? Colors.red[700]
+                                      : Colors.amber[700],
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  _hasIssues(task.cleaningNotes!)
+                                      ? 'Meldingen'
+                                      : 'Notities',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: _hasIssues(task.cleaningNotes!)
+                                        ? Colors.red[700]
+                                        : Colors.amber[700],
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
                             Text(
-                              'Notities',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.amber[700],
-                                fontSize: 12,
-                              ),
+                              _getNotesPreview(task.cleaningNotes!),
+                              style: TextStyle(color: Colors.grey[700], fontSize: 13),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          task.cleaningNotes!,
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                      ],
+                      ),
+                    ),
+                  // Completed time with tap hint
+                  InkWell(
+                    onTap: onViewDetails,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          Icon(Icons.check_circle, size: 16, color: Colors.green[600]),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Afgerond: ${task.cleaningCompletedAt}',
+                            style: TextStyle(color: Colors.green[600], fontSize: 13),
+                          ),
+                          const Spacer(),
+                          Text(
+                            'Bekijk details',
+                            style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                          ),
+                          Icon(Icons.chevron_right, color: Colors.grey[400], size: 16),
+                        ],
+                      ),
                     ),
                   ),
-                // Completed time
-                if (isCompleted && task.cleaningCompletedAt != null)
+                  // Action buttons row
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.check_circle, size: 16, color: Colors.green[600]),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Afgerond: ${task.cleaningCompletedAt}',
-                        style: TextStyle(color: Colors.green[600], fontSize: 13),
+                      TextButton.icon(
+                        onPressed: onViewDetails,
+                        icon: const Icon(Icons.info_outline, size: 18),
+                        label: const Text('Details'),
+                      ),
+                      TextButton.icon(
+                        onPressed: onUndo,
+                        icon: const Icon(Icons.undo, size: 18),
+                        label: const Text('Ongedaan maken'),
+                        style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
                       ),
                     ],
                   ),
-                // Action button
+                ],
+                // Action button for incomplete tasks
                 if (!isCompleted)
                   SizedBox(
                     width: double.infinity,
@@ -606,13 +680,6 @@ class _CleaningTaskCard extends StatelessWidget {
                         padding: const EdgeInsets.all(14),
                       ),
                     ),
-                  )
-                else
-                  TextButton.icon(
-                    onPressed: onUndo,
-                    icon: const Icon(Icons.undo, size: 18),
-                    label: const Text('Ongedaan maken'),
-                    style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
                   ),
               ],
             ),
@@ -620,6 +687,30 @@ class _CleaningTaskCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  bool _hasIssues(String notes) {
+    return notes.contains('[Extra vies]') ||
+           notes.contains('[Schade]') ||
+           notes.contains('[Ontbrekend]') ||
+           notes.contains('[Reparatie nodig]') ||
+           notes.contains('[Anders]');
+  }
+
+  String _getNotesPreview(String notes) {
+    // Parse out issue types and show them
+    final issues = <String>[];
+    if (notes.contains('[Extra vies]')) issues.add('Extra vies');
+    if (notes.contains('[Schade]')) issues.add('Schade');
+    if (notes.contains('[Ontbrekend]')) issues.add('Ontbrekend');
+    if (notes.contains('[Reparatie nodig]')) issues.add('Reparatie nodig');
+
+    if (issues.isNotEmpty) {
+      return issues.join(' • ');
+    }
+
+    // Otherwise show the first line of notes
+    return notes.split('\n').first;
   }
 
   Widget _buildTimeWindow() {
@@ -1122,4 +1213,329 @@ class CleaningIssue {
   final String description;
 
   CleaningIssue({required this.type, required this.description});
+}
+
+class _CleaningDetailsSheet extends StatelessWidget {
+  final CleaningTask task;
+  final VoidCallback onUndo;
+
+  const _CleaningDetailsSheet({
+    required this.task,
+    required this.onUndo,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final parsedIssues = _parseIssues(task.cleaningNotes);
+    final otherNotes = _extractOtherNotes(task.cleaningNotes);
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Header
+              Row(
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: task.accommodationColor ?? AppTheme.primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          task.accommodationName,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Gast: ${task.guestName}',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.check_circle, size: 16, color: Colors.green),
+                        SizedBox(width: 4),
+                        Text(
+                          'Klaar',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Completed info
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.green.withOpacity(0.2)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.access_time, color: Colors.green),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Schoonmaak afgerond',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            task.cleaningCompletedAt ?? 'Onbekend',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Issues section
+              if (parsedIssues.isNotEmpty) ...[
+                const Text(
+                  'Gemelde problemen',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...parsedIssues.map((issue) => Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                    color: _getIssueColor(issue['type']!).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _getIssueColor(issue['type']!).withOpacity(0.3),
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        _getIssueIcon(issue['type']!),
+                        color: _getIssueColor(issue['type']!),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              issue['type']!,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: _getIssueColor(issue['type']!),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              issue['description']!,
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+                const SizedBox(height: 16),
+              ],
+
+              // Other notes section
+              if (otherNotes.isNotEmpty) ...[
+                const Text(
+                  'Notities',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    otherNotes,
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // No notes message
+              if (task.cleaningNotes == null || task.cleaningNotes!.isEmpty)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.check, color: Colors.green[600]),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Schoonmaak zonder bijzonderheden afgerond',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 24),
+
+              // Actions
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close),
+                      label: const Text('Sluiten'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.all(16),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: onUndo,
+                      icon: const Icon(Icons.undo),
+                      label: const Text('Ongedaan'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.orange,
+                        side: const BorderSide(color: Colors.orange),
+                        padding: const EdgeInsets.all(16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Map<String, String>> _parseIssues(String? notes) {
+    if (notes == null) return [];
+
+    final issues = <Map<String, String>>[];
+    final lines = notes.split('\n');
+
+    for (final line in lines) {
+      if (line.startsWith('[')) {
+        final endBracket = line.indexOf(']');
+        if (endBracket > 1) {
+          final type = line.substring(1, endBracket);
+          final description = line.substring(endBracket + 1).trim();
+          issues.add({'type': type, 'description': description});
+        }
+      }
+    }
+
+    return issues;
+  }
+
+  String _extractOtherNotes(String? notes) {
+    if (notes == null) return '';
+
+    final lines = notes.split('\n');
+    final otherLines = lines.where((line) => !line.startsWith('['));
+    return otherLines.join('\n').trim();
+  }
+
+  IconData _getIssueIcon(String type) {
+    switch (type) {
+      case 'Extra vies':
+        return Icons.dirty_lens;
+      case 'Schade':
+        return Icons.broken_image;
+      case 'Ontbrekend':
+        return Icons.search_off;
+      case 'Reparatie nodig':
+        return Icons.build;
+      default:
+        return Icons.more_horiz;
+    }
+  }
+
+  Color _getIssueColor(String type) {
+    switch (type) {
+      case 'Extra vies':
+        return Colors.brown;
+      case 'Schade':
+        return Colors.red;
+      case 'Ontbrekend':
+        return Colors.orange;
+      case 'Reparatie nodig':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
 }
