@@ -119,6 +119,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 value: '${stats['current_bookings'] ?? 0}',
                 icon: Icons.calendar_today,
                 color: AppTheme.primaryColor,
+                onTap: () => _showStatDetails('active', upcomingCheckins, upcomingCheckouts),
               ),
               _StatCard(
                 title: 'Check-ins',
@@ -126,6 +127,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 subtitle: 'komende 7 dagen',
                 icon: Icons.login,
                 color: AppTheme.successColor,
+                onTap: () => _showStatDetails('checkins', upcomingCheckins, upcomingCheckouts),
               ),
               _StatCard(
                 title: 'Check-outs',
@@ -133,12 +135,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 subtitle: 'komende 7 dagen',
                 icon: Icons.logout,
                 color: AppTheme.accentColor,
+                onTap: () => _showStatDetails('checkouts', upcomingCheckins, upcomingCheckouts),
               ),
               _StatCard(
                 title: 'Omzet deze maand',
                 value: '€${_formatAmount(stats['monthly_revenue'])}',
                 icon: Icons.euro,
                 color: AppTheme.secondaryColor,
+                onTap: () => _showRevenueDetails(stats),
               ),
             ],
           ),
@@ -487,6 +491,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   Widget _buildRecentBookingCard(dynamic booking) {
     final accommodationColor = _parseColor(booking['accommodation_color']);
+    final totalAmount = (booking['total_amount'] as num?)?.toDouble() ?? 0;
+    final paidAmount = (booking['paid_amount'] as num?)?.toDouble() ?? 0;
+    final openAmount = totalAmount - paidAmount;
+    final hasWishes = booking['special_requests'] != null &&
+                       booking['special_requests'].toString().isNotEmpty;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -495,81 +504,165 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         onTap: () => _showBookingDetail(booking),
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Avatar
-              CircleAvatar(
-                backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-                child: Text(
-                  (booking['guest_name'] ?? 'O')[0].toUpperCase(),
-                  style: TextStyle(
-                    color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            booking['guest_name'] ?? 'Onbekend',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        _buildStatusBadge(booking['status']),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: accommodationColor,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            booking['accommodation'] ?? '',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${_formatDate(booking['check_in'])} - ${_formatDate(booking['check_out'])} (${booking['nights']} nachten)',
+              Row(
+                children: [
+                  // Avatar
+                  CircleAvatar(
+                    backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                    child: Text(
+                      (booking['guest_name'] ?? 'O')[0].toUpperCase(),
                       style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[500],
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                booking['guest_name'] ?? 'Onbekend',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            _buildStatusBadge(booking['status']),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: accommodationColor,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                booking['accommodation'] ?? '',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${_formatDate(booking['check_in'])} - ${_formatDate(booking['check_out'])} (${booking['nights']} nachten)',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              // Payment info row
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    // Total
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Text(
+                            'Totaal: ',
+                            style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                          ),
+                          Text(
+                            '€${_formatAmount(totalAmount)}',
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Paid
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppTheme.successColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        '€${_formatAmount(paidAmount)}',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.successColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    // Open
+                    if (openAmount > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '€${_formatAmount(openAmount)} open',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
-              // Amount
-              if (booking['total_amount'] != null)
-                Text(
-                  '€${_formatAmount(booking['total_amount'])}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryColor,
+              // Special requests / wishes
+              if (hasWishes) ...[
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.amber.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.star, size: 14, color: Colors.amber[700]),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          booking['special_requests'].toString(),
+                          style: TextStyle(fontSize: 11, color: Colors.amber[900]),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+              ],
             ],
           ),
         ),
@@ -1045,6 +1138,359 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       await launchUrl(uri);
     }
   }
+
+  void _showStatDetails(String type, List checkins, List checkouts) {
+    String title;
+    String description;
+    List items;
+    Color color;
+    IconData icon;
+
+    switch (type) {
+      case 'active':
+        title = 'Actieve Boekingen';
+        description = 'Huidige gasten die nu verblijven';
+        items = [...checkins, ...checkouts].where((b) {
+          final checkIn = DateTime.tryParse(b['check_in'] ?? '');
+          final checkOut = DateTime.tryParse(b['check_out'] ?? '');
+          final now = DateTime.now();
+          return checkIn != null && checkOut != null &&
+                 checkIn.isBefore(now) && checkOut.isAfter(now);
+        }).toList();
+        color = AppTheme.primaryColor;
+        icon = Icons.calendar_today;
+        break;
+      case 'checkins':
+        title = 'Aankomende Check-ins';
+        description = 'Check-ins in de komende 7 dagen';
+        items = checkins;
+        color = AppTheme.successColor;
+        icon = Icons.login;
+        break;
+      case 'checkouts':
+        title = 'Aankomende Check-outs';
+        description = 'Check-outs in de komende 7 dagen';
+        items = checkouts;
+        color = AppTheme.accentColor;
+        icon = Icons.logout;
+        break;
+      default:
+        return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.3,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) => Column(
+          children: [
+            // Handle
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, color: color, size: 28),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          description,
+                          style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      '${items.length}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            // List
+            Expanded(
+              child: items.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(icon, size: 48, color: Colors.grey[300]),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Geen items',
+                            style: TextStyle(color: Colors.grey[500]),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.separated(
+                      controller: scrollController,
+                      padding: const EdgeInsets.all(16),
+                      itemCount: items.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final booking = items[index];
+                        return Card(
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: color.withOpacity(0.1),
+                              child: Text(
+                                (booking['guest_name'] ?? 'O')[0].toUpperCase(),
+                                style: TextStyle(color: color, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            title: Text(
+                              booking['guest_name'] ?? 'Onbekend',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(booking['accommodation'] ?? ''),
+                                Text(
+                                  type == 'checkouts'
+                                      ? 'Check-out: ${_formatDate(booking['check_out'])}'
+                                      : 'Check-in: ${_formatDate(booking['check_in'])}',
+                                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                                ),
+                              ],
+                            ),
+                            trailing: booking['is_today'] == true
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: color,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Text(
+                                      'VANDAAG',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    '+${booking['days_until'] ?? 0}d',
+                                    style: TextStyle(color: color, fontWeight: FontWeight.bold),
+                                  ),
+                            onTap: () {
+                              Navigator.pop(context);
+                              _showBookingDetail(booking);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showRevenueDetails(Map<String, dynamic> stats) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Handle
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Header
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppTheme.secondaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(Icons.euro, color: AppTheme.secondaryColor, size: 28),
+                ),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Omzet Deze Maand',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Gebaseerd op betalingen deze maand',
+                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            // Revenue card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppTheme.secondaryColor,
+                    AppTheme.secondaryColor.withOpacity(0.8),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Totale omzet',
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '€${_formatAmount(stats['monthly_revenue'])}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _getCurrentMonthName(),
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Additional info
+            Row(
+              children: [
+                Expanded(
+                  child: _buildRevenueInfoCard(
+                    'Boekingen',
+                    '${stats['current_bookings'] ?? 0}',
+                    Icons.calendar_today,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildRevenueInfoCard(
+                    'Check-ins',
+                    '${stats['upcoming_checkins'] ?? 0}',
+                    Icons.login,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRevenueInfoCard(String label, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: Colors.grey[600]),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            label,
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getCurrentMonthName() {
+    const months = [
+      'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni',
+      'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'
+    ];
+    final now = DateTime.now();
+    return '${months[now.month - 1]} ${now.year}';
+  }
 }
 
 class _StatCard extends StatelessWidget {
@@ -1053,6 +1499,7 @@ class _StatCard extends StatelessWidget {
   final String? subtitle;
   final IconData icon;
   final Color color;
+  final VoidCallback? onTap;
 
   const _StatCard({
     required this.title,
@@ -1060,40 +1507,52 @@ class _StatCard extends StatelessWidget {
     this.subtitle,
     required this.icon,
     required this.color,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-            ),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
-            ),
-            if (subtitle != null)
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(icon, color: color, size: 24),
+                  if (onTap != null)
+                    Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
+                ],
+              ),
+              const SizedBox(height: 8),
               Text(
-                subtitle!,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Colors.grey[400],
+                value,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: color,
                     ),
               ),
-          ],
+              Text(
+                title,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[600],
+                    ),
+              ),
+              if (subtitle != null)
+                Text(
+                  subtitle!,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Colors.grey[400],
+                      ),
+                ),
+            ],
+          ),
         ),
       ),
     );

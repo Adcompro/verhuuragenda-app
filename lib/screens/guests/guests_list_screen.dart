@@ -38,7 +38,10 @@ class _GuestsListScreenState extends State<GuestsListScreen> {
     });
 
     try {
-      final response = await ApiClient.instance.get(ApiConfig.guests);
+      final response = await ApiClient.instance.get(
+        ApiConfig.guests,
+        queryParameters: {'per_page': '1000'}, // Load all guests
+      );
 
       // Handle both paginated and non-paginated responses
       List<dynamic> data;

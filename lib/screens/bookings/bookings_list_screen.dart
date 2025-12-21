@@ -82,8 +82,8 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
 
       setState(() {
         _bookings = data.map((json) => Booking.fromJson(json)).toList();
-        // Sort by check-in date
-        _bookings.sort((a, b) => a.checkIn.compareTo(b.checkIn));
+        // Sort by check-in date descending (newest first)
+        _bookings.sort((a, b) => b.checkIn.compareTo(a.checkIn));
         _isLoading = false;
       });
     } catch (e) {
