@@ -1609,39 +1609,52 @@ class _StatCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(icon, color: color, size: 24),
+                  Icon(icon, color: color, size: 20),
                   if (onTap != null)
-                    Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
+                    Icon(Icons.chevron_right, color: Colors.grey[400], size: 18),
                 ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                value,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: color,
                     ),
+                  ),
+                ),
               ),
               Text(
                 title,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey[600],
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               if (subtitle != null)
                 Text(
                   subtitle!,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Colors.grey[400],
-                      ),
+                  style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.grey[400],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
             ],
           ),
