@@ -45,27 +45,12 @@ workflows:
           echo "UIDeviceFamily set to:"
           /usr/libexec/PlistBuddy -c "Print :UIDeviceFamily" Runner/Info.plist
 
-      - name: Install CocoaPods
+      - name: Build iOS Simulator App
         script: |
-          cd ios
-          pod install --repo-update
-
-      - name: Build iOS Simulator App for all devices
-        script: |
-          cd ios
-          xcodebuild build \
-            -workspace Runner.xcworkspace \
-            -scheme Runner \
-            -sdk iphonesimulator \
-            -configuration Debug \
-            -destination 'generic/platform=iOS Simulator' \
-            ONLY_ACTIVE_ARCH=NO \
-            BUILD_DIR=../build/ios
+          flutter build ios --debug --simulator
 
     artifacts:
-      - build/ios/Debug-iphonesimulator/*.app
       - build/ios/iphonesimulator/*.app
-      - /Users/builder/Library/Developer/Xcode/DerivedData/**/*.app
 
   ios-workflow:
     name: iOS Build
