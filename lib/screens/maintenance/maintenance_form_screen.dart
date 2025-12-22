@@ -8,6 +8,7 @@ import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
 import '../../models/maintenance.dart';
 import '../../models/accommodation.dart';
+import '../../utils/responsive.dart';
 
 class MaintenanceFormScreen extends StatefulWidget {
   final MaintenanceTask? task;
@@ -108,11 +109,17 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   }
 
   Widget _buildForm() {
+    final isTablet = Responsive.useWideLayout(context);
+    final maxWidth = isTablet ? 600.0 : double.infinity;
+
     return Form(
       key: _formKey,
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: ListView(
+            padding: EdgeInsets.all(isTablet ? 24 : 16),
+            children: [
           // Title
           _buildSectionTitle('Titel'),
           TextFormField(
@@ -230,8 +237,10 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                     ),
             ),
           ),
-          const SizedBox(height: 32),
-        ],
+            const SizedBox(height: 32),
+          ],
+          ),
+        ),
       ),
     );
   }

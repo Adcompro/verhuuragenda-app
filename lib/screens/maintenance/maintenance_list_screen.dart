@@ -4,6 +4,7 @@ import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
 import '../../models/maintenance.dart';
+import '../../utils/responsive.dart';
 import 'maintenance_form_screen.dart';
 
 class MaintenanceListScreen extends StatefulWidget {
@@ -71,6 +72,8 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.useWideLayout(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Onderhoud'),
@@ -79,19 +82,40 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
             icon: const Icon(Icons.refresh),
             onPressed: _loadTasks,
           ),
+          // Extra add button in app bar for iPad (easier to reach)
+          if (isTablet)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: TextButton.icon(
+                onPressed: () => _navigateToForm(),
+                icon: const Icon(Icons.add),
+                label: const Text('Nieuwe taak'),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+                ),
+              ),
+            ),
         ],
       ),
-      body: Column(
-        children: [
-          _buildFilters(),
-          Expanded(child: _buildBody()),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildFilters(),
+            Expanded(child: _buildBody()),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _navigateToForm(),
-        icon: const Icon(Icons.add),
-        label: const Text('Nieuwe taak'),
+      floatingActionButton: SafeArea(
+        child: FloatingActionButton.extended(
+          onPressed: () => _navigateToForm(),
+          icon: const Icon(Icons.add),
+          label: const Text('Nieuwe taak'),
+        ),
       ),
+      floatingActionButtonLocation: isTablet
+          ? FloatingActionButtonLocation.endFloat
+          : FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -213,15 +237,31 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
       );
     }
 
+    final isTablet = Responsive.useWideLayout(context);
+
     return RefreshIndicator(
       onRefresh: _loadTasks,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(12),
-        itemCount: _tasks.length,
-        itemBuilder: (context, index) {
-          return _buildTaskCard(_tasks[index]);
-        },
-      ),
+      child: isTablet
+          ? GridView.builder(
+              padding: const EdgeInsets.all(16),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: Responsive.isDesktop(context) ? 3 : 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 1.5,
+              ),
+              itemCount: _tasks.length,
+              itemBuilder: (context, index) {
+                return _buildTaskCard(_tasks[index]);
+              },
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: _tasks.length,
+              itemBuilder: (context, index) {
+                return _buildTaskCard(_tasks[index]);
+              },
+            ),
     );
   }
 

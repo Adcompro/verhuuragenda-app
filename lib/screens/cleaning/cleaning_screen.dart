@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
+import '../../utils/responsive.dart';
 
 class CleaningScreen extends StatefulWidget {
   const CleaningScreen({super.key});
@@ -91,13 +92,15 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
           ],
         ),
       ),
-      body: Column(
-        children: [
-          // Stats header
-          if (_stats != null) _buildStatsHeader(),
-          // Tasks list
-          Expanded(child: _buildBody()),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Stats header
+            if (_stats != null) _buildStatsHeader(),
+            // Tasks list
+            Expanded(child: _buildBody()),
+          ],
+        ),
       ),
     );
   }
@@ -156,22 +159,29 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, color: color, size: 20),
             const SizedBox(height: 4),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: color,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
             ),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                color: color.withOpacity(0.8),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: color.withOpacity(0.8),
+                ),
               ),
             ),
           ],
@@ -231,29 +241,65 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
     // Group tasks by status
     final pendingTasks = _tasks.where((t) => !t.cleaningCompleted).toList();
     final completedTasks = _tasks.where((t) => t.cleaningCompleted).toList();
+    final isTablet = Responsive.useWideLayout(context);
 
     return RefreshIndicator(
       onRefresh: () => _loadTasks(_currentPeriod),
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(isTablet ? 20 : 16),
         children: [
           // Pending tasks
           if (pendingTasks.isNotEmpty) ...[
             _buildSectionHeader('Te doen', pendingTasks.length, Colors.orange),
-            ...pendingTasks.map((task) => _CleaningTaskCard(
-              task: task,
-              onComplete: () => _showCompleteDialog(task),
-            )),
+            if (isTablet)
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: Responsive.isDesktop(context) ? 3 : 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1.1,
+                ),
+                itemCount: pendingTasks.length,
+                itemBuilder: (context, index) => _CleaningTaskCard(
+                  task: pendingTasks[index],
+                  onComplete: () => _showCompleteDialog(pendingTasks[index]),
+                ),
+              )
+            else
+              ...pendingTasks.map((task) => _CleaningTaskCard(
+                task: task,
+                onComplete: () => _showCompleteDialog(task),
+              )),
           ],
           // Completed tasks
           if (completedTasks.isNotEmpty) ...[
             const SizedBox(height: 24),
             _buildSectionHeader('Afgerond', completedTasks.length, Colors.green),
-            ...completedTasks.map((task) => _CleaningTaskCard(
-              task: task,
-              onUndo: () => _undoComplete(task),
-              onViewDetails: () => _showCompletedDetails(task),
-            )),
+            if (isTablet)
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: Responsive.isDesktop(context) ? 3 : 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1.1,
+                ),
+                itemCount: completedTasks.length,
+                itemBuilder: (context, index) => _CleaningTaskCard(
+                  task: completedTasks[index],
+                  onUndo: () => _undoComplete(completedTasks[index]),
+                  onViewDetails: () => _showCompletedDetails(completedTasks[index]),
+                ),
+              )
+            else
+              ...completedTasks.map((task) => _CleaningTaskCard(
+                task: task,
+                onUndo: () => _undoComplete(task),
+                onViewDetails: () => _showCompletedDetails(task),
+              )),
           ],
         ],
       ),
