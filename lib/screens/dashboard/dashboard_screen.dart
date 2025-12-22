@@ -134,7 +134,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             physics: const NeverScrollableScrollPhysics(),
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: isWide ? 1.2 : 1.5,
+            childAspectRatio: isWide ? 1.2 : 1.3,
             children: [
               _StatCard(
                 title: 'Actieve boekingen',
