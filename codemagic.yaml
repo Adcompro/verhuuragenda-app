@@ -24,6 +24,19 @@ workflows:
         script: |
           flutter pub get
 
+      - name: Enable iPad support
+        script: |
+          cd ios
+          # Set UIDeviceFamily to support both iPhone (1) and iPad (2)
+          /usr/libexec/PlistBuddy -c "Delete :UIDeviceFamily" Runner/Info.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily array" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:0 integer 1" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:1 integer 2" Runner/Info.plist
+
+          # Verify
+          echo "UIDeviceFamily set to:"
+          /usr/libexec/PlistBuddy -c "Print :UIDeviceFamily" Runner/Info.plist
+
       - name: Build iOS Simulator App
         script: |
           flutter build ios --debug --simulator
