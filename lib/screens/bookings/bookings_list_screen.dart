@@ -4,6 +4,7 @@ import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
 import '../../models/booking.dart';
+import '../../utils/responsive.dart';
 
 class BookingsListScreen extends StatefulWidget {
   const BookingsListScreen({super.key});
@@ -347,27 +348,63 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
       );
     }
 
+    final isWide = Responsive.useWideLayout(context);
+    final padding = Responsive.getScreenPadding(context);
+
     return RefreshIndicator(
       onRefresh: _loadBookings,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: _bookings.length + 1, // +1 for the count header
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+      child: CustomScrollView(
+        slivers: [
+          // Count header
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(padding.left, padding.top, padding.right, 12),
+            sliver: SliverToBoxAdapter(
               child: Text(
                 '${_bookings.length} boeking${_bookings.length == 1 ? '' : 'en'}',
                 style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
-            );
-          }
-          final booking = _bookings[index - 1];
-          return _BookingCard(
-            booking: booking,
-            onTap: () => context.push('/bookings/${booking.id}'),
-          );
-        },
+            ),
+          ),
+          // Grid on tablet, list on phone
+          if (isWide)
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(padding.left, 0, padding.right, padding.bottom),
+              sliver: SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: Responsive.isDesktop(context) ? 3 : 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1.8,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final booking = _bookings[index];
+                    return _BookingCard(
+                      booking: booking,
+                      onTap: () => context.push('/bookings/${booking.id}'),
+                    );
+                  },
+                  childCount: _bookings.length,
+                ),
+              ),
+            )
+          else
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(padding.left, 0, padding.right, padding.bottom),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final booking = _bookings[index];
+                    return _BookingCard(
+                      booking: booking,
+                      onTap: () => context.push('/bookings/${booking.id}'),
+                    );
+                  },
+                  childCount: _bookings.length,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

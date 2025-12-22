@@ -5,6 +5,7 @@ import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
+import '../../utils/responsive.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -118,20 +119,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final upcomingCheckins = (_dashboardData?['upcoming_checkins_list'] as List?) ?? [];
     final upcomingCheckouts = (_dashboardData?['upcoming_checkouts_list'] as List?) ?? [];
     final recentBookings = (_dashboardData?['recent_bookings'] as List?) ?? [];
+    final isWide = Responsive.useWideLayout(context);
+    final padding = Responsive.getScreenPadding(context);
 
     return RefreshIndicator(
       onRefresh: _loadDashboard,
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: padding,
         children: [
-          // Stats Grid
+          // Stats Grid - 4 columns on tablet, 2 on phone
           GridView.count(
-            crossAxisCount: 2,
+            crossAxisCount: isWide ? 4 : 2,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: 1.5,
+            childAspectRatio: isWide ? 1.8 : 1.5,
             children: [
               _StatCard(
                 title: 'Actieve boekingen',
@@ -168,33 +171,80 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
           const SizedBox(height: 24),
 
-          // Upcoming Check-ins
-          _buildSectionHeader(
-            'Aankomende Check-ins',
-            Icons.login,
-            AppTheme.successColor,
-            upcomingCheckins.length,
-          ),
-          const SizedBox(height: 8),
-          if (upcomingCheckins.isEmpty)
-            _buildEmptyCard('Geen check-ins gepland')
-          else
-            ...upcomingCheckins.map<Widget>((booking) => _buildCheckinCard(booking)).toList(),
+          // On tablet: show check-ins and check-outs side by side
+          if (isWide) ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Check-ins column
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader(
+                        'Aankomende Check-ins',
+                        Icons.login,
+                        AppTheme.successColor,
+                        upcomingCheckins.length,
+                      ),
+                      const SizedBox(height: 8),
+                      if (upcomingCheckins.isEmpty)
+                        _buildEmptyCard('Geen check-ins gepland')
+                      else
+                        ...upcomingCheckins.map<Widget>((booking) => _buildCheckinCard(booking)).toList(),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 24),
+                // Check-outs column
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader(
+                        'Aankomende Check-outs',
+                        Icons.logout,
+                        AppTheme.accentColor,
+                        upcomingCheckouts.length,
+                      ),
+                      const SizedBox(height: 8),
+                      if (upcomingCheckouts.isEmpty)
+                        _buildEmptyCard('Geen check-outs gepland')
+                      else
+                        ...upcomingCheckouts.map<Widget>((booking) => _buildCheckoutCard(booking)).toList(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ] else ...[
+            // Phone layout: stacked
+            _buildSectionHeader(
+              'Aankomende Check-ins',
+              Icons.login,
+              AppTheme.successColor,
+              upcomingCheckins.length,
+            ),
+            const SizedBox(height: 8),
+            if (upcomingCheckins.isEmpty)
+              _buildEmptyCard('Geen check-ins gepland')
+            else
+              ...upcomingCheckins.map<Widget>((booking) => _buildCheckinCard(booking)).toList(),
 
-          const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-          // Upcoming Check-outs
-          _buildSectionHeader(
-            'Aankomende Check-outs',
-            Icons.logout,
-            AppTheme.accentColor,
-            upcomingCheckouts.length,
-          ),
-          const SizedBox(height: 8),
-          if (upcomingCheckouts.isEmpty)
-            _buildEmptyCard('Geen check-outs gepland')
-          else
-            ...upcomingCheckouts.map<Widget>((booking) => _buildCheckoutCard(booking)).toList(),
+            _buildSectionHeader(
+              'Aankomende Check-outs',
+              Icons.logout,
+              AppTheme.accentColor,
+              upcomingCheckouts.length,
+            ),
+            const SizedBox(height: 8),
+            if (upcomingCheckouts.isEmpty)
+              _buildEmptyCard('Geen check-outs gepland')
+            else
+              ...upcomingCheckouts.map<Widget>((booking) => _buildCheckoutCard(booking)).toList(),
+          ],
 
           const SizedBox(height: 24),
 
@@ -206,7 +256,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             recentBookings.length,
           ),
           const SizedBox(height: 8),
-          if (recentBookings.isEmpty)
+          // On tablet: show recent bookings in a grid
+          if (isWide && recentBookings.isNotEmpty)
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 2.5,
+              ),
+              itemCount: recentBookings.length,
+              itemBuilder: (context, index) => _buildRecentBookingCard(recentBookings[index]),
+            )
+          else if (recentBookings.isEmpty)
             _buildEmptyCard('Nog geen boekingen')
           else
             ...recentBookings.map<Widget>((booking) => _buildRecentBookingCard(booking)).toList(),

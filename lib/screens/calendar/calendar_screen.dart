@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
+import '../../utils/responsive.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -18,7 +19,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
   String? _error;
 
   DateTime _startDate = DateTime.now();
-  final int _daysToShow = 14;
+
+  // Dynamically determine days to show based on screen size
+  int _getDaysToShow(BuildContext context) {
+    if (Responsive.isDesktop(context)) return 28;
+    if (Responsive.isTablet(context)) return 21;
+    return 14;
+  }
 
   @override
   void initState() {
@@ -26,14 +33,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
     _loadCalendarData();
   }
 
-  Future<void> _loadCalendarData() async {
+  Future<void> _loadCalendarData({int? daysToLoad}) async {
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
     try {
-      final endDate = _startDate.add(Duration(days: _daysToShow + 7));
+      // Use provided days or default to 28 for max coverage
+      final days = daysToLoad ?? 28;
+      final endDate = _startDate.add(Duration(days: days + 7));
       final startDate = _startDate.subtract(const Duration(days: 2));
       final response = await ApiClient.instance.get(
         '${ApiConfig.calendar}?start=${_formatDate(startDate)}&end=${_formatDate(endDate)}',
@@ -114,15 +123,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Widget _buildContent() {
+    final daysToShow = _getDaysToShow(context);
+
     return Column(
       children: [
         _buildHeader(),
         _buildQuickStats(),
-        _buildDateNav(),
+        _buildDateNav(daysToShow),
         Expanded(
           child: _accommodations.isEmpty
               ? _buildEmptyState()
-              : _buildAccommodationCards(),
+              : _buildAccommodationCards(daysToShow),
         ),
       ],
     );
@@ -284,9 +295,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildDateNav() {
+  Widget _buildDateNav(int daysToShow) {
+    final isWide = Responsive.useWideLayout(context);
+    final horizontalMargin = isWide ? 24.0 : 20.0;
+
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+      margin: EdgeInsets.fromLTRB(horizontalMargin, 8, horizontalMargin, 12),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -315,10 +329,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 child: Column(
                   children: [
                     Text(
-                      _getDateRangeText(),
-                      style: const TextStyle(
+                      _getDateRangeText(daysToShow),
+                      style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 15,
+                        fontSize: isWide ? 16 : 15,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -329,7 +343,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'Tik voor vandaag',
+                        isWide ? '$daysToShow dagen weergave' : 'Tik voor vandaag',
                         style: TextStyle(
                           fontSize: 10,
                           color: AppTheme.primaryColor,
@@ -366,8 +380,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  String _getDateRangeText() {
-    final endDate = _startDate.add(Duration(days: _daysToShow - 1));
+  String _getDateRangeText(int daysToShow) {
+    final endDate = _startDate.add(Duration(days: daysToShow - 1));
     final months = ['', 'jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
 
     if (_startDate.month == endDate.month) {
@@ -396,21 +410,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildAccommodationCards() {
+  Widget _buildAccommodationCards(int daysToShow) {
+    final isWide = Responsive.useWideLayout(context);
+    final horizontalPadding = isWide ? 24.0 : 20.0;
+
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, 20),
       itemCount: _accommodations.length,
       itemBuilder: (context, index) {
-        return _buildAccommodationCard(_accommodations[index]);
+        return _buildAccommodationCard(_accommodations[index], daysToShow);
       },
     );
   }
 
-  Widget _buildAccommodationCard(dynamic accommodation) {
+  Widget _buildAccommodationCard(dynamic accommodation, int daysToShow) {
     final accId = accommodation['id'];
     final accColor = _parseColor(accommodation['color']);
     final accBookings = _bookings.where((b) => b['accommodation_id'] == accId).toList();
     final accBlocked = _blockedDates.where((b) => b['accommodation_id'] == accId).toList();
+    final isWide = Responsive.useWideLayout(context);
+    final timelineHeight = isWide ? 60.0 : 50.0;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -430,7 +449,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         children: [
           // Header
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(isWide ? 20 : 16),
             decoration: BoxDecoration(
               border: Border(
                 left: BorderSide(color: accColor, width: 4),
@@ -439,21 +458,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
             child: Row(
               children: [
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: isWide ? 48 : 40,
+                  height: isWide ? 48 : 40,
                   decoration: BoxDecoration(
                     color: accColor.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.home_rounded, color: accColor, size: 22),
+                  child: Icon(Icons.home_rounded, color: accColor, size: isWide ? 26 : 22),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     accommodation['name'] ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                      fontSize: isWide ? 18 : 16,
                     ),
                   ),
                 ),
@@ -464,10 +483,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
           // Timeline with tappable booking bars
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: EdgeInsets.fromLTRB(isWide ? 20 : 16, 0, isWide ? 20 : 16, isWide ? 20 : 16),
             child: SizedBox(
-              height: 50,
-              child: _buildTimeline(accBookings, accBlocked),
+              height: timelineHeight,
+              child: _buildTimeline(accBookings, accBlocked, daysToShow),
             ),
           ),
         ],
@@ -551,15 +570,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildTimeline(List<dynamic> bookings, List<dynamic> blocked) {
+  Widget _buildTimeline(List<dynamic> bookings, List<dynamic> blocked, int daysToShow) {
     final dates = List.generate(
-      _daysToShow,
+      daysToShow,
       (i) => _startDate.add(Duration(days: i)),
     );
+    final isWide = Responsive.useWideLayout(context);
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final cellWidth = constraints.maxWidth / _daysToShow;
+        final cellWidth = constraints.maxWidth / daysToShow;
         final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
 
         return Column(
@@ -574,7 +594,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     '${date.day}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: isWide ? 11 : 10,
                       fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
                       color: isToday ? AppTheme.primaryColor : Colors.grey[500],
                     ),
@@ -608,9 +628,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     }).toList(),
                   ),
                   // Blocked dates
-                  ...blocked.map((b) => _buildBar(b, startDay, cellWidth, isBlocked: true)),
+                  ...blocked.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: true)),
                   // Bookings
-                  ...bookings.map((b) => _buildBar(b, startDay, cellWidth, isBlocked: false)),
+                  ...bookings.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: false)),
                 ],
               ),
             ),
@@ -620,11 +640,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildBar(dynamic event, DateTime startDay, double cellWidth, {required bool isBlocked}) {
+  Widget _buildBar(dynamic event, DateTime startDay, double cellWidth, int daysToShow, {required bool isBlocked}) {
     final DateTime eventStart;
     final DateTime eventEnd;
     final Color color;
     final String label;
+    final isWide = Responsive.useWideLayout(context);
 
     if (isBlocked) {
       eventStart = DateTime.parse(event['start_date']);
@@ -644,12 +665,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final startOffset = eventStart.difference(startDay).inDays;
     final duration = eventEnd.difference(eventStart).inDays + (isBlocked ? 1 : 0);
 
-    if (startOffset + duration < 0 || startOffset >= _daysToShow) {
+    if (startOffset + duration < 0 || startOffset >= daysToShow) {
       return const SizedBox.shrink();
     }
 
     final visibleStart = startOffset < 0 ? 0 : startOffset;
-    final visibleEnd = (startOffset + duration) > _daysToShow ? _daysToShow : (startOffset + duration);
+    final visibleEnd = (startOffset + duration) > daysToShow ? daysToShow : (startOffset + duration);
     final visibleDuration = visibleEnd - visibleStart;
 
     if (visibleDuration <= 0) return const SizedBox.shrink();
