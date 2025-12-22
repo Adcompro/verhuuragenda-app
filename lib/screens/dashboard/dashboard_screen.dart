@@ -134,7 +134,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             physics: const NeverScrollableScrollPhysics(),
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: isWide ? 1.8 : 1.5,
+            childAspectRatio: isWide ? 1.2 : 1.5,
             children: [
               _StatCard(
                 title: 'Actieve boekingen',
@@ -265,7 +265,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 2.5,
+                childAspectRatio: 2.0,
               ),
               itemCount: recentBookings.length,
               itemBuilder: (context, index) => _buildRecentBookingCard(recentBookings[index]),
