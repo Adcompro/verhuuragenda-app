@@ -52,6 +52,98 @@ workflows:
     artifacts:
       - build/ios/iphonesimulator/*.app
 
+  # iPad Preview workflow met screenshots
+  ios-ipad-preview:
+    name: iPad Preview Build
+    max_build_duration: 45
+    instance_type: mac_mini_m1
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      - name: Create Flutter project structure
+        script: |
+          cp -r lib lib_backup
+          cp pubspec.yaml pubspec_backup.yaml
+          flutter create --org nl.verhuuragenda --project-name verhuuragenda_app .
+          rm -rf lib
+          mv lib_backup lib
+          mv pubspec_backup.yaml pubspec.yaml
+
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+
+      - name: Enable iPad support
+        script: |
+          cd ios
+          # Set UIDeviceFamily to support both iPhone (1) and iPad (2)
+          /usr/libexec/PlistBuddy -c "Delete :UIDeviceFamily" Runner/Info.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily array" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:0 integer 1" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:1 integer 2" Runner/Info.plist
+
+          # Set iPad orientations
+          /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations~ipad" Runner/Info.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad array" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad:0 string UIInterfaceOrientationPortrait" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad:1 string UIInterfaceOrientationLandscapeLeft" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad:2 string UIInterfaceOrientationLandscapeRight" Runner/Info.plist
+
+      - name: List available iPad simulators
+        script: |
+          xcrun simctl list devices available | grep -i ipad
+
+      - name: Boot iPad Simulator
+        script: |
+          # Find and boot an iPad simulator
+          IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad" | grep -v "unavailable" | head -1 | grep -oE '[A-F0-9-]{36}')
+          echo "Booting iPad with UDID: $IPAD_UDID"
+          xcrun simctl boot "$IPAD_UDID" || true
+
+          # Wait for simulator to be ready
+          sleep 10
+
+      - name: Build for iPad Simulator
+        script: |
+          flutter build ios --debug --simulator
+
+      - name: Install and run on iPad Simulator
+        script: |
+          # Get the iPad UDID
+          IPAD_UDID=$(xcrun simctl list devices booted | grep -i "iPad" | grep -oE '[A-F0-9-]{36}' | head -1)
+
+          if [ -z "$IPAD_UDID" ]; then
+            echo "No booted iPad found, finding one..."
+            IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad" | head -1 | grep -oE '[A-F0-9-]{36}')
+            xcrun simctl boot "$IPAD_UDID" || true
+            sleep 5
+          fi
+
+          echo "Using iPad UDID: $IPAD_UDID"
+
+          # Install the app
+          xcrun simctl install "$IPAD_UDID" build/ios/iphonesimulator/Runner.app
+
+          # Launch the app
+          xcrun simctl launch "$IPAD_UDID" nl.verhuuragenda.verhuuragendaApp
+
+          # Wait for app to load
+          sleep 5
+
+          # Take screenshots
+          mkdir -p screenshots
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/ipad_screenshot_1.png
+
+          echo "Screenshot saved!"
+
+    artifacts:
+      - build/ios/iphonesimulator/*.app
+      - screenshots/*.png
+
   ios-workflow:
     name: iOS Build
     max_build_duration: 60
