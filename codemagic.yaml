@@ -116,7 +116,7 @@ workflows:
     instance_type: mac_mini_m1
 
     integrations:
-      app_store_connect: VerhuurVakantiewoning
+      app_store_connect: huisjes
 
     environment:
       flutter: stable
