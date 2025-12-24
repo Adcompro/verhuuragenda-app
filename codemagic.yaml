@@ -1,5 +1,5 @@
 workflows:
-  # Simulator workflow voor preview op verschillende schermgroottes
+  # iOS Simulator workflow voor previews
   ios-simulator-workflow:
     name: iOS Simulator Build
     max_build_duration: 30
@@ -15,7 +15,7 @@ workflows:
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
-          flutter create --org nl.verhuuragenda --project-name verhuuragenda_app .
+          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
@@ -27,21 +27,10 @@ workflows:
       - name: Enable iPad support
         script: |
           cd ios
-          # Set UIDeviceFamily to support both iPhone (1) and iPad (2)
           /usr/libexec/PlistBuddy -c "Delete :UIDeviceFamily" Runner/Info.plist 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily array" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:0 integer 1" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:1 integer 2" Runner/Info.plist
-
-          # Set iPad as supported device in project
-          /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations~ipad" Runner/Info.plist 2>/dev/null || true
-          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad array" Runner/Info.plist
-          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad:0 string UIInterfaceOrientationPortrait" Runner/Info.plist
-          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad:1 string UIInterfaceOrientationLandscapeLeft" Runner/Info.plist
-          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad:2 string UIInterfaceOrientationLandscapeRight" Runner/Info.plist
-          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad:3 string UIInterfaceOrientationPortraitUpsideDown" Runner/Info.plist
-
-          # Verify
           echo "UIDeviceFamily set to:"
           /usr/libexec/PlistBuddy -c "Print :UIDeviceFamily" Runner/Info.plist
 
@@ -68,7 +57,7 @@ workflows:
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
-          flutter create --org nl.verhuuragenda --project-name verhuuragenda_app .
+          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
@@ -80,18 +69,10 @@ workflows:
       - name: Enable iPad support
         script: |
           cd ios
-          # Set UIDeviceFamily to support both iPhone (1) and iPad (2)
           /usr/libexec/PlistBuddy -c "Delete :UIDeviceFamily" Runner/Info.plist 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily array" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:0 integer 1" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:1 integer 2" Runner/Info.plist
-
-          # Set iPad orientations
-          /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations~ipad" Runner/Info.plist 2>/dev/null || true
-          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad array" Runner/Info.plist
-          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad:0 string UIInterfaceOrientationPortrait" Runner/Info.plist
-          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad:1 string UIInterfaceOrientationLandscapeLeft" Runner/Info.plist
-          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations~ipad:2 string UIInterfaceOrientationLandscapeRight" Runner/Info.plist
 
       - name: List available iPad simulators
         script: |
@@ -99,12 +80,9 @@ workflows:
 
       - name: Boot iPad Simulator
         script: |
-          # Find and boot an iPad simulator
           IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad" | grep -v "unavailable" | head -1 | grep -oE '[A-F0-9-]{36}')
           echo "Booting iPad with UDID: $IPAD_UDID"
           xcrun simctl boot "$IPAD_UDID" || true
-
-          # Wait for simulator to be ready
           sleep 10
 
       - name: Build for iPad Simulator
@@ -113,39 +91,27 @@ workflows:
 
       - name: Install and run on iPad Simulator
         script: |
-          # Get the iPad UDID
           IPAD_UDID=$(xcrun simctl list devices booted | grep -i "iPad" | grep -oE '[A-F0-9-]{36}' | head -1)
-
           if [ -z "$IPAD_UDID" ]; then
-            echo "No booted iPad found, finding one..."
             IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad" | head -1 | grep -oE '[A-F0-9-]{36}')
             xcrun simctl boot "$IPAD_UDID" || true
             sleep 5
           fi
-
           echo "Using iPad UDID: $IPAD_UDID"
-
-          # Install the app
           xcrun simctl install "$IPAD_UDID" build/ios/iphonesimulator/Runner.app
-
-          # Launch the app
-          xcrun simctl launch "$IPAD_UDID" nl.verhuuragenda.verhuuragendaApp
-
-          # Wait for app to load
+          xcrun simctl launch "$IPAD_UDID" nl.verhuurvakantiewoning.verhuurvakantiewoning_app
           sleep 5
-
-          # Take screenshots
           mkdir -p screenshots
           xcrun simctl io "$IPAD_UDID" screenshot screenshots/ipad_screenshot_1.png
-
           echo "Screenshot saved!"
 
     artifacts:
       - build/ios/iphonesimulator/*.app
       - screenshots/*.png
 
+  # iOS App Store workflow
   ios-workflow:
-    name: iOS Build
+    name: iOS App Store Build
     max_build_duration: 60
     instance_type: mac_mini_m1
 
@@ -158,14 +124,14 @@ workflows:
       cocoapods: default
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: nl.vakantiewoningverhuur.app
+        bundle_identifier: nl.verhuurvakantiewoning.app
 
     scripts:
       - name: Create Flutter project structure
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
-          flutter create --org nl.verhuuragenda --project-name verhuuragenda_app .
+          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
@@ -173,36 +139,16 @@ workflows:
       - name: Update iOS bundle identifier, version and permissions
         script: |
           cd ios
-
-          # Extract version from pubspec.yaml more robustly
           FULL_VERSION=$(grep '^version:' ../pubspec.yaml | awk '{print $2}')
           VERSION=$(echo $FULL_VERSION | cut -d'+' -f1)
           BUILD_NUMBER=$(echo $FULL_VERSION | cut -d'+' -f2)
-
-          echo "=== Version Info ==="
-          echo "Full version: $FULL_VERSION"
-          echo "Marketing version: $VERSION"
-          echo "Build number: $BUILD_NUMBER"
-          echo "===================="
-
-          # Update bundle identifier
-          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier nl.vakantiewoningverhuur.app" Runner/Info.plist
-          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.vakantiewoningverhuur.app;/g' Runner.xcodeproj/project.pbxproj
-
-          # Update version numbers in Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier nl.verhuurvakantiewoning.app" Runner/Info.plist
+          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.verhuurvakantiewoning.app;/g' Runner.xcodeproj/project.pbxproj
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" Runner/Info.plist
-
-          # Verify plist was updated
-          echo "=== Info.plist versions ==="
-          /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" Runner/Info.plist
-          /usr/libexec/PlistBuddy -c "Print :CFBundleVersion" Runner/Info.plist
-          echo "==========================="
-
-          # Add camera and photo library permissions for image_picker
-          /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string VerhuurAgenda heeft toegang nodig tot je camera om fotos van onderhoudstaken te maken." Runner/Info.plist || true
-          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string VerhuurAgenda heeft toegang nodig tot je fotobibliotheek om fotos te selecteren." Runner/Info.plist || true
-          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string VerhuurAgenda wil fotos opslaan in je fotobibliotheek." Runner/Info.plist || true
+          /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string VerhuurVakantiewoning heeft toegang nodig tot je camera om fotos te maken." Runner/Info.plist || true
+          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string VerhuurVakantiewoning wil fotos uit je bibliotheek gebruiken." Runner/Info.plist || true
+          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string VerhuurVakantiewoning wil fotos opslaan in je bibliotheek." Runner/Info.plist || true
 
       - name: Get Flutter packages
         script: |
@@ -210,23 +156,16 @@ workflows:
 
       - name: Set up code signing
         script: |
-          # Fetch or create signing files automatically
-          app-store-connect fetch-signing-files "nl.vakantiewoningverhuur.app" \
+          app-store-connect fetch-signing-files "nl.verhuurvakantiewoning.app" \
             --type IOS_APP_STORE \
             --create
-
-          # Apply the profiles to Xcode project
           xcode-project use-profiles
 
       - name: Build iOS App
         script: |
-          # Extract version from pubspec.yaml
           FULL_VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
           VERSION=$(echo $FULL_VERSION | cut -d'+' -f1)
           BUILD_NUMBER=$(echo $FULL_VERSION | cut -d'+' -f2)
-
-          echo "Building with version $VERSION build $BUILD_NUMBER"
-
           flutter build ipa --release \
             --build-name=$VERSION \
             --build-number=$BUILD_NUMBER \
@@ -241,6 +180,7 @@ workflows:
         auth: integration
         submit_to_testflight: true
 
+  # Android workflow
   android-workflow:
     name: Android Build
     max_build_duration: 60
@@ -255,7 +195,7 @@ workflows:
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
-          flutter create --org nl.verhuuragenda --project-name verhuuragenda_app .
+          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
@@ -264,9 +204,10 @@ workflows:
         script: |
           flutter pub get
 
-      - name: Build APK
+      - name: Build APK & AAB
         script: |
           flutter build apk --release
+          flutter build appbundle --release
 
     artifacts:
       - build/**/outputs/**/*.apk
