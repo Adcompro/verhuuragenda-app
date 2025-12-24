@@ -15,7 +15,7 @@ workflows:
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
-          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
+          flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
@@ -57,7 +57,7 @@ workflows:
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
-          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
+          flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
@@ -99,7 +99,7 @@ workflows:
           fi
           echo "Using iPad UDID: $IPAD_UDID"
           xcrun simctl install "$IPAD_UDID" build/ios/iphonesimulator/Runner.app
-          xcrun simctl launch "$IPAD_UDID" nl.verhuurvakantiewoning.verhuurvakantiewoning_app
+          xcrun simctl launch "$IPAD_UDID" nl.vakantiewoningverhuur.verhuurvakantiewoning_app
           sleep 5
           mkdir -p screenshots
           xcrun simctl io "$IPAD_UDID" screenshot screenshots/ipad_screenshot_1.png
@@ -124,14 +124,14 @@ workflows:
       cocoapods: default
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: nl.verhuurvakantiewoning.app
+        bundle_identifier: nl.vakantiewoningverhuur.app
 
     scripts:
       - name: Create Flutter project structure
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
-          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
+          flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
@@ -142,8 +142,8 @@ workflows:
           FULL_VERSION=$(grep '^version:' ../pubspec.yaml | awk '{print $2}')
           VERSION=$(echo $FULL_VERSION | cut -d'+' -f1)
           BUILD_NUMBER=$(echo $FULL_VERSION | cut -d'+' -f2)
-          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier nl.verhuurvakantiewoning.app" Runner/Info.plist
-          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.verhuurvakantiewoning.app;/g' Runner.xcodeproj/project.pbxproj
+          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier nl.vakantiewoningverhuur.app" Runner/Info.plist
+          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.vakantiewoningverhuur.app;/g' Runner.xcodeproj/project.pbxproj
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string VerhuurVakantiewoning heeft toegang nodig tot je camera om fotos te maken." Runner/Info.plist || true
@@ -156,7 +156,7 @@ workflows:
 
       - name: Set up code signing
         script: |
-          app-store-connect fetch-signing-files "nl.verhuurvakantiewoning.app" \
+          app-store-connect fetch-signing-files "nl.vakantiewoningverhuur.app" \
             --type IOS_APP_STORE \
             --create
           xcode-project use-profiles
@@ -195,7 +195,7 @@ workflows:
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
-          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
+          flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
