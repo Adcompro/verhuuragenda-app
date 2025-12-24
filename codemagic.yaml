@@ -116,7 +116,7 @@ workflows:
     instance_type: mac_mini_m1
 
     integrations:
-      app_store_connect: huisjes
+      app_store_connect: VerhuurVakantiewoning
 
     environment:
       flutter: stable
@@ -124,7 +124,7 @@ workflows:
       cocoapods: default
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: nl.vakantiewoningverhuur.app
+        bundle_identifier: nl.verhuurvakantiewoning.app
 
     scripts:
       - name: Create Flutter project structure
