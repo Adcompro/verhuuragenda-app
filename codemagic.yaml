@@ -210,6 +210,12 @@ workflows:
 
       - name: Set up code signing
         script: |
+          # Fetch or create signing files automatically
+          app-store-connect fetch-signing-files "nl.vakantiewoningverhuur.app" \
+            --type IOS_APP_STORE \
+            --create
+
+          # Apply the profiles to Xcode project
           xcode-project use-profiles
 
       - name: Build iOS App
