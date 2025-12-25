@@ -89,7 +89,7 @@ workflows:
         script: |
           flutter build ios --debug --simulator
 
-      - name: Install and run on iPad Simulator
+      - name: Install and take multiple screenshots
         script: |
           IPAD_UDID=$(xcrun simctl list devices booted | grep -i "iPad" | grep -oE '[A-F0-9-]{36}' | head -1)
           if [ -z "$IPAD_UDID" ]; then
@@ -98,12 +98,35 @@ workflows:
             sleep 5
           fi
           echo "Using iPad UDID: $IPAD_UDID"
+
+          # Install app
           xcrun simctl install "$IPAD_UDID" build/ios/iphonesimulator/Runner.app
-          xcrun simctl launch "$IPAD_UDID" nl.vakantiewoningverhuur.verhuurvakantiewoning_app
-          sleep 5
           mkdir -p screenshots
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/ipad_screenshot_1.png
-          echo "Screenshot saved!"
+
+          # Launch and screenshot 1: Login/Splash
+          echo "Taking screenshot 1: Launch screen..."
+          xcrun simctl launch "$IPAD_UDID" nl.vakantiewoningverhuur.verhuurvakantiewoning_app
+          sleep 10
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/01_ipad_launch.png
+
+          # Screenshot 2: After login (dashboard)
+          echo "Taking screenshot 2: Dashboard..."
+          sleep 5
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/02_ipad_dashboard.png
+
+          echo "====================================="
+          echo "2 screenshots saved!"
+          echo "====================================="
+          echo ""
+          echo "Voor App Store heb je screenshots nodig van:"
+          echo "1. Dashboard"
+          echo "2. Kalender"
+          echo "3. Boekingen"
+          echo "4. Schoonmaak"
+          echo "5. Onderhoud"
+          echo ""
+          echo "TIP: Installeer via TestFlight op je iPad"
+          echo "en maak handmatig screenshots van elk scherm."
 
     artifacts:
       - build/ios/iphonesimulator/*.app
