@@ -31,18 +31,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _autoLoginForScreenshots() async {
-    // Wait a moment for the UI to render (for login screenshot)
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      // Wait a moment for the UI to render (for login screenshot)
+      await Future.delayed(const Duration(seconds: 2));
 
-    // Fill in demo credentials
-    _emailController.text = 'review@verhuuragenda.nl';
-    _passwordController.text = 'AppleReview2025!';
+      // Fill in demo credentials
+      _emailController.text = 'review@verhuuragenda.nl';
+      _passwordController.text = 'AppleReview2025!';
 
-    // Wait another moment then login
-    await Future.delayed(const Duration(seconds: 1));
+      // Wait another moment then login
+      await Future.delayed(const Duration(seconds: 1));
 
-    if (mounted) {
-      _handleLogin();
+      if (mounted) {
+        // Try to login, but don't block if it fails
+        await _handleLogin().timeout(
+          const Duration(seconds: 10),
+          onTimeout: () {
+            debugPrint('Auto-login timeout - simulator may not have network access');
+          },
+        );
+      }
+    } catch (e) {
+      debugPrint('Auto-login failed: $e');
     }
   }
 
