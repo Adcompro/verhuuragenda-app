@@ -107,30 +107,70 @@ workflows:
           BUNDLE_ID=$(defaults read "$(pwd)/build/ios/iphonesimulator/Runner.app/Info.plist" CFBundleIdentifier)
           echo "Detected Bundle ID: $BUNDLE_ID"
 
-          # Launch and screenshot 1: Login/Splash
-          echo "Taking screenshot 1: Launch screen..."
+          # Launch app
+          echo "Launching app..."
           xcrun simctl launch "$IPAD_UDID" "$BUNDLE_ID"
-          sleep 10
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/01_ipad_launch.png
+          sleep 8
 
-          # Screenshot 2: After login (dashboard)
+          # Screenshot 1: Login scherm
+          echo "Taking screenshot 1: Login screen..."
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/01_login.png
+
+          # Login met demo credentials via keyboard simulation
+          echo "Logging in with demo credentials..."
+
+          # Tap on email field (approximate center-top area)
+          xcrun simctl io "$IPAD_UDID" tap 500 400
+          sleep 1
+
+          # Type email
+          xcrun simctl io "$IPAD_UDID" type "review@verhuuragenda.nl"
+          sleep 0.5
+
+          # Tap on password field
+          xcrun simctl io "$IPAD_UDID" tap 500 500
+          sleep 1
+
+          # Type password
+          xcrun simctl io "$IPAD_UDID" type "AppleReview2025!"
+          sleep 0.5
+
+          # Tap login button
+          xcrun simctl io "$IPAD_UDID" tap 500 650
+          sleep 8
+
+          # Screenshot 2: Dashboard
           echo "Taking screenshot 2: Dashboard..."
-          sleep 5
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/02_ipad_dashboard.png
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/02_dashboard.png
+
+          # Navigate to Calendar - tap on calendar icon in navigation
+          echo "Navigating to Calendar..."
+          xcrun simctl io "$IPAD_UDID" tap 150 200
+          sleep 3
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/03_calendar.png
+
+          # Navigate to Bookings
+          echo "Navigating to Bookings..."
+          xcrun simctl io "$IPAD_UDID" tap 150 280
+          sleep 3
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/04_bookings.png
+
+          # Navigate to Cleaning
+          echo "Navigating to Cleaning..."
+          xcrun simctl io "$IPAD_UDID" tap 150 440
+          sleep 3
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/05_cleaning.png
+
+          # Navigate to Maintenance
+          echo "Navigating to Maintenance..."
+          xcrun simctl io "$IPAD_UDID" tap 150 520
+          sleep 3
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/06_maintenance.png
 
           echo "====================================="
-          echo "2 screenshots saved!"
+          echo "6 screenshots saved!"
           echo "====================================="
-          echo ""
-          echo "Voor App Store heb je screenshots nodig van:"
-          echo "1. Dashboard"
-          echo "2. Kalender"
-          echo "3. Boekingen"
-          echo "4. Schoonmaak"
-          echo "5. Onderhoud"
-          echo ""
-          echo "TIP: Installeer via TestFlight op je iPad"
-          echo "en maak handmatig screenshots van elk scherm."
+          ls -la screenshots/
 
     artifacts:
       - build/ios/iphonesimulator/*.app
