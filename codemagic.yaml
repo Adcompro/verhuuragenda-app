@@ -103,9 +103,13 @@ workflows:
           xcrun simctl install "$IPAD_UDID" build/ios/iphonesimulator/Runner.app
           mkdir -p screenshots
 
+          # Get the actual bundle ID from the built app
+          BUNDLE_ID=$(defaults read "$(pwd)/build/ios/iphonesimulator/Runner.app/Info.plist" CFBundleIdentifier)
+          echo "Detected Bundle ID: $BUNDLE_ID"
+
           # Launch and screenshot 1: Login/Splash
           echo "Taking screenshot 1: Launch screen..."
-          xcrun simctl launch "$IPAD_UDID" nl.vakantiewoningverhuur.verhuurvakantiewoning_app
+          xcrun simctl launch "$IPAD_UDID" "$BUNDLE_ID"
           sleep 10
           xcrun simctl io "$IPAD_UDID" screenshot screenshots/01_ipad_launch.png
 
