@@ -107,31 +107,38 @@ workflows:
           BUNDLE_ID=$(defaults read "$(pwd)/build/ios/iphonesimulator/Runner.app/Info.plist" CFBundleIdentifier)
           echo "Detected Bundle ID: $BUNDLE_ID"
 
-          # Launch app
+          # Launch app in background (don't wait)
           echo "Launching app..."
-          xcrun simctl launch "$IPAD_UDID" "$BUNDLE_ID"
+          xcrun simctl launch "$IPAD_UDID" "$BUNDLE_ID" &
+          LAUNCH_PID=$!
 
-          # Screenshot 1: Login screen (take quickly before auto-login)
-          sleep 3
-          echo "Taking screenshot 1: Login screen..."
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/01_login.png
+          # Give app time to start
+          sleep 5
 
-          # Wait for auto-login to complete (app auto-logs in after 3 seconds in debug mode)
-          echo "Waiting for auto-login..."
-          sleep 15
+          # Screenshot 1: Initial screen
+          echo "Taking screenshot 1..."
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/01_screen.png || true
 
-          # Screenshot 2: Dashboard (after auto-login)
-          echo "Taking screenshot 2: Dashboard..."
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/02_dashboard.png
+          # Wait more for auto-login
+          sleep 10
+
+          # Screenshot 2
+          echo "Taking screenshot 2..."
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/02_screen.png || true
+
+          # Wait more
+          sleep 5
+
+          # Screenshot 3
+          echo "Taking screenshot 3..."
+          xcrun simctl io "$IPAD_UDID" screenshot screenshots/03_screen.png || true
+
+          # Kill any hanging process
+          kill $LAUNCH_PID 2>/dev/null || true
 
           echo "====================================="
           echo "Screenshots saved!"
           echo "====================================="
-          echo ""
-          echo "De app logt automatisch in met demo credentials."
-          echo "Voor screenshots van andere schermen:"
-          echo "Installeer via TestFlight en maak handmatig screenshots."
-          echo ""
           ls -la screenshots/
 
     artifacts:
