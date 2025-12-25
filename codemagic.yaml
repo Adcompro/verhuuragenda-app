@@ -110,66 +110,28 @@ workflows:
           # Launch app
           echo "Launching app..."
           xcrun simctl launch "$IPAD_UDID" "$BUNDLE_ID"
-          sleep 8
 
-          # Screenshot 1: Login scherm
+          # Screenshot 1: Login screen (take quickly before auto-login)
+          sleep 3
           echo "Taking screenshot 1: Login screen..."
           xcrun simctl io "$IPAD_UDID" screenshot screenshots/01_login.png
 
-          # Login met demo credentials via keyboard simulation
-          echo "Logging in with demo credentials..."
+          # Wait for auto-login to complete (app auto-logs in after 3 seconds in debug mode)
+          echo "Waiting for auto-login..."
+          sleep 15
 
-          # Tap on email field (approximate center-top area)
-          xcrun simctl io "$IPAD_UDID" tap 500 400
-          sleep 1
-
-          # Type email
-          xcrun simctl io "$IPAD_UDID" type "review@verhuuragenda.nl"
-          sleep 0.5
-
-          # Tap on password field
-          xcrun simctl io "$IPAD_UDID" tap 500 500
-          sleep 1
-
-          # Type password
-          xcrun simctl io "$IPAD_UDID" type "AppleReview2025!"
-          sleep 0.5
-
-          # Tap login button
-          xcrun simctl io "$IPAD_UDID" tap 500 650
-          sleep 8
-
-          # Screenshot 2: Dashboard
+          # Screenshot 2: Dashboard (after auto-login)
           echo "Taking screenshot 2: Dashboard..."
           xcrun simctl io "$IPAD_UDID" screenshot screenshots/02_dashboard.png
 
-          # Navigate to Calendar - tap on calendar icon in navigation
-          echo "Navigating to Calendar..."
-          xcrun simctl io "$IPAD_UDID" tap 150 200
-          sleep 3
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/03_calendar.png
-
-          # Navigate to Bookings
-          echo "Navigating to Bookings..."
-          xcrun simctl io "$IPAD_UDID" tap 150 280
-          sleep 3
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/04_bookings.png
-
-          # Navigate to Cleaning
-          echo "Navigating to Cleaning..."
-          xcrun simctl io "$IPAD_UDID" tap 150 440
-          sleep 3
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/05_cleaning.png
-
-          # Navigate to Maintenance
-          echo "Navigating to Maintenance..."
-          xcrun simctl io "$IPAD_UDID" tap 150 520
-          sleep 3
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/06_maintenance.png
-
           echo "====================================="
-          echo "6 screenshots saved!"
+          echo "Screenshots saved!"
           echo "====================================="
+          echo ""
+          echo "De app logt automatisch in met demo credentials."
+          echo "Voor screenshots van andere schermen:"
+          echo "Installeer via TestFlight en maak handmatig screenshots."
+          echo ""
           ls -la screenshots/
 
     artifacts:

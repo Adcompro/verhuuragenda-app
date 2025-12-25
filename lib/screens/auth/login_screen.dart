@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +18,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-login in debug mode (simulator) for screenshots
+    if (kDebugMode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _autoLoginForScreenshots();
+      });
+    }
+  }
+
+  Future<void> _autoLoginForScreenshots() async {
+    // Wait a moment for the UI to render (for login screenshot)
+    await Future.delayed(const Duration(seconds: 2));
+
+    // Fill in demo credentials
+    _emailController.text = 'review@verhuuragenda.nl';
+    _passwordController.text = 'AppleReview2025!';
+
+    // Wait another moment then login
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (mounted) {
+      _handleLogin();
+    }
+  }
 
   @override
   void dispose() {
