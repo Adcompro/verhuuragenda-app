@@ -276,10 +276,9 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
       initialDateRange: _startDate != null && _endDate != null
           ? DateTimeRange(start: _startDate!, end: _endDate!)
           : DateTimeRange(
-              start: now.subtract(const Duration(days: 365)),
-              end: now.add(const Duration(days: 365)),
+              start: now.subtract(const Duration(days: 30)),
+              end: now.add(const Duration(days: 30)),
             ),
-      locale: const Locale('nl', 'NL'),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
