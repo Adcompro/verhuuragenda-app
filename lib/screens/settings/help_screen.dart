@@ -149,46 +149,6 @@ class HelpScreen extends StatelessWidget {
 
                   const SizedBox(height: 32),
 
-                  // Help center link
-                  Card(
-                    child: ListTile(
-                      leading: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(Icons.menu_book, color: Colors.blue[700]),
-                      ),
-                      title: const Text('Helpcentrum'),
-                      subtitle: const Text('Uitgebreide handleidingen en tutorials'),
-                      trailing: const Icon(Icons.open_in_new, size: 20),
-                      onTap: () => _openHelpCenter(context),
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Video tutorials
-                  Card(
-                    child: ListTile(
-                      leading: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.red[50],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(Icons.play_circle_outline, color: Colors.red[700]),
-                      ),
-                      title: const Text('Video tutorials'),
-                      subtitle: const Text('Leer VerhuurAgenda stap voor stap'),
-                      trailing: const Icon(Icons.open_in_new, size: 20),
-                      onTap: () => _openVideoTutorials(context),
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-
                   // Feedback section
                   Container(
                     width: double.infinity,
@@ -349,20 +309,6 @@ class HelpScreen extends StatelessWidget {
 
   Future<void> _openWhatsApp(BuildContext context) async {
     final uri = Uri.parse('https://wa.me/31683710971?text=Hallo,%20ik%20heb%20een%20vraag%20over%20VerhuurAgenda');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  Future<void> _openHelpCenter(BuildContext context) async {
-    final uri = Uri.parse('https://verhuuragenda.nl/help');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  Future<void> _openVideoTutorials(BuildContext context) async {
-    final uri = Uri.parse('https://verhuuragenda.nl/tutorials');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
