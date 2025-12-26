@@ -7,7 +7,7 @@ class HelpScreen extends StatelessWidget {
   const HelpScreen({super.key});
 
   static const String supportEmail = 'support@verhuuragenda.nl';
-  static const String phoneNumber = '+31 85 123 4567';
+  static const String phoneNumber = '+31 6 83710971';
 
   @override
   Widget build(BuildContext context) {
@@ -348,7 +348,7 @@ class HelpScreen extends StatelessWidget {
   }
 
   Future<void> _openWhatsApp(BuildContext context) async {
-    final uri = Uri.parse('https://wa.me/31851234567?text=Hallo,%20ik%20heb%20een%20vraag%20over%20VerhuurAgenda');
+    final uri = Uri.parse('https://wa.me/31683710971?text=Hallo,%20ik%20heb%20een%20vraag%20over%20VerhuurAgenda');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
