@@ -47,17 +47,17 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
       final now = DateTime.now();
       switch (_periodFilter) {
         case 'upcoming':
-          queryParams['from'] = _formatDateForApi(now.subtract(const Duration(days: 7)));
+          queryParams['from_date'] = _formatDateForApi(now);
           break;
         case 'past':
-          queryParams['to'] = _formatDateForApi(now);
+          queryParams['to_date'] = _formatDateForApi(now);
           break;
         case 'custom':
           if (_startDate != null) {
-            queryParams['from'] = _formatDateForApi(_startDate!);
+            queryParams['from_date'] = _formatDateForApi(_startDate!);
           }
           if (_endDate != null) {
-            queryParams['to'] = _formatDateForApi(_endDate!);
+            queryParams['to_date'] = _formatDateForApi(_endDate!);
           }
           break;
         case 'all':
