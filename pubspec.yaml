@@ -3,7 +3,7 @@ description: VerhuurAgenda - Vakantieverhuur Beheer App
 
 publish_to: 'none'
 
-version: 1.0.0+67
+version: 1.0.0+68
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
@@ -39,8 +39,8 @@ dependencies:
 
   # Utils
   url_launcher: ^6.2.1
-  share_plus: ^7.2.1
-  package_info_plus: ^5.0.1
+  share_plus: ^10.1.0
+  package_info_plus: ^8.1.0
 
   # Biometrics
   local_auth: ^2.1.8
@@ -55,7 +55,7 @@ dependencies:
   image_picker: ^1.0.7
 
   # Other
-  connectivity_plus: ^5.0.2
+  connectivity_plus: ^6.1.0
 
 dev_dependencies:
   flutter_test:
