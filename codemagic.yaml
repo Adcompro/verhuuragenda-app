@@ -167,10 +167,13 @@ workflows:
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
+          cp -r assets assets_backup 2>/dev/null || true
           flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
+          rm -rf assets 2>/dev/null || true
+          mv assets_backup assets 2>/dev/null || true
 
       - name: Update iOS bundle identifier, version and permissions
         script: |
@@ -189,6 +192,10 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter pub get
+
+      - name: Generate app icons
+        script: |
+          dart run flutter_launcher_icons
 
       - name: Set up code signing
         script: |
