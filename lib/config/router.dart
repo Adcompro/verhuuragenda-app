@@ -18,6 +18,7 @@ import '../screens/maintenance/maintenance_list_screen.dart';
 import '../screens/campaigns/campaigns_list_screen.dart';
 import '../screens/statistics/statistics_screen.dart';
 import '../screens/settings/settings_screen.dart';
+import '../screens/settings/subscription_screen.dart';
 import '../screens/seasons/seasons_list_screen.dart';
 import '../screens/team/team_list_screen.dart';
 import '../widgets/common/bottom_nav.dart';
@@ -143,6 +144,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/settings',
             builder: (context, state) => const SettingsScreen(),
+          ),
+          GoRoute(
+            path: '/subscription',
+            builder: (context, state) => const SubscriptionScreen(),
           ),
         ],
       ),

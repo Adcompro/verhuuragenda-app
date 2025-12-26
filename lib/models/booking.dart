@@ -104,13 +104,27 @@ class Booking {
       payments = [];
     }
 
+    // Parse dates safely with fallback to today
+    DateTime checkIn;
+    DateTime checkOut;
+    try {
+      checkIn = DateTime.parse(json['check_in']);
+    } catch (e) {
+      checkIn = DateTime.now();
+    }
+    try {
+      checkOut = DateTime.parse(json['check_out']);
+    } catch (e) {
+      checkOut = DateTime.now().add(const Duration(days: 1));
+    }
+
     return Booking(
       id: json['id'] ?? 0,
       bookingNumber: json['booking_number'],
       guest: guest,
       accommodation: accommodation,
-      checkIn: DateTime.parse(json['check_in']),
-      checkOut: DateTime.parse(json['check_out']),
+      checkIn: checkIn,
+      checkOut: checkOut,
       adults: json['adults'] ?? 1,
       children: json['children'],
       babies: json['babies'],

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../config/api_config.dart';
 import '../storage/secure_storage.dart';
 
@@ -60,20 +61,26 @@ class _AuthInterceptor extends Interceptor {
 class _LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print('🌐 API Request: ${options.method} ${options.path}');
+    if (kDebugMode) {
+      debugPrint('API Request: ${options.method} ${options.path}');
+    }
     handler.next(options);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print('✅ API Response: ${response.statusCode} ${response.requestOptions.path}');
+    if (kDebugMode) {
+      debugPrint('API Response: ${response.statusCode} ${response.requestOptions.path}');
+    }
     handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    print('❌ API Error: ${err.response?.statusCode} ${err.requestOptions.path}');
-    print('   Message: ${err.message}');
+    if (kDebugMode) {
+      debugPrint('API Error: ${err.response?.statusCode} ${err.requestOptions.path}');
+      debugPrint('Message: ${err.message}');
+    }
     handler.next(err);
   }
 }

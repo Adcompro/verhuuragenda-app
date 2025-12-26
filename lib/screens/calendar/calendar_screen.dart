@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
@@ -959,7 +960,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                 // Navigate to booking detail
                                 final bookingId = booking['id'];
                                 if (bookingId != null) {
-                                  Navigator.pushNamed(context, '/bookings/$bookingId');
+                                  context.push('/bookings/$bookingId');
                                 }
                               },
                               icon: const Icon(Icons.open_in_full),

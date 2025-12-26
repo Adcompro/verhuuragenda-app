@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -240,7 +241,7 @@ class _TeamListScreenState extends State<TeamListScreen> {
               child: ElevatedButton.icon(
                 onPressed: () {
                   // Navigate to subscription screen
-                  Navigator.pushNamed(context, '/subscription');
+                  context.push('/subscription');
                 },
                 icon: const Icon(Icons.star),
                 label: const Text('Bekijk Premium'),
