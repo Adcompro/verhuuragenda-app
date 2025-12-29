@@ -1741,6 +1741,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get stay => 'Stay';
   @override
+  String get forUpcomingPeriod => 'upcoming';
+  @override
+  String get inPastPeriod => 'in the past';
+  @override
   String resetEmailDescription(String email) => 'If an account exists with the email address $email, you will receive an email within a few minutes with instructions to reset your password.';
   @override
   String accommodationsCountText(int count) => '$count accommodations';
@@ -1829,7 +1833,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String errorUpdating(String error) => 'Error updating: $error';
   @override
-  String bookingWithId(String id) => 'Booking #$id';
+  String bookingWithId(int id) => 'Booking #$id';
   @override
   String couldNotLoadBooking(String error) => 'Could not load booking: $error';
+  @override
+  String bookingsCount(int count) => '$count bookings';
+  @override
+  String fromDateToDate(String startDate, String endDate) => 'from $startDate to $endDate';
 }

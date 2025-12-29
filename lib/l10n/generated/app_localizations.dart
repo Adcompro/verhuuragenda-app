@@ -883,6 +883,8 @@ abstract class AppLocalizations {
   String get shareGuestPortal;
   String get bookingNotFound;
   String get stay;
+  String get forUpcomingPeriod;
+  String get inPastPeriod;
   String resetEmailDescription(String email);
   String accommodationsCountText(int count);
   String daysViewText(int count);
@@ -927,8 +929,10 @@ abstract class AppLocalizations {
   String errorDeleting(String error);
   String portalShareMessage(String guestName, String portalUrl, String pin);
   String errorUpdating(String error);
-  String bookingWithId(String id);
+  String bookingWithId(int id);
   String couldNotLoadBooking(String error);
+  String bookingsCount(int count);
+  String fromDateToDate(String startDate, String endDate);
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

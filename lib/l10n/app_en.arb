@@ -1208,7 +1208,7 @@
   "bookingWithId": "Booking #{id}",
   "@bookingWithId": {
     "placeholders": {
-      "id": {"type": "String"}
+      "id": {"type": "int"}
     }
   },
   "shareGuestPortal": "Share guest portal",
@@ -1219,5 +1219,20 @@
     }
   },
   "bookingNotFound": "Booking not found",
-  "stay": "Stay"
+  "stay": "Stay",
+  "bookingsCount": "{count} bookings",
+  "@bookingsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "forUpcomingPeriod": "upcoming",
+  "inPastPeriod": "in the past",
+  "fromDateToDate": "from {startDate} to {endDate}",
+  "@fromDateToDate": {
+    "placeholders": {
+      "startDate": {"type": "String"},
+      "endDate": {"type": "String"}
+    }
+  }
 }

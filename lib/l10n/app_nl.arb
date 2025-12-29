@@ -1208,7 +1208,7 @@
   "bookingWithId": "Boeking #{id}",
   "@bookingWithId": {
     "placeholders": {
-      "id": {"type": "String"}
+      "id": {"type": "int"}
     }
   },
   "shareGuestPortal": "Deel gastenportaal",
@@ -1219,5 +1219,20 @@
     }
   },
   "bookingNotFound": "Boeking niet gevonden",
-  "stay": "Verblijf"
+  "stay": "Verblijf",
+  "bookingsCount": "{count} boekingen",
+  "@bookingsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "forUpcomingPeriod": "aankomend",
+  "inPastPeriod": "in het verleden",
+  "fromDateToDate": "van {startDate} tot {endDate}",
+  "@fromDateToDate": {
+    "placeholders": {
+      "startDate": {"type": "String"},
+      "endDate": {"type": "String"}
+    }
+  }
 }
