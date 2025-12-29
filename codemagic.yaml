@@ -196,6 +196,7 @@ workflows:
           /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string VerhuurVakantiewoning heeft toegang nodig tot je camera om fotos te maken." Runner/Info.plist || true
           /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string VerhuurVakantiewoning wil fotos uit je bibliotheek gebruiken." Runner/Info.plist || true
           /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string VerhuurVakantiewoning wil fotos opslaan in je bibliotheek." Runner/Info.plist || true
+          /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" Runner/Info.plist || true
 
       - name: Get Flutter packages
         script: |
