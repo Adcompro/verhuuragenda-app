@@ -1168,5 +1168,14 @@
   "checkingAvailability": "Checking availability...",
   "available": "Available",
   "notAvailable": "Not available",
-  "overlappingBookings": "Overlapping bookings"
+  "overlappingBookings": "Overlapping bookings",
+  "errorDeleting": "Error deleting: {error}",
+  "@errorDeleting": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "bank": "Bank",
+  "creditcard": "Credit card",
+  "registerPayment": "Register payment"
 }

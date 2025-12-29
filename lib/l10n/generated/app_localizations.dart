@@ -1,31 +1,29 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations_en.dart';
 import 'app_localizations_nl.dart';
 
 abstract class AppLocalizations {
   AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
-
+  
   final String localeName;
-
+  
   static AppLocalizations? of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
-
+  
   static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
-
+  
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
     GlobalWidgetsLocalizations.delegate,
   ];
-
+  
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('nl'),
@@ -881,7 +879,9 @@ abstract class AppLocalizations {
   String get available;
   String get notAvailable;
   String get overlappingBookings;
-
+  String get bank;
+  String get creditcard;
+  String get registerPayment;
   String resetEmailDescription(String email);
   String accommodationsCountText(int count);
   String daysViewText(int count);
@@ -923,29 +923,28 @@ abstract class AppLocalizations {
   String termsLastUpdated(String date);
   String helpCopied(String text);
   String couldNotLoadData(String error);
+  String errorDeleting(String error);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
-
+  
   @override
   Future<AppLocalizations> load(Locale locale) {
     return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
   }
-
+  
   @override
   bool isSupported(Locale locale) => <String>['en', 'nl'].contains(locale.languageCode);
-
+  
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
-    case 'en':
-      return AppLocalizationsEn();
-    case 'nl':
-      return AppLocalizationsNl();
+    case 'en': return AppLocalizationsEn();
+    case 'nl': return AppLocalizationsNl();
   }
   return AppLocalizationsNl();
 }

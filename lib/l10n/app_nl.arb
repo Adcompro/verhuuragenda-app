@@ -1168,5 +1168,14 @@
   "checkingAvailability": "Beschikbaarheid controleren...",
   "available": "Beschikbaar",
   "notAvailable": "Niet beschikbaar",
-  "overlappingBookings": "Overlappende boekingen"
+  "overlappingBookings": "Overlappende boekingen",
+  "errorDeleting": "Fout bij verwijderen: {error}",
+  "@errorDeleting": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "bank": "Bank",
+  "creditcard": "Creditcard",
+  "registerPayment": "Betaling registreren"
 }
