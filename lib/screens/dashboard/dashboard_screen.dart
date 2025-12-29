@@ -453,6 +453,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget _buildCheckoutCard(dynamic booking) {
+    final l10n = AppLocalizations.of(context)!;
     final isToday = booking['is_today'] == true;
     final daysUntil = booking['days_until'] ?? 0;
     final accommodationColor = _parseColor(booking['accommodation_color']);
