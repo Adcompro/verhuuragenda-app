@@ -1148,5 +1148,10 @@
   "newGuest": "Nieuwe gast",
   "selectAGuest": "Selecteer een gast",
   "website": "Website",
-  "firstNameAndEmailRequired": "Voornaam en e-mail zijn verplicht"
+  "firstNameAndEmailRequired": "Voornaam en e-mail zijn verplicht",
+  "enterAmount": "Voer een bedrag in",
+  "downPayment": "Aanbetaling",
+  "internalNotesHint": "Interne notities over deze boeking...",
+  "saveBooking": "Boeking opslaan",
+  "selectAnAccommodation": "Selecteer een accommodatie"
 }

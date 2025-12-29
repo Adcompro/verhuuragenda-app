@@ -1148,5 +1148,10 @@
   "newGuest": "New guest",
   "selectAGuest": "Select a guest",
   "website": "Website",
-  "firstNameAndEmailRequired": "First name and email are required"
+  "firstNameAndEmailRequired": "First name and email are required",
+  "enterAmount": "Enter an amount",
+  "downPayment": "Down payment",
+  "internalNotesHint": "Internal notes about this booking...",
+  "saveBooking": "Save booking",
+  "selectAnAccommodation": "Select an accommodation"
 }

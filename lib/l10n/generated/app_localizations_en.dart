@@ -2512,6 +2512,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get firstNameAndEmailRequired => 'First name and email are required';
 
   @override
+  String get enterAmount => 'Enter an amount';
+
+  @override
+  String get downPayment => 'Down payment';
+
+  @override
+  String get internalNotesHint => 'Internal notes about this booking...';
+
+  @override
+  String get saveBooking => 'Save booking';
+
+  @override
+  String get selectAnAccommodation => 'Select an accommodation';
+
+  @override
   String resetEmailDescription(String email) => 'If an account exists with the email address $email, you will receive an email within a few minutes with instructions to reset your password.';
 
   @override

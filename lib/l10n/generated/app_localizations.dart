@@ -867,6 +867,11 @@ abstract class AppLocalizations {
   String get selectAGuest;
   String get website;
   String get firstNameAndEmailRequired;
+  String get enterAmount;
+  String get downPayment;
+  String get internalNotesHint;
+  String get saveBooking;
+  String get selectAnAccommodation;
 
   String resetEmailDescription(String email);
   String accommodationsCountText(int count);

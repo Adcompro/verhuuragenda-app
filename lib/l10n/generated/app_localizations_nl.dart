@@ -2512,6 +2512,21 @@ class AppLocalizationsNl extends AppLocalizations {
   String get firstNameAndEmailRequired => 'Voornaam en e-mail zijn verplicht';
 
   @override
+  String get enterAmount => 'Voer een bedrag in';
+
+  @override
+  String get downPayment => 'Aanbetaling';
+
+  @override
+  String get internalNotesHint => 'Interne notities over deze boeking...';
+
+  @override
+  String get saveBooking => 'Boeking opslaan';
+
+  @override
+  String get selectAnAccommodation => 'Selecteer een accommodatie';
+
+  @override
   String resetEmailDescription(String email) => 'Als er een account bestaat met het e-mailadres $email, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.';
 
   @override
