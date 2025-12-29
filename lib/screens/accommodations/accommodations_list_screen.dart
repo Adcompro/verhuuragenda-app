@@ -239,6 +239,60 @@ class _AccommodationCard extends StatelessWidget {
                       ),
                   ],
                 ),
+                // iCal sync indicators
+                if (accommodation.icalAirbnbUrl != null ||
+                    accommodation.icalBookingUrl != null ||
+                    accommodation.icalOtherUrl != null) ...[
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Icon(Icons.sync, size: 14, color: Colors.grey[500]),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Sync: ',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                      if (accommodation.icalAirbnbUrl != null && accommodation.icalAirbnbUrl!.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          margin: const EdgeInsets.only(right: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF5A5F).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'Airbnb',
+                            style: TextStyle(fontSize: 10, color: Color(0xFFFF5A5F), fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      if (accommodation.icalBookingUrl != null && accommodation.icalBookingUrl!.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          margin: const EdgeInsets.only(right: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF003580).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'Booking',
+                            style: TextStyle(fontSize: 10, color: Color(0xFF003580), fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      if (accommodation.icalOtherUrl != null && accommodation.icalOtherUrl!.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'Overig',
+                            style: TextStyle(fontSize: 10, color: Colors.grey[600], fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
                 // Pricing info
                 if (accommodation.basePriceLow != null ||
                     accommodation.basePriceMid != null ||
