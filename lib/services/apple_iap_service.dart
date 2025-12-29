@@ -219,6 +219,8 @@ class AppleIAPService {
       // This is the recommended approach for in_app_purchase package
       String receiptData = purchaseDetails.verificationData.serverVerificationData;
 
+      debugPrint('AppleIAPService: Receipt data length: ${receiptData.length}');
+
       if (receiptData.isEmpty) {
         return PurchaseResult(
           success: false,
@@ -232,12 +234,16 @@ class AppleIAPService {
           ? '${ApiConfig.subscription}/apple/restore'
           : '${ApiConfig.subscription}/apple/verify';
 
+      debugPrint('AppleIAPService: Calling endpoint: $endpoint');
+
       final response = await ApiClient.instance.post(
         endpoint,
         data: {
           'receipt_data': receiptData,
         },
       );
+
+      debugPrint('AppleIAPService: Response status: ${response.statusCode}');
 
       final data = response.data as Map<String, dynamic>;
 
@@ -256,8 +262,23 @@ class AppleIAPService {
           error: data['error'] ?? 'Verificatie mislukt',
         );
       }
+    } on DioException catch (e) {
+      debugPrint('AppleIAPService: DioException: ${e.type}');
+      debugPrint('AppleIAPService: Response: ${e.response?.data}');
+      debugPrint('AppleIAPService: Status code: ${e.response?.statusCode}');
+
+      // Try to get error message from response
+      String errorMsg = 'Verificatie mislukt';
+      if (e.response?.data is Map) {
+        errorMsg = e.response?.data['error'] ?? e.response?.data['message'] ?? errorMsg;
+      }
+
+      return PurchaseResult(
+        success: false,
+        error: '$errorMsg (${e.response?.statusCode ?? "geen verbinding"})',
+      );
     } catch (e) {
-      debugPrint('AppleIAPService: Verification exception: $e');
+      debugPrint('AppleIAPService: General exception: $e');
       return PurchaseResult(
         success: false,
         error: 'Verificatie mislukt: $e',
