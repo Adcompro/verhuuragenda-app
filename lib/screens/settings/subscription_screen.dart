@@ -577,6 +577,42 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final appleSubscription = _subscription['apple_subscription'];
     final isAppleSubscription = appleSubscription != null;
 
+    // Debug info for iOS (always show for testing)
+    Widget? iapDebugWidget;
+    if (Platform.isIOS) {
+      iapDebugWidget = Container(
+        padding: const EdgeInsets.all(12),
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.blue[50],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.blue[200]!),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.apple, color: Colors.blue[700], size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  'Apple IAP Debug',
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[900], fontSize: 12),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Store: ${_iapInitialized ? "✓ Beschikbaar" : "✗ Niet beschikbaar"}\n'
+              'Producten: ${_iapProducts.length} geladen\n'
+              '${_iapProducts.map((p) => "• ${p.id}").join("\n")}',
+              style: TextStyle(fontSize: 11, color: Colors.blue[800], fontFamily: 'monospace'),
+            ),
+          ],
+        ),
+      );
+    }
+
     if (isPremium) {
       return Card(
         child: Padding(
@@ -646,6 +682,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                   ),
                 ),
+              ],
+              // Show IAP debug info for premium users too
+              if (iapDebugWidget != null) ...[
+                const SizedBox(height: 16),
+                iapDebugWidget,
               ],
             ],
           ),
