@@ -619,7 +619,7 @@ class _CleaningTaskCard extends StatelessWidget {
             child: Column(
               children: [
                 // Time window visualization
-                _buildTimeWindow(),
+                _buildTimeWindow(context),
                 const SizedBox(height: 16),
                 // Completed summary for completed tasks
                 if (isCompleted) ...[
@@ -771,7 +771,7 @@ class _CleaningTaskCard extends StatelessWidget {
     return notes.split('\n').first;
   }
 
-  Widget _buildTimeWindow() {
+  Widget _buildTimeWindow(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(12),

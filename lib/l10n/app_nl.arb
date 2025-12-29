@@ -1137,5 +1137,12 @@
     "placeholders": {
       "text": {"type": "String"}
     }
-  }
+  },
+
+  "selectCheckInAndCheckOutDate": "Selecteer check-in en check-out datum",
+  "checkOutMustBeAfterCheckIn": "Check-out moet na check-in zijn",
+  "bookingCreated": "Boeking aangemaakt",
+  "bookingUpdated": "Boeking bijgewerkt",
+  "couldNotCreateBooking": "Kon boeking niet aanmaken",
+  "couldNotUpdateBooking": "Kon boeking niet bijwerken"
 }

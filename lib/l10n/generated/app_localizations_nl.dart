@@ -2482,6 +2482,24 @@ class AppLocalizationsNl extends AppLocalizations {
   String get helpFeedbackButton => 'Feedback versturen';
 
   @override
+  String get selectCheckInAndCheckOutDate => 'Selecteer check-in en check-out datum';
+
+  @override
+  String get checkOutMustBeAfterCheckIn => 'Check-out moet na check-in zijn';
+
+  @override
+  String get bookingCreated => 'Boeking aangemaakt';
+
+  @override
+  String get bookingUpdated => 'Boeking bijgewerkt';
+
+  @override
+  String get couldNotCreateBooking => 'Kon boeking niet aanmaken';
+
+  @override
+  String get couldNotUpdateBooking => 'Kon boeking niet bijwerken';
+
+  @override
   String resetEmailDescription(String email) => 'Als er een account bestaat met het e-mailadres $email, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.';
 
   @override

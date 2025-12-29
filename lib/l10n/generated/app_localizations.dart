@@ -857,6 +857,12 @@ abstract class AppLocalizations {
   String get helpFeedbackTitle;
   String get helpFeedbackDescription;
   String get helpFeedbackButton;
+  String get selectCheckInAndCheckOutDate;
+  String get checkOutMustBeAfterCheckIn;
+  String get bookingCreated;
+  String get bookingUpdated;
+  String get couldNotCreateBooking;
+  String get couldNotUpdateBooking;
 
   String resetEmailDescription(String email);
   String accommodationsCountText(int count);

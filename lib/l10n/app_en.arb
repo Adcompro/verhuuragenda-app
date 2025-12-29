@@ -1137,5 +1137,12 @@
     "placeholders": {
       "text": {"type": "String"}
     }
-  }
+  },
+
+  "selectCheckInAndCheckOutDate": "Select check-in and check-out date",
+  "checkOutMustBeAfterCheckIn": "Check-out must be after check-in",
+  "bookingCreated": "Booking created",
+  "bookingUpdated": "Booking updated",
+  "couldNotCreateBooking": "Could not create booking",
+  "couldNotUpdateBooking": "Could not update booking"
 }

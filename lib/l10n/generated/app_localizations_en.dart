@@ -2482,6 +2482,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpFeedbackButton => 'Send feedback';
 
   @override
+  String get selectCheckInAndCheckOutDate => 'Select check-in and check-out date';
+
+  @override
+  String get checkOutMustBeAfterCheckIn => 'Check-out must be after check-in';
+
+  @override
+  String get bookingCreated => 'Booking created';
+
+  @override
+  String get bookingUpdated => 'Booking updated';
+
+  @override
+  String get couldNotCreateBooking => 'Could not create booking';
+
+  @override
+  String get couldNotUpdateBooking => 'Could not update booking';
+
+  @override
   String resetEmailDescription(String email) => 'If an account exists with the email address $email, you will receive an email within a few minutes with instructions to reset your password.';
 
   @override

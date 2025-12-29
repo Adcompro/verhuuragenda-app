@@ -783,7 +783,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.error(e.toString()))),
+                    SnackBar(content: Text(l10n.errorWithMessage(e.toString()))),
                   );
                 }
               }
@@ -851,7 +851,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.error(e.toString()))),
+          SnackBar(content: Text(l10n.errorWithMessage(e.toString()))),
         );
       }
     } finally {
