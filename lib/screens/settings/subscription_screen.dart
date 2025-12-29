@@ -22,7 +22,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   // IAP state
   bool _iapInitialized = false;
-  bool _isPurchasing = false;
+  String? _purchasingProductId; // Track which product is being purchased
+  bool _isRestoring = false;
   String? _purchaseError;
   List<ProductDetails> _iapProducts = [];
 
@@ -61,7 +62,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (!mounted) return;
 
     setState(() {
-      _isPurchasing = false;
+      _purchasingProductId = null;
+      _isRestoring = false;
       _purchaseError = result.error;
     });
 
@@ -95,7 +97,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Future<void> _purchaseProduct(String productId) async {
     setState(() {
-      _isPurchasing = true;
+      _purchasingProductId = productId;
       _purchaseError = null;
     });
 
@@ -104,7 +106,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Future<void> _restorePurchases() async {
     setState(() {
-      _isPurchasing = true;
+      _isRestoring = true;
       _purchaseError = null;
     });
 
@@ -112,8 +114,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     // Give it some time, then reset loading state if no result
     Future.delayed(const Duration(seconds: 5), () {
-      if (mounted && _isPurchasing) {
-        setState(() => _isPurchasing = false);
+      if (mounted && _isRestoring) {
+        setState(() => _isRestoring = false);
       }
     });
   }
@@ -871,9 +873,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         const SizedBox(height: 16),
         // Restore purchases button
         TextButton.icon(
-          onPressed: _isPurchasing ? null : _restorePurchases,
-          icon: const Icon(Icons.restore, size: 18),
-          label: const Text('Aankopen herstellen'),
+          onPressed: (_purchasingProductId != null || _isRestoring) ? null : _restorePurchases,
+          icon: _isRestoring
+              ? const SizedBox(
+                  height: 18,
+                  width: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.restore, size: 18),
+          label: Text(_isRestoring ? 'Herstellen...' : 'Aankopen herstellen'),
           style: TextButton.styleFrom(
             foregroundColor: Colors.grey[600],
           ),
@@ -971,13 +979,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _isPurchasing ? null : () => _purchaseProduct(product.id),
+              onPressed: _purchasingProductId != null ? null : () => _purchaseProduct(product.id),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 backgroundColor: isPopular ? AppTheme.primaryColor : Colors.grey[800],
                 foregroundColor: Colors.white,
               ),
-              child: _isPurchasing
+              child: _purchasingProductId == product.id
                   ? const SizedBox(
                       height: 20,
                       width: 20,
