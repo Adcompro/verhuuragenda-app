@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
+import '../../services/apple_iap_service.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
@@ -17,10 +20,102 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Map<String, dynamic> _subscription = {};
   Map<String, dynamic> _limits = {};
 
+  // IAP state
+  bool _iapInitialized = false;
+  bool _isPurchasing = false;
+  String? _purchaseError;
+  List<ProductDetails> _iapProducts = [];
+
   @override
   void initState() {
     super.initState();
     _loadSubscription();
+    _initializeIAP();
+  }
+
+  @override
+  void dispose() {
+    AppleIAPService.instance.onPurchaseUpdate = null;
+    super.dispose();
+  }
+
+  Future<void> _initializeIAP() async {
+    if (!Platform.isIOS) return;
+
+    try {
+      await AppleIAPService.instance.initialize();
+      AppleIAPService.instance.onPurchaseUpdate = _handlePurchaseResult;
+
+      if (mounted) {
+        setState(() {
+          _iapInitialized = AppleIAPService.instance.isAvailable;
+          _iapProducts = AppleIAPService.instance.products;
+        });
+      }
+    } catch (e) {
+      debugPrint('IAP initialization error: $e');
+    }
+  }
+
+  void _handlePurchaseResult(PurchaseResult result) {
+    if (!mounted) return;
+
+    setState(() {
+      _isPurchasing = false;
+      _purchaseError = result.error;
+    });
+
+    if (result.success) {
+      // Refresh subscription data
+      _loadSubscription();
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result.message ?? 'Abonnement geactiveerd!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else if (result.isPending) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result.message ?? 'Aankoop wordt verwerkt...'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    } else if (!result.isCanceled && result.error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result.error!),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _purchaseProduct(String productId) async {
+    setState(() {
+      _isPurchasing = true;
+      _purchaseError = null;
+    });
+
+    await AppleIAPService.instance.purchaseSubscription(productId);
+  }
+
+  Future<void> _restorePurchases() async {
+    setState(() {
+      _isPurchasing = true;
+      _purchaseError = null;
+    });
+
+    await AppleIAPService.instance.restorePurchases();
+
+    // Give it some time, then reset loading state if no result
+    Future.delayed(const Duration(seconds: 5), () {
+      if (mounted && _isPurchasing) {
+        setState(() => _isPurchasing = false);
+      }
+    });
   }
 
   Future<void> _loadSubscription() async {
@@ -479,6 +574,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget _buildPaymentSection() {
     final isPremium = _limits['is_premium'] == true;
     final isOnTrial = _subscription['is_on_trial'] == true;
+    final appleSubscription = _subscription['apple_subscription'];
+    final isAppleSubscription = appleSubscription != null;
 
     if (isPremium) {
       return Card(
@@ -508,24 +605,48 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              Text(
-                'Beheer je abonnement of bekijk je facturen op de website.',
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: _openPaymentPage,
-                  icon: const Icon(Icons.open_in_new),
-                  label: const Text('Beheer abonnement'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.white,
+              if (isAppleSubscription && Platform.isIOS) ...[
+                Text(
+                  'Je hebt een Apple App Store abonnement.',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Beheer je abonnement via de iOS Instellingen app onder "Abonnementen".',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: _openSubscriptionSettings,
+                    icon: const Icon(Icons.settings),
+                    label: const Text('Open iOS Instellingen'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
                   ),
                 ),
-              ),
+              ] else ...[
+                Text(
+                  'Beheer je abonnement of bekijk je facturen op de website.',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _openPaymentPage,
+                    icon: const Icon(Icons.open_in_new),
+                    label: const Text('Beheer abonnement'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -550,11 +671,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   child: const Icon(Icons.star, color: Colors.amber),
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  isOnTrial ? 'Upgrade naar Premium' : 'Meer mogelijkheden nodig?',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    isOnTrial ? 'Upgrade naar Premium' : 'Meer mogelijkheden nodig?',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -584,44 +707,49 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Pricing options
-            Row(
-              children: [
-                Expanded(
-                  child: _buildPricingOption(
-                    'Maandelijks',
-                    '\u20AC9,99',
-                    '/maand',
-                    'Flexibel opzegbaar',
-                    false,
+            // Show In-App Purchase options on iOS
+            if (Platform.isIOS && _iapInitialized) ...[
+              _buildIAPPurchaseOptions(),
+            ] else ...[
+              // Fallback to static pricing display with web link
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildPricingOption(
+                      'Maandelijks',
+                      '\u20AC9,99',
+                      '/maand',
+                      'Flexibel opzegbaar',
+                      false,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildPricingOption(
-                    'Jaarlijks',
-                    '\u20AC99',
-                    '/jaar',
-                    '17% korting',
-                    true,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildPricingOption(
+                      'Jaarlijks',
+                      '\u20AC99',
+                      '/jaar',
+                      '17% korting',
+                      true,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _openPaymentPage,
-                icon: const Icon(Icons.rocket_launch),
-                label: const Text('Bekijk alle opties'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  backgroundColor: Colors.amber[700],
-                  foregroundColor: Colors.white,
+                ],
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _openPaymentPage,
+                  icon: const Icon(Icons.rocket_launch),
+                  label: const Text('Bekijk alle opties'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.amber[700],
+                    foregroundColor: Colors.white,
+                  ),
                 ),
               ),
-            ),
+            ],
             if (!isOnTrial) ...[
               const SizedBox(height: 8),
               Center(
@@ -635,6 +763,163 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildIAPPurchaseOptions() {
+    final monthlyProduct = _iapProducts.where((p) => p.id == AppleIAPService.productMonthly).firstOrNull;
+    final yearlyProduct = _iapProducts.where((p) => p.id == AppleIAPService.productYearly).firstOrNull;
+
+    return Column(
+      children: [
+        // Yearly option (recommended)
+        if (yearlyProduct != null)
+          _buildIAPProductCard(
+            product: yearlyProduct,
+            title: 'Premium Jaarlijks',
+            subtitle: 'Bespaar 17%',
+            isPopular: true,
+          ),
+        const SizedBox(height: 12),
+        // Monthly option
+        if (monthlyProduct != null)
+          _buildIAPProductCard(
+            product: monthlyProduct,
+            title: 'Premium Maandelijks',
+            subtitle: 'Flexibel opzegbaar',
+            isPopular: false,
+          ),
+        const SizedBox(height: 16),
+        // Restore purchases button
+        TextButton.icon(
+          onPressed: _isPurchasing ? null : _restorePurchases,
+          icon: const Icon(Icons.restore, size: 18),
+          label: const Text('Aankopen herstellen'),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.grey[600],
+          ),
+        ),
+        if (_purchaseError != null) ...[
+          const SizedBox(height: 8),
+          Text(
+            _purchaseError!,
+            style: TextStyle(color: Colors.red[700], fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildIAPProductCard({
+    required ProductDetails product,
+    required String title,
+    required String subtitle,
+    required bool isPopular,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isPopular ? AppTheme.primaryColor.withOpacity(0.1) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isPopular ? AppTheme.primaryColor : Colors.grey[300]!,
+          width: isPopular ? 2 : 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          if (isPopular)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                'Aanbevolen',
+                style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+              ),
+            ),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: isPopular ? AppTheme.primaryColor : Colors.grey[600],
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    product.price,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                  Text(
+                    product.id.contains('yearly') ? '/jaar' : '/maand',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _isPurchasing ? null : () => _purchaseProduct(product.id),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                backgroundColor: isPopular ? AppTheme.primaryColor : Colors.grey[800],
+                foregroundColor: Colors.white,
+              ),
+              child: _isPurchasing
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Text('Koop nu'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openSubscriptionSettings() async {
+    // Open iOS subscription settings
+    final url = Uri.parse('https://apps.apple.com/account/subscriptions');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
   }
 
   Widget _buildBenefitRow(String text) {

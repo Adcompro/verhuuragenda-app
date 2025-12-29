@@ -5,7 +5,7 @@ class MaintenanceTask {
   final String title;
   final String? description;
   final String priority; // low, medium, high, urgent
-  final String status; // pending, in_progress, completed, cancelled
+  final String status; // open, in_progress, waiting, completed, cancelled
   final String category; // repair, maintenance, cleaning, inventory, inspection, other
   final DateTime? dueDate;
   final DateTime? completedAt;
@@ -48,7 +48,7 @@ class MaintenanceTask {
       title: json['title'] ?? '',
       description: json['description'],
       priority: json['priority'] ?? 'medium',
-      status: json['status'] ?? 'pending',
+      status: json['status'] ?? 'open',
       category: json['category'] ?? 'maintenance',
       dueDate: json['due_date'] != null ? DateTime.tryParse(json['due_date']) : null,
       completedAt: json['completed_at'] != null ? DateTime.tryParse(json['completed_at']) : null,
@@ -94,10 +94,12 @@ class MaintenanceTask {
 
   String get statusLabel {
     switch (status) {
-      case 'pending':
+      case 'open':
         return 'Open';
       case 'in_progress':
         return 'Bezig';
+      case 'waiting':
+        return 'Wachtend';
       case 'completed':
         return 'Afgerond';
       case 'cancelled':

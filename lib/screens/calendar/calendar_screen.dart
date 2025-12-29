@@ -652,10 +652,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
       eventStart = DateTime.parse(event['start_date']);
       eventEnd = DateTime.parse(event['end_date']);
       final source = event['source'] ?? '';
-      color = source == 'airbnb' ? const Color(0xFFFF5A5F) :
-              source == 'booking' ? const Color(0xFF003580) : Colors.grey;
-      label = source == 'airbnb' ? 'Airbnb' :
-              source == 'booking' ? 'Booking' : 'Geblokkeerd';
+      color = _getSourceColor(source);
+      label = _getSourceLabel(source);
     } else {
       eventStart = DateTime.parse(event['check_in']);
       eventEnd = DateTime.parse(event['check_out']);
@@ -996,6 +994,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
         color = Colors.blue;
         label = 'Aanvraag';
         break;
+      case 'completed':
+        color = AppTheme.successColor;
+        label = 'Afgerond';
+        break;
+      case 'cancelled':
+        color = Colors.red;
+        label = 'Geannuleerd';
+        break;
       default:
         color = Colors.grey;
         label = status ?? 'Onbekend';
@@ -1240,6 +1246,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
       case 'confirmed': return 'Bevestigd';
       case 'option': return 'Optie';
       case 'inquiry': return 'Aanvraag';
+      case 'completed': return 'Afgerond';
+      case 'cancelled': return 'Geannuleerd';
       default: return status ?? 'Onbekend';
     }
   }
@@ -1250,6 +1258,30 @@ class _CalendarScreenState extends State<CalendarScreen> {
       case 'partial': return 'Aanbetaald';
       case 'unpaid': return 'Openstaand';
       default: return status ?? '-';
+    }
+  }
+
+  Color _getSourceColor(String source) {
+    switch (source) {
+      case 'airbnb': return const Color(0xFFFF5A5F);   // Airbnb rood/roze
+      case 'booking': return const Color(0xFF003580); // Booking.com donkerblauw
+      case 'vrbo': return const Color(0xFF0E55E5);    // Vrbo blauw
+      case 'holidu': return const Color(0xFF6B21A8);  // Holidu paars
+      case 'google': return const Color(0xFF4285F4);  // Google blauw
+      case 'belvilla': return const Color(0xFFE87722); // Belvilla oranje
+      default: return Colors.grey;
+    }
+  }
+
+  String _getSourceLabel(String source) {
+    switch (source) {
+      case 'airbnb': return 'Airbnb';
+      case 'booking': return 'Booking';
+      case 'vrbo': return 'Vrbo';
+      case 'holidu': return 'Holidu';
+      case 'google': return 'Google';
+      case 'belvilla': return 'Belvilla';
+      default: return 'Geblokkeerd';
     }
   }
 }

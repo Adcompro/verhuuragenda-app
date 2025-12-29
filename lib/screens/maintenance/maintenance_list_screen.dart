@@ -36,7 +36,7 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
     try {
       final queryParams = <String, dynamic>{};
       if (_statusFilter == 'open') {
-        queryParams['status'] = 'pending,in_progress';
+        queryParams['status'] = 'open,in_progress,waiting';
       } else if (_statusFilter == 'completed') {
         queryParams['status'] = 'completed';
       }
@@ -566,10 +566,12 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
 
   String _getStatusLabel(String status) {
     switch (status) {
-      case 'pending':
+      case 'open':
         return 'Open';
       case 'in_progress':
         return 'Bezig';
+      case 'waiting':
+        return 'Wachtend';
       case 'completed':
         return 'Afgerond';
       case 'cancelled':
@@ -833,7 +835,7 @@ class _TaskDetailSheet extends StatelessWidget {
                     if (task.status != 'completed' && task.status != 'cancelled') ...[
                       Row(
                         children: [
-                          if (task.status == 'pending')
+                          if (task.status == 'open')
                             Expanded(
                               child: OutlinedButton.icon(
                                 onPressed: () => onStatusChange('in_progress'),
@@ -841,7 +843,7 @@ class _TaskDetailSheet extends StatelessWidget {
                                 label: const Text('Start'),
                               ),
                             ),
-                          if (task.status == 'pending') const SizedBox(width: 12),
+                          if (task.status == 'open') const SizedBox(width: 12),
                           Expanded(
                             child: ElevatedButton.icon(
                               onPressed: () => onStatusChange('completed'),
