@@ -1234,5 +1234,15 @@
       "startDate": {"type": "String"},
       "endDate": {"type": "String"}
     }
-  }
+  },
+  "untilToday": "tot vandaag",
+  "customPeriod": "Aangepaste periode",
+  "chooseADateRange": "Kies een datumbereik",
+  "couldNotLoadBookings": "Kon boekingen niet laden: {error}",
+  "@couldNotLoadBookings": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "noBookingsFound": "Geen boekingen gevonden"
 }

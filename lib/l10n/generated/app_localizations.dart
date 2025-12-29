@@ -885,6 +885,10 @@ abstract class AppLocalizations {
   String get stay;
   String get forUpcomingPeriod;
   String get inPastPeriod;
+  String get untilToday;
+  String get customPeriod;
+  String get chooseADateRange;
+  String get noBookingsFound;
   String resetEmailDescription(String email);
   String accommodationsCountText(int count);
   String daysViewText(int count);
@@ -933,6 +937,7 @@ abstract class AppLocalizations {
   String couldNotLoadBooking(String error);
   String bookingsCount(int count);
   String fromDateToDate(String startDate, String endDate);
+  String couldNotLoadBookings(String error);
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

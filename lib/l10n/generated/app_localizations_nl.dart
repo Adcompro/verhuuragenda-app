@@ -1745,6 +1745,14 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get inPastPeriod => 'in het verleden';
   @override
+  String get untilToday => 'tot vandaag';
+  @override
+  String get customPeriod => 'Aangepaste periode';
+  @override
+  String get chooseADateRange => 'Kies een datumbereik';
+  @override
+  String get noBookingsFound => 'Geen boekingen gevonden';
+  @override
   String resetEmailDescription(String email) => 'Als er een account bestaat met het e-mailadres $email, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.';
   @override
   String accommodationsCountText(int count) => '$count accommodaties';
@@ -1840,4 +1848,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String bookingsCount(int count) => '$count boekingen';
   @override
   String fromDateToDate(String startDate, String endDate) => 'van $startDate tot $endDate';
+  @override
+  String couldNotLoadBookings(String error) => 'Kon boekingen niet laden: $error';
 }

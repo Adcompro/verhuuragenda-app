@@ -1234,5 +1234,15 @@
       "startDate": {"type": "String"},
       "endDate": {"type": "String"}
     }
-  }
+  },
+  "untilToday": "until today",
+  "customPeriod": "Custom period",
+  "chooseADateRange": "Choose a date range",
+  "couldNotLoadBookings": "Could not load bookings: {error}",
+  "@couldNotLoadBookings": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "noBookingsFound": "No bookings found"
 }
