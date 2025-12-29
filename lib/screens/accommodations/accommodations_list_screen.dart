@@ -240,56 +240,28 @@ class _AccommodationCard extends StatelessWidget {
                   ],
                 ),
                 // iCal sync indicators
-                if (accommodation.icalAirbnbUrl != null ||
-                    accommodation.icalBookingUrl != null ||
-                    accommodation.icalOtherUrl != null) ...[
+                if (_hasAnySyncUrl(accommodation)) ...[
                   const SizedBox(height: 12),
-                  Row(
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Icon(Icons.sync, size: 14, color: Colors.grey[500]),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Sync: ',
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                      ),
                       if (accommodation.icalAirbnbUrl != null && accommodation.icalAirbnbUrl!.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          margin: const EdgeInsets.only(right: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFF5A5F).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text(
-                            'Airbnb',
-                            style: TextStyle(fontSize: 10, color: Color(0xFFFF5A5F), fontWeight: FontWeight.w500),
-                          ),
-                        ),
+                        _buildSyncBadge('Airbnb', const Color(0xFFFF5A5F)),
                       if (accommodation.icalBookingUrl != null && accommodation.icalBookingUrl!.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          margin: const EdgeInsets.only(right: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF003580).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text(
-                            'Booking',
-                            style: TextStyle(fontSize: 10, color: Color(0xFF003580), fontWeight: FontWeight.w500),
-                          ),
-                        ),
+                        _buildSyncBadge('Booking', const Color(0xFF003580)),
+                      if (accommodation.icalVrboUrl != null && accommodation.icalVrboUrl!.isNotEmpty)
+                        _buildSyncBadge('VRBO', const Color(0xFF3B5998)),
+                      if (accommodation.icalGoogleUrl != null && accommodation.icalGoogleUrl!.isNotEmpty)
+                        _buildSyncBadge('Google', const Color(0xFF4285F4)),
+                      if (accommodation.icalHoliduUrl != null && accommodation.icalHoliduUrl!.isNotEmpty)
+                        _buildSyncBadge('Holidu', const Color(0xFF00B4AB)),
+                      if (accommodation.icalBelvillaUrl != null && accommodation.icalBelvillaUrl!.isNotEmpty)
+                        _buildSyncBadge('Belvilla', const Color(0xFFE85D04)),
                       if (accommodation.icalOtherUrl != null && accommodation.icalOtherUrl!.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            'Overig',
-                            style: TextStyle(fontSize: 10, color: Colors.grey[600], fontWeight: FontWeight.w500),
-                          ),
-                        ),
+                        _buildSyncBadge('Overig', Colors.grey),
                     ],
                   ),
                 ],
@@ -449,5 +421,29 @@ class _AccommodationCard extends StatelessWidget {
     } catch (e) {
       return AppTheme.primaryColor;
     }
+  }
+
+  bool _hasAnySyncUrl(Accommodation acc) {
+    return (acc.icalAirbnbUrl != null && acc.icalAirbnbUrl!.isNotEmpty) ||
+        (acc.icalBookingUrl != null && acc.icalBookingUrl!.isNotEmpty) ||
+        (acc.icalVrboUrl != null && acc.icalVrboUrl!.isNotEmpty) ||
+        (acc.icalGoogleUrl != null && acc.icalGoogleUrl!.isNotEmpty) ||
+        (acc.icalHoliduUrl != null && acc.icalHoliduUrl!.isNotEmpty) ||
+        (acc.icalBelvillaUrl != null && acc.icalBelvillaUrl!.isNotEmpty) ||
+        (acc.icalOtherUrl != null && acc.icalOtherUrl!.isNotEmpty);
+  }
+
+  Widget _buildSyncBadge(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.w500),
+      ),
+    );
   }
 }

@@ -43,6 +43,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
   final _arrivalController = TextEditingController();
   final _icalAirbnbController = TextEditingController();
   final _icalBookingController = TextEditingController();
+  final _icalVrboController = TextEditingController();
+  final _icalGoogleController = TextEditingController();
+  final _icalHoliduController = TextEditingController();
+  final _icalBelvillaController = TextEditingController();
   final _icalOtherController = TextEditingController();
 
   String _propertyType = 'house';
@@ -89,6 +93,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
     _arrivalController.dispose();
     _icalAirbnbController.dispose();
     _icalBookingController.dispose();
+    _icalVrboController.dispose();
+    _icalGoogleController.dispose();
+    _icalHoliduController.dispose();
+    _icalBelvillaController.dispose();
     _icalOtherController.dispose();
     super.dispose();
   }
@@ -122,6 +130,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
         _arrivalController.text = acc.arrivalInstructions ?? '';
         _icalAirbnbController.text = acc.icalAirbnbUrl ?? '';
         _icalBookingController.text = acc.icalBookingUrl ?? '';
+        _icalVrboController.text = acc.icalVrboUrl ?? '';
+        _icalGoogleController.text = acc.icalGoogleUrl ?? '';
+        _icalHoliduController.text = acc.icalHoliduUrl ?? '';
+        _icalBelvillaController.text = acc.icalBelvillaUrl ?? '';
         _icalOtherController.text = acc.icalOtherUrl ?? '';
         _propertyType = acc.propertyType ?? 'house';
         _selectedColor = acc.color ?? '#3B82F6';
@@ -480,10 +492,100 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           const SizedBox(height: 16),
 
           TextFormField(
+            controller: _icalVrboController,
+            decoration: InputDecoration(
+              labelText: 'VRBO / Expedia iCal URL',
+              helperText: 'Groot in VS, groeiend in EU',
+              border: const OutlineInputBorder(),
+              prefixIcon: Container(
+                margin: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF3B5998).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.villa, color: Color(0xFF3B5998), size: 20),
+              ),
+              hintText: 'https://www.vrbo.com/...',
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          TextFormField(
+            controller: _icalGoogleController,
+            decoration: InputDecoration(
+              labelText: 'Google Vacation Rentals iCal URL',
+              helperText: 'Gratis exposure, directe boekingen',
+              border: const OutlineInputBorder(),
+              prefixIcon: Container(
+                margin: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4285F4).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.travel_explore, color: Color(0xFF4285F4), size: 20),
+              ),
+              hintText: 'https://...',
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          TextFormField(
+            controller: _icalHoliduController,
+            decoration: InputDecoration(
+              labelText: 'Holidu iCal URL',
+              helperText: 'Populair in Duitsland & Nederland',
+              border: const OutlineInputBorder(),
+              prefixIcon: Container(
+                margin: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00B4AB).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.search, color: Color(0xFF00B4AB), size: 20),
+              ),
+              hintText: 'https://www.holidu.com/...',
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          TextFormField(
+            controller: _icalBelvillaController,
+            decoration: InputDecoration(
+              labelText: 'Belvilla / Novasol iCal URL',
+              helperText: 'Europese markt',
+              border: const OutlineInputBorder(),
+              prefixIcon: Container(
+                margin: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE85D04).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.beach_access, color: Color(0xFFE85D04), size: 20),
+              ),
+              hintText: 'https://www.belvilla.com/...',
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          TextFormField(
             controller: _icalOtherController,
-            decoration: const InputDecoration(
-              labelText: 'Andere iCal URL (optioneel)',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: 'Andere iCal URL',
+              helperText: 'Voor andere platforms of handmatige import',
+              border: const OutlineInputBorder(),
+              prefixIcon: Container(
+                margin: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.link, color: Colors.grey[600], size: 20),
+              ),
               hintText: 'https://...',
             ),
           ),
@@ -661,6 +763,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
         'is_active': _isActive,
         'ical_airbnb_url': _icalAirbnbController.text.trim().isNotEmpty ? _icalAirbnbController.text.trim() : null,
         'ical_booking_url': _icalBookingController.text.trim().isNotEmpty ? _icalBookingController.text.trim() : null,
+        'ical_vrbo_url': _icalVrboController.text.trim().isNotEmpty ? _icalVrboController.text.trim() : null,
+        'ical_google_url': _icalGoogleController.text.trim().isNotEmpty ? _icalGoogleController.text.trim() : null,
+        'ical_holidu_url': _icalHoliduController.text.trim().isNotEmpty ? _icalHoliduController.text.trim() : null,
+        'ical_belvilla_url': _icalBelvillaController.text.trim().isNotEmpty ? _icalBelvillaController.text.trim() : null,
         'ical_other_url': _icalOtherController.text.trim().isNotEmpty ? _icalOtherController.text.trim() : null,
       };
 

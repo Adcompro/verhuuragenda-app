@@ -41,6 +41,10 @@ class Accommodation {
   final List<String> photos;
   final String? icalAirbnbUrl;
   final String? icalBookingUrl;
+  final String? icalVrboUrl;
+  final String? icalGoogleUrl;
+  final String? icalHoliduUrl;
+  final String? icalBelvillaUrl;
   final String? icalOtherUrl;
   final String? icalExportUrl;
   final String? description;
@@ -77,6 +81,10 @@ class Accommodation {
     this.photos = const [],
     this.icalAirbnbUrl,
     this.icalBookingUrl,
+    this.icalVrboUrl,
+    this.icalGoogleUrl,
+    this.icalHoliduUrl,
+    this.icalBelvillaUrl,
     this.icalOtherUrl,
     this.icalExportUrl,
     this.description,
@@ -117,6 +125,10 @@ class Accommodation {
           : [],
       icalAirbnbUrl: json['ical_airbnb_url'],
       icalBookingUrl: json['ical_booking_url'],
+      icalVrboUrl: json['ical_vrbo_url'],
+      icalGoogleUrl: json['ical_google_url'],
+      icalHoliduUrl: json['ical_holidu_url'],
+      icalBelvillaUrl: json['ical_belvilla_url'],
       icalOtherUrl: json['ical_other_url'],
       icalExportUrl: json['ical_export_url'],
       description: json['description'],
