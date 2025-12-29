@@ -1177,5 +1177,17 @@
   },
   "bank": "Bank",
   "creditcard": "Creditcard",
-  "registerPayment": "Betaling registreren"
+  "registerPayment": "Betaling registreren",
+  "portalShareMessage": "Hallo {guestName},\n\nHier is de link naar je gastenportaal: {portalUrl}\n\nJe PIN-code is: {pin}\n\nMet vriendelijke groet",
+  "@portalShareMessage": {
+    "placeholders": {
+      "guestName": {"type": "String"},
+      "portalUrl": {"type": "String"},
+      "pin": {"type": "String"}
+    }
+  },
+  "yourBookingDetails": "Je boekingsgegevens",
+  "deleteBookingQuestion": "Boeking verwijderen?",
+  "deleteBookingConfirmation": "Weet je zeker dat je deze boeking wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
+  "bookingDeleted": "Boeking verwijderd"
 }

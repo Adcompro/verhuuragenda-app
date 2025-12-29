@@ -1710,6 +1710,14 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get registerPayment => 'Betaling registreren';
   @override
+  String get yourBookingDetails => 'Je boekingsgegevens';
+  @override
+  String get deleteBookingQuestion => 'Boeking verwijderen?';
+  @override
+  String get deleteBookingConfirmation => 'Weet je zeker dat je deze boeking wilt verwijderen? Dit kan niet ongedaan worden gemaakt.';
+  @override
+  String get bookingDeleted => 'Boeking verwijderd';
+  @override
   String resetEmailDescription(String email) => 'Als er een account bestaat met het e-mailadres $email, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.';
   @override
   String accommodationsCountText(int count) => '$count accommodaties';
@@ -1793,4 +1801,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String couldNotLoadData(String error) => 'Kon gegevens niet laden: $error';
   @override
   String errorDeleting(String error) => 'Fout bij verwijderen: $error';
+  @override
+  String portalShareMessage(String guestName, String portalUrl, String pin) => 'Hallo $guestName,\n\nHier is de link naar je gastenportaal: $portalUrl\n\nJe PIN-code is: $pin\n\nMet vriendelijke groet';
 }

@@ -882,6 +882,10 @@ abstract class AppLocalizations {
   String get bank;
   String get creditcard;
   String get registerPayment;
+  String get yourBookingDetails;
+  String get deleteBookingQuestion;
+  String get deleteBookingConfirmation;
+  String get bookingDeleted;
   String resetEmailDescription(String email);
   String accommodationsCountText(int count);
   String daysViewText(int count);
@@ -924,6 +928,7 @@ abstract class AppLocalizations {
   String helpCopied(String text);
   String couldNotLoadData(String error);
   String errorDeleting(String error);
+  String portalShareMessage(String guestName, String portalUrl, String pin);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

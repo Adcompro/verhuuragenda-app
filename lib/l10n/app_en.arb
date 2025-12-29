@@ -1177,5 +1177,17 @@
   },
   "bank": "Bank",
   "creditcard": "Credit card",
-  "registerPayment": "Register payment"
+  "registerPayment": "Register payment",
+  "portalShareMessage": "Hello {guestName},\n\nHere is the link to your guest portal: {portalUrl}\n\nYour PIN code is: {pin}\n\nKind regards",
+  "@portalShareMessage": {
+    "placeholders": {
+      "guestName": {"type": "String"},
+      "portalUrl": {"type": "String"},
+      "pin": {"type": "String"}
+    }
+  },
+  "yourBookingDetails": "Your booking details",
+  "deleteBookingQuestion": "Delete booking?",
+  "deleteBookingConfirmation": "Are you sure you want to delete this booking? This cannot be undone.",
+  "bookingDeleted": "Booking deleted"
 }

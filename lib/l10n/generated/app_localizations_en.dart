@@ -1710,6 +1710,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get registerPayment => 'Register payment';
   @override
+  String get yourBookingDetails => 'Your booking details';
+  @override
+  String get deleteBookingQuestion => 'Delete booking?';
+  @override
+  String get deleteBookingConfirmation => 'Are you sure you want to delete this booking? This cannot be undone.';
+  @override
+  String get bookingDeleted => 'Booking deleted';
+  @override
   String resetEmailDescription(String email) => 'If an account exists with the email address $email, you will receive an email within a few minutes with instructions to reset your password.';
   @override
   String accommodationsCountText(int count) => '$count accommodations';
@@ -1793,4 +1801,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String couldNotLoadData(String error) => 'Could not load data: $error';
   @override
   String errorDeleting(String error) => 'Error deleting: $error';
+  @override
+  String portalShareMessage(String guestName, String portalUrl, String pin) => 'Hello $guestName,\n\nHere is the link to your guest portal: $portalUrl\n\nYour PIN code is: $pin\n\nKind regards';
 }
