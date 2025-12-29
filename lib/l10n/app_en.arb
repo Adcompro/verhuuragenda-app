@@ -1189,5 +1189,15 @@
   "yourBookingDetails": "Your booking details",
   "deleteBookingQuestion": "Delete booking?",
   "deleteBookingConfirmation": "Are you sure you want to delete this booking? This cannot be undone.",
-  "bookingDeleted": "Booking deleted"
+  "bookingDeleted": "Booking deleted",
+  "copyLink": "Copy link",
+  "linkCopied": "Link copied",
+  "changeStatus": "Change status",
+  "statusUpdated": "Status updated",
+  "errorUpdating": "Error updating: {error}",
+  "@errorUpdating": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  }
 }

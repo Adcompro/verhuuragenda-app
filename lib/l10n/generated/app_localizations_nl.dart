@@ -1718,6 +1718,14 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get bookingDeleted => 'Boeking verwijderd';
   @override
+  String get copyLink => 'Link kopiëren';
+  @override
+  String get linkCopied => 'Link gekopieerd';
+  @override
+  String get changeStatus => 'Status wijzigen';
+  @override
+  String get statusUpdated => 'Status bijgewerkt';
+  @override
   String resetEmailDescription(String email) => 'Als er een account bestaat met het e-mailadres $email, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.';
   @override
   String accommodationsCountText(int count) => '$count accommodaties';
@@ -1803,4 +1811,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String errorDeleting(String error) => 'Fout bij verwijderen: $error';
   @override
   String portalShareMessage(String guestName, String portalUrl, String pin) => 'Hallo $guestName,\n\nHier is de link naar je gastenportaal: $portalUrl\n\nJe PIN-code is: $pin\n\nMet vriendelijke groet';
+  @override
+  String errorUpdating(String error) => 'Fout bij bijwerken: $error';
 }

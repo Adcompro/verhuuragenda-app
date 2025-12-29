@@ -1189,5 +1189,15 @@
   "yourBookingDetails": "Je boekingsgegevens",
   "deleteBookingQuestion": "Boeking verwijderen?",
   "deleteBookingConfirmation": "Weet je zeker dat je deze boeking wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
-  "bookingDeleted": "Boeking verwijderd"
+  "bookingDeleted": "Boeking verwijderd",
+  "copyLink": "Link kopiëren",
+  "linkCopied": "Link gekopieerd",
+  "changeStatus": "Status wijzigen",
+  "statusUpdated": "Status bijgewerkt",
+  "errorUpdating": "Fout bij bijwerken: {error}",
+  "@errorUpdating": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  }
 }

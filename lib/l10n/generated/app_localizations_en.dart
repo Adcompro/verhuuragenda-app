@@ -1718,6 +1718,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get bookingDeleted => 'Booking deleted';
   @override
+  String get copyLink => 'Copy link';
+  @override
+  String get linkCopied => 'Link copied';
+  @override
+  String get changeStatus => 'Change status';
+  @override
+  String get statusUpdated => 'Status updated';
+  @override
   String resetEmailDescription(String email) => 'If an account exists with the email address $email, you will receive an email within a few minutes with instructions to reset your password.';
   @override
   String accommodationsCountText(int count) => '$count accommodations';
@@ -1803,4 +1811,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorDeleting(String error) => 'Error deleting: $error';
   @override
   String portalShareMessage(String guestName, String portalUrl, String pin) => 'Hello $guestName,\n\nHere is the link to your guest portal: $portalUrl\n\nYour PIN code is: $pin\n\nKind regards';
+  @override
+  String errorUpdating(String error) => 'Error updating: $error';
 }
