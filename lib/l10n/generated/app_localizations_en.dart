@@ -2500,6 +2500,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get couldNotUpdateBooking => 'Could not update booking';
 
   @override
+  String get newGuest => 'New guest';
+
+  @override
+  String get selectAGuest => 'Select a guest';
+
+  @override
+  String get website => 'Website';
+
+  @override
+  String get firstNameAndEmailRequired => 'First name and email are required';
+
+  @override
   String resetEmailDescription(String email) => 'If an account exists with the email address $email, you will receive an email within a few minutes with instructions to reset your password.';
 
   @override

@@ -1144,5 +1144,9 @@
   "bookingCreated": "Booking created",
   "bookingUpdated": "Booking updated",
   "couldNotCreateBooking": "Could not create booking",
-  "couldNotUpdateBooking": "Could not update booking"
+  "couldNotUpdateBooking": "Could not update booking",
+  "newGuest": "New guest",
+  "selectAGuest": "Select a guest",
+  "website": "Website",
+  "firstNameAndEmailRequired": "First name and email are required"
 }

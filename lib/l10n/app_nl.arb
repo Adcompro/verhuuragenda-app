@@ -1144,5 +1144,9 @@
   "bookingCreated": "Boeking aangemaakt",
   "bookingUpdated": "Boeking bijgewerkt",
   "couldNotCreateBooking": "Kon boeking niet aanmaken",
-  "couldNotUpdateBooking": "Kon boeking niet bijwerken"
+  "couldNotUpdateBooking": "Kon boeking niet bijwerken",
+  "newGuest": "Nieuwe gast",
+  "selectAGuest": "Selecteer een gast",
+  "website": "Website",
+  "firstNameAndEmailRequired": "Voornaam en e-mail zijn verplicht"
 }

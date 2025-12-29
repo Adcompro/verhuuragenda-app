@@ -2500,6 +2500,18 @@ class AppLocalizationsNl extends AppLocalizations {
   String get couldNotUpdateBooking => 'Kon boeking niet bijwerken';
 
   @override
+  String get newGuest => 'Nieuwe gast';
+
+  @override
+  String get selectAGuest => 'Selecteer een gast';
+
+  @override
+  String get website => 'Website';
+
+  @override
+  String get firstNameAndEmailRequired => 'Voornaam en e-mail zijn verplicht';
+
+  @override
   String resetEmailDescription(String email) => 'Als er een account bestaat met het e-mailadres $email, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.';
 
   @override

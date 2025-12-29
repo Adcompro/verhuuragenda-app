@@ -863,6 +863,10 @@ abstract class AppLocalizations {
   String get bookingUpdated;
   String get couldNotCreateBooking;
   String get couldNotUpdateBooking;
+  String get newGuest;
+  String get selectAGuest;
+  String get website;
+  String get firstNameAndEmailRequired;
 
   String resetEmailDescription(String email);
   String accommodationsCountText(int count);
