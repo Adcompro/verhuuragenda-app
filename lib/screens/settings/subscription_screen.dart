@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
