@@ -1753,6 +1753,16 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get noBookingsFound => 'Geen boekingen gevonden';
   @override
+  String get upcomingBookings => 'Aankomende boekingen';
+  @override
+  String get fromToday => 'vanaf vandaag';
+  @override
+  String get allBookings => 'Alle boekingen';
+  @override
+  String get withoutDateFilter => 'zonder datumfilter';
+  @override
+  String get pastBookings => 'Vorige boekingen';
+  @override
   String resetEmailDescription(String email) => 'Als er een account bestaat met het e-mailadres $email, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.';
   @override
   String accommodationsCountText(int count) => '$count accommodaties';

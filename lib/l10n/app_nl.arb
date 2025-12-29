@@ -1244,5 +1244,10 @@
       "error": {"type": "String"}
     }
   },
-  "noBookingsFound": "Geen boekingen gevonden"
+  "noBookingsFound": "Geen boekingen gevonden",
+  "upcomingBookings": "Aankomende boekingen",
+  "fromToday": "vanaf vandaag",
+  "allBookings": "Alle boekingen",
+  "withoutDateFilter": "zonder datumfilter",
+  "pastBookings": "Vorige boekingen"
 }

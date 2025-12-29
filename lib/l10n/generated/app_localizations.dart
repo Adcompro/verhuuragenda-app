@@ -889,6 +889,11 @@ abstract class AppLocalizations {
   String get customPeriod;
   String get chooseADateRange;
   String get noBookingsFound;
+  String get upcomingBookings;
+  String get fromToday;
+  String get allBookings;
+  String get withoutDateFilter;
+  String get pastBookings;
   String resetEmailDescription(String email);
   String accommodationsCountText(int count);
   String daysViewText(int count);

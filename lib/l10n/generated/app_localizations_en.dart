@@ -1753,6 +1753,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noBookingsFound => 'No bookings found';
   @override
+  String get upcomingBookings => 'Upcoming bookings';
+  @override
+  String get fromToday => 'from today';
+  @override
+  String get allBookings => 'All bookings';
+  @override
+  String get withoutDateFilter => 'without date filter';
+  @override
+  String get pastBookings => 'Past bookings';
+  @override
   String resetEmailDescription(String email) => 'If an account exists with the email address $email, you will receive an email within a few minutes with instructions to reset your password.';
   @override
   String accommodationsCountText(int count) => '$count accommodations';

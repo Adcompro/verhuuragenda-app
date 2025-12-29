@@ -1244,5 +1244,10 @@
       "error": {"type": "String"}
     }
   },
-  "noBookingsFound": "No bookings found"
+  "noBookingsFound": "No bookings found",
+  "upcomingBookings": "Upcoming bookings",
+  "fromToday": "from today",
+  "allBookings": "All bookings",
+  "withoutDateFilter": "without date filter",
+  "pastBookings": "Past bookings"
 }
