@@ -708,9 +708,48 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ),
             const SizedBox(height: 16),
             // Show In-App Purchase options on iOS
-            if (Platform.isIOS && _iapInitialized) ...[
+            if (Platform.isIOS && _iapInitialized && _iapProducts.isNotEmpty) ...[
               _buildIAPPurchaseOptions(),
-            ] else ...[
+            ] else if (Platform.isIOS) ...[
+              // Show debug info and fallback
+              Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.orange[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange[200]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.orange[700], size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'In-App Purchase Status',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange[900]),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Store beschikbaar: ${_iapInitialized ? "Ja" : "Nee"}\n'
+                      'Producten geladen: ${_iapProducts.length}',
+                      style: TextStyle(fontSize: 12, color: Colors.orange[800]),
+                    ),
+                    if (!_iapInitialized) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        'Controleer: In-App Purchase capability in Xcode, '
+                        'sandbox tester account, of draai op een echt device.',
+                        style: TextStyle(fontSize: 11, color: Colors.orange[700]),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
               // Fallback to static pricing display with web link
               Row(
                 children: [
