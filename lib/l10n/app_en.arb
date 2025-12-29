@@ -1204,5 +1204,20 @@
   "deposit": "Deposit",
   "outstanding": "Outstanding",
   "payments": "Payments",
-  "pinCopied": "PIN copied"
+  "pinCopied": "PIN copied",
+  "bookingWithId": "Booking #{id}",
+  "@bookingWithId": {
+    "placeholders": {
+      "id": {"type": "String"}
+    }
+  },
+  "shareGuestPortal": "Share guest portal",
+  "couldNotLoadBooking": "Could not load booking: {error}",
+  "@couldNotLoadBooking": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "bookingNotFound": "Booking not found",
+  "stay": "Stay"
 }

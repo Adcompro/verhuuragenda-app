@@ -9,13 +9,9 @@ import 'app_localizations_nl.dart';
 abstract class AppLocalizations {
   AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
   final String localeName;
-  static AppLocalizations? of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
-  }
+  static AppLocalizations? of(BuildContext context) { return Localizations.of<AppLocalizations>(context, AppLocalizations); }
   static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate, GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate, GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[delegate, GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate, GlobalWidgetsLocalizations.delegate];
   static const List<Locale> supportedLocales = <Locale>[Locale('en'), Locale('nl')];
 
   String get appName;
@@ -884,6 +880,9 @@ abstract class AppLocalizations {
   String get outstanding;
   String get payments;
   String get pinCopied;
+  String get shareGuestPortal;
+  String get bookingNotFound;
+  String get stay;
   String resetEmailDescription(String email);
   String accommodationsCountText(int count);
   String daysViewText(int count);
@@ -928,6 +927,8 @@ abstract class AppLocalizations {
   String errorDeleting(String error);
   String portalShareMessage(String guestName, String portalUrl, String pin);
   String errorUpdating(String error);
+  String bookingWithId(String id);
+  String couldNotLoadBooking(String error);
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

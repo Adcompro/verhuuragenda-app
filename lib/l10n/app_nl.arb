@@ -1204,5 +1204,20 @@
   "deposit": "Aanbetaling",
   "outstanding": "Openstaand",
   "payments": "Betalingen",
-  "pinCopied": "PIN gekopieerd"
+  "pinCopied": "PIN gekopieerd",
+  "bookingWithId": "Boeking #{id}",
+  "@bookingWithId": {
+    "placeholders": {
+      "id": {"type": "String"}
+    }
+  },
+  "shareGuestPortal": "Deel gastenportaal",
+  "couldNotLoadBooking": "Kon boeking niet laden: {error}",
+  "@couldNotLoadBooking": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "bookingNotFound": "Boeking niet gevonden",
+  "stay": "Verblijf"
 }

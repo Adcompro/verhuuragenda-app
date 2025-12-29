@@ -1735,6 +1735,12 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get pinCopied => 'PIN gekopieerd';
   @override
+  String get shareGuestPortal => 'Deel gastenportaal';
+  @override
+  String get bookingNotFound => 'Boeking niet gevonden';
+  @override
+  String get stay => 'Verblijf';
+  @override
   String resetEmailDescription(String email) => 'Als er een account bestaat met het e-mailadres $email, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.';
   @override
   String accommodationsCountText(int count) => '$count accommodaties';
@@ -1822,4 +1828,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String portalShareMessage(String guestName, String portalUrl, String pin) => 'Hallo $guestName,\n\nHier is de link naar je gastenportaal: $portalUrl\n\nJe PIN-code is: $pin\n\nMet vriendelijke groet';
   @override
   String errorUpdating(String error) => 'Fout bij bijwerken: $error';
+  @override
+  String bookingWithId(String id) => 'Boeking #$id';
+  @override
+  String couldNotLoadBooking(String error) => 'Kon boeking niet laden: $error';
 }
