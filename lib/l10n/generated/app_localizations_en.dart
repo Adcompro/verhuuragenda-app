@@ -1,5 +1,4 @@
 import 'app_localizations.dart';
-
 class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([super.locale = 'en']);
 
@@ -1725,6 +1724,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changeStatus => 'Change status';
   @override
   String get statusUpdated => 'Status updated';
+  @override
+  String get cleaningCosts => 'Cleaning costs';
+  @override
+  String get deposit => 'Deposit';
+  @override
+  String get outstanding => 'Outstanding';
+  @override
+  String get payments => 'Payments';
+  @override
+  String get pinCopied => 'PIN copied';
   @override
   String resetEmailDescription(String email) => 'If an account exists with the email address $email, you will receive an email within a few minutes with instructions to reset your password.';
   @override

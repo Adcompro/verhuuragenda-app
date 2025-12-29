@@ -1199,5 +1199,10 @@
     "placeholders": {
       "error": {"type": "String"}
     }
-  }
+  },
+  "cleaningCosts": "Schoonmaakkosten",
+  "deposit": "Aanbetaling",
+  "outstanding": "Openstaand",
+  "payments": "Betalingen",
+  "pinCopied": "PIN gekopieerd"
 }

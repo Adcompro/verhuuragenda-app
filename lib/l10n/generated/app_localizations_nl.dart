@@ -1,5 +1,4 @@
 import 'app_localizations.dart';
-
 class AppLocalizationsNl extends AppLocalizations {
   AppLocalizationsNl([super.locale = 'nl']);
 
@@ -1725,6 +1724,16 @@ class AppLocalizationsNl extends AppLocalizations {
   String get changeStatus => 'Status wijzigen';
   @override
   String get statusUpdated => 'Status bijgewerkt';
+  @override
+  String get cleaningCosts => 'Schoonmaakkosten';
+  @override
+  String get deposit => 'Aanbetaling';
+  @override
+  String get outstanding => 'Openstaand';
+  @override
+  String get payments => 'Betalingen';
+  @override
+  String get pinCopied => 'PIN gekopieerd';
   @override
   String resetEmailDescription(String email) => 'Als er een account bestaat met het e-mailadres $email, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.';
   @override
