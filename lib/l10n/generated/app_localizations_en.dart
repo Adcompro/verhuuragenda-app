@@ -2527,6 +2527,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectAnAccommodation => 'Select an accommodation';
 
   @override
+  String get blockedPeriods => 'Blocked periods';
+
+  @override
+  String get availableAlternatives => 'Available alternatives';
+
+  @override
+  String get numberOfPeople => 'Number of people';
+
+  @override
+  String get statusAndSource => 'Status & Source';
+
+  @override
+  String get financial => 'Financial';
+
+  @override
   String resetEmailDescription(String email) => 'If an account exists with the email address $email, you will receive an email within a few minutes with instructions to reset your password.';
 
   @override

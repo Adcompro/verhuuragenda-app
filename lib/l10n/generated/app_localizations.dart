@@ -872,6 +872,11 @@ abstract class AppLocalizations {
   String get internalNotesHint;
   String get saveBooking;
   String get selectAnAccommodation;
+  String get blockedPeriods;
+  String get availableAlternatives;
+  String get numberOfPeople;
+  String get statusAndSource;
+  String get financial;
 
   String resetEmailDescription(String email);
   String accommodationsCountText(int count);

@@ -2527,6 +2527,21 @@ class AppLocalizationsNl extends AppLocalizations {
   String get selectAnAccommodation => 'Selecteer een accommodatie';
 
   @override
+  String get blockedPeriods => 'Geblokkeerde periodes';
+
+  @override
+  String get availableAlternatives => 'Beschikbare alternatieven';
+
+  @override
+  String get numberOfPeople => 'Aantal personen';
+
+  @override
+  String get statusAndSource => 'Status & Bron';
+
+  @override
+  String get financial => 'Financieel';
+
+  @override
   String resetEmailDescription(String email) => 'Als er een account bestaat met het e-mailadres $email, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.';
 
   @override

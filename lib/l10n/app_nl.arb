@@ -1153,5 +1153,10 @@
   "downPayment": "Aanbetaling",
   "internalNotesHint": "Interne notities over deze boeking...",
   "saveBooking": "Boeking opslaan",
-  "selectAnAccommodation": "Selecteer een accommodatie"
+  "selectAnAccommodation": "Selecteer een accommodatie",
+  "blockedPeriods": "Geblokkeerde periodes",
+  "availableAlternatives": "Beschikbare alternatieven",
+  "numberOfPeople": "Aantal personen",
+  "statusAndSource": "Status & Bron",
+  "financial": "Financieel"
 }

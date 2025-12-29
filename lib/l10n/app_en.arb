@@ -1153,5 +1153,10 @@
   "downPayment": "Down payment",
   "internalNotesHint": "Internal notes about this booking...",
   "saveBooking": "Save booking",
-  "selectAnAccommodation": "Select an accommodation"
+  "selectAnAccommodation": "Select an accommodation",
+  "blockedPeriods": "Blocked periods",
+  "availableAlternatives": "Available alternatives",
+  "numberOfPeople": "Number of people",
+  "statusAndSource": "Status & Source",
+  "financial": "Financial"
 }
