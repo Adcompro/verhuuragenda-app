@@ -24,6 +24,10 @@ workflows:
         script: |
           flutter pub get
 
+      - name: Generate localizations
+        script: |
+          flutter gen-l10n
+
       - name: Enable iPad support
         script: |
           cd ios
@@ -65,6 +69,10 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter pub get
+
+      - name: Generate localizations
+        script: |
+          flutter gen-l10n
 
       - name: Enable iPad support
         script: |
@@ -193,6 +201,10 @@ workflows:
         script: |
           flutter pub get
 
+      - name: Generate localizations
+        script: |
+          flutter gen-l10n
+
       - name: Generate app icons
         script: |
           dart run flutter_launcher_icons
@@ -246,6 +258,10 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter pub get
+
+      - name: Generate localizations
+        script: |
+          flutter gen-l10n
 
       - name: Build APK & AAB
         script: |
