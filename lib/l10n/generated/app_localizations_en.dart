@@ -2542,6 +2542,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get financial => 'Financial';
 
   @override
+  String get checkingAvailability => 'Checking availability...';
+
+  @override
+  String get available => 'Available';
+
+  @override
+  String get notAvailable => 'Not available';
+
+  @override
+  String get overlappingBookings => 'Overlapping bookings';
+
+  @override
   String resetEmailDescription(String email) => 'If an account exists with the email address $email, you will receive an email within a few minutes with instructions to reset your password.';
 
   @override
@@ -2660,5 +2672,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String helpCopied(String text) => '$text copied';
+
+  @override
+  String couldNotLoadData(String error) => 'Could not load data: $error';
 
 }

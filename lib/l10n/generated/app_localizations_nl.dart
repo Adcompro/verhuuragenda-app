@@ -2542,6 +2542,18 @@ class AppLocalizationsNl extends AppLocalizations {
   String get financial => 'Financieel';
 
   @override
+  String get checkingAvailability => 'Beschikbaarheid controleren...';
+
+  @override
+  String get available => 'Beschikbaar';
+
+  @override
+  String get notAvailable => 'Niet beschikbaar';
+
+  @override
+  String get overlappingBookings => 'Overlappende boekingen';
+
+  @override
   String resetEmailDescription(String email) => 'Als er een account bestaat met het e-mailadres $email, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.';
 
   @override
@@ -2660,5 +2672,8 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String helpCopied(String text) => '$text gekopieerd';
+
+  @override
+  String couldNotLoadData(String error) => 'Kon gegevens niet laden: $error';
 
 }

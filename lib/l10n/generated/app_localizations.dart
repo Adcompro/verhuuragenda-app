@@ -877,6 +877,10 @@ abstract class AppLocalizations {
   String get numberOfPeople;
   String get statusAndSource;
   String get financial;
+  String get checkingAvailability;
+  String get available;
+  String get notAvailable;
+  String get overlappingBookings;
 
   String resetEmailDescription(String email);
   String accommodationsCountText(int count);
@@ -918,6 +922,7 @@ abstract class AppLocalizations {
   String privacyLastUpdated(String date);
   String termsLastUpdated(String date);
   String helpCopied(String text);
+  String couldNotLoadData(String error);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

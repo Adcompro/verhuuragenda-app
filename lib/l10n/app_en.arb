@@ -1158,5 +1158,15 @@
   "availableAlternatives": "Available alternatives",
   "numberOfPeople": "Number of people",
   "statusAndSource": "Status & Source",
-  "financial": "Financial"
+  "financial": "Financial",
+  "couldNotLoadData": "Could not load data: {error}",
+  "@couldNotLoadData": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "checkingAvailability": "Checking availability...",
+  "available": "Available",
+  "notAvailable": "Not available",
+  "overlappingBookings": "Overlapping bookings"
 }

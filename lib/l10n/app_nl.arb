@@ -1158,5 +1158,15 @@
   "availableAlternatives": "Beschikbare alternatieven",
   "numberOfPeople": "Aantal personen",
   "statusAndSource": "Status & Bron",
-  "financial": "Financieel"
+  "financial": "Financieel",
+  "couldNotLoadData": "Kon gegevens niet laden: {error}",
+  "@couldNotLoadData": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "checkingAvailability": "Beschikbaarheid controleren...",
+  "available": "Beschikbaar",
+  "notAvailable": "Niet beschikbaar",
+  "overlappingBookings": "Overlappende boekingen"
 }
