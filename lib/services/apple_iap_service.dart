@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
-import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import '../core/api/api_client.dart';
 import '../config/api_config.dart';
 
@@ -60,14 +58,6 @@ class AppleIAPService {
 
     // Load products
     await loadProducts();
-
-    // Enable pending transactions (important for interrupted purchases)
-    if (Platform.isIOS) {
-      final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
-          _inAppPurchase
-              .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-      await iosPlatformAddition.setDelegate(PaymentQueueDelegate());
-    }
 
     debugPrint('AppleIAPService: Initialized successfully');
   }
@@ -225,20 +215,9 @@ class AppleIAPService {
   /// Verify purchase with backend
   Future<PurchaseResult> _verifyPurchase(PurchaseDetails purchaseDetails) async {
     try {
-      // Get the receipt data
-      String? receiptData;
-
-      if (Platform.isIOS) {
-        // On iOS, we need to get the receipt from StoreKit
-        final SKPaymentQueueWrapper paymentQueue = SKPaymentQueueWrapper();
-        final String? receipt = await paymentQueue.retrieveReceiptData();
-        receiptData = receipt;
-      }
-
-      if (receiptData == null || receiptData.isEmpty) {
-        // Fallback to verification data from purchase details
-        receiptData = purchaseDetails.verificationData.serverVerificationData;
-      }
+      // Get the receipt data from the purchase verification data
+      // This is the recommended approach for in_app_purchase package
+      String receiptData = purchaseDetails.verificationData.serverVerificationData;
 
       if (receiptData.isEmpty) {
         return PurchaseResult(
@@ -321,18 +300,4 @@ class PurchaseResult {
     this.error,
     this.subscription,
   });
-}
-
-/// Delegate for handling payment queue events
-class PaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
-  @override
-  bool shouldContinueTransaction(
-      SKPaymentTransactionWrapper transaction, SKStorefrontWrapper storefront) {
-    return true;
-  }
-
-  @override
-  bool shouldShowPriceConsent() {
-    return false;
-  }
 }
