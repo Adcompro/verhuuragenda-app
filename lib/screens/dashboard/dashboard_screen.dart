@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../core/api/api_client.dart';
@@ -39,7 +40,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Kon dashboard niet laden';
+        _error = null; // Will be set with l10n in build
         _isLoading = false;
       });
     }
@@ -48,16 +49,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Dashboard'),
+            Text(l10n.dashboard),
             if (user != null)
               Text(
-                'Welkom, ${user.name}',
+                '${l10n.welcome}, ${user.name}',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
           ],
@@ -74,41 +76,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget _buildBody() {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_error != null) {
+    if (_dashboardData == null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
-            Text(_error!, style: TextStyle(color: Colors.grey[600])),
+            Text(l10n.couldNotLoadDashboard, style: TextStyle(color: Colors.grey[600])),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadDashboard,
-              child: const Text('Opnieuw proberen'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    // Safety check for null dashboard data
-    if (_dashboardData == null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text('Geen data beschikbaar', style: TextStyle(color: Colors.grey[600])),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadDashboard,
-              child: const Text('Vernieuwen'),
+              child: Text(l10n.tryAgain),
             ),
           ],
         ),
@@ -137,30 +122,30 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             childAspectRatio: isWide ? 1.1 : 1.1,
             children: [
               _StatCard(
-                title: 'Actieve boekingen',
+                title: l10n.activeBookings,
                 value: '${stats['current_bookings'] ?? 0}',
                 icon: Icons.calendar_today,
                 color: AppTheme.primaryColor,
                 onTap: () => _showStatDetails('active', upcomingCheckins, upcomingCheckouts),
               ),
               _StatCard(
-                title: 'Check-ins',
+                title: l10n.checkIns,
                 value: '${stats['upcoming_checkins'] ?? 0}',
-                subtitle: 'komende 7 dagen',
+                subtitle: l10n.next7days,
                 icon: Icons.login,
                 color: AppTheme.successColor,
                 onTap: () => _showStatDetails('checkins', upcomingCheckins, upcomingCheckouts),
               ),
               _StatCard(
-                title: 'Check-outs',
+                title: l10n.checkOuts,
                 value: '${stats['upcoming_checkouts'] ?? 0}',
-                subtitle: 'komende 7 dagen',
+                subtitle: l10n.next7days,
                 icon: Icons.logout,
                 color: AppTheme.accentColor,
                 onTap: () => _showStatDetails('checkouts', upcomingCheckins, upcomingCheckouts),
               ),
               _StatCard(
-                title: 'Omzet deze maand',
+                title: l10n.monthlyRevenue,
                 value: '€${_formatAmount(stats['monthly_revenue'])}',
                 icon: Icons.euro,
                 color: AppTheme.secondaryColor,
@@ -182,14 +167,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildSectionHeader(
-                        'Aankomende Check-ins',
+                        l10n.upcomingCheckins,
                         Icons.login,
                         AppTheme.successColor,
                         upcomingCheckins.length,
                       ),
                       const SizedBox(height: 8),
                       if (upcomingCheckins.isEmpty)
-                        _buildEmptyCard('Geen check-ins gepland')
+                        _buildEmptyCard(l10n.noCheckinsScheduled)
                       else
                         ...upcomingCheckins.map<Widget>((booking) => _buildCheckinCard(booking)).toList(),
                     ],
@@ -202,14 +187,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildSectionHeader(
-                        'Aankomende Check-outs',
+                        l10n.upcomingCheckouts,
                         Icons.logout,
                         AppTheme.accentColor,
                         upcomingCheckouts.length,
                       ),
                       const SizedBox(height: 8),
                       if (upcomingCheckouts.isEmpty)
-                        _buildEmptyCard('Geen check-outs gepland')
+                        _buildEmptyCard(l10n.noCheckoutsScheduled)
                       else
                         ...upcomingCheckouts.map<Widget>((booking) => _buildCheckoutCard(booking)).toList(),
                     ],
@@ -220,28 +205,28 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ] else ...[
             // Phone layout: stacked
             _buildSectionHeader(
-              'Aankomende Check-ins',
+              l10n.upcomingCheckins,
               Icons.login,
               AppTheme.successColor,
               upcomingCheckins.length,
             ),
             const SizedBox(height: 8),
             if (upcomingCheckins.isEmpty)
-              _buildEmptyCard('Geen check-ins gepland')
+              _buildEmptyCard(l10n.noCheckinsScheduled)
             else
               ...upcomingCheckins.map<Widget>((booking) => _buildCheckinCard(booking)).toList(),
 
             const SizedBox(height: 24),
 
             _buildSectionHeader(
-              'Aankomende Check-outs',
+              l10n.upcomingCheckouts,
               Icons.logout,
               AppTheme.accentColor,
               upcomingCheckouts.length,
             ),
             const SizedBox(height: 8),
             if (upcomingCheckouts.isEmpty)
-              _buildEmptyCard('Geen check-outs gepland')
+              _buildEmptyCard(l10n.noCheckoutsScheduled)
             else
               ...upcomingCheckouts.map<Widget>((booking) => _buildCheckoutCard(booking)).toList(),
           ],
@@ -250,7 +235,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
           // Recent Bookings
           _buildSectionHeader(
-            'Recente Boekingen',
+            l10n.recentBookings,
             Icons.history,
             Colors.grey[600]!,
             recentBookings.length,
@@ -335,6 +320,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget _buildCheckinCard(dynamic booking) {
+    final l10n = AppLocalizations.of(context)!;
     final isToday = booking['is_today'] == true;
     final daysUntil = booking['days_until'] ?? 0;
     final accommodationColor = _parseColor(booking['accommodation_color']);
@@ -365,7 +351,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 child: Column(
                   children: [
                     Text(
-                      isToday ? 'NU' : '+$daysUntil',
+                      isToday ? l10n.now : '+$daysUntil',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -374,7 +360,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                     if (!isToday)
                       Text(
-                        daysUntil == 1 ? 'dag' : 'dagen',
+                        daysUntil == 1 ? l10n.day : l10n.days,
                         style: TextStyle(
                           fontSize: 10,
                           color: AppTheme.successColor,
@@ -393,7 +379,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            booking['guest_name'] ?? 'Onbekend',
+                            booking['guest_name'] ?? l10n.unknown,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
@@ -506,7 +492,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                     if (!isToday)
                       Text(
-                        daysUntil == 1 ? 'dag' : 'dagen',
+                        daysUntil == 1 ? l10n.day : l10n.days,
                         style: TextStyle(
                           fontSize: 10,
                           color: AppTheme.accentColor,
@@ -797,7 +783,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       case 'cancelled':
         return 'Geannuleerd';
       default:
-        return status ?? 'Onbekend';
+        return status ?? '';
     }
   }
 
@@ -1188,7 +1174,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       case 'vrbo':
         return 'VRBO';
       default:
-        return source ?? 'Onbekend';
+        return source ?? '';
     }
   }
 

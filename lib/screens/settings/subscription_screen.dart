@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -151,9 +152,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Abonnement'),
+        title: Text(l10n.subscription),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -181,6 +183,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildError() {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -196,7 +199,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadSubscription,
-              child: const Text('Opnieuw proberen'),
+              child: Text(l10n.tryAgain),
             ),
           ],
         ),
@@ -205,6 +208,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildSubscriptionCard() {
+    final l10n = AppLocalizations.of(context)!;
     // API field names
     final isPremium = _subscription['is_premium'] == true;
     final isOnTrial = _subscription['is_on_trial'] == true;
@@ -219,19 +223,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     Color statusBgColor;
 
     if (isPremium) {
-      planName = 'Premium';
-      statusText = 'Actief';
+      planName = l10n.planPremium;
+      statusText = l10n.active;
       gradientColors = [AppTheme.primaryColor, AppTheme.primaryColor.withOpacity(0.8)];
       statusBgColor = Colors.white24;
     } else if (isOnTrial) {
-      planName = 'Premium Proef';
-      statusText = 'Proefperiode';
+      planName = l10n.planPremiumTrial;
+      statusText = l10n.trialPeriod;
       gradientColors = [Colors.purple[600]!, Colors.purple[400]!];
       statusBgColor = Colors.white24;
     } else {
       // Free plan - this is a valid permanent plan!
-      planName = 'Gratis';
-      statusText = 'Actief';
+      planName = l10n.planFree;
+      statusText = l10n.active;
       gradientColors = [Colors.teal[600]!, Colors.teal[400]!];
       statusBgColor = Colors.white24;
     }
@@ -273,9 +277,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Huidig abonnement',
-                      style: TextStyle(
+                    Text(
+                      l10n.currentPlan,
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 12,
                       ),
@@ -329,10 +333,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    _buildFeatureRow(Icons.home, '1 accommodatie'),
-                    _buildFeatureRow(Icons.calendar_today, '10 boekingen per jaar'),
-                    _buildFeatureRow(Icons.sync, 'iCal synchronisatie'),
-                    _buildFeatureRow(Icons.person, 'Gastenportaal'),
+                    _buildFeatureRow(Icons.home, l10n.oneAccommodation),
+                    _buildFeatureRow(Icons.calendar_today, l10n.tenBookingsPerYear),
+                    _buildFeatureRow(Icons.sync, l10n.icalSync),
+                    _buildFeatureRow(Icons.person, l10n.guestPortal),
                   ],
                 ),
               ),
@@ -349,7 +353,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          isOnTrial ? 'Proef eindigt' : 'Geldig tot',
+                          isOnTrial ? l10n.trialEnds : l10n.validUntil,
                           style: const TextStyle(color: Colors.white70, fontSize: 12),
                         ),
                         const SizedBox(height: 4),
@@ -829,15 +833,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     backgroundColor: Colors.amber[700],
                     foregroundColor: Colors.white,
                   ),
-                ),
-              ),
-            ],
-            if (!isOnTrial) ...[
-              const SizedBox(height: 8),
-              Center(
-                child: Text(
-                  '14 dagen gratis proberen',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
               ),
             ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../config/theme.dart';
@@ -32,9 +33,11 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Over VerhuurAgenda'),
+        title: Text(l10n.aboutTitle),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -91,7 +94,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Versie $_version (build $_buildNumber)',
+                    '${l10n.versionLabel} $_version (build $_buildNumber)',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.white.withOpacity(0.8),
@@ -108,59 +111,10 @@ class _AboutScreenState extends State<AboutScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSection(
-                    'Ons Verhaal',
-                    'VerhuurAgenda is ontstaan uit onze eigen ervaring als vakantieverhuurders. '
-                    'We weten hoe uitdagend het kan zijn om meerdere accommodaties te beheren, '
-                    'boekingen bij te houden, en gasten een geweldige ervaring te bieden.\n\n'
-                    'Daarom hebben we VerhuurAgenda ontwikkeld: een alles-in-één platform dat '
-                    'speciaal is ontworpen voor Nederlandse verhuurders. Van boekingsbeheer tot '
-                    'schoonmaakplanning, van gastenportaal tot financiële overzichten - alles '
-                    'wat je nodig hebt op één plek.',
+                    context,
+                    l10n.aboutTitle,
+                    l10n.aboutDescription,
                   ),
-                  const SizedBox(height: 32),
-
-                  _buildSection(
-                    'Onze Missie',
-                    'We geloven dat vakantieverhuur persoonlijk en gastvrij moet zijn. '
-                    'Onze missie is om verhuurders de tools te geven waarmee ze tijd besparen '
-                    'op administratie, zodat ze zich kunnen focussen op wat echt belangrijk is: '
-                    'het creëren van onvergetelijke ervaringen voor hun gasten.\n\n'
-                    'Met VerhuurAgenda beheer je je verhuur professioneel, maar behoud je '
-                    'het persoonlijke karakter dat jouw accommodatie uniek maakt.',
-                  ),
-                  const SizedBox(height: 32),
-
-                  _buildSection(
-                    'Waarom VerhuurAgenda?',
-                    '',
-                  ),
-                  const SizedBox(height: 12),
-                  _buildFeatureItem(
-                    Icons.flag_outlined,
-                    '100% Nederlands',
-                    'Ontwikkeld in Nederland, voor Nederlandse verhuurders',
-                  ),
-                  _buildFeatureItem(
-                    Icons.sync,
-                    'Synchronisatie',
-                    'Koppel met Airbnb, Booking.com en andere platforms',
-                  ),
-                  _buildFeatureItem(
-                    Icons.phone_iphone,
-                    'Altijd bij de hand',
-                    'Beheer je verhuur onderweg met onze mobiele app',
-                  ),
-                  _buildFeatureItem(
-                    Icons.support_agent,
-                    'Persoonlijke support',
-                    'Direct contact met ons team, geen chatbots',
-                  ),
-                  _buildFeatureItem(
-                    Icons.security,
-                    'Veilig & Betrouwbaar',
-                    'Je gegevens zijn veilig opgeslagen in Nederland',
-                  ),
-
                   const SizedBox(height: 32),
                   const Divider(),
                   const SizedBox(height: 24),
@@ -170,7 +124,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     child: Column(
                       children: [
                         Text(
-                          'Gemaakt met',
+                          l10n.madeWithLove.split(' in ')[0],
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[600],
@@ -182,9 +136,9 @@ class _AboutScreenState extends State<AboutScreen> {
                           children: [
                             Icon(Icons.favorite, color: Colors.red[400], size: 20),
                             const SizedBox(width: 8),
-                            const Text(
-                              'in Nederland',
-                              style: TextStyle(
+                            Text(
+                              'in ${l10n.madeWithLove.split(' in ').last}',
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -200,7 +154,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           ),
                         ),
                         Text(
-                          'Alle rechten voorbehouden',
+                          l10n.allRightsReserved,
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[400],
@@ -216,11 +170,11 @@ class _AboutScreenState extends State<AboutScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildLinkButton('Website', 'https://verhuuragenda.nl'),
+                      _buildLinkButton(l10n.websiteLabel, 'https://verhuuragenda.nl'),
                       const SizedBox(width: 16),
-                      _buildNavButton(context, 'Privacy', const PrivacyScreen()),
+                      _buildNavButton(context, l10n.privacy, const PrivacyScreen()),
                       const SizedBox(width: 16),
-                      _buildNavButton(context, 'Voorwaarden', const TermsScreen()),
+                      _buildNavButton(context, l10n.terms, const TermsScreen()),
                     ],
                   ),
                   const SizedBox(height: 32),
@@ -233,7 +187,7 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-  Widget _buildSection(String title, String content) {
+  Widget _buildSection(BuildContext context, String title, String content) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -256,48 +210,6 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
         ],
       ],
-    );
-  }
-
-  Widget _buildFeatureItem(IconData icon, String title, String subtitle) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: AppTheme.primaryColor, size: 22),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 

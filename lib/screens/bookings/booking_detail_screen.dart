@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
@@ -44,7 +45,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Kon boeking niet laden: ${e.toString()}';
+        _error = e.toString();
         _isLoading = false;
       });
     }
@@ -52,42 +53,43 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(_booking?.bookingNumber ?? 'Boeking #${widget.bookingId}'),
+        title: Text(_booking?.bookingNumber ?? l10n.bookingWithId(widget.bookingId)),
         actions: [
           if (_booking != null)
             PopupMenuButton<String>(
               onSelected: _handleMenuAction,
               itemBuilder: (context) => [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'status',
                   child: Row(
                     children: [
-                      Icon(Icons.edit, size: 20),
-                      SizedBox(width: 12),
-                      Text('Status wijzigen'),
+                      const Icon(Icons.edit, size: 20),
+                      const SizedBox(width: 12),
+                      Text(l10n.changeStatus),
                     ],
                   ),
                 ),
                 if (_booking!.portalUrl != null)
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'portal',
                     child: Row(
                       children: [
-                        Icon(Icons.share, size: 20),
-                        SizedBox(width: 12),
-                        Text('Deel gastenportaal'),
+                        const Icon(Icons.share, size: 20),
+                        const SizedBox(width: 12),
+                        Text(l10n.shareGuestPortal),
                       ],
                     ),
                   ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'delete',
                   child: Row(
                     children: [
-                      Icon(Icons.delete, size: 20, color: Colors.red),
-                      SizedBox(width: 12),
-                      Text('Verwijderen', style: TextStyle(color: Colors.red)),
+                      const Icon(Icons.delete, size: 20, color: Colors.red),
+                      const SizedBox(width: 12),
+                      Text(l10n.delete, style: const TextStyle(color: Colors.red)),
                     ],
                   ),
                 ),
@@ -95,11 +97,11 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             ),
         ],
       ),
-      body: _buildBody(),
+      body: _buildBody(l10n),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(AppLocalizations l10n) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -113,12 +115,12 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             children: [
               Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
               const SizedBox(height: 16),
-              Text(_error!, textAlign: TextAlign.center),
+              Text(l10n.couldNotLoadBooking(_error!), textAlign: TextAlign.center),
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: _loadBooking,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Opnieuw proberen'),
+                label: Text(l10n.tryAgain),
               ),
             ],
           ),
@@ -127,7 +129,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     }
 
     if (_booking == null) {
-      return const Center(child: Text('Boeking niet gevonden'));
+      return Center(child: Text(l10n.bookingNotFound));
     }
 
     return RefreshIndicator(
@@ -138,14 +140,14 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildStatusHeader(),
-            _buildGuestSection(),
-            _buildAccommodationSection(),
-            _buildDatesSection(),
-            _buildFinancialSection(),
-            if (_booking!.payments.isNotEmpty) _buildPaymentsSection(),
+            _buildGuestSection(l10n),
+            _buildAccommodationSection(l10n),
+            _buildDatesSection(l10n),
+            _buildFinancialSection(l10n),
+            if (_booking!.payments.isNotEmpty) _buildPaymentsSection(l10n),
             if (_booking!.internalNotes != null && _booking!.internalNotes!.isNotEmpty)
-              _buildNotesSection(),
-            if (_booking!.portalUrl != null) _buildPortalSection(),
+              _buildNotesSection(l10n),
+            if (_booking!.portalUrl != null) _buildPortalSection(l10n),
             const SizedBox(height: 100), // Space for FAB
           ],
         ),
@@ -184,12 +186,12 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     );
   }
 
-  Widget _buildGuestSection() {
+  Widget _buildGuestSection(AppLocalizations l10n) {
     final guest = _booking!.guest;
     if (guest == null) return const SizedBox.shrink();
 
     return _buildSection(
-      title: 'Gast',
+      title: l10n.guest,
       icon: Icons.person,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,7 +238,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.phone,
-                    label: 'Bellen',
+                    label: l10n.call,
                     color: Colors.green,
                     onPressed: () => _callGuest(guest.phone!),
                   ),
@@ -256,7 +258,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.email,
-                    label: 'Email',
+                    label: l10n.email,
                     color: Colors.blue,
                     onPressed: () => _emailGuest(guest.email!),
                   ),
@@ -268,12 +270,12 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     );
   }
 
-  Widget _buildAccommodationSection() {
+  Widget _buildAccommodationSection(AppLocalizations l10n) {
     final accommodation = _booking!.accommodation;
     if (accommodation == null) return const SizedBox.shrink();
 
     return _buildSection(
-      title: 'Accommodatie',
+      title: l10n.accommodation,
       icon: Icons.home,
       child: Row(
         children: [
@@ -312,9 +314,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     );
   }
 
-  Widget _buildDatesSection() {
+  Widget _buildDatesSection(AppLocalizations l10n) {
     return _buildSection(
-      title: 'Verblijf',
+      title: l10n.stay,
       icon: Icons.calendar_today,
       child: Column(
         children: [
@@ -322,7 +324,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             children: [
               Expanded(
                 child: _buildDateCard(
-                  label: 'Check-in',
+                  label: l10n.checkIn,
                   date: _booking!.checkIn,
                   icon: Icons.login,
                 ),
@@ -330,7 +332,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
               const SizedBox(width: 16),
               Expanded(
                 child: _buildDateCard(
-                  label: 'Check-out',
+                  label: l10n.checkOut,
                   date: _booking!.checkOut,
                   icon: Icons.logout,
                 ),
@@ -350,24 +352,24 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 _buildInfoItem(
                   icon: Icons.nights_stay,
                   value: '${_booking!.nights}',
-                  label: 'nachten',
+                  label: l10n.nights,
                 ),
                 _buildInfoItem(
                   icon: Icons.people,
                   value: '${_booking!.adults}',
-                  label: 'volwassenen',
+                  label: l10n.adults,
                 ),
                 if (_booking!.children != null && _booking!.children! > 0)
                   _buildInfoItem(
                     icon: Icons.child_care,
                     value: '${_booking!.children}',
-                    label: 'kinderen',
+                    label: l10n.children,
                   ),
                 if (_booking!.babies != null && _booking!.babies! > 0)
                   _buildInfoItem(
                     icon: Icons.baby_changing_station,
                     value: '${_booking!.babies}',
-                    label: 'baby\'s',
+                    label: l10n.babies,
                   ),
               ],
             ),
@@ -377,25 +379,25 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     );
   }
 
-  Widget _buildFinancialSection() {
+  Widget _buildFinancialSection(AppLocalizations l10n) {
     return _buildSection(
-      title: 'Financieel',
+      title: l10n.financial,
       icon: Icons.euro,
       child: Column(
         children: [
-          _buildFinancialRow('Totaalbedrag', _booking!.totalAmount, isBold: true),
+          _buildFinancialRow(l10n.totalAmount, _booking!.totalAmount, isBold: true),
           if (_booking!.cleaningFee != null && _booking!.cleaningFee! > 0)
-            _buildFinancialRow('Schoonmaakkosten', _booking!.cleaningFee!, isSubtle: true),
+            _buildFinancialRow(l10n.cleaningCosts, _booking!.cleaningFee!, isSubtle: true),
           if (_booking!.depositAmount != null && _booking!.depositAmount! > 0)
-            _buildFinancialRow('Borg', _booking!.depositAmount!, isSubtle: true),
+            _buildFinancialRow(l10n.deposit, _booking!.depositAmount!, isSubtle: true),
           const Divider(height: 24),
           _buildFinancialRow(
-            'Betaald',
+            l10n.paid,
             _booking!.paidAmount,
             color: AppTheme.paymentPaid,
           ),
           _buildFinancialRow(
-            'Openstaand',
+            l10n.outstanding,
             _booking!.remainingAmount,
             color: _booking!.remainingAmount > 0 ? AppTheme.paymentUnpaid : AppTheme.paymentPaid,
             isBold: true,
@@ -406,7 +408,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             child: ElevatedButton.icon(
               onPressed: _addPayment,
               icon: const Icon(Icons.add),
-              label: const Text('Betaling toevoegen'),
+              label: Text(l10n.addPayment),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(16),
               ),
@@ -417,9 +419,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     );
   }
 
-  Widget _buildPaymentsSection() {
+  Widget _buildPaymentsSection(AppLocalizations l10n) {
     return _buildSection(
-      title: 'Betalingen',
+      title: l10n.payments,
       icon: Icons.payment,
       child: Column(
         children: _booking!.payments.map((payment) {
@@ -463,9 +465,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     );
   }
 
-  Widget _buildNotesSection() {
+  Widget _buildNotesSection(AppLocalizations l10n) {
     return _buildSection(
-      title: 'Interne notities',
+      title: l10n.internalNotes,
       icon: Icons.note,
       child: Text(
         _booking!.internalNotes!,
@@ -474,9 +476,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     );
   }
 
-  Widget _buildPortalSection() {
+  Widget _buildPortalSection(AppLocalizations l10n) {
     return _buildSection(
-      title: 'Gastenportaal',
+      title: l10n.guestPortal,
       icon: Icons.link,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -508,7 +510,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     onPressed: () {
                       Clipboard.setData(ClipboardData(text: _booking!.portalPin!));
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('PIN gekopieerd')),
+                        SnackBar(content: Text(l10n.pinCopied)),
                       );
                     },
                   ),
@@ -522,11 +524,11 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: _booking!.portalUrl!));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Link gekopieerd')),
+                      SnackBar(content: Text(l10n.linkCopied)),
                     );
                   },
                   icon: const Icon(Icons.copy),
-                  label: const Text('Kopieer link'),
+                  label: Text(l10n.copyLink),
                 ),
               ),
               const SizedBox(width: 8),
@@ -534,7 +536,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 child: ElevatedButton.icon(
                   onPressed: () => _sharePortal(),
                   icon: const Icon(Icons.share),
-                  label: const Text('Delen'),
+                  label: Text(l10n.share),
                 ),
               ),
             ],
@@ -709,18 +711,19 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   }
 
   void _showStatusDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Status wijzigen'),
+        title: Text(l10n.changeStatus),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildStatusOption('confirmed', 'Bevestigd'),
-            _buildStatusOption('option', 'Optie'),
-            _buildStatusOption('inquiry', 'Aanvraag'),
-            _buildStatusOption('cancelled', 'Geannuleerd'),
-            _buildStatusOption('completed', 'Afgerond'),
+            _buildStatusOption('confirmed', l10n.confirmed),
+            _buildStatusOption('option', l10n.option),
+            _buildStatusOption('inquiry', l10n.inquiry),
+            _buildStatusOption('cancelled', l10n.cancelled),
+            _buildStatusOption('completed', l10n.completed),
           ],
         ),
       ),
@@ -743,6 +746,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   }
 
   Future<void> _updateStatus(String status) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       await ApiClient.instance.patch(
         '${ApiConfig.bookings}/${widget.bookingId}/status',
@@ -751,13 +755,13 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       _loadBooking();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Status bijgewerkt')),
+          SnackBar(content: Text(l10n.statusUpdated)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fout bij bijwerken: $e')),
+          SnackBar(content: Text(l10n.errorUpdating(e.toString()))),
         );
       }
     }
@@ -781,32 +785,28 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
   void _sharePortal() {
     if (_booking?.portalUrl == null) return;
+    final l10n = AppLocalizations.of(context)!;
 
-    final message = '''
-Beste ${_booking!.guest?.fullName ?? 'gast'},
+    final message = l10n.portalShareMessage(
+      _booking!.guest?.fullName ?? l10n.guest,
+      _booking!.portalUrl!,
+      _booking!.portalPin ?? l10n.notAvailable,
+    );
 
-Via onderstaande link kunt u uw boekingsgegevens bekijken en online inchecken:
-
-${_booking!.portalUrl}
-
-PIN code: ${_booking!.portalPin ?? 'Niet beschikbaar'}
-
-Met vriendelijke groet
-''';
-
-    Share.share(message, subject: 'Uw boekingsgegevens');
+    Share.share(message, subject: l10n.yourBookingDetails);
   }
 
   void _confirmDelete() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Boeking verwijderen?'),
-        content: const Text('Weet je zeker dat je deze boeking wilt verwijderen? Dit kan niet ongedaan worden gemaakt.'),
+        title: Text(l10n.deleteBookingQuestion),
+        content: Text(l10n.deleteBookingConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annuleren'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -814,7 +814,7 @@ Met vriendelijke groet
               await _deleteBooking();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Verwijderen'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -822,18 +822,19 @@ Met vriendelijke groet
   }
 
   Future<void> _deleteBooking() async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       await ApiClient.instance.delete('${ApiConfig.bookings}/${widget.bookingId}');
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Boeking verwijderd')),
+          SnackBar(content: Text(l10n.bookingDeleted)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fout bij verwijderen: $e')),
+          SnackBar(content: Text(l10n.errorDeleting(e.toString()))),
         );
       }
     }
@@ -934,6 +935,7 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.only(
         left: 24,
@@ -956,32 +958,32 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Betaling toevoegen',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Text(
+            l10n.addPayment,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 24),
           TextField(
             controller: _amountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(
-              labelText: 'Bedrag',
+            decoration: InputDecoration(
+              labelText: l10n.amount,
               prefixText: '€ ',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
             value: _method,
-            decoration: const InputDecoration(
-              labelText: 'Betaalmethode',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.paymentMethod,
+              border: const OutlineInputBorder(),
             ),
-            items: const [
-              DropdownMenuItem(value: 'bank', child: Text('Bank')),
-              DropdownMenuItem(value: 'cash', child: Text('Contant')),
-              DropdownMenuItem(value: 'ideal', child: Text('iDEAL')),
-              DropdownMenuItem(value: 'creditcard', child: Text('Creditcard')),
+            items: [
+              DropdownMenuItem(value: 'bank', child: Text(l10n.bank)),
+              DropdownMenuItem(value: 'cash', child: Text(l10n.cash)),
+              const DropdownMenuItem(value: 'ideal', child: Text('iDEAL')),
+              DropdownMenuItem(value: 'creditcard', child: Text(l10n.creditcard)),
             ],
             onChanged: (value) {
               setState(() => _method = value!);
@@ -1001,7 +1003,7 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Betaling registreren'),
+                  : Text(l10n.registerPayment),
             ),
           ),
         ],
@@ -1010,10 +1012,11 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
   }
 
   Future<void> _submitPayment() async {
+    final l10n = AppLocalizations.of(context)!;
     final amount = double.tryParse(_amountController.text.replaceAll(',', '.'));
     if (amount == null || amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Voer een geldig bedrag in')),
+        SnackBar(content: Text(l10n.enterValidAmount)),
       );
       return;
     }
@@ -1034,13 +1037,13 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
         Navigator.pop(context);
         widget.onPaymentAdded();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Betaling toegevoegd')),
+          SnackBar(content: Text(l10n.paymentAdded)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fout: $e')),
+          SnackBar(content: Text(l10n.error(e.toString()))),
         );
       }
     } finally {

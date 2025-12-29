@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -51,7 +52,7 @@ class _TeamListScreenState extends State<TeamListScreen> {
         });
       } else {
         setState(() {
-          _error = 'Kon teamleden niet laden: ${e.toString()}';
+          _error = e.toString();
           _isLoading = false;
         });
       }
@@ -74,20 +75,21 @@ class _TeamListScreenState extends State<TeamListScreen> {
   }
 
   Future<void> _deleteMember(TeamMember member) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Teamlid verwijderen'),
-        content: Text('Weet je zeker dat je "${member.name}" wilt verwijderen uit je team?'),
+        title: Text(l10n.deleteTeamMemberTitle),
+        content: Text(l10n.confirmDeleteTeamMember(member.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuleren'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Verwijderen'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -98,14 +100,14 @@ class _TeamListScreenState extends State<TeamListScreen> {
         await ApiClient.instance.delete('${ApiConfig.users}/${member.id}');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Teamlid verwijderd'), backgroundColor: Colors.green),
+            SnackBar(content: Text(l10n.teamMemberDeleted), backgroundColor: Colors.green),
           );
         }
         _loadTeamMembers();
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Kon niet verwijderen: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(l10n.couldNotDeleteError(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -114,22 +116,24 @@ class _TeamListScreenState extends State<TeamListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Team'),
+        title: Text(l10n.teamTitle),
       ),
       body: _buildBody(),
       floatingActionButton: !_upgradeRequired && !_isLoading
           ? FloatingActionButton.extended(
               onPressed: () => _navigateToForm(null),
               icon: const Icon(Icons.person_add),
-              label: const Text('Nieuw lid'),
+              label: Text(l10n.newTeamMember),
             )
           : null,
     );
   }
 
   Widget _buildBody() {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -147,12 +151,12 @@ class _TeamListScreenState extends State<TeamListScreen> {
             children: [
               Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
               const SizedBox(height: 16),
-              Text(_error!, textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600])),
+              Text(l10n.couldNotLoadTeamMembersError(_error!), textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600])),
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: _loadTeamMembers,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Opnieuw proberen'),
+                label: Text(l10n.retry),
               ),
             ],
           ),
@@ -168,12 +172,12 @@ class _TeamListScreenState extends State<TeamListScreen> {
             Icon(Icons.group_outlined, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Nog geen teamleden',
+              l10n.noTeamMembers,
               style: TextStyle(color: Colors.grey[600], fontSize: 16),
             ),
             const SizedBox(height: 8),
             Text(
-              'Voeg teamleden toe om samen te werken',
+              l10n.addTeamMembersToCollaborate,
               style: TextStyle(color: Colors.grey[500], fontSize: 14),
             ),
           ],
@@ -199,6 +203,7 @@ class _TeamListScreenState extends State<TeamListScreen> {
   }
 
   Widget _buildUpgradePrompt() {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -218,17 +223,16 @@ class _TeamListScreenState extends State<TeamListScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Premium functie',
-              style: TextStyle(
+            Text(
+              l10n.premiumFeature,
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              'Teambeheer is alleen beschikbaar met een Premium abonnement. '
-              'Upgrade om teamleden toe te voegen en samen te werken.',
+              l10n.teamManagementPremium,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.grey[600],
@@ -244,7 +248,7 @@ class _TeamListScreenState extends State<TeamListScreen> {
                   context.push('/subscription');
                 },
                 icon: const Icon(Icons.star),
-                label: const Text('Bekijk Premium'),
+                label: Text(l10n.viewPremium),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),

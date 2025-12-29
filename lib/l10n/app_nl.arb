@@ -1,0 +1,1141 @@
+{
+  "@@locale": "nl",
+
+  "appName": "VerhuurAgenda",
+
+  "login": "Inloggen",
+  "logout": "Uitloggen",
+  "register": "Registreren",
+  "freeRegister": "Gratis registreren",
+  "email": "E-mailadres",
+  "password": "Wachtwoord",
+  "confirmPassword": "Bevestig wachtwoord",
+  "forgotPassword": "Wachtwoord vergeten?",
+  "rememberMe": "Onthoud mij",
+  "name": "Naam",
+  "fullName": "Volledige naam",
+  "companyName": "Bedrijfsnaam",
+  "companyNameOptional": "Bedrijfsnaam (optioneel)",
+  "phone": "Telefoon",
+
+  "loginTitle": "Log in om je verhuur te beheren",
+  "registerTitle": "Account aanmaken",
+  "registerSubtitle": "Start gratis met het beheren van je vakantieverhuur",
+  "noAccount": "Nog geen account?",
+  "hasAccount": "Al een account?",
+  "resetPassword": "Wachtwoord resetten",
+  "resetPasswordInstructions": "Voer je e-mailadres in en we sturen je een link om je wachtwoord te resetten.",
+  "sendResetLink": "Verstuur reset link",
+  "backToLogin": "Terug naar inloggen",
+  "resetEmailSent": "Reset link verstuurd! Check je e-mail.",
+
+  "enterEmail": "Voer je e-mailadres in",
+  "enterValidEmail": "Voer een geldig e-mailadres in",
+  "enterPassword": "Voer je wachtwoord in",
+  "enterName": "Voer je naam in",
+  "passwordMinLength": "Wachtwoord moet minimaal 8 karakters zijn",
+  "passwordsNotMatch": "Wachtwoorden komen niet overeen",
+  "invalidCredentials": "De opgegeven inloggegevens zijn onjuist.",
+  "accountDeactivated": "Dit account is gedeactiveerd.",
+  "emailAlreadyExists": "Dit e-mailadres is al in gebruik.",
+  "registrationFailed": "Registratie mislukt. Mogelijk bestaat dit e-mailadres al.",
+
+  "agreeToTerms": "Ik ga akkoord met de",
+  "termsAndConditions": "algemene voorwaarden",
+  "and": "en het",
+  "privacyPolicy": "privacybeleid",
+  "mustAgreeToTerms": "Je moet akkoord gaan met de algemene voorwaarden",
+
+  "freeAccount": "Gratis account",
+  "freeAccountFeature1": "1 accommodatie beheren",
+  "freeAccountFeature2": "10 boekingen per jaar",
+  "freeAccountFeature3": "iCal synchronisatie",
+  "freeAccountFeature4": "Upgrade naar Premium wanneer je wilt",
+
+  "welcomeTitle": "Welkom bij VerhuurAgenda!",
+  "accountCreated": "Je account is succesvol aangemaakt.",
+  "emailSentTo": "We hebben een bevestigingsmail gestuurd naar:",
+  "canLoginNow": "Je kunt nu direct inloggen en aan de slag!",
+  "goToLogin": "Naar inloggen",
+
+  "dashboard": "Dashboard",
+  "calendar": "Kalender",
+  "accommodations": "Accommodaties",
+  "bookings": "Boekingen",
+  "guests": "Gasten",
+  "cleaning": "Schoonmaak",
+  "settings": "Instellingen",
+  "more": "Meer",
+
+  "today": "Vandaag",
+  "yesterday": "Gisteren",
+  "tomorrow": "Morgen",
+  "thisWeek": "Deze week",
+  "thisMonth": "Deze maand",
+  "thisYear": "Dit jaar",
+
+  "checkIn": "Check-in",
+  "checkOut": "Check-out",
+  "checkIns": "Check-ins",
+  "checkOuts": "Check-outs",
+  "nights": "nachten",
+  "night": "nacht",
+  "guests_count": "gasten",
+  "guest_count": "gast",
+  "adults": "Volwassenen",
+  "children": "Kinderen",
+  "babies": "Baby's",
+
+  "accommodation": "Accommodatie",
+  "addAccommodation": "Accommodatie toevoegen",
+  "editAccommodation": "Accommodatie bewerken",
+  "deleteAccommodation": "Accommodatie verwijderen",
+  "accommodationName": "Naam accommodatie",
+  "accommodationType": "Type accommodatie",
+  "maxGuests": "Max. gasten",
+  "bedrooms": "Slaapkamers",
+  "bathrooms": "Badkamers",
+  "address": "Adres",
+  "city": "Plaats",
+  "country": "Land",
+  "description": "Beschrijving",
+
+  "house": "Huis",
+  "apartment": "Appartement",
+  "villa": "Villa",
+  "cabin": "Cabin",
+  "cottage": "Cottage",
+  "chalet": "Chalet",
+  "bungalow": "Bungalow",
+  "studio": "Studio",
+  "other": "Anders",
+
+  "pricing": "Prijzen",
+  "basePrice": "Basisprijs",
+  "cleaningFee": "Schoonmaakkosten",
+  "lowSeason": "Laagseizoen",
+  "midSeason": "Middenseizoen",
+  "highSeason": "Hoogseizoen",
+  "perWeek": "per week",
+  "perNight": "per nacht",
+
+  "icalSync": "iCal Synchronisatie",
+  "icalAirbnb": "Airbnb iCal URL",
+  "icalBooking": "Booking.com iCal URL",
+  "icalVrbo": "VRBO iCal URL",
+  "icalGoogle": "Google Vacation Rentals iCal URL",
+  "icalHolidu": "Holidu iCal URL",
+  "icalBelvilla": "Belvilla/Novasol iCal URL",
+  "icalOther": "Overige iCal URL",
+  "icalPasteUrl": "Plak hier de iCal URL",
+
+  "houseRules": "Huisregels",
+  "arrivalInstructions": "Aankomstinstructies",
+  "wifiNetwork": "WiFi netwerk",
+  "wifiPassword": "WiFi wachtwoord",
+  "alarmCode": "Alarmcode",
+  "checkInTime": "Check-in tijd",
+  "checkOutTime": "Check-out tijd",
+
+  "booking": "Boeking",
+  "addBooking": "Boeking toevoegen",
+  "editBooking": "Boeking bewerken",
+  "deleteBooking": "Boeking verwijderen",
+  "bookingDetails": "Boekingsdetails",
+  "newBooking": "Nieuwe boeking",
+
+  "selectAccommodation": "Selecteer accommodatie",
+  "selectGuest": "Selecteer gast",
+  "selectDates": "Selecteer datums",
+  "arrival": "Aankomst",
+  "departure": "Vertrek",
+
+  "status": "Status",
+  "statusInquiry": "Aanvraag",
+  "statusOption": "Optie",
+  "statusConfirmed": "Bevestigd",
+  "statusCancelled": "Geannuleerd",
+  "statusCompleted": "Afgerond",
+
+  "source": "Bron",
+  "sourceDirect": "Direct",
+  "sourceAirbnb": "Airbnb",
+  "sourceBooking": "Booking.com",
+  "sourceVrbo": "VRBO",
+  "sourceOther": "Anders",
+  "externalBooking": "Externe boeking",
+
+  "totalAmount": "Totaalbedrag",
+  "depositAmount": "Aanbetaling",
+  "remainingAmount": "Resterend",
+  "paid": "Betaald",
+  "unpaid": "Onbetaald",
+  "partiallyPaid": "Deels betaald",
+
+  "internalNotes": "Interne notities",
+  "guestNotes": "Notities voor gast",
+
+  "guest": "Gast",
+  "addGuest": "Gast toevoegen",
+  "editGuest": "Gast bewerken",
+  "guestDetails": "Gastgegevens",
+  "firstName": "Voornaam",
+  "lastName": "Achternaam",
+  "returningGuest": "Terugkerende gast",
+  "totalBookings": "Totaal boekingen",
+
+  "cleaningSchedule": "Schoonmaakplanning",
+  "cleaningRequired": "Schoonmaak nodig",
+  "cleaningDone": "Schoonmaak klaar",
+  "markAsCleaned": "Markeer als schoon",
+
+  "subscription": "Abonnement",
+  "currentSubscription": "Huidig abonnement",
+  "free": "Gratis",
+  "premium": "Premium",
+  "premiumMonthly": "Premium Maandelijks",
+  "premiumYearly": "Premium Jaarlijks",
+  "active": "Actief",
+  "expired": "Verlopen",
+  "trial": "Proefperiode",
+  "trialEnds": "Proef eindigt",
+  "validUntil": "Geldig tot",
+  "daysRemaining": "Dagen resterend",
+  "days": "dagen",
+
+  "upgradeTitle": "Meer mogelijkheden nodig?",
+  "upgradeToPremium": "Upgrade naar Premium",
+  "premiumBenefits": "Premium voordelen:",
+  "benefitUnlimitedAccommodations": "Onbeperkt accommodaties",
+  "benefitUnlimitedBookings": "Onbeperkt boekingen",
+  "benefitMultipleUsers": "Meerdere teamleden",
+  "benefitEmailCampaigns": "E-mailcampagnes",
+  "benefitPrioritySupport": "Prioriteit support",
+
+  "buyNow": "Koop nu",
+  "restorePurchases": "Aankopen herstellen",
+  "restoring": "Herstellen...",
+  "recommended": "Aanbevolen",
+  "save17percent": "Bespaar 17%",
+  "flexibleCancellation": "Flexibel opzegbaar",
+  "perMonth": "/maand",
+  "perYear": "/jaar",
+
+  "subscriptionActivated": "Abonnement geactiveerd!",
+  "subscriptionRestored": "Abonnement hersteld!",
+  "purchasePending": "Aankoop wordt verwerkt...",
+  "purchaseCancelled": "Aankoop geannuleerd",
+  "purchaseFailed": "Aankoop mislukt",
+  "verificationFailed": "Verificatie mislukt",
+  "storeNotAvailable": "App Store is niet beschikbaar",
+  "productNotFound": "Product niet gevonden",
+
+  "manageSubscription": "Abonnement beheren",
+  "appleSubscription": "Je hebt een Apple App Store abonnement.",
+  "manageInSettings": "Beheer je abonnement via de iOS Instellingen app onder \"Abonnementen\".",
+  "openSettings": "Open iOS Instellingen",
+
+  "usageAndLimits": "Gebruik & Limieten",
+  "accommodationsUsed": "Accommodaties",
+  "bookingsThisYear": "Boekingen dit jaar",
+  "teamMembers": "Teamleden",
+  "unlimited": "Onbeperkt",
+  "upgradeBanner": "Upgrade naar Premium voor onbeperkt gebruik!",
+
+  "included": "Inbegrepen:",
+  "guestPortal": "Gastenportaal",
+
+  "profile": "Profiel",
+  "editProfile": "Profiel bewerken",
+  "nameAndContact": "Naam, foto en contactgegevens",
+  "notifications": "Notificaties",
+  "pushNotifications": "Push meldingen en herinneringen",
+
+  "management": "Beheer",
+  "seasons": "Seizoenen",
+  "seasonsDescription": "Laag-, midden- en hoogseizoen periodes",
+  "team": "Team",
+  "teamDescription": "Teamleden beheren (Premium)",
+
+  "support": "Ondersteuning",
+  "helpAndSupport": "Help & Support",
+  "helpDescription": "FAQ, contact en tutorials",
+  "aboutApp": "Over VerhuurAgenda",
+  "aboutDescription": "Versie, verhaal en links",
+
+  "data": "Gegevens",
+  "exportData": "Gegevens exporteren",
+  "exportDescription": "Download al je data",
+  "deleteAccount": "Account verwijderen",
+  "deleteAccountDescription": "Verwijder je account permanent",
+
+  "exportDialog": "Gegevens exporteren",
+  "exportDialogContent": "We sturen je een e-mail met een downloadlink voor al je gegevens. Dit kan enkele minuten duren.",
+  "exportRequested": "Export aangevraagd. Check je e-mail.",
+  "exportFailed": "Kon export niet starten",
+
+  "deleteAccountTitle": "Account verwijderen",
+  "deleteAccountWarning": "Let op! Deze actie kan niet ongedaan worden gemaakt.",
+  "deleteAccountConsequences": "Als je je account verwijdert:\n• Worden al je boekingen verwijderd\n• Worden al je accommodaties verwijderd\n• Worden al je gastgegevens verwijderd\n• Wordt je abonnement beëindigd",
+  "confirmEmail": "Typ je e-mailadres ter bevestiging:",
+  "emailNotMatch": "E-mailadres komt niet overeen",
+  "permanentlyDelete": "Permanent verwijderen",
+  "accountDeleted": "Account succesvol verwijderd",
+  "deleteAccountFailed": "Kon account niet verwijderen. Neem contact op met support.",
+
+  "logoutConfirm": "Weet je zeker dat je wilt uitloggen?",
+
+  "cancel": "Annuleren",
+  "save": "Opslaan",
+  "delete": "Verwijderen",
+  "edit": "Bewerken",
+  "add": "Toevoegen",
+  "close": "Sluiten",
+  "confirm": "Bevestigen",
+  "yes": "Ja",
+  "no": "Nee",
+  "ok": "OK",
+  "done": "Klaar",
+  "next": "Volgende",
+  "back": "Terug",
+  "retry": "Opnieuw proberen",
+  "loading": "Laden...",
+  "saving": "Opslaan...",
+  "searching": "Zoeken...",
+  "noResults": "Geen resultaten",
+  "error": "Fout",
+  "success": "Gelukt",
+  "warning": "Waarschuwing",
+
+  "search": "Zoeken",
+  "filter": "Filter",
+  "sort": "Sorteren",
+  "refresh": "Vernieuwen",
+  "share": "Delen",
+  "copy": "Kopiëren",
+  "copied": "Gekopieerd",
+
+  "noAccommodations": "Nog geen accommodaties",
+  "addFirstAccommodation": "Voeg je eerste accommodatie toe",
+  "noBookings": "Nog geen boekingen",
+  "noUpcomingBookings": "Geen aankomende boekingen",
+  "noGuests": "Nog geen gasten",
+
+  "confirmDelete": "Weet je zeker dat je dit wilt verwijderen?",
+  "cannotBeUndone": "Deze actie kan niet ongedaan worden gemaakt.",
+
+  "occupancy": "Bezetting",
+  "revenue": "Omzet",
+  "averageStay": "Gem. verblijf",
+  "statistics": "Statistieken",
+
+  "january": "januari",
+  "february": "februari",
+  "march": "maart",
+  "april": "april",
+  "may": "mei",
+  "june": "juni",
+  "july": "juli",
+  "august": "augustus",
+  "september": "september",
+  "october": "oktober",
+  "november": "november",
+  "december": "december",
+
+  "monday": "maandag",
+  "tuesday": "dinsdag",
+  "wednesday": "woensdag",
+  "thursday": "donderdag",
+  "friday": "vrijdag",
+  "saturday": "zaterdag",
+  "sunday": "zondag",
+
+  "mon": "ma",
+  "tue": "di",
+  "wed": "wo",
+  "thu": "do",
+  "fri": "vr",
+  "sat": "za",
+  "sun": "zo",
+
+  "couldNotLoad": "Kon niet laden",
+  "somethingWentWrong": "Er ging iets mis",
+  "tryAgain": "Probeer opnieuw",
+  "noInternet": "Geen internetverbinding",
+  "checkConnection": "Controleer je internetverbinding en probeer opnieuw",
+
+  "terms": "Algemene voorwaarden",
+  "privacy": "Privacybeleid",
+
+  "forgotPasswordTitle": "Wachtwoord vergeten?",
+  "forgotPasswordDescription": "Geen probleem! Voer je e-mailadres in en we sturen je een link om je wachtwoord opnieuw in te stellen.",
+  "emailHint": "je@email.nl",
+  "checkInbox": "Check je inbox!",
+  "resetEmailDescription": "Als er een account bestaat met het e-mailadres {email}, dan heb je binnen enkele minuten een e-mail ontvangen met instructies om je wachtwoord opnieuw in te stellen.",
+  "@resetEmailDescription": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "tips": "Tips",
+  "tipCheckSpam": "Check ook je spam/ongewenste map",
+  "tipLinkValid": "De link is 60 minuten geldig",
+  "tipNoEmail": "Geen mail ontvangen? Probeer opnieuw",
+  "tryDifferentEmail": "Andere e-mail proberen",
+
+  "welcome": "Welkom",
+  "activeBookings": "Actieve boekingen",
+  "next7days": "komende 7 dagen",
+  "monthlyRevenue": "Omzet deze maand",
+  "upcomingCheckins": "Aankomende Check-ins",
+  "upcomingCheckouts": "Aankomende Check-outs",
+  "recentBookings": "Recente Boekingen",
+  "noCheckinsScheduled": "Geen check-ins gepland",
+  "noCheckoutsScheduled": "Geen check-outs gepland",
+  "unknown": "Onbekend",
+  "day": "dag",
+  "now": "NU",
+  "total": "Totaal",
+  "open": "open",
+  "call": "Bellen",
+  "sendEmail": "Email versturen",
+  "couldNotLoadDashboard": "Kon dashboard niet laden",
+  "noDataAvailable": "Geen data beschikbaar",
+  "currentGuestsStaying": "Huidige gasten die nu verblijven",
+  "checkInsNext7Days": "Check-ins in de komende 7 dagen",
+  "checkOutsNext7Days": "Check-outs in de komende 7 dagen",
+  "noItems": "Geen items",
+  "revenueThisMonth": "Omzet Deze Maand",
+  "basedOnPayments": "Gebaseerd op betalingen deze maand",
+  "totalRevenue": "Totale omzet",
+  "viewPlanAndLimits": "Bekijk je plan en limieten",
+
+  "home": "Home",
+  "maintenance": "Onderhoud",
+  "campaigns": "Campagnes",
+  "popular": "Populair",
+  "couldNotLoadSubscription": "Kon abonnementsgegevens niet laden",
+  "currentPlan": "Huidig abonnement",
+  "planPremium": "Premium",
+  "planPremiumTrial": "Premium Proef",
+  "planFree": "Gratis",
+  "trialPeriod": "Proefperiode",
+  "oneAccommodation": "1 accommodatie",
+  "tenBookingsPerYear": "10 boekingen per jaar",
+  "trialExpiresSoon": "Je proefperiode verloopt binnenkort. Upgrade naar Premium!",
+  "subscriptionExpiresSoon": "Je abonnement verloopt binnenkort. Verleng op tijd.",
+  "manageSubscriptionWeb": "Beheer je abonnement of bekijk je facturen op de website.",
+  "couldNotOpenWebsite": "Kon website niet openen",
+  "viewAllOptions": "Bekijk alle opties",
+  "storeAvailable": "Beschikbaar",
+  "storeNotAvailableShort": "Niet beschikbaar",
+  "productsLoaded": "producten geladen",
+  "checkCapability": "Controleer: In-App Purchase capability in Xcode, sandbox tester account, of draai op een echt device.",
+  "monthly": "Maandelijks",
+  "yearly": "Jaarlijks",
+  "discount17": "17% korting",
+  "volw": "volw.",
+  "kind": "kind.",
+
+  "language": "Taal",
+  "languageDescription": "Kies je voorkeurstaal",
+  "systemDefault": "Systeem standaard",
+  "dutch": "Nederlands",
+  "english": "Engels",
+  "languageChanged": "Taal gewijzigd",
+
+  "all": "Alle",
+  "newItem": "Nieuw",
+  "createAccommodation": "Accommodatie aanmaken",
+  "upcoming": "Aankomend",
+  "past": "Verleden",
+  "custom": "Aangepast",
+  "selectPeriod": "Selecteer periode",
+  "from": "Van",
+  "until": "Tot",
+  "apply": "Toepassen",
+  "inquiry": "Aanvraag",
+  "option": "Optie",
+  "confirmed": "Bevestigd",
+  "cancelled": "Geannuleerd",
+  "completed": "Afgerond",
+  "direct": "Direct",
+  "blocked": "Geblokkeerd",
+  "external": "Extern",
+  "thisWeekTab": "Deze week",
+  "allTab": "Alles",
+  "todayTab": "Vandaag",
+  "pending": "In afwachting",
+  "inProgress": "Bezig",
+  "high": "Hoog",
+  "medium": "Gemiddeld",
+  "low": "Laag",
+  "newPassword": "Nieuw wachtwoord",
+  "newPasswordOptional": "Nieuw wachtwoord (optioneel)",
+  "createTask": "Taak aanmaken",
+  "task": "Taak",
+  "priority": "Prioriteit",
+  "dueDate": "Vervaldatum",
+  "assignedTo": "Toegewezen aan",
+  "selectDate": "Selecteer datum",
+  "noTasksYet": "Nog geen taken",
+  "addFirstTask": "Voeg je eerste taak toe",
+  "deleteTask": "Taak verwijderen",
+  "deleteTaskConfirm": "Weet je zeker dat je deze taak wilt verwijderen?",
+  "markComplete": "Markeer als klaar",
+  "markIncomplete": "Markeer als niet klaar",
+  "addNote": "Notitie toevoegen",
+  "noteAdded": "Notitie toegevoegd",
+  "couldNotAddNote": "Kon notitie niet toevoegen",
+  "couldNotUpdateTask": "Kon taak niet bijwerken",
+  "couldNotDeleteTask": "Kon taak niet verwijderen",
+  "couldNotLoadTasks": "Kon taken niet laden",
+  "role": "Rol",
+  "admin": "Beheerder",
+  "member": "Lid",
+  "inviteTeamMember": "Teamlid uitnodigen",
+  "editTeamMember": "Teamlid bewerken",
+  "deleteTeamMember": "Teamlid verwijderen",
+  "deleteTeamMemberConfirm": "Weet je zeker dat je dit teamlid wilt verwijderen?",
+  "teamMemberAdded": "Teamlid toegevoegd",
+  "teamMemberUpdated": "Teamlid bijgewerkt",
+  "teamMemberDeleted": "Teamlid verwijderd",
+  "couldNotLoadTeam": "Kon team niet laden",
+  "couldNotSaveTeamMember": "Kon teamlid niet opslaan",
+  "noTeamMembersYet": "Nog geen teamleden",
+  "seasonName": "Seizoennaam",
+  "seasonType": "Seizoentype",
+  "startDate": "Startdatum",
+  "endDate": "Einddatum",
+  "addSeason": "Seizoen toevoegen",
+  "editSeason": "Seizoen bewerken",
+  "deleteSeason": "Seizoen verwijderen",
+  "deleteSeasonConfirm": "Weet je zeker dat je dit seizoen wilt verwijderen?",
+  "seasonAdded": "Seizoen toegevoegd",
+  "seasonUpdated": "Seizoen bijgewerkt",
+  "seasonDeleted": "Seizoen verwijderd",
+  "couldNotLoadSeasons": "Kon seizoenen niet laden",
+  "couldNotSaveSeason": "Kon seizoen niet opslaan",
+  "noSeasonsYet": "Nog geen seizoenen gedefinieerd",
+  "profileUpdated": "Profiel bijgewerkt",
+  "couldNotUpdateProfile": "Kon profiel niet bijwerken",
+  "notificationSettings": "Notificatie instellingen",
+  "emailNotifications": "E-mail notificaties",
+  "pushNotificationsLabel": "Push notificaties",
+  "bookingReminders": "Boekingsherinneringen",
+  "checkInReminders": "Check-in herinneringen",
+  "checkOutReminders": "Check-out herinneringen",
+  "cleaningReminders": "Schoonmaakherinneringen",
+  "paymentReminders": "Betalingsherinneringen",
+  "marketingEmails": "Marketing e-mails",
+  "settingsSaved": "Instellingen opgeslagen",
+  "couldNotSaveSettings": "Kon instellingen niet opslaan",
+  "help": "Help",
+  "faq": "Veelgestelde vragen",
+  "contactSupport": "Contact support",
+  "tutorials": "Tutorials",
+  "documentation": "Documentatie",
+  "about": "Over",
+  "version": "Versie",
+  "madeWithLove": "Met liefde gemaakt in Nederland",
+  "termsOfService": "Algemene voorwaarden",
+  "allRightsReserved": "Alle rechten voorbehouden",
+  "couldNotLaunchUrl": "Kon link niet openen",
+
+  "occupancyTitle": "Bezetting",
+  "accommodationsCountText": "{count} accommodaties",
+  "@accommodationsCountText": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "occupied": "Bezet",
+  "availableStatus": "Vrij",
+  "daysViewText": "{count} dagen weergave",
+  "@daysViewText": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "tapForToday": "Tik voor vandaag",
+  "noAccommodationsShort": "Geen accommodaties",
+  "addPayment": "Betaling toevoegen",
+  "amount": "Bedrag",
+  "paymentMethod": "Betaalmethode",
+  "bankTransfer": "Bankoverschrijving",
+  "cash": "Contant",
+  "ideal": "iDEAL",
+  "creditCard": "Creditcard",
+  "enterValidAmount": "Voer een geldig bedrag in",
+  "paymentAdded": "Betaling toegevoegd",
+  "couldNotAddPayment": "Kon betaling niet toevoegen",
+  "viewFullBooking": "Bekijk volledige boeking",
+  "payment": "Betaling",
+  "guestsSection": "Gasten",
+  "adultsCount": "{count} volwassenen",
+  "@adultsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "childrenCount": "{count} kinderen",
+  "@childrenCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "babiesCount": "{count} baby's",
+  "@babiesCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "pet": "Huisdier",
+  "nightsCount": "{count} nachten",
+  "@nightsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "stillToPay": "Nog te betalen",
+  "notes": "Notities",
+  "noCleaningTasks": "Geen schoonmaaktaken",
+  "urgent": "Spoed",
+  "ready": "Klaar",
+  "toDo": "Te doen",
+  "finishedSection": "Afgerond",
+  "forToday": "voor vandaag",
+  "cleaningWindow": "Schoonmaakvenster",
+  "sameDay": "Zelfde dag!",
+  "flexible": "Flexibel",
+  "finishCleaning": "Schoonmaak afronden",
+  "undo": "Ongedaan maken",
+  "details": "Details",
+  "anythingToReport": "Iets te melden?",
+  "extraDirty": "Extra vies",
+  "damage": "Schade",
+  "missingItem": "Ontbrekend",
+  "repairNeeded": "Reparatie nodig",
+  "notesOptional": "Notities (optioneel)",
+  "extraCommentsPlaceholder": "Extra opmerkingen over de schoonmaak...",
+  "processing": "Bezig...",
+  "cleanedSuccess": "{name} schoongemaakt!",
+  "@cleanedSuccess": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "undoCleaningTitle": "Schoonmaak ongedaan maken?",
+  "undoCleaningMessage": "Weet je zeker dat je de schoonmaak van {name} wilt resetten?",
+  "@undoCleaningMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "yesReset": "Ja, reset",
+  "cleaningStatusReset": "Schoonmaakstatus gereset",
+  "cleaningCompletedAt": "Schoonmaak afgerond",
+  "completedAt": "Afgerond: {time}",
+  "@completedAt": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "reportedIssues": "Gemelde problemen",
+  "cleaningCompletedWithoutIssues": "Schoonmaak zonder bijzonderheden afgerond",
+  "reports": "Meldingen",
+  "viewDetails": "Bekijk details",
+  "couldNotLoadCleaning": "Kon schoonmaakschema niet laden",
+  "guestLabel": "Gast: {name}",
+  "@guestLabel": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "retryButton": "Opnieuw proberen",
+  "retryShort": "Opnieuw",
+
+  "couldNotLoadAccommodations": "Kon accommodaties niet laden",
+  "couldNotLoadAccommodation": "Kon accommodatie niet laden",
+  "noAccommodationsFound": "Geen accommodaties gevonden",
+  "bedroomsShort": "slpk",
+  "bathroomsShort": "badk",
+  "inactive": "Inactief",
+  "published": "Gepubliceerd",
+  "draft": "Concept",
+  "midSeasonShort": "Midden",
+  "newAccommodation": "Nieuwe accommodatie",
+  "generalInfo": "Algemene informatie",
+  "nameRequired": "Naam *",
+  "accommodationNameExample": "Bijv. Strandhuisje De Meeuwen",
+  "nameIsRequired": "Naam is verplicht",
+  "type": "Type",
+  "maxGuestsRequired": "Max gasten *",
+  "required": "Verplicht",
+  "color": "Kleur",
+  "accommodationAvailableForBookings": "Accommodatie is beschikbaar voor boekingen",
+  "pricesPerWeek": "Prijzen (per week)",
+  "location": "Locatie",
+  "checkInCheckOut": "Check-in & Check-out",
+  "checkInFrom": "Check-in vanaf",
+  "checkInUntil": "Check-in tot",
+  "wifiAndAccess": "WiFi & Toegang",
+  "alarmCodeKeybox": "Alarmcode / sleutelkluiscode",
+  "calendarSync": "Kalender synchronisatie",
+  "vrboHelperText": "Groot in VS, groeiend in EU",
+  "googleHelperText": "Gratis exposure, directe boekingen",
+  "holiduHelperText": "Populair in Duitsland & Nederland",
+  "belvillaHelperText": "Europese markt",
+  "otherIcalUrl": "Andere iCal URL",
+  "otherIcalHelperText": "Voor andere platforms of handmatige import",
+  "exportUrlLabel": "Export URL",
+  "houseRulesAndInstructions": "Huisregels & Instructies",
+  "accommodationUpdated": "Accommodatie bijgewerkt",
+  "accommodationCreated": "Accommodatie aangemaakt",
+  "deleteAccommodationConfirm": "Accommodatie verwijderen?",
+  "deleteAccommodationMessage": "Weet je zeker dat je \"{name}\" wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
+  "@deleteAccommodationMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "accommodationDeleted": "Accommodatie verwijderd",
+  "deleteError": "Fout bij verwijderen",
+  "nGuestsCount": "{count} gasten",
+  "@nGuestsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nBedroomsShort": "{count} slpk",
+  "@nBedroomsShort": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nBathroomsShort": "{count} badk",
+  "@nBathroomsShort": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "houseLabel": "Woning",
+  "cabinLabel": "Huisje",
+
+  "newSeason": "Nieuw seizoen",
+  "couldNotLoadSeasonsError": "Kon seizoenen niet laden: {error}",
+  "@couldNotLoadSeasonsError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "noSeasonsForYear": "Geen seizoenen voor {year}",
+  "@noSeasonsForYear": {
+    "placeholders": {
+      "year": {"type": "int"}
+    }
+  },
+  "addSeasonsHint": "Voeg seizoenen toe om verschillende prijzen per periode te gebruiken",
+  "deleteSeasonTitle": "Seizoen verwijderen",
+  "deleteSeasonConfirmMessage": "Weet je zeker dat je \"{name}\" wilt verwijderen?",
+  "@deleteSeasonConfirmMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "couldNotDeleteError": "Kon niet verwijderen: {error}",
+  "@couldNotDeleteError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "yearLabel": "Jaar",
+  "seasonTypeLabel": "Seizoenstype",
+  "period": "Periode",
+  "nameHint": "bijv. Kerstvakantie, Zomervakantie",
+  "enterNameValidation": "Vul een naam in",
+  "selectStartAndEndDate": "Selecteer start- en einddatum",
+  "couldNotSaveError": "Kon niet opslaan: {error}",
+  "@couldNotSaveError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "daysCount": "{count} dagen",
+  "@daysCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "howDoSeasonsWork": "Hoe werken seizoenen?",
+  "seasonsExplanation": "Seizoenen bepalen welke prijs wordt gebruikt voor boekingen. Stel per accommodatie de prijzen in voor laag-, midden- en hoogseizoen.",
+  "lowSeasonDescription": "Laagseizoen: rustige periodes met lagere prijzen",
+  "midSeasonDescription": "Middenseizoen: gemiddelde prijzen",
+  "highSeasonDescription": "Hoogseizoen: drukke periodes met hogere prijzen",
+
+  "phoneNumber": "Telefoonnummer",
+  "changePhoto": "Foto wijzigen",
+  "photoUploadComingSoon": "Foto upload komt binnenkort",
+  "personalDetails": "Persoonlijke gegevens",
+  "companyDetails": "Bedrijfsgegevens",
+  "websiteLabel": "Website",
+  "websiteHint": "https://jouwwebsite.nl",
+  "streetAndNumber": "Straat en huisnummer",
+  "postalCode": "Postcode",
+  "changePassword": "Wachtwoord wijzigen",
+  "chooseNewPassword": "Kies een nieuw wachtwoord",
+  "currentPassword": "Huidig wachtwoord",
+  "confirmNewPassword": "Bevestig nieuw wachtwoord",
+  "minimumCharacters": "Minimaal 8 karakters",
+  "passwordChanged": "Wachtwoord gewijzigd",
+  "couldNotChangePassword": "Kon wachtwoord niet wijzigen. Check je huidige wachtwoord.",
+  "change": "Wijzigen",
+  "couldNotSaveProfile": "Kon profiel niet opslaan. Probeer het opnieuw.",
+  "enterYourName": "Voer je naam in",
+  "enterYourEmail": "Voer je e-mailadres in",
+  "enterValidEmailAddress": "Voer een geldig e-mailadres in",
+
+  "notificationsTitle": "Notificaties",
+  "preferencesSaved": "Voorkeuren opgeslagen",
+  "couldNotSavePreferences": "Kon voorkeuren niet opslaan",
+  "bookingsSection": "Boekingen",
+  "newBookingNotification": "Nieuwe boeking",
+  "newBookingNotificationSubtitle": "Ontvang een melding bij nieuwe boekingen",
+  "cancellationNotification": "Annulering",
+  "cancellationNotificationSubtitle": "Melding wanneer een boeking wordt geannuleerd",
+  "paymentReceivedNotification": "Betaling ontvangen",
+  "paymentReceivedNotificationSubtitle": "Melding bij ontvangst van betalingen",
+  "remindersSection": "Herinneringen",
+  "checkInReminderNotification": "Check-in herinnering",
+  "checkInReminderNotificationSubtitle": "Herinnering 1 dag voor check-in van gasten",
+  "checkOutReminderNotification": "Check-out herinnering",
+  "checkOutReminderNotificationSubtitle": "Herinnering op de dag van check-out",
+  "cleaningReminderNotification": "Schoonmaak herinnering",
+  "cleaningReminderNotificationSubtitle": "Herinnering voor schoonmaaktaken",
+  "otherSection": "Overig",
+  "maintenanceUpdatesNotification": "Onderhoud updates",
+  "maintenanceUpdatesNotificationSubtitle": "Meldingen over onderhoudstaken",
+  "newsletterAndTipsNotification": "Nieuwsbrief & tips",
+  "newsletterAndTipsNotificationSubtitle": "Ontvang tips en updates over VerhuurAgenda",
+  "pushNotificationsInfo": "Push notificaties worden verstuurd naar dit apparaat. Zorg dat notificaties zijn ingeschakeld in je telefooninstellingen.",
+
+  "teamTitle": "Team",
+  "newTeamMember": "Nieuw lid",
+  "deleteTeamMemberTitle": "Teamlid verwijderen",
+  "confirmDeleteTeamMember": "Weet je zeker dat je \"{name}\" wilt verwijderen uit je team?",
+  "@confirmDeleteTeamMember": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "couldNotLoadTeamMembersError": "Kon teamleden niet laden: {error}",
+  "@couldNotLoadTeamMembersError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "premiumFeature": "Premium functie",
+  "teamManagementPremium": "Teambeheer is alleen beschikbaar met een Premium abonnement. Upgrade om teamleden toe te voegen en samen te werken.",
+  "viewPremium": "Bekijk Premium",
+  "noTeamMembers": "Nog geen teamleden",
+  "addTeamMembersToCollaborate": "Voeg teamleden toe om samen te werken",
+
+  "editTeamMemberTitle": "Teamlid bewerken",
+  "newTeamMemberTitle": "Nieuw teamlid",
+  "selectRoleError": "Selecteer een rol",
+  "teamMemberSaved": "Teamlid bijgewerkt",
+  "teamMemberCreated": "Teamlid toegevoegd",
+  "emailInUse": "Dit e-mailadres is al in gebruik",
+  "couldNotSave": "Kon niet opslaan",
+  "enterNameField": "Vul een naam in",
+  "emailAddressLabel": "E-mailadres",
+  "enterEmailField": "Vul een e-mailadres in",
+  "enterValidEmailField": "Vul een geldig e-mailadres in",
+  "enterPasswordField": "Vul een wachtwoord in",
+  "passwordMinChars": "Wachtwoord moet minimaal 8 tekens bevatten",
+  "roleLabel": "Rol",
+  "aboutTeamRoles": "Over teamrollen",
+  "teamRolesInfo": "Teamleden krijgen toegang tot je VerhuurAgenda op basis van hun rol. Ze loggen in met hun eigen e-mailadres en wachtwoord.",
+  "activeToggle": "Actief",
+  "inactiveMembersCannotLogin": "Inactieve leden kunnen niet inloggen",
+
+  "maintenanceTitle": "Onderhoud",
+  "newTask": "Nieuwe taak",
+  "filterOpen": "Open",
+  "filterCompleted": "Afgerond",
+  "priorityUrgentEmoji": "Spoed",
+  "priorityHighEmoji": "Hoog",
+  "priorityMediumEmoji": "Gemiddeld",
+  "priorityLowEmoji": "Laag",
+  "couldNotLoadTasksError": "Kon taken niet laden",
+  "noOpenTasks": "Geen openstaande taken",
+  "noTasksFound": "Geen taken gevonden",
+  "tapToAddTask": "Tik op + om een nieuwe taak toe te voegen",
+  "completedOnDate": "Afgerond {date}",
+  "@completedOnDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "overdueDate": "Verlopen: {date}",
+  "@overdueDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "deadlineDate": "Deadline: {date}",
+  "@deadlineDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "statusChangedTo": "Status gewijzigd naar {status}",
+  "@statusChangedTo": {
+    "placeholders": {
+      "status": {"type": "String"}
+    }
+  },
+  "couldNotChangeStatus": "Kon status niet wijzigen",
+  "statusOpen": "Open",
+  "statusInProgress": "Bezig",
+  "statusWaiting": "Wachtend",
+  "statusCompletedValue": "Afgerond",
+  "statusCancelledValue": "Geannuleerd",
+  "deleteTaskTitle": "Taak verwijderen?",
+  "confirmDeleteTaskMessage": "Weet je zeker dat je \"{title}\" wilt verwijderen?",
+  "@confirmDeleteTaskMessage": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "taskDeletedSuccess": "Taak verwijderd",
+  "couldNotDeleteTaskError": "Kon taak niet verwijderen",
+  "descriptionLabel": "Beschrijving",
+  "deadlineLabel": "Deadline",
+  "completedDateLabel": "Afgerond",
+  "completedByPerson": "{date} door {person}",
+  "@completedByPerson": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "person": {"type": "String"}
+    }
+  },
+  "photosLabel": "Foto's",
+  "notesLabel": "Notities",
+  "startAction": "Start",
+  "completeAction": "Afronden",
+  "deleteTaskAction": "Taak verwijderen",
+  "overdueLabel": "Verlopen",
+
+  "editTaskTitle": "Taak bewerken",
+  "newMaintenanceTask": "Nieuwe onderhoudstaak",
+  "titleLabel": "Titel",
+  "titleHint": "Bijv. Lekkende kraan badkamer",
+  "enterTitleError": "Voer een titel in",
+  "accommodationLabel": "Accommodatie",
+  "selectAccommodationOptional": "Selecteer accommodatie (optioneel)",
+  "noSpecificAccommodation": "Geen specifieke accommodatie",
+  "descriptionHint": "Beschrijf het probleem of de taak...",
+  "priorityLabel": "Prioriteit",
+  "categoryLabel": "Categorie",
+  "categoryRepair": "Reparatie",
+  "categoryMaintenance": "Onderhoud",
+  "categoryCleaning": "Schoonmaak",
+  "categoryInventory": "Inventaris",
+  "categoryInspection": "Inspectie",
+  "categoryOther": "Overig",
+  "deadlineFieldLabel": "Deadline",
+  "noDeadline": "Geen deadline",
+  "cameraButton": "Camera",
+  "galleryButton": "Galerij",
+  "uploadingPhotos": "Foto's uploaden...",
+  "notesHint": "Extra opmerkingen...",
+  "taskUpdatedSuccess": "Taak bijgewerkt",
+  "taskCreatedSuccess": "Taak aangemaakt",
+  "couldNotLoadPhotoError": "Kon foto niet laden: {error}",
+  "@couldNotLoadPhotoError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "readyButton": "Gereed",
+  "errorWithMessage": "Fout: {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+
+  "campaignsTitle": "Campagnes",
+  "campaignStatusDraft": "Concept",
+  "campaignStatusScheduled": "Gepland",
+  "campaignStatusSending": "Verzenden...",
+  "campaignStatusSent": "Verzonden",
+  "campaignStatusPaused": "Gepauzeerd",
+  "campaignStatusCancelled": "Geannuleerd",
+  "couldNotLoadCampaigns": "Kon campagnes niet laden",
+  "campaignsInfoBanner": "Campagnes aanmaken en bewerken doe je via de website. Hier kun je de statistieken bekijken.",
+  "allFilter": "Alle",
+  "sentFilter": "Verzonden",
+  "scheduledFilter": "Gepland",
+  "draftsFilter": "Concepten",
+  "noCampaignsFound": "Geen campagnes gevonden",
+  "noCampaignsDescription": "Maak je eerste campagne aan via de website om je gasten te bereiken.",
+  "sentOnDate": "Verzonden op {date}",
+  "@sentOnDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "scheduledForDate": "Gepland voor {date}",
+  "@scheduledForDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "recipientsCount": "{count} ontvangers",
+  "@recipientsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "contactsCount": "{count} contacten",
+  "@contactsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "opened": "Geopend",
+  "clicked": "Geklikt",
+  "unsubscribedLabel": "Afgemeld",
+  "subject": "Onderwerp",
+  "emailsBouncedCount": "{count} emails zijn niet afgeleverd (bounced)",
+  "@emailsBouncedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "openWebsiteToEdit": "Open de website om deze campagne te bewerken",
+  "viewOnWebsite": "Bekijken op website",
+
+  "splashLoading": "Laden...",
+
+  "helpTitle": "Help & Support",
+  "helpSearchPlaceholder": "Zoeken in veelgestelde vragen...",
+  "faqTitle": "Veelgestelde vragen",
+  "contactSupportTitle": "Contact opnemen",
+  "contactSupportDescription": "Heb je een vraag die hier niet beantwoord wordt? Neem contact met ons op.",
+  "sendEmailButton": "Stuur een e-mail",
+  "callUsButton": "Bel ons",
+  "officeHours": "Bereikbaar op werkdagen van 9:00 - 17:00",
+
+  "aboutTitle": "Over VerhuurAgenda",
+  "aboutDescription": "VerhuurAgenda is de slimme app voor vakantieverhuur beheer. Beheer je boekingen, gasten en accommodaties eenvoudig vanaf je telefoon.",
+  "versionLabel": "Versie",
+  "developerLabel": "Ontwikkelaar",
+  "developerName": "VerhuurAgenda B.V.",
+  "websiteLabel": "Website",
+  "contactLabel": "Contact",
+  "followUs": "Volg ons",
+  "rateApp": "Beoordeel de app",
+  "rateAppDescription": "Vind je VerhuurAgenda handig? Laat een beoordeling achter!",
+  "shareApp": "Deel de app",
+  "shareAppMessage": "Bekijk VerhuurAgenda - de slimme app voor vakantieverhuur beheer!",
+  "legalSection": "Juridisch",
+  "acknowledgements": "Met dank aan",
+  "acknowledgementsDescription": "Deze app is gebouwd met Flutter en maakt gebruik van diverse open source packages.",
+  "allRightsReservedFull": "© {year} VerhuurAgenda. Alle rechten voorbehouden.",
+  "@allRightsReservedFull": {
+    "placeholders": {
+      "year": {"type": "int"}
+    }
+  },
+
+  "privacyTitle": "Privacybeleid",
+  "privacyLastUpdated": "Laatst bijgewerkt: {date}",
+  "@privacyLastUpdated": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "privacyIntro": "Bij VerhuurAgenda nemen we je privacy serieus. Dit beleid beschrijft hoe we je gegevens verzamelen, gebruiken en beschermen.",
+  "privacySection1Title": "Welke gegevens verzamelen we?",
+  "privacySection1Content": "We verzamelen gegevens die je zelf invoert, zoals je naam, e-mailadres, accommodatiegegevens en boekingsinformatie. Ook verzamelen we automatisch bepaalde technische gegevens zoals apparaattype en app-gebruik.",
+  "privacySection2Title": "Hoe gebruiken we je gegevens?",
+  "privacySection2Content": "Je gegevens worden gebruikt om de app te laten functioneren, je boekingen te beheren, en om de service te verbeteren. We delen je gegevens nooit met derden voor marketingdoeleinden.",
+  "privacySection3Title": "Hoe beschermen we je gegevens?",
+  "privacySection3Content": "We gebruiken industriestandaard beveiligingsmaatregelen om je gegevens te beschermen, waaronder versleuteling en beveiligde servers.",
+  "privacySection4Title": "Je rechten",
+  "privacySection4Content": "Je hebt het recht om je gegevens in te zien, te corrigeren of te verwijderen. Neem contact met ons op als je hier gebruik van wilt maken.",
+  "privacyContactUs": "Vragen over privacy? Neem contact op via privacy@verhuuragenda.nl",
+
+  "termsTitle": "Algemene Voorwaarden",
+  "termsLastUpdated": "Laatst bijgewerkt: {date}",
+  "@termsLastUpdated": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "termsIntro": "Door gebruik te maken van VerhuurAgenda ga je akkoord met deze voorwaarden.",
+  "termsSection1Title": "Gebruik van de dienst",
+  "termsSection1Content": "VerhuurAgenda is bedoeld voor het beheren van vakantieverhuur. Je bent zelf verantwoordelijk voor de juistheid van de gegevens die je invoert.",
+  "termsSection2Title": "Account en beveiliging",
+  "termsSection2Content": "Je bent verantwoordelijk voor het geheimhouden van je inloggegevens. Meld verdachte activiteiten direct bij ons.",
+  "termsSection3Title": "Abonnementen en betalingen",
+  "termsSection3Content": "Premium functies zijn beschikbaar via een betaald abonnement. Abonnementen worden automatisch verlengd tenzij je opzegt.",
+  "termsSection4Title": "Aansprakelijkheid",
+  "termsSection4Content": "VerhuurAgenda is niet aansprakelijk voor schade die voortvloeit uit het gebruik van de app. We doen ons best om de service beschikbaar en betrouwbaar te houden.",
+  "termsSection5Title": "Wijzigingen",
+  "termsSection5Content": "We kunnen deze voorwaarden van tijd tot tijd aanpassen. Bij belangrijke wijzigingen informeren we je via e-mail of in de app.",
+  "termsContactUs": "Vragen? Neem contact op via info@verhuuragenda.nl",
+
+  "statisticsTitle": "Statistieken",
+  "statisticsOverview": "Overzicht",
+  "statisticsPeriod": "Periode",
+  "statisticsThisMonth": "Deze maand",
+  "statisticsThisYear": "Dit jaar",
+  "statisticsAllTime": "Alle tijd",
+  "statisticsCustomPeriod": "Aangepaste periode",
+  "statisticsTotalBookings": "Totaal boekingen",
+  "statisticsConfirmedBookings": "Bevestigde boekingen",
+  "statisticsCancelledBookings": "Geannuleerde boekingen",
+  "statisticsOccupancyRate": "Bezettingsgraad",
+  "statisticsAverageStayDuration": "Gem. verblijfsduur",
+  "statisticsAverageBookingValue": "Gem. boekingswaarde",
+  "statisticsRevenueByMonth": "Omzet per maand",
+  "statisticsBookingsBySource": "Boekingen per bron",
+  "statisticsTopAccommodations": "Top accommodaties",
+  "statisticsNoData": "Geen data beschikbaar voor deze periode",
+  "statisticsExport": "Exporteren",
+
+  "helpHowCanWeHelp": "Hoe kunnen we je helpen?",
+  "helpTeamAvailable": "Ons team staat voor je klaar op werkdagen\nvan 9:00 tot 17:00 uur",
+  "helpContactUs": "Neem contact op",
+  "helpEmailTitle": "E-mail",
+  "helpEmailResponse": "We reageren binnen 24 uur",
+  "helpPhoneTitle": "Telefoon",
+  "helpPhoneHours": "Ma-Vr 9:00 - 17:00",
+  "helpWhatsAppTitle": "WhatsApp",
+  "helpWhatsAppSubtitle": "Chat met ons",
+  "helpWhatsAppResponse": "Snelle reactie op werkdagen",
+  "helpFaqTitle": "Veelgestelde vragen",
+  "helpFaq1Question": "Hoe voeg ik een nieuwe accommodatie toe?",
+  "helpFaq1Answer": "Ga naar Accommodaties in het menu en tik op de + knop. Vul de gegevens in en voeg foto's toe. Je kunt later altijd wijzigingen maken.",
+  "helpFaq2Question": "Hoe synchroniseer ik met Airbnb of Booking.com?",
+  "helpFaq2Answer": "Ga naar je accommodatie instellingen en voeg de iCal URL toe van je externe platform. VerhuurAgenda haalt automatisch de boekingen op.",
+  "helpFaq3Question": "Hoe werkt het gastenportaal?",
+  "helpFaq3Answer": "Bij elke boeking wordt automatisch een unieke link gegenereerd. Deel deze met je gasten zodat ze kunnen inchecken en alle informatie kunnen bekijken.",
+  "helpFaq4Question": "Kan ik meerdere gebruikers toevoegen?",
+  "helpFaq4Answer": "Ja, afhankelijk van je abonnement kun je teamleden uitnodigen. Ga naar Instellingen > Abonnement om je limieten te bekijken.",
+  "helpFaq5Question": "Hoe kan ik mijn abonnement verlengen?",
+  "helpFaq5Answer": "Ga naar Instellingen > Abonnement en tik op \"Naar betaling op website\". Je wordt doorgestuurd naar onze beveiligde betaalpagina.",
+  "helpFeedbackTitle": "Heb je een idee of suggestie?",
+  "helpFeedbackDescription": "We horen graag je feedback! Stuur ons een bericht met je idee en wie weet zit het in de volgende update.",
+  "helpFeedbackButton": "Feedback versturen",
+  "helpCopied": "{text} gekopieerd",
+  "@helpCopied": {
+    "placeholders": {
+      "text": {"type": "String"}
+    }
+  }
+}

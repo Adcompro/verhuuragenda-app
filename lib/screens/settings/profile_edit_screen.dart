@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
@@ -104,17 +105,19 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
       await ref.read(authStateProvider.notifier).refreshUser();
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profiel bijgewerkt'),
+          SnackBar(
+            content: Text(l10n.profileUpdated),
             backgroundColor: Colors.green,
           ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
-        _error = 'Kon profiel niet opslaan. Probeer het opnieuw.';
+        _error = l10n.couldNotSaveProfile;
         _isLoading = false;
       });
     }
@@ -135,9 +138,10 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profiel bewerken'),
+        title: Text(l10n.editProfile),
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _handleSave,
@@ -147,7 +151,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Opslaan'),
+                : Text(l10n.save),
           ),
         ],
       ),
@@ -214,10 +218,10 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                           TextButton(
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Foto upload komt binnenkort')),
+                                SnackBar(content: Text(l10n.photoUploadComingSoon)),
                               );
                             },
-                            child: const Text('Foto wijzigen'),
+                            child: Text(l10n.changePhoto),
                           ),
                         ],
                       ),
@@ -249,18 +253,18 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                       ),
 
                     // Personal info section
-                    _buildSectionTitle('Persoonlijke gegevens'),
+                    _buildSectionTitle(l10n.personalDetails),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Volledige naam',
-                        prefixIcon: Icon(Icons.person_outlined),
+                      decoration: InputDecoration(
+                        labelText: l10n.fullName,
+                        prefixIcon: const Icon(Icons.person_outlined),
                       ),
                       textCapitalization: TextCapitalization.words,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Voer je naam in';
+                          return l10n.enterYourName;
                         }
                         return null;
                       },
@@ -268,17 +272,17 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'E-mailadres',
-                        prefixIcon: Icon(Icons.email_outlined),
+                      decoration: InputDecoration(
+                        labelText: l10n.email,
+                        prefixIcon: const Icon(Icons.email_outlined),
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Voer je e-mailadres in';
+                          return l10n.enterYourEmail;
                         }
                         if (!value.contains('@')) {
-                          return 'Voer een geldig e-mailadres in';
+                          return l10n.enterValidEmailAddress;
                         }
                         return null;
                       },
@@ -286,9 +290,9 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _phoneController,
-                      decoration: const InputDecoration(
-                        labelText: 'Telefoonnummer',
-                        prefixIcon: Icon(Icons.phone_outlined),
+                      decoration: InputDecoration(
+                        labelText: l10n.phoneNumber,
+                        prefixIcon: const Icon(Icons.phone_outlined),
                         hintText: '+31 6 12345678',
                       ),
                       keyboardType: TextInputType.phone,
@@ -296,35 +300,35 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     const SizedBox(height: 32),
 
                     // Company info section
-                    _buildSectionTitle('Bedrijfsgegevens'),
+                    _buildSectionTitle(l10n.companyDetails),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _companyController,
-                      decoration: const InputDecoration(
-                        labelText: 'Bedrijfsnaam',
-                        prefixIcon: Icon(Icons.business_outlined),
+                      decoration: InputDecoration(
+                        labelText: l10n.companyName,
+                        prefixIcon: const Icon(Icons.business_outlined),
                       ),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _websiteController,
-                      decoration: const InputDecoration(
-                        labelText: 'Website',
-                        prefixIcon: Icon(Icons.language_outlined),
-                        hintText: 'https://jouwwebsite.nl',
+                      decoration: InputDecoration(
+                        labelText: l10n.websiteLabel,
+                        prefixIcon: const Icon(Icons.language_outlined),
+                        hintText: l10n.websiteHint,
                       ),
                       keyboardType: TextInputType.url,
                     ),
                     const SizedBox(height: 32),
 
                     // Address section
-                    _buildSectionTitle('Adres'),
+                    _buildSectionTitle(l10n.address),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _addressController,
-                      decoration: const InputDecoration(
-                        labelText: 'Straat en huisnummer',
-                        prefixIcon: Icon(Icons.home_outlined),
+                      decoration: InputDecoration(
+                        labelText: l10n.streetAndNumber,
+                        prefixIcon: const Icon(Icons.home_outlined),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -334,8 +338,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                           flex: 2,
                           child: TextFormField(
                             controller: _postalCodeController,
-                            decoration: const InputDecoration(
-                              labelText: 'Postcode',
+                            decoration: InputDecoration(
+                              labelText: l10n.postalCode,
                             ),
                           ),
                         ),
@@ -344,8 +348,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                           flex: 3,
                           child: TextFormField(
                             controller: _cityController,
-                            decoration: const InputDecoration(
-                              labelText: 'Plaats',
+                            decoration: InputDecoration(
+                              labelText: l10n.city,
                             ),
                           ),
                         ),
@@ -354,7 +358,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     const SizedBox(height: 32),
 
                     // Password change section
-                    _buildSectionTitle('Wachtwoord'),
+                    _buildSectionTitle(l10n.password),
                     const SizedBox(height: 12),
                     Card(
                       child: ListTile(
@@ -366,8 +370,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                           ),
                           child: const Icon(Icons.lock_outline, color: Colors.orange),
                         ),
-                        title: const Text('Wachtwoord wijzigen'),
-                        subtitle: const Text('Kies een nieuw wachtwoord'),
+                        title: Text(l10n.changePassword),
+                        subtitle: Text(l10n.chooseNewPassword),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => _showChangePasswordDialog(),
                       ),
@@ -391,6 +395,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
   }
 
   void _showChangePasswordDialog() {
+    final l10n = AppLocalizations.of(context)!;
     final currentPasswordController = TextEditingController();
     final newPasswordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
@@ -403,7 +408,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('Wachtwoord wijzigen'),
+          title: Text(l10n.changePassword),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -412,7 +417,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                   controller: currentPasswordController,
                   obscureText: obscureCurrent,
                   decoration: InputDecoration(
-                    labelText: 'Huidig wachtwoord',
+                    labelText: l10n.currentPassword,
                     suffixIcon: IconButton(
                       icon: Icon(obscureCurrent
                           ? Icons.visibility_outlined
@@ -426,8 +431,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                   controller: newPasswordController,
                   obscureText: obscureNew,
                   decoration: InputDecoration(
-                    labelText: 'Nieuw wachtwoord',
-                    helperText: 'Minimaal 8 karakters',
+                    labelText: l10n.newPassword,
+                    helperText: l10n.minimumCharacters,
                     suffixIcon: IconButton(
                       icon: Icon(obscureNew
                           ? Icons.visibility_outlined
@@ -441,7 +446,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                   controller: confirmPasswordController,
                   obscureText: obscureConfirm,
                   decoration: InputDecoration(
-                    labelText: 'Bevestig nieuw wachtwoord',
+                    labelText: l10n.confirmNewPassword,
                     suffixIcon: IconButton(
                       icon: Icon(obscureConfirm
                           ? Icons.visibility_outlined
@@ -456,7 +461,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
           actions: [
             TextButton(
               onPressed: isLoading ? null : () => Navigator.pop(context),
-              child: const Text('Annuleren'),
+              child: Text(l10n.cancel),
             ),
             ElevatedButton(
               onPressed: isLoading
@@ -464,8 +469,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                   : () async {
                       if (newPasswordController.text.length < 8) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Wachtwoord moet minimaal 8 karakters zijn'),
+                          SnackBar(
+                            content: Text(l10n.passwordMinLength),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -473,8 +478,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                       }
                       if (newPasswordController.text != confirmPasswordController.text) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Wachtwoorden komen niet overeen'),
+                          SnackBar(
+                            content: Text(l10n.passwordsNotMatch),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -496,8 +501,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                         if (context.mounted) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Wachtwoord gewijzigd'),
+                            SnackBar(
+                              content: Text(l10n.passwordChanged),
                               backgroundColor: Colors.green,
                             ),
                           );
@@ -505,8 +510,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                       } catch (e) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Kon wachtwoord niet wijzigen. Check je huidige wachtwoord.'),
+                            SnackBar(
+                              content: Text(l10n.couldNotChangePassword),
                               backgroundColor: Colors.red,
                             ),
                           );
@@ -520,7 +525,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Wijzigen'),
+                  : Text(l10n.change),
             ),
           ],
         ),

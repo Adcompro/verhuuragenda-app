@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 
@@ -79,6 +80,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authStateProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: SafeArea(
@@ -107,16 +109,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
 
-                const Text(
-                  'VerhuurAgenda',
-                  style: TextStyle(
+                Text(
+                  l10n.appName,
+                  style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Log in om je verhuur te beheren',
+                  l10n.loginTitle,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey[600],
@@ -154,16 +156,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    labelText: 'E-mailadres',
-                    prefixIcon: Icon(Icons.email_outlined),
+                  decoration: InputDecoration(
+                    labelText: l10n.email,
+                    prefixIcon: const Icon(Icons.email_outlined),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Voer je e-mailadres in';
+                      return l10n.enterEmail;
                     }
                     if (!value.contains('@')) {
-                      return 'Voer een geldig e-mailadres in';
+                      return l10n.enterValidEmail;
                     }
                     return null;
                   },
@@ -178,7 +180,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _handleLogin(),
                   decoration: InputDecoration(
-                    labelText: 'Wachtwoord',
+                    labelText: l10n.password,
                     prefixIcon: const Icon(Icons.lock_outlined),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -195,7 +197,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Voer je wachtwoord in';
+                      return l10n.enterPassword;
                     }
                     return null;
                   },
@@ -214,11 +216,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         });
                       },
                     ),
-                    const Text('Onthoud mij'),
+                    Text(l10n.rememberMe),
                     const Spacer(),
                     TextButton(
                       onPressed: () => context.go('/forgot-password'),
-                      child: const Text('Wachtwoord vergeten?'),
+                      child: Text(l10n.forgotPassword),
                     ),
                   ],
                 ),
@@ -240,9 +242,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'Inloggen',
-                          style: TextStyle(fontSize: 16),
+                      : Text(
+                          l10n.login,
+                          style: const TextStyle(fontSize: 16),
                         ),
                 ),
 
@@ -253,12 +255,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Nog geen account? ',
+                      '${l10n.noAccount} ',
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     TextButton(
                       onPressed: () => context.go('/register'),
-                      child: const Text('Gratis registreren'),
+                      child: Text(l10n.freeRegister),
                     ),
                   ],
                 ),

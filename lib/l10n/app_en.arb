@@ -1,0 +1,1141 @@
+{
+  "@@locale": "en",
+
+  "appName": "VerhuurAgenda",
+
+  "login": "Log in",
+  "logout": "Log out",
+  "register": "Register",
+  "freeRegister": "Register for free",
+  "email": "Email address",
+  "password": "Password",
+  "confirmPassword": "Confirm password",
+  "forgotPassword": "Forgot password?",
+  "rememberMe": "Remember me",
+  "name": "Name",
+  "fullName": "Full name",
+  "companyName": "Company name",
+  "companyNameOptional": "Company name (optional)",
+  "phone": "Phone",
+
+  "loginTitle": "Log in to manage your rentals",
+  "registerTitle": "Create account",
+  "registerSubtitle": "Start managing your vacation rentals for free",
+  "noAccount": "Don't have an account?",
+  "hasAccount": "Already have an account?",
+  "resetPassword": "Reset password",
+  "resetPasswordInstructions": "Enter your email address and we'll send you a link to reset your password.",
+  "sendResetLink": "Send reset link",
+  "backToLogin": "Back to login",
+  "resetEmailSent": "Reset link sent! Check your email.",
+
+  "enterEmail": "Enter your email address",
+  "enterValidEmail": "Enter a valid email address",
+  "enterPassword": "Enter your password",
+  "enterName": "Enter your name",
+  "passwordMinLength": "Password must be at least 8 characters",
+  "passwordsNotMatch": "Passwords do not match",
+  "invalidCredentials": "Invalid login credentials.",
+  "accountDeactivated": "This account has been deactivated.",
+  "emailAlreadyExists": "This email address is already in use.",
+  "registrationFailed": "Registration failed. This email may already be in use.",
+
+  "agreeToTerms": "I agree to the",
+  "termsAndConditions": "terms and conditions",
+  "and": "and the",
+  "privacyPolicy": "privacy policy",
+  "mustAgreeToTerms": "You must agree to the terms and conditions",
+
+  "freeAccount": "Free account",
+  "freeAccountFeature1": "Manage 1 accommodation",
+  "freeAccountFeature2": "10 bookings per year",
+  "freeAccountFeature3": "iCal synchronization",
+  "freeAccountFeature4": "Upgrade to Premium anytime",
+
+  "welcomeTitle": "Welcome to VerhuurAgenda!",
+  "accountCreated": "Your account has been created successfully.",
+  "emailSentTo": "We have sent a confirmation email to:",
+  "canLoginNow": "You can now log in and get started!",
+  "goToLogin": "Go to login",
+
+  "dashboard": "Dashboard",
+  "calendar": "Calendar",
+  "accommodations": "Accommodations",
+  "bookings": "Bookings",
+  "guests": "Guests",
+  "cleaning": "Cleaning",
+  "settings": "Settings",
+  "more": "More",
+
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "tomorrow": "Tomorrow",
+  "thisWeek": "This week",
+  "thisMonth": "This month",
+  "thisYear": "This year",
+
+  "checkIn": "Check-in",
+  "checkOut": "Check-out",
+  "checkIns": "Check-ins",
+  "checkOuts": "Check-outs",
+  "nights": "nights",
+  "night": "night",
+  "guests_count": "guests",
+  "guest_count": "guest",
+  "adults": "Adults",
+  "children": "Children",
+  "babies": "Babies",
+
+  "accommodation": "Accommodation",
+  "addAccommodation": "Add accommodation",
+  "editAccommodation": "Edit accommodation",
+  "deleteAccommodation": "Delete accommodation",
+  "accommodationName": "Accommodation name",
+  "accommodationType": "Accommodation type",
+  "maxGuests": "Max. guests",
+  "bedrooms": "Bedrooms",
+  "bathrooms": "Bathrooms",
+  "address": "Address",
+  "city": "City",
+  "country": "Country",
+  "description": "Description",
+
+  "house": "House",
+  "apartment": "Apartment",
+  "villa": "Villa",
+  "cabin": "Cabin",
+  "cottage": "Cottage",
+  "chalet": "Chalet",
+  "bungalow": "Bungalow",
+  "studio": "Studio",
+  "other": "Other",
+
+  "pricing": "Pricing",
+  "basePrice": "Base price",
+  "cleaningFee": "Cleaning fee",
+  "lowSeason": "Low season",
+  "midSeason": "Mid season",
+  "highSeason": "High season",
+  "perWeek": "per week",
+  "perNight": "per night",
+
+  "icalSync": "iCal Synchronization",
+  "icalAirbnb": "Airbnb iCal URL",
+  "icalBooking": "Booking.com iCal URL",
+  "icalVrbo": "VRBO iCal URL",
+  "icalGoogle": "Google Vacation Rentals iCal URL",
+  "icalHolidu": "Holidu iCal URL",
+  "icalBelvilla": "Belvilla/Novasol iCal URL",
+  "icalOther": "Other iCal URL",
+  "icalPasteUrl": "Paste iCal URL here",
+
+  "houseRules": "House rules",
+  "arrivalInstructions": "Arrival instructions",
+  "wifiNetwork": "WiFi network",
+  "wifiPassword": "WiFi password",
+  "alarmCode": "Alarm code",
+  "checkInTime": "Check-in time",
+  "checkOutTime": "Check-out time",
+
+  "booking": "Booking",
+  "addBooking": "Add booking",
+  "editBooking": "Edit booking",
+  "deleteBooking": "Delete booking",
+  "bookingDetails": "Booking details",
+  "newBooking": "New booking",
+
+  "selectAccommodation": "Select accommodation",
+  "selectGuest": "Select guest",
+  "selectDates": "Select dates",
+  "arrival": "Arrival",
+  "departure": "Departure",
+
+  "status": "Status",
+  "statusInquiry": "Inquiry",
+  "statusOption": "Option",
+  "statusConfirmed": "Confirmed",
+  "statusCancelled": "Cancelled",
+  "statusCompleted": "Completed",
+
+  "source": "Source",
+  "sourceDirect": "Direct",
+  "sourceAirbnb": "Airbnb",
+  "sourceBooking": "Booking.com",
+  "sourceVrbo": "VRBO",
+  "sourceOther": "Other",
+  "externalBooking": "External booking",
+
+  "totalAmount": "Total amount",
+  "depositAmount": "Deposit",
+  "remainingAmount": "Remaining",
+  "paid": "Paid",
+  "unpaid": "Unpaid",
+  "partiallyPaid": "Partially paid",
+
+  "internalNotes": "Internal notes",
+  "guestNotes": "Notes for guest",
+
+  "guest": "Guest",
+  "addGuest": "Add guest",
+  "editGuest": "Edit guest",
+  "guestDetails": "Guest details",
+  "firstName": "First name",
+  "lastName": "Last name",
+  "returningGuest": "Returning guest",
+  "totalBookings": "Total bookings",
+
+  "cleaningSchedule": "Cleaning schedule",
+  "cleaningRequired": "Cleaning required",
+  "cleaningDone": "Cleaning done",
+  "markAsCleaned": "Mark as cleaned",
+
+  "subscription": "Subscription",
+  "currentSubscription": "Current subscription",
+  "free": "Free",
+  "premium": "Premium",
+  "premiumMonthly": "Premium Monthly",
+  "premiumYearly": "Premium Yearly",
+  "active": "Active",
+  "expired": "Expired",
+  "trial": "Trial",
+  "trialEnds": "Trial ends",
+  "validUntil": "Valid until",
+  "daysRemaining": "Days remaining",
+  "days": "days",
+
+  "upgradeTitle": "Need more features?",
+  "upgradeToPremium": "Upgrade to Premium",
+  "premiumBenefits": "Premium benefits:",
+  "benefitUnlimitedAccommodations": "Unlimited accommodations",
+  "benefitUnlimitedBookings": "Unlimited bookings",
+  "benefitMultipleUsers": "Multiple team members",
+  "benefitEmailCampaigns": "Email campaigns",
+  "benefitPrioritySupport": "Priority support",
+
+  "buyNow": "Buy now",
+  "restorePurchases": "Restore purchases",
+  "restoring": "Restoring...",
+  "recommended": "Recommended",
+  "save17percent": "Save 17%",
+  "flexibleCancellation": "Flexible cancellation",
+  "perMonth": "/month",
+  "perYear": "/year",
+
+  "subscriptionActivated": "Subscription activated!",
+  "subscriptionRestored": "Subscription restored!",
+  "purchasePending": "Purchase is being processed...",
+  "purchaseCancelled": "Purchase cancelled",
+  "purchaseFailed": "Purchase failed",
+  "verificationFailed": "Verification failed",
+  "storeNotAvailable": "App Store is not available",
+  "productNotFound": "Product not found",
+
+  "manageSubscription": "Manage subscription",
+  "appleSubscription": "You have an Apple App Store subscription.",
+  "manageInSettings": "Manage your subscription in the iOS Settings app under \"Subscriptions\".",
+  "openSettings": "Open iOS Settings",
+
+  "usageAndLimits": "Usage & Limits",
+  "accommodationsUsed": "Accommodations",
+  "bookingsThisYear": "Bookings this year",
+  "teamMembers": "Team members",
+  "unlimited": "Unlimited",
+  "upgradeBanner": "Upgrade to Premium for unlimited usage!",
+
+  "included": "Included:",
+  "guestPortal": "Guest portal",
+
+  "profile": "Profile",
+  "editProfile": "Edit profile",
+  "nameAndContact": "Name, photo and contact details",
+  "notifications": "Notifications",
+  "pushNotifications": "Push notifications and reminders",
+
+  "management": "Management",
+  "seasons": "Seasons",
+  "seasonsDescription": "Low, mid and high season periods",
+  "team": "Team",
+  "teamDescription": "Manage team members (Premium)",
+
+  "support": "Support",
+  "helpAndSupport": "Help & Support",
+  "helpDescription": "FAQ, contact and tutorials",
+  "aboutApp": "About VerhuurAgenda",
+  "aboutDescription": "Version, story and links",
+
+  "data": "Data",
+  "exportData": "Export data",
+  "exportDescription": "Download all your data",
+  "deleteAccount": "Delete account",
+  "deleteAccountDescription": "Permanently delete your account",
+
+  "exportDialog": "Export data",
+  "exportDialogContent": "We will send you an email with a download link for all your data. This may take a few minutes.",
+  "exportRequested": "Export requested. Check your email.",
+  "exportFailed": "Could not start export",
+
+  "deleteAccountTitle": "Delete account",
+  "deleteAccountWarning": "Warning! This action cannot be undone.",
+  "deleteAccountConsequences": "If you delete your account:\n• All your bookings will be deleted\n• All your accommodations will be deleted\n• All your guest data will be deleted\n• Your subscription will be terminated",
+  "confirmEmail": "Type your email address to confirm:",
+  "emailNotMatch": "Email address does not match",
+  "permanentlyDelete": "Permanently delete",
+  "accountDeleted": "Account successfully deleted",
+  "deleteAccountFailed": "Could not delete account. Please contact support.",
+
+  "logoutConfirm": "Are you sure you want to log out?",
+
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "add": "Add",
+  "close": "Close",
+  "confirm": "Confirm",
+  "yes": "Yes",
+  "no": "No",
+  "ok": "OK",
+  "done": "Done",
+  "next": "Next",
+  "back": "Back",
+  "retry": "Try again",
+  "loading": "Loading...",
+  "saving": "Saving...",
+  "searching": "Searching...",
+  "noResults": "No results",
+  "error": "Error",
+  "success": "Success",
+  "warning": "Warning",
+
+  "search": "Search",
+  "filter": "Filter",
+  "sort": "Sort",
+  "refresh": "Refresh",
+  "share": "Share",
+  "copy": "Copy",
+  "copied": "Copied",
+
+  "noAccommodations": "No accommodations yet",
+  "addFirstAccommodation": "Add your first accommodation",
+  "noBookings": "No bookings yet",
+  "noUpcomingBookings": "No upcoming bookings",
+  "noGuests": "No guests yet",
+
+  "confirmDelete": "Are you sure you want to delete this?",
+  "cannotBeUndone": "This action cannot be undone.",
+
+  "occupancy": "Occupancy",
+  "revenue": "Revenue",
+  "averageStay": "Avg. stay",
+  "statistics": "Statistics",
+
+  "january": "January",
+  "february": "February",
+  "march": "March",
+  "april": "April",
+  "may": "May",
+  "june": "June",
+  "july": "July",
+  "august": "August",
+  "september": "September",
+  "october": "October",
+  "november": "November",
+  "december": "December",
+
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday",
+
+  "mon": "Mon",
+  "tue": "Tue",
+  "wed": "Wed",
+  "thu": "Thu",
+  "fri": "Fri",
+  "sat": "Sat",
+  "sun": "Sun",
+
+  "couldNotLoad": "Could not load",
+  "somethingWentWrong": "Something went wrong",
+  "tryAgain": "Try again",
+  "noInternet": "No internet connection",
+  "checkConnection": "Check your internet connection and try again",
+
+  "terms": "Terms and conditions",
+  "privacy": "Privacy policy",
+
+  "forgotPasswordTitle": "Forgot password?",
+  "forgotPasswordDescription": "No problem! Enter your email address and we'll send you a link to reset your password.",
+  "emailHint": "your@email.com",
+  "checkInbox": "Check your inbox!",
+  "resetEmailDescription": "If an account exists with the email address {email}, you will receive an email within a few minutes with instructions to reset your password.",
+  "@resetEmailDescription": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "tips": "Tips",
+  "tipCheckSpam": "Also check your spam/junk folder",
+  "tipLinkValid": "The link is valid for 60 minutes",
+  "tipNoEmail": "Didn't receive an email? Try again",
+  "tryDifferentEmail": "Try different email",
+
+  "welcome": "Welcome",
+  "activeBookings": "Active bookings",
+  "next7days": "next 7 days",
+  "monthlyRevenue": "Revenue this month",
+  "upcomingCheckins": "Upcoming Check-ins",
+  "upcomingCheckouts": "Upcoming Check-outs",
+  "recentBookings": "Recent Bookings",
+  "noCheckinsScheduled": "No check-ins scheduled",
+  "noCheckoutsScheduled": "No check-outs scheduled",
+  "unknown": "Unknown",
+  "day": "day",
+  "now": "NOW",
+  "total": "Total",
+  "open": "open",
+  "call": "Call",
+  "sendEmail": "Send email",
+  "couldNotLoadDashboard": "Could not load dashboard",
+  "noDataAvailable": "No data available",
+  "currentGuestsStaying": "Current guests staying",
+  "checkInsNext7Days": "Check-ins in the next 7 days",
+  "checkOutsNext7Days": "Check-outs in the next 7 days",
+  "noItems": "No items",
+  "revenueThisMonth": "Revenue This Month",
+  "basedOnPayments": "Based on payments this month",
+  "totalRevenue": "Total revenue",
+  "viewPlanAndLimits": "View your plan and limits",
+
+  "home": "Home",
+  "maintenance": "Maintenance",
+  "campaigns": "Campaigns",
+  "popular": "Popular",
+  "couldNotLoadSubscription": "Could not load subscription data",
+  "currentPlan": "Current subscription",
+  "planPremium": "Premium",
+  "planPremiumTrial": "Premium Trial",
+  "planFree": "Free",
+  "trialPeriod": "Trial period",
+  "oneAccommodation": "1 accommodation",
+  "tenBookingsPerYear": "10 bookings per year",
+  "trialExpiresSoon": "Your trial expires soon. Upgrade to Premium!",
+  "subscriptionExpiresSoon": "Your subscription expires soon. Renew on time.",
+  "manageSubscriptionWeb": "Manage your subscription or view invoices on the website.",
+  "couldNotOpenWebsite": "Could not open website",
+  "viewAllOptions": "View all options",
+  "storeAvailable": "Available",
+  "storeNotAvailableShort": "Not available",
+  "productsLoaded": "products loaded",
+  "checkCapability": "Check: In-App Purchase capability in Xcode, sandbox tester account, or run on a real device.",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "discount17": "17% discount",
+  "volw": "ad.",
+  "kind": "child.",
+
+  "language": "Language",
+  "languageDescription": "Choose your preferred language",
+  "systemDefault": "System default",
+  "dutch": "Dutch",
+  "english": "English",
+  "languageChanged": "Language changed",
+
+  "all": "All",
+  "newItem": "New",
+  "createAccommodation": "Create accommodation",
+  "upcoming": "Upcoming",
+  "past": "Past",
+  "custom": "Custom",
+  "selectPeriod": "Select period",
+  "from": "From",
+  "until": "Until",
+  "apply": "Apply",
+  "inquiry": "Inquiry",
+  "option": "Option",
+  "confirmed": "Confirmed",
+  "cancelled": "Cancelled",
+  "completed": "Completed",
+  "direct": "Direct",
+  "blocked": "Blocked",
+  "external": "External",
+  "thisWeekTab": "This week",
+  "allTab": "All",
+  "todayTab": "Today",
+  "pending": "Pending",
+  "inProgress": "In progress",
+  "high": "High",
+  "medium": "Medium",
+  "low": "Low",
+  "newPassword": "New password",
+  "newPasswordOptional": "New password (optional)",
+  "createTask": "Create task",
+  "task": "Task",
+  "priority": "Priority",
+  "dueDate": "Due date",
+  "assignedTo": "Assigned to",
+  "selectDate": "Select date",
+  "noTasksYet": "No tasks yet",
+  "addFirstTask": "Add your first task",
+  "deleteTask": "Delete task",
+  "deleteTaskConfirm": "Are you sure you want to delete this task?",
+  "markComplete": "Mark complete",
+  "markIncomplete": "Mark incomplete",
+  "addNote": "Add note",
+  "noteAdded": "Note added",
+  "couldNotAddNote": "Could not add note",
+  "couldNotUpdateTask": "Could not update task",
+  "couldNotDeleteTask": "Could not delete task",
+  "couldNotLoadTasks": "Could not load tasks",
+  "role": "Role",
+  "admin": "Admin",
+  "member": "Member",
+  "inviteTeamMember": "Invite team member",
+  "editTeamMember": "Edit team member",
+  "deleteTeamMember": "Delete team member",
+  "deleteTeamMemberConfirm": "Are you sure you want to remove this team member?",
+  "teamMemberAdded": "Team member added",
+  "teamMemberUpdated": "Team member updated",
+  "teamMemberDeleted": "Team member deleted",
+  "couldNotLoadTeam": "Could not load team",
+  "couldNotSaveTeamMember": "Could not save team member",
+  "noTeamMembersYet": "No team members yet",
+  "seasonName": "Season name",
+  "seasonType": "Season type",
+  "startDate": "Start date",
+  "endDate": "End date",
+  "addSeason": "Add season",
+  "editSeason": "Edit season",
+  "deleteSeason": "Delete season",
+  "deleteSeasonConfirm": "Are you sure you want to delete this season?",
+  "seasonAdded": "Season added",
+  "seasonUpdated": "Season updated",
+  "seasonDeleted": "Season deleted",
+  "couldNotLoadSeasons": "Could not load seasons",
+  "couldNotSaveSeason": "Could not save season",
+  "noSeasonsYet": "No seasons defined yet",
+  "profileUpdated": "Profile updated",
+  "couldNotUpdateProfile": "Could not update profile",
+  "notificationSettings": "Notification settings",
+  "emailNotifications": "Email notifications",
+  "pushNotificationsLabel": "Push notifications",
+  "bookingReminders": "Booking reminders",
+  "checkInReminders": "Check-in reminders",
+  "checkOutReminders": "Check-out reminders",
+  "cleaningReminders": "Cleaning reminders",
+  "paymentReminders": "Payment reminders",
+  "marketingEmails": "Marketing emails",
+  "settingsSaved": "Settings saved",
+  "couldNotSaveSettings": "Could not save settings",
+  "help": "Help",
+  "faq": "FAQ",
+  "contactSupport": "Contact support",
+  "tutorials": "Tutorials",
+  "documentation": "Documentation",
+  "about": "About",
+  "version": "Version",
+  "madeWithLove": "Made with love in the Netherlands",
+  "termsOfService": "Terms of service",
+  "allRightsReserved": "All rights reserved",
+  "couldNotLaunchUrl": "Could not open link",
+
+  "occupancyTitle": "Occupancy",
+  "accommodationsCountText": "{count} accommodations",
+  "@accommodationsCountText": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "occupied": "Occupied",
+  "availableStatus": "Available",
+  "daysViewText": "{count} days view",
+  "@daysViewText": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "tapForToday": "Tap for today",
+  "noAccommodationsShort": "No accommodations",
+  "addPayment": "Add payment",
+  "amount": "Amount",
+  "paymentMethod": "Payment method",
+  "bankTransfer": "Bank transfer",
+  "cash": "Cash",
+  "ideal": "iDEAL",
+  "creditCard": "Credit card",
+  "enterValidAmount": "Enter a valid amount",
+  "paymentAdded": "Payment added",
+  "couldNotAddPayment": "Could not add payment",
+  "viewFullBooking": "View full booking",
+  "payment": "Payment",
+  "guestsSection": "Guests",
+  "adultsCount": "{count} adults",
+  "@adultsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "childrenCount": "{count} children",
+  "@childrenCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "babiesCount": "{count} babies",
+  "@babiesCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "pet": "Pet",
+  "nightsCount": "{count} nights",
+  "@nightsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "stillToPay": "Still to pay",
+  "notes": "Notes",
+  "noCleaningTasks": "No cleaning tasks",
+  "urgent": "Urgent",
+  "ready": "Ready",
+  "toDo": "To do",
+  "finishedSection": "Completed",
+  "forToday": "for today",
+  "cleaningWindow": "Cleaning window",
+  "sameDay": "Same day!",
+  "flexible": "Flexible",
+  "finishCleaning": "Finish cleaning",
+  "undo": "Undo",
+  "details": "Details",
+  "anythingToReport": "Anything to report?",
+  "extraDirty": "Extra dirty",
+  "damage": "Damage",
+  "missingItem": "Missing",
+  "repairNeeded": "Repair needed",
+  "notesOptional": "Notes (optional)",
+  "extraCommentsPlaceholder": "Extra comments about the cleaning...",
+  "processing": "Processing...",
+  "cleanedSuccess": "{name} cleaned!",
+  "@cleanedSuccess": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "undoCleaningTitle": "Undo cleaning?",
+  "undoCleaningMessage": "Are you sure you want to reset the cleaning of {name}?",
+  "@undoCleaningMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "yesReset": "Yes, reset",
+  "cleaningStatusReset": "Cleaning status reset",
+  "cleaningCompletedAt": "Cleaning completed",
+  "completedAt": "Completed: {time}",
+  "@completedAt": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "reportedIssues": "Reported issues",
+  "cleaningCompletedWithoutIssues": "Cleaning completed without issues",
+  "reports": "Reports",
+  "viewDetails": "View details",
+  "couldNotLoadCleaning": "Could not load cleaning schedule",
+  "guestLabel": "Guest: {name}",
+  "@guestLabel": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "retryButton": "Try again",
+  "retryShort": "Retry",
+
+  "couldNotLoadAccommodations": "Could not load accommodations",
+  "couldNotLoadAccommodation": "Could not load accommodation",
+  "noAccommodationsFound": "No accommodations found",
+  "bedroomsShort": "bedr",
+  "bathroomsShort": "bath",
+  "inactive": "Inactive",
+  "published": "Published",
+  "draft": "Draft",
+  "midSeasonShort": "Mid",
+  "newAccommodation": "New accommodation",
+  "generalInfo": "General information",
+  "nameRequired": "Name *",
+  "accommodationNameExample": "E.g. Beach House The Seagulls",
+  "nameIsRequired": "Name is required",
+  "type": "Type",
+  "maxGuestsRequired": "Max guests *",
+  "required": "Required",
+  "color": "Color",
+  "accommodationAvailableForBookings": "Accommodation is available for bookings",
+  "pricesPerWeek": "Prices (per week)",
+  "location": "Location",
+  "checkInCheckOut": "Check-in & Check-out",
+  "checkInFrom": "Check-in from",
+  "checkInUntil": "Check-in until",
+  "wifiAndAccess": "WiFi & Access",
+  "alarmCodeKeybox": "Alarm code / key box code",
+  "calendarSync": "Calendar synchronization",
+  "vrboHelperText": "Large in US, growing in EU",
+  "googleHelperText": "Free exposure, direct bookings",
+  "holiduHelperText": "Popular in Germany & Netherlands",
+  "belvillaHelperText": "European market",
+  "otherIcalUrl": "Other iCal URL",
+  "otherIcalHelperText": "For other platforms or manual import",
+  "exportUrlLabel": "Export URL",
+  "houseRulesAndInstructions": "House Rules & Instructions",
+  "accommodationUpdated": "Accommodation updated",
+  "accommodationCreated": "Accommodation created",
+  "deleteAccommodationConfirm": "Delete accommodation?",
+  "deleteAccommodationMessage": "Are you sure you want to delete \"{name}\"? This cannot be undone.",
+  "@deleteAccommodationMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "accommodationDeleted": "Accommodation deleted",
+  "deleteError": "Error deleting",
+  "nGuestsCount": "{count} guests",
+  "@nGuestsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nBedroomsShort": "{count} bedr",
+  "@nBedroomsShort": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nBathroomsShort": "{count} bath",
+  "@nBathroomsShort": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "houseLabel": "House",
+  "cabinLabel": "Cabin",
+
+  "newSeason": "New season",
+  "couldNotLoadSeasonsError": "Could not load seasons: {error}",
+  "@couldNotLoadSeasonsError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "noSeasonsForYear": "No seasons for {year}",
+  "@noSeasonsForYear": {
+    "placeholders": {
+      "year": {"type": "int"}
+    }
+  },
+  "addSeasonsHint": "Add seasons to use different prices per period",
+  "deleteSeasonTitle": "Delete season",
+  "deleteSeasonConfirmMessage": "Are you sure you want to delete \"{name}\"?",
+  "@deleteSeasonConfirmMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "couldNotDeleteError": "Could not delete: {error}",
+  "@couldNotDeleteError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "yearLabel": "Year",
+  "seasonTypeLabel": "Season type",
+  "period": "Period",
+  "nameHint": "e.g. Christmas Holiday, Summer Holiday",
+  "enterNameValidation": "Enter a name",
+  "selectStartAndEndDate": "Select start and end date",
+  "couldNotSaveError": "Could not save: {error}",
+  "@couldNotSaveError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "daysCount": "{count} days",
+  "@daysCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "howDoSeasonsWork": "How do seasons work?",
+  "seasonsExplanation": "Seasons determine which price is used for bookings. Set prices per accommodation for low, mid and high season.",
+  "lowSeasonDescription": "Low season: quiet periods with lower prices",
+  "midSeasonDescription": "Mid season: average prices",
+  "highSeasonDescription": "High season: busy periods with higher prices",
+
+  "phoneNumber": "Phone number",
+  "changePhoto": "Change photo",
+  "photoUploadComingSoon": "Photo upload coming soon",
+  "personalDetails": "Personal details",
+  "companyDetails": "Company details",
+  "websiteLabel": "Website",
+  "websiteHint": "https://yourwebsite.com",
+  "streetAndNumber": "Street and number",
+  "postalCode": "Postal code",
+  "changePassword": "Change password",
+  "chooseNewPassword": "Choose a new password",
+  "currentPassword": "Current password",
+  "confirmNewPassword": "Confirm new password",
+  "minimumCharacters": "Minimum 8 characters",
+  "passwordChanged": "Password changed",
+  "couldNotChangePassword": "Could not change password. Check your current password.",
+  "change": "Change",
+  "couldNotSaveProfile": "Could not save profile. Please try again.",
+  "enterYourName": "Enter your name",
+  "enterYourEmail": "Enter your email address",
+  "enterValidEmailAddress": "Enter a valid email address",
+
+  "notificationsTitle": "Notifications",
+  "preferencesSaved": "Preferences saved",
+  "couldNotSavePreferences": "Could not save preferences",
+  "bookingsSection": "Bookings",
+  "newBookingNotification": "New booking",
+  "newBookingNotificationSubtitle": "Receive a notification for new bookings",
+  "cancellationNotification": "Cancellation",
+  "cancellationNotificationSubtitle": "Notification when a booking is cancelled",
+  "paymentReceivedNotification": "Payment received",
+  "paymentReceivedNotificationSubtitle": "Notification when payments are received",
+  "remindersSection": "Reminders",
+  "checkInReminderNotification": "Check-in reminder",
+  "checkInReminderNotificationSubtitle": "Reminder 1 day before guest check-in",
+  "checkOutReminderNotification": "Check-out reminder",
+  "checkOutReminderNotificationSubtitle": "Reminder on the day of check-out",
+  "cleaningReminderNotification": "Cleaning reminder",
+  "cleaningReminderNotificationSubtitle": "Reminder for cleaning tasks",
+  "otherSection": "Other",
+  "maintenanceUpdatesNotification": "Maintenance updates",
+  "maintenanceUpdatesNotificationSubtitle": "Notifications about maintenance tasks",
+  "newsletterAndTipsNotification": "Newsletter & tips",
+  "newsletterAndTipsNotificationSubtitle": "Receive tips and updates about VerhuurAgenda",
+  "pushNotificationsInfo": "Push notifications are sent to this device. Make sure notifications are enabled in your phone settings.",
+
+  "teamTitle": "Team",
+  "newTeamMember": "New member",
+  "deleteTeamMemberTitle": "Delete team member",
+  "confirmDeleteTeamMember": "Are you sure you want to remove \"{name}\" from your team?",
+  "@confirmDeleteTeamMember": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "couldNotLoadTeamMembersError": "Could not load team members: {error}",
+  "@couldNotLoadTeamMembersError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "premiumFeature": "Premium feature",
+  "teamManagementPremium": "Team management is only available with a Premium subscription. Upgrade to add team members and collaborate.",
+  "viewPremium": "View Premium",
+  "noTeamMembers": "No team members yet",
+  "addTeamMembersToCollaborate": "Add team members to collaborate",
+
+  "editTeamMemberTitle": "Edit team member",
+  "newTeamMemberTitle": "New team member",
+  "selectRoleError": "Select a role",
+  "teamMemberSaved": "Team member updated",
+  "teamMemberCreated": "Team member added",
+  "emailInUse": "This email address is already in use",
+  "couldNotSave": "Could not save",
+  "enterNameField": "Enter a name",
+  "emailAddressLabel": "Email address",
+  "enterEmailField": "Enter an email address",
+  "enterValidEmailField": "Enter a valid email address",
+  "enterPasswordField": "Enter a password",
+  "passwordMinChars": "Password must be at least 8 characters",
+  "roleLabel": "Role",
+  "aboutTeamRoles": "About team roles",
+  "teamRolesInfo": "Team members get access to your VerhuurAgenda based on their role. They log in with their own email address and password.",
+  "activeToggle": "Active",
+  "inactiveMembersCannotLogin": "Inactive members cannot log in",
+
+  "maintenanceTitle": "Maintenance",
+  "newTask": "New task",
+  "filterOpen": "Open",
+  "filterCompleted": "Completed",
+  "priorityUrgentEmoji": "Urgent",
+  "priorityHighEmoji": "High",
+  "priorityMediumEmoji": "Medium",
+  "priorityLowEmoji": "Low",
+  "couldNotLoadTasksError": "Could not load tasks",
+  "noOpenTasks": "No open tasks",
+  "noTasksFound": "No tasks found",
+  "tapToAddTask": "Tap + to add a new task",
+  "completedOnDate": "Completed {date}",
+  "@completedOnDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "overdueDate": "Overdue: {date}",
+  "@overdueDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "deadlineDate": "Deadline: {date}",
+  "@deadlineDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "statusChangedTo": "Status changed to {status}",
+  "@statusChangedTo": {
+    "placeholders": {
+      "status": {"type": "String"}
+    }
+  },
+  "couldNotChangeStatus": "Could not change status",
+  "statusOpen": "Open",
+  "statusInProgress": "In progress",
+  "statusWaiting": "Waiting",
+  "statusCompletedValue": "Completed",
+  "statusCancelledValue": "Cancelled",
+  "deleteTaskTitle": "Delete task?",
+  "confirmDeleteTaskMessage": "Are you sure you want to delete \"{title}\"?",
+  "@confirmDeleteTaskMessage": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "taskDeletedSuccess": "Task deleted",
+  "couldNotDeleteTaskError": "Could not delete task",
+  "descriptionLabel": "Description",
+  "deadlineLabel": "Deadline",
+  "completedDateLabel": "Completed",
+  "completedByPerson": "{date} by {person}",
+  "@completedByPerson": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "person": {"type": "String"}
+    }
+  },
+  "photosLabel": "Photos",
+  "notesLabel": "Notes",
+  "startAction": "Start",
+  "completeAction": "Complete",
+  "deleteTaskAction": "Delete task",
+  "overdueLabel": "Overdue",
+
+  "editTaskTitle": "Edit task",
+  "newMaintenanceTask": "New maintenance task",
+  "titleLabel": "Title",
+  "titleHint": "E.g. Leaking tap bathroom",
+  "enterTitleError": "Enter a title",
+  "accommodationLabel": "Accommodation",
+  "selectAccommodationOptional": "Select accommodation (optional)",
+  "noSpecificAccommodation": "No specific accommodation",
+  "descriptionHint": "Describe the problem or task...",
+  "priorityLabel": "Priority",
+  "categoryLabel": "Category",
+  "categoryRepair": "Repair",
+  "categoryMaintenance": "Maintenance",
+  "categoryCleaning": "Cleaning",
+  "categoryInventory": "Inventory",
+  "categoryInspection": "Inspection",
+  "categoryOther": "Other",
+  "deadlineFieldLabel": "Deadline",
+  "noDeadline": "No deadline",
+  "cameraButton": "Camera",
+  "galleryButton": "Gallery",
+  "uploadingPhotos": "Uploading photos...",
+  "notesHint": "Extra comments...",
+  "taskUpdatedSuccess": "Task updated",
+  "taskCreatedSuccess": "Task created",
+  "couldNotLoadPhotoError": "Could not load photo: {error}",
+  "@couldNotLoadPhotoError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "readyButton": "Done",
+  "errorWithMessage": "Error: {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+
+  "campaignsTitle": "Campaigns",
+  "campaignStatusDraft": "Draft",
+  "campaignStatusScheduled": "Scheduled",
+  "campaignStatusSending": "Sending...",
+  "campaignStatusSent": "Sent",
+  "campaignStatusPaused": "Paused",
+  "campaignStatusCancelled": "Cancelled",
+  "couldNotLoadCampaigns": "Could not load campaigns",
+  "campaignsInfoBanner": "Create and edit campaigns on the website. Here you can view the statistics.",
+  "allFilter": "All",
+  "sentFilter": "Sent",
+  "scheduledFilter": "Scheduled",
+  "draftsFilter": "Drafts",
+  "noCampaignsFound": "No campaigns found",
+  "noCampaignsDescription": "Create your first campaign on the website to reach your guests.",
+  "sentOnDate": "Sent on {date}",
+  "@sentOnDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "scheduledForDate": "Scheduled for {date}",
+  "@scheduledForDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "recipientsCount": "{count} recipients",
+  "@recipientsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "contactsCount": "{count} contacts",
+  "@contactsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "opened": "Opened",
+  "clicked": "Clicked",
+  "unsubscribedLabel": "Unsubscribed",
+  "subject": "Subject",
+  "emailsBouncedCount": "{count} emails were not delivered (bounced)",
+  "@emailsBouncedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "openWebsiteToEdit": "Open the website to edit this campaign",
+  "viewOnWebsite": "View on website",
+
+  "splashLoading": "Loading...",
+
+  "helpTitle": "Help & Support",
+  "helpSearchPlaceholder": "Search frequently asked questions...",
+  "faqTitle": "Frequently asked questions",
+  "contactSupportTitle": "Contact us",
+  "contactSupportDescription": "Have a question that isn't answered here? Contact us.",
+  "sendEmailButton": "Send an email",
+  "callUsButton": "Call us",
+  "officeHours": "Available on weekdays from 9:00 AM - 5:00 PM",
+
+  "aboutTitle": "About VerhuurAgenda",
+  "aboutDescription": "VerhuurAgenda is the smart app for vacation rental management. Manage your bookings, guests and accommodations easily from your phone.",
+  "versionLabel": "Version",
+  "developerLabel": "Developer",
+  "developerName": "VerhuurAgenda B.V.",
+  "websiteLabel": "Website",
+  "contactLabel": "Contact",
+  "followUs": "Follow us",
+  "rateApp": "Rate the app",
+  "rateAppDescription": "Do you find VerhuurAgenda useful? Leave a review!",
+  "shareApp": "Share the app",
+  "shareAppMessage": "Check out VerhuurAgenda - the smart app for vacation rental management!",
+  "legalSection": "Legal",
+  "acknowledgements": "Acknowledgements",
+  "acknowledgementsDescription": "This app is built with Flutter and uses various open source packages.",
+  "allRightsReservedFull": "© {year} VerhuurAgenda. All rights reserved.",
+  "@allRightsReservedFull": {
+    "placeholders": {
+      "year": {"type": "int"}
+    }
+  },
+
+  "privacyTitle": "Privacy Policy",
+  "privacyLastUpdated": "Last updated: {date}",
+  "@privacyLastUpdated": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "privacyIntro": "At VerhuurAgenda, we take your privacy seriously. This policy describes how we collect, use and protect your data.",
+  "privacySection1Title": "What data do we collect?",
+  "privacySection1Content": "We collect data that you enter yourself, such as your name, email address, accommodation details and booking information. We also automatically collect certain technical data such as device type and app usage.",
+  "privacySection2Title": "How do we use your data?",
+  "privacySection2Content": "Your data is used to operate the app, manage your bookings, and improve the service. We never share your data with third parties for marketing purposes.",
+  "privacySection3Title": "How do we protect your data?",
+  "privacySection3Content": "We use industry-standard security measures to protect your data, including encryption and secure servers.",
+  "privacySection4Title": "Your rights",
+  "privacySection4Content": "You have the right to view, correct or delete your data. Contact us if you wish to exercise these rights.",
+  "privacyContactUs": "Questions about privacy? Contact us at privacy@verhuuragenda.nl",
+
+  "termsTitle": "Terms and Conditions",
+  "termsLastUpdated": "Last updated: {date}",
+  "@termsLastUpdated": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "termsIntro": "By using VerhuurAgenda you agree to these terms.",
+  "termsSection1Title": "Use of the service",
+  "termsSection1Content": "VerhuurAgenda is intended for managing vacation rentals. You are responsible for the accuracy of the data you enter.",
+  "termsSection2Title": "Account and security",
+  "termsSection2Content": "You are responsible for keeping your login credentials secret. Report suspicious activity to us immediately.",
+  "termsSection3Title": "Subscriptions and payments",
+  "termsSection3Content": "Premium features are available through a paid subscription. Subscriptions renew automatically unless you cancel.",
+  "termsSection4Title": "Liability",
+  "termsSection4Content": "VerhuurAgenda is not liable for damages resulting from use of the app. We do our best to keep the service available and reliable.",
+  "termsSection5Title": "Changes",
+  "termsSection5Content": "We may adjust these terms from time to time. We will inform you of important changes via email or in the app.",
+  "termsContactUs": "Questions? Contact us at info@verhuuragenda.nl",
+
+  "statisticsTitle": "Statistics",
+  "statisticsOverview": "Overview",
+  "statisticsPeriod": "Period",
+  "statisticsThisMonth": "This month",
+  "statisticsThisYear": "This year",
+  "statisticsAllTime": "All time",
+  "statisticsCustomPeriod": "Custom period",
+  "statisticsTotalBookings": "Total bookings",
+  "statisticsConfirmedBookings": "Confirmed bookings",
+  "statisticsCancelledBookings": "Cancelled bookings",
+  "statisticsOccupancyRate": "Occupancy rate",
+  "statisticsAverageStayDuration": "Avg. stay duration",
+  "statisticsAverageBookingValue": "Avg. booking value",
+  "statisticsRevenueByMonth": "Revenue by month",
+  "statisticsBookingsBySource": "Bookings by source",
+  "statisticsTopAccommodations": "Top accommodations",
+  "statisticsNoData": "No data available for this period",
+  "statisticsExport": "Export",
+
+  "helpHowCanWeHelp": "How can we help you?",
+  "helpTeamAvailable": "Our team is available on weekdays\nfrom 9:00 AM to 5:00 PM",
+  "helpContactUs": "Contact us",
+  "helpEmailTitle": "Email",
+  "helpEmailResponse": "We respond within 24 hours",
+  "helpPhoneTitle": "Phone",
+  "helpPhoneHours": "Mon-Fri 9:00 AM - 5:00 PM",
+  "helpWhatsAppTitle": "WhatsApp",
+  "helpWhatsAppSubtitle": "Chat with us",
+  "helpWhatsAppResponse": "Quick response on weekdays",
+  "helpFaqTitle": "Frequently asked questions",
+  "helpFaq1Question": "How do I add a new accommodation?",
+  "helpFaq1Answer": "Go to Accommodations in the menu and tap the + button. Fill in the details and add photos. You can always make changes later.",
+  "helpFaq2Question": "How do I sync with Airbnb or Booking.com?",
+  "helpFaq2Answer": "Go to your accommodation settings and add the iCal URL from your external platform. VerhuurAgenda automatically fetches the bookings.",
+  "helpFaq3Question": "How does the guest portal work?",
+  "helpFaq3Answer": "A unique link is automatically generated for each booking. Share this with your guests so they can check in and view all information.",
+  "helpFaq4Question": "Can I add multiple users?",
+  "helpFaq4Answer": "Yes, depending on your subscription you can invite team members. Go to Settings > Subscription to view your limits.",
+  "helpFaq5Question": "How can I renew my subscription?",
+  "helpFaq5Answer": "Go to Settings > Subscription and tap \"Go to payment on website\". You will be redirected to our secure payment page.",
+  "helpFeedbackTitle": "Have an idea or suggestion?",
+  "helpFeedbackDescription": "We'd love to hear your feedback! Send us a message with your idea and who knows, it might be in the next update.",
+  "helpFeedbackButton": "Send feedback",
+  "helpCopied": "{text} copied",
+  "@helpCopied": {
+    "placeholders": {
+      "text": {"type": "String"}
+    }
+  }
+}

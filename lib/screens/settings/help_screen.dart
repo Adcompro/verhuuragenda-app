@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../config/theme.dart';
 
@@ -11,9 +12,11 @@ class HelpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Help & Support'),
+        title: Text(l10n.helpTitle),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -39,16 +42,16 @@ class HelpScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Hoe kunnen we je helpen?',
-                    style: TextStyle(
+                  Text(
+                    l10n.helpHowCanWeHelp,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Ons team staat voor je klaar op werkdagen\nvan 9:00 tot 17:00 uur',
+                    l10n.helpTeamAvailable,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
@@ -65,9 +68,9 @@ class HelpScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Neem contact op',
-                    style: TextStyle(
+                  Text(
+                    l10n.helpContactUs,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -77,34 +80,37 @@ class HelpScreen extends StatelessWidget {
                   // Email card
                   _buildContactCard(
                     context,
+                    l10n,
                     icon: Icons.email_outlined,
-                    title: 'E-mail',
+                    title: l10n.helpEmailTitle,
                     subtitle: supportEmail,
-                    description: 'We reageren binnen 24 uur',
+                    description: l10n.helpEmailResponse,
                     onTap: () => _sendEmail(context),
-                    onLongPress: () => _copyToClipboard(context, supportEmail),
+                    onLongPress: () => _copyToClipboard(context, l10n, supportEmail),
                   ),
                   const SizedBox(height: 12),
 
                   // Phone card
                   _buildContactCard(
                     context,
+                    l10n,
                     icon: Icons.phone_outlined,
-                    title: 'Telefoon',
+                    title: l10n.helpPhoneTitle,
                     subtitle: phoneNumber,
-                    description: 'Ma-Vr 9:00 - 17:00',
+                    description: l10n.helpPhoneHours,
                     onTap: () => _callPhone(context),
-                    onLongPress: () => _copyToClipboard(context, phoneNumber),
+                    onLongPress: () => _copyToClipboard(context, l10n, phoneNumber),
                   ),
                   const SizedBox(height: 12),
 
                   // WhatsApp card
                   _buildContactCard(
                     context,
+                    l10n,
                     icon: Icons.chat_outlined,
-                    title: 'WhatsApp',
-                    subtitle: 'Chat met ons',
-                    description: 'Snelle reactie op werkdagen',
+                    title: l10n.helpWhatsAppTitle,
+                    subtitle: l10n.helpWhatsAppSubtitle,
+                    description: l10n.helpWhatsAppResponse,
                     onTap: () => _openWhatsApp(context),
                     color: Colors.green,
                   ),
@@ -112,9 +118,9 @@ class HelpScreen extends StatelessWidget {
                   const SizedBox(height: 32),
 
                   // FAQ Section
-                  const Text(
-                    'Veelgestelde vragen',
-                    style: TextStyle(
+                  Text(
+                    l10n.helpFaqTitle,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -122,29 +128,24 @@ class HelpScreen extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   _buildFaqItem(
-                    'Hoe voeg ik een nieuwe accommodatie toe?',
-                    'Ga naar Accommodaties in het menu en tik op de + knop. '
-                    'Vul de gegevens in en voeg foto\'s toe. Je kunt later altijd wijzigingen maken.',
+                    l10n.helpFaq1Question,
+                    l10n.helpFaq1Answer,
                   ),
                   _buildFaqItem(
-                    'Hoe synchroniseer ik met Airbnb of Booking.com?',
-                    'Ga naar je accommodatie instellingen en voeg de iCal URL toe van je externe platform. '
-                    'VerhuurAgenda haalt automatisch de boekingen op.',
+                    l10n.helpFaq2Question,
+                    l10n.helpFaq2Answer,
                   ),
                   _buildFaqItem(
-                    'Hoe werkt het gastenportaal?',
-                    'Bij elke boeking wordt automatisch een unieke link gegenereerd. '
-                    'Deel deze met je gasten zodat ze kunnen inchecken en alle informatie kunnen bekijken.',
+                    l10n.helpFaq3Question,
+                    l10n.helpFaq3Answer,
                   ),
                   _buildFaqItem(
-                    'Kan ik meerdere gebruikers toevoegen?',
-                    'Ja, afhankelijk van je abonnement kun je teamleden uitnodigen. '
-                    'Ga naar Instellingen > Abonnement om je limieten te bekijken.',
+                    l10n.helpFaq4Question,
+                    l10n.helpFaq4Answer,
                   ),
                   _buildFaqItem(
-                    'Hoe kan ik mijn abonnement verlengen?',
-                    'Ga naar Instellingen > Abonnement en tik op "Naar betaling op website". '
-                    'Je wordt doorgestuurd naar onze beveiligde betaalpagina.',
+                    l10n.helpFaq5Question,
+                    l10n.helpFaq5Answer,
                   ),
 
                   const SizedBox(height: 32),
@@ -162,16 +163,16 @@ class HelpScreen extends StatelessWidget {
                       children: [
                         Icon(Icons.lightbulb_outline, color: Colors.amber[700], size: 32),
                         const SizedBox(height: 12),
-                        const Text(
-                          'Heb je een idee of suggestie?',
-                          style: TextStyle(
+                        Text(
+                          l10n.helpFeedbackTitle,
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'We horen graag je feedback! Stuur ons een bericht met je idee en wie weet zit het in de volgende update.',
+                          l10n.helpFeedbackDescription,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.grey[700],
@@ -182,7 +183,7 @@ class HelpScreen extends StatelessWidget {
                         OutlinedButton.icon(
                           onPressed: () => _sendFeedback(context),
                           icon: const Icon(Icons.send),
-                          label: const Text('Feedback versturen'),
+                          label: Text(l10n.helpFeedbackButton),
                         ),
                       ],
                     ),
@@ -199,7 +200,8 @@ class HelpScreen extends StatelessWidget {
   }
 
   Widget _buildContactCard(
-    BuildContext context, {
+    BuildContext context,
+    AppLocalizations l10n, {
     required IconData icon,
     required String title,
     required String subtitle,
@@ -325,11 +327,11 @@ class HelpScreen extends StatelessWidget {
     }
   }
 
-  void _copyToClipboard(BuildContext context, String text) {
+  void _copyToClipboard(BuildContext context, AppLocalizations l10n, String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$text gekopieerd'),
+        content: Text(l10n.helpCopied(text)),
         duration: const Duration(seconds: 2),
       ),
     );

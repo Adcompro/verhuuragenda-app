@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
@@ -141,8 +142,9 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
         _isLoadingData = false;
       });
     } catch (e) {
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
-        _error = 'Kon accommodatie niet laden';
+        _error = l10n.couldNotLoadAccommodation;
         _isLoadingData = false;
       });
     }
@@ -150,9 +152,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Accommodatie bewerken' : 'Nieuwe accommodatie'),
+        title: Text(isEditing ? l10n.editAccommodation : l10n.newAccommodation),
         actions: [
           if (isEditing)
             IconButton(
@@ -180,7 +183,7 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
                     width: 20,
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
-                : Text(isEditing ? 'Opslaan' : 'Accommodatie aanmaken'),
+                : Text(isEditing ? l10n.save : l10n.createAccommodation),
           ),
         ),
       ),
@@ -188,39 +191,40 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
   }
 
   Widget _buildForm() {
+    final l10n = AppLocalizations.of(context)!;
     return Form(
       key: _formKey,
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // General info section
-          _buildSectionHeader('Algemene informatie', Icons.home),
+          _buildSectionHeader(l10n.generalInfo, Icons.home),
           const SizedBox(height: 12),
 
           TextFormField(
             controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Naam *',
-              hintText: 'Bijv. Strandhuisje De Meeuwen',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.nameRequired,
+              hintText: l10n.accommodationNameExample,
+              border: const OutlineInputBorder(),
             ),
-            validator: (v) => v?.isEmpty == true ? 'Naam is verplicht' : null,
+            validator: (v) => v?.isEmpty == true ? l10n.nameIsRequired : null,
           ),
           const SizedBox(height: 16),
 
           // Property type dropdown
           DropdownButtonFormField<String>(
             value: _propertyType,
-            decoration: const InputDecoration(
-              labelText: 'Type',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.type,
+              border: const OutlineInputBorder(),
             ),
-            items: const [
-              DropdownMenuItem(value: 'house', child: Text('Woning')),
-              DropdownMenuItem(value: 'apartment', child: Text('Appartement')),
-              DropdownMenuItem(value: 'villa', child: Text('Villa')),
-              DropdownMenuItem(value: 'cabin', child: Text('Huisje')),
-              DropdownMenuItem(value: 'studio', child: Text('Studio')),
+            items: [
+              DropdownMenuItem(value: 'house', child: Text(l10n.houseLabel)),
+              DropdownMenuItem(value: 'apartment', child: Text(l10n.apartment)),
+              DropdownMenuItem(value: 'villa', child: Text(l10n.villa)),
+              DropdownMenuItem(value: 'cabin', child: Text(l10n.cabinLabel)),
+              DropdownMenuItem(value: 'studio', child: Text(l10n.studio)),
             ],
             onChanged: (v) => setState(() => _propertyType = v!),
           ),
@@ -234,12 +238,12 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
                   controller: _maxGuestsController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(
-                    labelText: 'Max gasten *',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.people),
+                  decoration: InputDecoration(
+                    labelText: l10n.maxGuestsRequired,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.people),
                   ),
-                  validator: (v) => v?.isEmpty == true ? 'Verplicht' : null,
+                  validator: (v) => v?.isEmpty == true ? l10n.required : null,
                 ),
               ),
               const SizedBox(width: 12),
@@ -248,10 +252,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
                   controller: _bedroomsController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(
-                    labelText: 'Slaapkamers',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.bed),
+                  decoration: InputDecoration(
+                    labelText: l10n.bedrooms,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.bed),
                   ),
                 ),
               ),
@@ -261,10 +265,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
                   controller: _bathroomsController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(
-                    labelText: 'Badkamers',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.bathtub),
+                  decoration: InputDecoration(
+                    labelText: l10n.bathrooms,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.bathtub),
                   ),
                 ),
               ),
@@ -273,13 +277,13 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           const SizedBox(height: 16),
 
           // Color picker
-          _buildColorPicker(),
+          _buildColorPicker(l10n),
           const SizedBox(height: 16),
 
           // Active switch
           SwitchListTile(
-            title: const Text('Actief'),
-            subtitle: const Text('Accommodatie is beschikbaar voor boekingen'),
+            title: Text(l10n.active),
+            subtitle: Text(l10n.accommodationAvailableForBookings),
             value: _isActive,
             onChanged: (v) => setState(() => _isActive = v),
             contentPadding: EdgeInsets.zero,
@@ -288,7 +292,7 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           const SizedBox(height: 24),
 
           // Pricing section
-          _buildSectionHeader('Prijzen (per week)', Icons.euro),
+          _buildSectionHeader(l10n.pricesPerWeek, Icons.euro),
           const SizedBox(height: 12),
 
           Row(
@@ -297,10 +301,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
                 child: TextFormField(
                   controller: _priceLowController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Laagseizoen',
-                    border: OutlineInputBorder(),
-                    prefixText: '€ ',
+                  decoration: InputDecoration(
+                    labelText: l10n.lowSeason,
+                    border: const OutlineInputBorder(),
+                    prefixText: ' ',
                   ),
                 ),
               ),
@@ -309,10 +313,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
                 child: TextFormField(
                   controller: _priceMidController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Midden',
-                    border: OutlineInputBorder(),
-                    prefixText: '€ ',
+                  decoration: InputDecoration(
+                    labelText: l10n.midSeasonShort,
+                    border: const OutlineInputBorder(),
+                    prefixText: ' ',
                   ),
                 ),
               ),
@@ -321,10 +325,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
                 child: TextFormField(
                   controller: _priceHighController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Hoogseizoen',
-                    border: OutlineInputBorder(),
-                    prefixText: '€ ',
+                  decoration: InputDecoration(
+                    labelText: l10n.highSeason,
+                    border: const OutlineInputBorder(),
+                    prefixText: ' ',
                   ),
                 ),
               ),
@@ -335,40 +339,40 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           TextFormField(
             controller: _cleaningFeeController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Schoonmaakkosten',
-              border: OutlineInputBorder(),
-              prefixText: '€ ',
+            decoration: InputDecoration(
+              labelText: l10n.cleaningFee,
+              border: const OutlineInputBorder(),
+              prefixText: ' ',
             ),
           ),
 
           const SizedBox(height: 24),
 
           // Location section
-          _buildSectionHeader('Locatie', Icons.location_on),
+          _buildSectionHeader(l10n.location, Icons.location_on),
           const SizedBox(height: 12),
 
           TextFormField(
             controller: _addressController,
-            decoration: const InputDecoration(
-              labelText: 'Adres',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.address,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 16),
 
           TextFormField(
             controller: _cityController,
-            decoration: const InputDecoration(
-              labelText: 'Plaats',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.city,
+              border: const OutlineInputBorder(),
             ),
           ),
 
           const SizedBox(height: 24),
 
           // Check-in/out section
-          _buildSectionHeader('Check-in & Check-out', Icons.access_time),
+          _buildSectionHeader(l10n.checkInCheckOut, Icons.access_time),
           const SizedBox(height: 12),
 
           Row(
@@ -376,9 +380,9 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
               Expanded(
                 child: TextFormField(
                   controller: _checkinFromController,
-                  decoration: const InputDecoration(
-                    labelText: 'Check-in vanaf',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.checkInFrom,
+                    border: const OutlineInputBorder(),
                     hintText: '15:00',
                   ),
                 ),
@@ -387,9 +391,9 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
               Expanded(
                 child: TextFormField(
                   controller: _checkinUntilController,
-                  decoration: const InputDecoration(
-                    labelText: 'Check-in tot',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.checkInUntil,
+                    border: const OutlineInputBorder(),
                     hintText: '20:00',
                   ),
                 ),
@@ -398,9 +402,9 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
               Expanded(
                 child: TextFormField(
                   controller: _checkoutController,
-                  decoration: const InputDecoration(
-                    labelText: 'Check-out',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.checkOut,
+                    border: const OutlineInputBorder(),
                     hintText: '10:00',
                   ),
                 ),
@@ -411,7 +415,7 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           const SizedBox(height: 24),
 
           // WiFi & Access section
-          _buildSectionHeader('WiFi & Toegang', Icons.wifi),
+          _buildSectionHeader(l10n.wifiAndAccess, Icons.wifi),
           const SizedBox(height: 12),
 
           Row(
@@ -419,9 +423,9 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
               Expanded(
                 child: TextFormField(
                   controller: _wifiNetworkController,
-                  decoration: const InputDecoration(
-                    labelText: 'WiFi netwerk',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.wifiNetwork,
+                    border: const OutlineInputBorder(),
                   ),
                 ),
               ),
@@ -429,9 +433,9 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
               Expanded(
                 child: TextFormField(
                   controller: _wifiPasswordController,
-                  decoration: const InputDecoration(
-                    labelText: 'WiFi wachtwoord',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.wifiPassword,
+                    border: const OutlineInputBorder(),
                   ),
                 ),
               ),
@@ -441,22 +445,22 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
 
           TextFormField(
             controller: _alarmCodeController,
-            decoration: const InputDecoration(
-              labelText: 'Alarmcode / sleutelkluiscode',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.alarmCodeKeybox,
+              border: const OutlineInputBorder(),
             ),
           ),
 
           const SizedBox(height: 24),
 
           // iCal section
-          _buildSectionHeader('Kalender synchronisatie', Icons.sync),
+          _buildSectionHeader(l10n.calendarSync, Icons.sync),
           const SizedBox(height: 12),
 
           TextFormField(
             controller: _icalAirbnbController,
             decoration: InputDecoration(
-              labelText: 'Airbnb iCal URL',
+              labelText: l10n.icalAirbnb,
               border: const OutlineInputBorder(),
               prefixIcon: Container(
                 margin: const EdgeInsets.all(8),
@@ -475,7 +479,7 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           TextFormField(
             controller: _icalBookingController,
             decoration: InputDecoration(
-              labelText: 'Booking.com iCal URL',
+              labelText: l10n.icalBooking,
               border: const OutlineInputBorder(),
               prefixIcon: Container(
                 margin: const EdgeInsets.all(8),
@@ -494,8 +498,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           TextFormField(
             controller: _icalVrboController,
             decoration: InputDecoration(
-              labelText: 'VRBO / Expedia iCal URL',
-              helperText: 'Groot in VS, groeiend in EU',
+              labelText: l10n.icalVrbo,
+              helperText: l10n.vrboHelperText,
               border: const OutlineInputBorder(),
               prefixIcon: Container(
                 margin: const EdgeInsets.all(8),
@@ -514,8 +518,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           TextFormField(
             controller: _icalGoogleController,
             decoration: InputDecoration(
-              labelText: 'Google Vacation Rentals iCal URL',
-              helperText: 'Gratis exposure, directe boekingen',
+              labelText: l10n.icalGoogle,
+              helperText: l10n.googleHelperText,
               border: const OutlineInputBorder(),
               prefixIcon: Container(
                 margin: const EdgeInsets.all(8),
@@ -534,8 +538,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           TextFormField(
             controller: _icalHoliduController,
             decoration: InputDecoration(
-              labelText: 'Holidu iCal URL',
-              helperText: 'Populair in Duitsland & Nederland',
+              labelText: l10n.icalHolidu,
+              helperText: l10n.holiduHelperText,
               border: const OutlineInputBorder(),
               prefixIcon: Container(
                 margin: const EdgeInsets.all(8),
@@ -554,8 +558,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           TextFormField(
             controller: _icalBelvillaController,
             decoration: InputDecoration(
-              labelText: 'Belvilla / Novasol iCal URL',
-              helperText: 'Europese markt',
+              labelText: l10n.icalBelvilla,
+              helperText: l10n.belvillaHelperText,
               border: const OutlineInputBorder(),
               prefixIcon: Container(
                 margin: const EdgeInsets.all(8),
@@ -574,8 +578,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           TextFormField(
             controller: _icalOtherController,
             decoration: InputDecoration(
-              labelText: 'Andere iCal URL',
-              helperText: 'Voor andere platforms of handmatige import',
+              labelText: l10n.otherIcalUrl,
+              helperText: l10n.otherIcalHelperText,
               border: const OutlineInputBorder(),
               prefixIcon: Container(
                 margin: const EdgeInsets.all(8),
@@ -607,7 +611,7 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
                       Icon(Icons.download, color: Colors.green[700], size: 18),
                       const SizedBox(width: 8),
                       Text(
-                        'Export URL',
+                        l10n.exportUrlLabel,
                         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green[800]),
                       ),
                     ],
@@ -625,15 +629,15 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           const SizedBox(height: 24),
 
           // House rules section
-          _buildSectionHeader('Huisregels & Instructies', Icons.rule),
+          _buildSectionHeader(l10n.houseRulesAndInstructions, Icons.rule),
           const SizedBox(height: 12),
 
           TextFormField(
             controller: _houseRulesController,
             maxLines: 4,
-            decoration: const InputDecoration(
-              labelText: 'Huisregels',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.houseRules,
+              border: const OutlineInputBorder(),
               alignLabelWithHint: true,
             ),
           ),
@@ -642,9 +646,9 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           TextFormField(
             controller: _arrivalController,
             maxLines: 4,
-            decoration: const InputDecoration(
-              labelText: 'Aankomstinstructies',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.arrivalInstructions,
+              border: const OutlineInputBorder(),
               alignLabelWithHint: true,
             ),
           ),
@@ -678,7 +682,7 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
     );
   }
 
-  Widget _buildColorPicker() {
+  Widget _buildColorPicker(AppLocalizations l10n) {
     final colors = [
       '#3B82F6', // Blue
       '#10B981', // Green
@@ -693,7 +697,7 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Kleur', style: TextStyle(fontSize: 12, color: Colors.grey)),
+        Text(l10n.color, style: const TextStyle(fontSize: 12, color: Colors.grey)),
         const SizedBox(height: 8),
         Wrap(
           spacing: 12,
@@ -777,15 +781,17 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
       }
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(isEditing ? 'Accommodatie bijgewerkt' : 'Accommodatie aangemaakt')),
+          SnackBar(content: Text(isEditing ? l10n.accommodationUpdated : l10n.accommodationCreated)),
         );
         context.pop(true); // Return true to indicate changes were made
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fout: $e')),
+          SnackBar(content: Text('${l10n.error}: $e')),
         );
       }
     } finally {
@@ -794,15 +800,16 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
   }
 
   void _confirmDelete() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Accommodatie verwijderen?'),
-        content: Text('Weet je zeker dat je "${_nameController.text}" wilt verwijderen? Dit kan niet ongedaan worden gemaakt.'),
+        title: Text(l10n.deleteAccommodationConfirm),
+        content: Text(l10n.deleteAccommodationMessage(_nameController.text)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annuleren'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -810,7 +817,7 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
               _deleteAccommodation();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Verwijderen'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -824,15 +831,17 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
       await ApiClient.instance.delete('${ApiConfig.accommodations}/${widget.accommodationId}');
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Accommodatie verwijderd')),
+          SnackBar(content: Text(l10n.accommodationDeleted)),
         );
         context.pop(true);
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fout bij verwijderen: $e')),
+          SnackBar(content: Text('${l10n.deleteError}: $e')),
         );
       }
     } finally {

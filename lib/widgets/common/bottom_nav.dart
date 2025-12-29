@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../utils/responsive.dart';
 
 class BottomNavShell extends StatelessWidget {
@@ -70,6 +71,8 @@ class BottomNavShell extends StatelessWidget {
   }
 
   Widget _buildTabletLayout(BuildContext context, int selectedIndex) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Row(
         children: [
@@ -85,65 +88,65 @@ class BottomNavShell extends StatelessWidget {
             leading: Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Responsive.isDesktop(context)
-                  ? const Text(
-                      'VerhuurAgenda',
-                      style: TextStyle(
+                  ? Text(
+                      l10n.appName,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     )
                   : const Icon(Icons.home_work, size: 32),
             ),
-            destinations: const [
+            destinations: [
               NavigationRailDestination(
-                icon: Icon(Icons.dashboard_outlined),
-                selectedIcon: Icon(Icons.dashboard),
-                label: Text('Dashboard'),
+                icon: const Icon(Icons.dashboard_outlined),
+                selectedIcon: const Icon(Icons.dashboard),
+                label: Text(l10n.dashboard),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.calendar_month_outlined),
-                selectedIcon: Icon(Icons.calendar_month),
-                label: Text('Kalender'),
+                icon: const Icon(Icons.calendar_month_outlined),
+                selectedIcon: const Icon(Icons.calendar_month),
+                label: Text(l10n.calendar),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.book_outlined),
-                selectedIcon: Icon(Icons.book),
-                label: Text('Boekingen'),
+                icon: const Icon(Icons.book_outlined),
+                selectedIcon: const Icon(Icons.book),
+                label: Text(l10n.bookings),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.home_work_outlined),
-                selectedIcon: Icon(Icons.home_work),
-                label: Text('Accommodaties'),
+                icon: const Icon(Icons.home_work_outlined),
+                selectedIcon: const Icon(Icons.home_work),
+                label: Text(l10n.accommodations),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.people_outline),
-                selectedIcon: Icon(Icons.people),
-                label: Text('Gasten'),
+                icon: const Icon(Icons.people_outline),
+                selectedIcon: const Icon(Icons.people),
+                label: Text(l10n.guests),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.cleaning_services_outlined),
-                selectedIcon: Icon(Icons.cleaning_services),
-                label: Text('Schoonmaak'),
+                icon: const Icon(Icons.cleaning_services_outlined),
+                selectedIcon: const Icon(Icons.cleaning_services),
+                label: Text(l10n.cleaning),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.build_outlined),
-                selectedIcon: Icon(Icons.build),
-                label: Text('Onderhoud'),
+                icon: const Icon(Icons.build_outlined),
+                selectedIcon: const Icon(Icons.build),
+                label: Text(l10n.maintenance),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.campaign_outlined),
-                selectedIcon: Icon(Icons.campaign),
-                label: Text('Campagnes'),
+                icon: const Icon(Icons.campaign_outlined),
+                selectedIcon: const Icon(Icons.campaign),
+                label: Text(l10n.campaigns),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.bar_chart_outlined),
-                selectedIcon: Icon(Icons.bar_chart),
-                label: Text('Statistieken'),
+                icon: const Icon(Icons.bar_chart_outlined),
+                selectedIcon: const Icon(Icons.bar_chart),
+                label: Text(l10n.statistics),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.settings_outlined),
-                selectedIcon: Icon(Icons.settings),
-                label: Text('Instellingen'),
+                icon: const Icon(Icons.settings_outlined),
+                selectedIcon: const Icon(Icons.settings),
+                label: Text(l10n.settings),
               ),
             ],
           ),
@@ -156,6 +159,8 @@ class BottomNavShell extends StatelessWidget {
   }
 
   Widget _buildPhoneLayout(BuildContext context, int selectedIndex) {
+    final l10n = AppLocalizations.of(context)!;
+
     // Map full index to bottom nav index (0-3)
     int bottomNavIndex;
     if (selectedIndex <= 0) {
@@ -188,26 +193,26 @@ class BottomNavShell extends StatelessWidget {
               break;
           }
         },
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home),
+            label: l10n.home,
           ),
           NavigationDestination(
-            icon: Icon(Icons.calendar_month_outlined),
-            selectedIcon: Icon(Icons.calendar_month),
-            label: 'Kalender',
+            icon: const Icon(Icons.calendar_month_outlined),
+            selectedIcon: const Icon(Icons.calendar_month),
+            label: l10n.calendar,
           ),
           NavigationDestination(
-            icon: Icon(Icons.book_outlined),
-            selectedIcon: Icon(Icons.book),
-            label: 'Boekingen',
+            icon: const Icon(Icons.book_outlined),
+            selectedIcon: const Icon(Icons.book),
+            label: l10n.bookings,
           ),
           NavigationDestination(
-            icon: Icon(Icons.more_horiz),
-            selectedIcon: Icon(Icons.more_horiz),
-            label: 'Meer',
+            icon: const Icon(Icons.more_horiz),
+            selectedIcon: const Icon(Icons.more_horiz),
+            label: l10n.more,
           ),
         ],
       ),
@@ -215,6 +220,8 @@ class BottomNavShell extends StatelessWidget {
   }
 
   void _showMoreMenu(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -236,7 +243,7 @@ class BottomNavShell extends StatelessWidget {
             const SizedBox(height: 16),
             _MenuItem(
               icon: Icons.home_work_outlined,
-              label: 'Accommodaties',
+              label: l10n.accommodations,
               onTap: () {
                 Navigator.pop(context);
                 context.go('/accommodations');
@@ -244,7 +251,7 @@ class BottomNavShell extends StatelessWidget {
             ),
             _MenuItem(
               icon: Icons.people_outline,
-              label: 'Gasten',
+              label: l10n.guests,
               onTap: () {
                 Navigator.pop(context);
                 context.go('/guests');
@@ -252,7 +259,7 @@ class BottomNavShell extends StatelessWidget {
             ),
             _MenuItem(
               icon: Icons.cleaning_services_outlined,
-              label: 'Schoonmaak',
+              label: l10n.cleaning,
               onTap: () {
                 Navigator.pop(context);
                 context.go('/cleaning');
@@ -260,7 +267,7 @@ class BottomNavShell extends StatelessWidget {
             ),
             _MenuItem(
               icon: Icons.build_outlined,
-              label: 'Onderhoud',
+              label: l10n.maintenance,
               onTap: () {
                 Navigator.pop(context);
                 context.go('/maintenance');
@@ -268,7 +275,7 @@ class BottomNavShell extends StatelessWidget {
             ),
             _MenuItem(
               icon: Icons.campaign_outlined,
-              label: 'Campagnes',
+              label: l10n.campaigns,
               onTap: () {
                 Navigator.pop(context);
                 context.go('/campaigns');
@@ -276,7 +283,7 @@ class BottomNavShell extends StatelessWidget {
             ),
             _MenuItem(
               icon: Icons.bar_chart_outlined,
-              label: 'Statistieken',
+              label: l10n.statistics,
               onTap: () {
                 Navigator.pop(context);
                 context.go('/statistics');
@@ -285,7 +292,7 @@ class BottomNavShell extends StatelessWidget {
             const Divider(),
             _MenuItem(
               icon: Icons.settings_outlined,
-              label: 'Instellingen',
+              label: l10n.settings,
               onTap: () {
                 Navigator.pop(context);
                 context.go('/settings');

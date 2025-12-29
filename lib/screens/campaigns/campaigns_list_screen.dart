@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -60,20 +61,20 @@ class Campaign {
   double get clickRate =>
       openedCount > 0 ? (clickedCount / openedCount * 100) : 0;
 
-  String get statusLabel {
+  String getStatusLabel(AppLocalizations l10n) {
     switch (status) {
       case 'draft':
-        return 'Concept';
+        return l10n.campaignStatusDraft;
       case 'scheduled':
-        return 'Gepland';
+        return l10n.campaignStatusScheduled;
       case 'sending':
-        return 'Verzenden...';
+        return l10n.campaignStatusSending;
       case 'sent':
-        return 'Verzonden';
+        return l10n.campaignStatusSent;
       case 'paused':
-        return 'Gepauzeerd';
+        return l10n.campaignStatusPaused;
       case 'cancelled':
-        return 'Geannuleerd';
+        return l10n.campaignStatusCancelled;
       default:
         return status;
     }
@@ -132,11 +133,11 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
   String? _error;
   String _statusFilter = 'all';
 
-  final List<Map<String, String>> _statusFilters = [
-    {'value': 'all', 'label': 'Alle'},
-    {'value': 'sent', 'label': 'Verzonden'},
-    {'value': 'scheduled', 'label': 'Gepland'},
-    {'value': 'draft', 'label': 'Concepten'},
+  List<Map<String, String>> _getStatusFilters(AppLocalizations l10n) => [
+    {'value': 'all', 'label': l10n.allFilter},
+    {'value': 'sent', 'label': l10n.sentFilter},
+    {'value': 'scheduled', 'label': l10n.scheduledFilter},
+    {'value': 'draft', 'label': l10n.draftsFilter},
   ];
 
   @override
@@ -174,7 +175,7 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Kon campagnes niet laden';
+        _error = e.toString();
         _isLoading = false;
       });
     }
@@ -187,9 +188,12 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final statusFilters = _getStatusFilters(l10n);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Campagnes'),
+        title: Text(l10n.campaignsTitle),
       ),
       body: Column(
         children: [
@@ -208,7 +212,7 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Campagnes aanmaken en bewerken doe je via de website. Hier kun je de statistieken bekijken.',
+                    l10n.campaignsInfoBanner,
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.blue[800],
@@ -224,7 +228,7 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
-              children: _statusFilters.map((filter) {
+              children: statusFilters.map((filter) {
                 final isSelected = _statusFilter == filter['value'];
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
@@ -247,14 +251,14 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
 
           // Content
           Expanded(
-            child: _buildContent(),
+            child: _buildContent(l10n),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(AppLocalizations l10n) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -266,12 +270,12 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
           children: [
             Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
-            Text(_error!, style: TextStyle(color: Colors.grey[600])),
+            Text(l10n.couldNotLoadCampaigns, style: TextStyle(color: Colors.grey[600])),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _loadCampaigns,
               icon: const Icon(Icons.refresh),
-              label: const Text('Opnieuw proberen'),
+              label: Text(l10n.retry),
             ),
           ],
         ),
@@ -279,7 +283,7 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
     }
 
     if (_filteredCampaigns.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(l10n);
     }
 
     return RefreshIndicator(
@@ -288,13 +292,13 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
         padding: const EdgeInsets.all(16),
         itemCount: _filteredCampaigns.length,
         itemBuilder: (context, index) {
-          return _buildCampaignCard(_filteredCampaigns[index]);
+          return _buildCampaignCard(_filteredCampaigns[index], l10n);
         },
       ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -313,7 +317,7 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
           ),
           const SizedBox(height: 24),
           Text(
-            'Geen campagnes gevonden',
+            l10n.noCampaignsFound,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -324,7 +328,7 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 48),
             child: Text(
-              'Maak je eerste campagne aan via de website om je gasten te bereiken.',
+              l10n.noCampaignsDescription,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.grey[600],
@@ -336,11 +340,11 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
     );
   }
 
-  Widget _buildCampaignCard(Campaign campaign) {
+  Widget _buildCampaignCard(Campaign campaign, AppLocalizations l10n) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
-        onTap: () => _showCampaignDetail(campaign),
+        onTap: () => _showCampaignDetail(campaign, l10n),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -393,7 +397,7 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          campaign.statusLabel,
+                          campaign.getStatusLabel(l10n),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -419,8 +423,8 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
                     const SizedBox(width: 6),
                     Text(
                       campaign.sentAt != null
-                          ? 'Verzonden op ${_formatDate(campaign.sentAt!)}'
-                          : 'Gepland voor ${_formatDate(campaign.scheduledAt!)}',
+                          ? l10n.sentOnDate(_formatDate(campaign.sentAt!))
+                          : l10n.scheduledForDate(_formatDate(campaign.scheduledAt!)),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -440,25 +444,25 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
                     _buildStatItem(
                       Icons.send_outlined,
                       '${campaign.sentCount}',
-                      'Verzonden',
+                      l10n.campaignStatusSent,
                       Colors.blue,
                     ),
                     _buildStatItem(
                       Icons.visibility_outlined,
                       '${campaign.openRate.toStringAsFixed(1)}%',
-                      'Geopend',
+                      l10n.opened,
                       Colors.green,
                     ),
                     _buildStatItem(
                       Icons.touch_app_outlined,
                       '${campaign.clickRate.toStringAsFixed(1)}%',
-                      'Geklikt',
+                      l10n.clicked,
                       Colors.orange,
                     ),
                     _buildStatItem(
                       Icons.unsubscribe_outlined,
                       '${campaign.unsubscribedCount}',
-                      'Afgemeld',
+                      l10n.unsubscribedLabel,
                       Colors.red,
                     ),
                   ],
@@ -473,7 +477,7 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
                     Icon(Icons.people_outline, size: 14, color: Colors.grey[500]),
                     const SizedBox(width: 6),
                     Text(
-                      '${campaign.totalRecipients} ontvangers',
+                      l10n.recipientsCount(campaign.totalRecipients),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -515,7 +519,7 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
     );
   }
 
-  void _showCampaignDetail(Campaign campaign) {
+  void _showCampaignDetail(Campaign campaign, AppLocalizations l10n) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -587,7 +591,7 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
-                                    campaign.statusLabel,
+                                    campaign.getStatusLabel(l10n),
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -605,7 +609,7 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
 
                       // Subject
                       _buildDetailSection(
-                        'Onderwerp',
+                        l10n.subject,
                         campaign.subject,
                         Icons.subject,
                       ),
@@ -613,21 +617,21 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
                       // Date
                       if (campaign.sentAt != null)
                         _buildDetailSection(
-                          'Verzonden op',
+                          l10n.sentOnDate(''),
                           _formatDateTime(campaign.sentAt!),
                           Icons.send,
                         ),
                       if (campaign.scheduledAt != null && campaign.sentAt == null)
                         _buildDetailSection(
-                          'Gepland voor',
+                          l10n.scheduledForDate(''),
                           _formatDateTime(campaign.scheduledAt!),
                           Icons.schedule,
                         ),
 
                       // Recipients
                       _buildDetailSection(
-                        'Ontvangers',
-                        '${campaign.totalRecipients} contacten',
+                        l10n.recipientsCount(0).replaceAll('0 ', ''),
+                        l10n.contactsCount(campaign.totalRecipients),
                         Icons.people_outline,
                       ),
 
@@ -636,9 +640,9 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
                         const SizedBox(height: 16),
                         const Divider(),
                         const SizedBox(height: 16),
-                        const Text(
-                          'Statistieken',
-                          style: TextStyle(
+                        Text(
+                          l10n.statistics,
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -655,25 +659,25 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
                           childAspectRatio: 1.5,
                           children: [
                             _buildStatCard(
-                              'Verzonden',
+                              l10n.campaignStatusSent,
                               campaign.sentCount.toString(),
                               Icons.send,
                               Colors.blue,
                             ),
                             _buildStatCard(
-                              'Geopend',
+                              l10n.opened,
                               '${campaign.openedCount} (${campaign.openRate.toStringAsFixed(1)}%)',
                               Icons.visibility,
                               Colors.green,
                             ),
                             _buildStatCard(
-                              'Geklikt',
+                              l10n.clicked,
                               '${campaign.clickedCount} (${campaign.clickRate.toStringAsFixed(1)}%)',
                               Icons.touch_app,
                               Colors.orange,
                             ),
                             _buildStatCard(
-                              'Afgemeld',
+                              l10n.unsubscribedLabel,
                               campaign.unsubscribedCount.toString(),
                               Icons.unsubscribe,
                               Colors.red,
@@ -695,9 +699,11 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
                               children: [
                                 Icon(Icons.warning_amber, color: Colors.amber[700]),
                                 const SizedBox(width: 12),
-                                Text(
-                                  '${campaign.bouncedCount} emails zijn niet afgeleverd (bounced)',
-                                  style: TextStyle(color: Colors.amber[900]),
+                                Expanded(
+                                  child: Text(
+                                    l10n.emailsBouncedCount(campaign.bouncedCount),
+                                    style: TextStyle(color: Colors.amber[900]),
+                                  ),
                                 ),
                               ],
                             ),
@@ -714,13 +720,13 @@ class _CampaignsListScreenState extends ConsumerState<CampaignsListScreen> {
                           onPressed: () {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Open de website om deze campagne te bewerken'),
+                              SnackBar(
+                                content: Text(l10n.openWebsiteToEdit),
                               ),
                             );
                           },
                           icon: const Icon(Icons.open_in_new),
-                          label: const Text('Bekijken op website'),
+                          label: Text(l10n.viewOnWebsite),
                         ),
                       ),
                     ],

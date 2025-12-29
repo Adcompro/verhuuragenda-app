@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -40,11 +41,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _handleRegister() async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (!_formKey.currentState!.validate()) return;
 
     if (!_acceptTerms) {
       setState(() {
-        _error = 'Je moet akkoord gaan met de algemene voorwaarden';
+        _error = l10n.mustAgreeToTerms;
       });
       return;
     }
@@ -74,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Registratie mislukt. Mogelijk bestaat dit e-mailadres al.';
+        _error = l10n.registrationFailed;
         _isLoading = false;
       });
     }
@@ -82,6 +85,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_registrationSuccess) {
       return _buildSuccessScreen();
     }
@@ -104,16 +109,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Header
-                const Text(
-                  'Account aanmaken',
-                  style: TextStyle(
+                Text(
+                  l10n.registerTitle,
+                  style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Start gratis met het beheren van je vakantieverhuur',
+                  l10n.registerSubtitle,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey[600],
@@ -151,13 +156,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _nameController,
                   textInputAction: TextInputAction.next,
                   textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(
-                    labelText: 'Volledige naam',
-                    prefixIcon: Icon(Icons.person_outlined),
+                  decoration: InputDecoration(
+                    labelText: l10n.fullName,
+                    prefixIcon: const Icon(Icons.person_outlined),
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Voer je naam in';
+                      return l10n.enterName;
                     }
                     return null;
                   },
@@ -169,9 +174,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _companyController,
                   textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    labelText: 'Bedrijfsnaam (optioneel)',
-                    prefixIcon: Icon(Icons.business_outlined),
+                  decoration: InputDecoration(
+                    labelText: l10n.companyNameOptional,
+                    prefixIcon: const Icon(Icons.business_outlined),
                     hintText: 'Bijv. Villa Verhuur BV',
                   ),
                 ),
@@ -183,16 +188,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    labelText: 'E-mailadres',
-                    prefixIcon: Icon(Icons.email_outlined),
+                  decoration: InputDecoration(
+                    labelText: l10n.email,
+                    prefixIcon: const Icon(Icons.email_outlined),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Voer je e-mailadres in';
+                      return l10n.enterEmail;
                     }
                     if (!value.contains('@') || !value.contains('.')) {
-                      return 'Voer een geldig e-mailadres in';
+                      return l10n.enterValidEmail;
                     }
                     return null;
                   },
@@ -206,7 +211,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   obscureText: _obscurePassword,
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
-                    labelText: 'Wachtwoord',
+                    labelText: l10n.password,
                     prefixIcon: const Icon(Icons.lock_outlined),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -220,14 +225,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         });
                       },
                     ),
-                    helperText: 'Minimaal 8 karakters',
+                    helperText: l10n.passwordMinLength,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Voer een wachtwoord in';
+                      return l10n.enterPassword;
                     }
                     if (value.length < 8) {
-                      return 'Wachtwoord moet minimaal 8 karakters zijn';
+                      return l10n.passwordMinLength;
                     }
                     return null;
                   },
@@ -241,7 +246,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   obscureText: _obscureConfirmPassword,
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
-                    labelText: 'Bevestig wachtwoord',
+                    labelText: l10n.confirmPassword,
                     prefixIcon: const Icon(Icons.lock_outlined),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -258,10 +263,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Bevestig je wachtwoord';
+                      return l10n.confirmPassword;
                     }
                     if (value != _passwordController.text) {
-                      return 'Wachtwoorden komen niet overeen';
+                      return l10n.passwordsNotMatch;
                     }
                     return null;
                   },
@@ -291,9 +296,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               fontSize: 14,
                             ),
                             children: [
-                              const TextSpan(text: 'Ik ga akkoord met de '),
+                              TextSpan(text: l10n.agreeToTerms),
                               TextSpan(
-                                text: 'algemene voorwaarden',
+                                text: l10n.termsAndConditions,
                                 style: TextStyle(
                                   color: AppTheme.primaryColor,
                                   decoration: TextDecoration.underline,
@@ -301,9 +306,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () => _openTerms(),
                               ),
-                              const TextSpan(text: ' en het '),
+                              TextSpan(text: ' ${l10n.and} '),
                               TextSpan(
-                                text: 'privacybeleid',
+                                text: l10n.privacyPolicy,
                                 style: TextStyle(
                                   color: AppTheme.primaryColor,
                                   decoration: TextDecoration.underline,
@@ -336,9 +341,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'Gratis registreren',
-                          style: TextStyle(fontSize: 16),
+                      : Text(
+                          l10n.freeRegister,
+                          style: const TextStyle(fontSize: 16),
                         ),
                 ),
 
@@ -349,12 +354,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Al een account? ',
+                      '${l10n.hasAccount} ',
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     TextButton(
                       onPressed: () => context.go('/login'),
-                      child: const Text('Inloggen'),
+                      child: Text(l10n.login),
                     ),
                   ],
                 ),
@@ -374,10 +379,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.card_giftcard, color: Colors.green[700]),
+                          Icon(Icons.check_circle, color: Colors.green[700]),
                           const SizedBox(width: 8),
                           Text(
-                            'Gratis proefperiode',
+                            l10n.freeAccount,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.green[800],
@@ -386,10 +391,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      _buildFeatureItem('14 dagen gratis proberen'),
-                      _buildFeatureItem('Geen creditcard nodig'),
-                      _buildFeatureItem('Direct aan de slag'),
-                      _buildFeatureItem('Alle functies beschikbaar'),
+                      _buildFeatureItem(l10n.freeAccountFeature1),
+                      _buildFeatureItem(l10n.freeAccountFeature2),
+                      _buildFeatureItem(l10n.freeAccountFeature3),
+                      _buildFeatureItem(l10n.freeAccountFeature4),
                     ],
                   ),
                 ),
@@ -402,6 +407,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildSuccessScreen() {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -422,9 +429,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              const Text(
-                'Welkom bij VerhuurAgenda!',
-                style: TextStyle(
+              Text(
+                l10n.welcomeTitle,
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -432,7 +439,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Je account is succesvol aangemaakt.\n\n'
+                '${l10n.accountCreated}\n\n'
                 'We hebben een bevestigingsmail gestuurd naar:\n'
                 '${_emailController.text}',
                 style: TextStyle(
@@ -445,17 +452,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.blue[50],
+                  color: Colors.green[50],
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: Colors.blue[700]),
+                    Icon(Icons.check_circle, color: Colors.green[700]),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Bevestig je e-mailadres om alle functies te gebruiken.',
-                        style: TextStyle(color: Colors.blue[800]),
+                        l10n.canLoginNow,
+                        style: TextStyle(color: Colors.green[800]),
                       ),
                     ),
                   ],
@@ -469,9 +476,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: const Text(
-                    'Naar inloggen',
-                    style: TextStyle(fontSize: 16),
+                  child: Text(
+                    l10n.goToLogin,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),

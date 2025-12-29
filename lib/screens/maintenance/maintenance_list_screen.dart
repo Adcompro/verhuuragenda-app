@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -64,7 +65,7 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Kon taken niet laden';
+        _error = e.toString();
         _isLoading = false;
       });
     }
@@ -72,11 +73,12 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isTablet = Responsive.useWideLayout(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Onderhoud'),
+        title: Text(l10n.maintenanceTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -89,7 +91,7 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
               child: TextButton.icon(
                 onPressed: () => _navigateToForm(),
                 icon: const Icon(Icons.add),
-                label: const Text('Nieuwe taak'),
+                label: Text(l10n.newTask),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
@@ -110,7 +112,7 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
         child: FloatingActionButton.extended(
           onPressed: () => _navigateToForm(),
           icon: const Icon(Icons.add),
-          label: const Text('Nieuwe taak'),
+          label: Text(l10n.newTask),
         ),
       ),
       floatingActionButtonLocation: isTablet
@@ -120,6 +122,7 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
   }
 
   Widget _buildFilters() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(12),
       color: Colors.grey[100],
@@ -131,17 +134,17 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildFilterChip('Open', 'open', _statusFilter, (v) {
+                _buildFilterChip(l10n.filterOpen, 'open', _statusFilter, (v) {
                   setState(() => _statusFilter = v);
                   _loadTasks();
                 }),
                 const SizedBox(width: 8),
-                _buildFilterChip('Afgerond', 'completed', _statusFilter, (v) {
+                _buildFilterChip(l10n.filterCompleted, 'completed', _statusFilter, (v) {
                   setState(() => _statusFilter = v);
                   _loadTasks();
                 }),
                 const SizedBox(width: 8),
-                _buildFilterChip('Alles', 'all', _statusFilter, (v) {
+                _buildFilterChip(l10n.all, 'all', _statusFilter, (v) {
                   setState(() => _statusFilter = v);
                   _loadTasks();
                 }),
@@ -149,13 +152,13 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
                 Container(width: 1, height: 24, color: Colors.grey[400]),
                 const SizedBox(width: 16),
                 // Priority filter
-                _buildPriorityChip('🔴 Spoed', 'urgent'),
+                _buildPriorityChip('🔴 ${l10n.priorityUrgentEmoji}', 'urgent'),
                 const SizedBox(width: 8),
-                _buildPriorityChip('🟠 Hoog', 'high'),
+                _buildPriorityChip('🟠 ${l10n.priorityHighEmoji}', 'high'),
                 const SizedBox(width: 8),
-                _buildPriorityChip('🟡 Gemiddeld', 'medium'),
+                _buildPriorityChip('🟡 ${l10n.priorityMediumEmoji}', 'medium'),
                 const SizedBox(width: 8),
-                _buildPriorityChip('🟢 Laag', 'low'),
+                _buildPriorityChip('🟢 ${l10n.priorityLowEmoji}', 'low'),
               ],
             ),
           ),
@@ -192,6 +195,7 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
   }
 
   Widget _buildBody() {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -203,11 +207,11 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
           children: [
             Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 16),
-            Text(_error!),
+            Text(l10n.couldNotLoadTasksError),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadTasks,
-              child: const Text('Opnieuw proberen'),
+              child: Text(l10n.retry),
             ),
           ],
         ),
@@ -223,13 +227,13 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
             const SizedBox(height: 16),
             Text(
               _statusFilter == 'open'
-                  ? 'Geen openstaande taken'
-                  : 'Geen taken gevonden',
+                  ? l10n.noOpenTasks
+                  : l10n.noTasksFound,
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             Text(
-              'Tik op + om een nieuwe taak toe te voegen',
+              l10n.tapToAddTask,
               style: TextStyle(color: Colors.grey[500]),
             ),
           ],
@@ -406,7 +410,7 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
                   // Due date or completed date
                   if (task.status == 'completed' && task.completedAt != null)
                     Text(
-                      'Afgerond ${_formatDate(task.completedAt!)}',
+                      AppLocalizations.of(context)!.completedOnDate(_formatDate(task.completedAt!)),
                       style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     )
                   else if (task.dueDate != null)
@@ -420,8 +424,8 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
                         const SizedBox(width: 4),
                         Text(
                           task.isOverdue
-                              ? 'Verlopen: ${_formatDate(task.dueDate!)}'
-                              : 'Deadline: ${_formatDate(task.dueDate!)}',
+                              ? AppLocalizations.of(context)!.overdueDate(_formatDate(task.dueDate!))
+                              : AppLocalizations.of(context)!.deadlineDate(_formatDate(task.dueDate!)),
                           style: TextStyle(
                             fontSize: 12,
                             color: task.isOverdue ? Colors.red : Colors.grey[600],
@@ -493,16 +497,17 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
   }
 
   String _formatDate(DateTime date) {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final dateOnly = DateTime(date.year, date.month, date.day);
 
     if (dateOnly == today) {
-      return 'Vandaag';
+      return l10n.today;
     } else if (dateOnly == today.subtract(const Duration(days: 1))) {
-      return 'Gisteren';
+      return l10n.yesterday;
     } else if (dateOnly == today.add(const Duration(days: 1))) {
-      return 'Morgen';
+      return l10n.tomorrow;
     }
     return '${date.day}-${date.month}-${date.year}';
   }
@@ -544,6 +549,7 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
   }
 
   Future<void> _updateTaskStatus(MaintenanceTask task, String status) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       await ApiClient.instance.patch(
         '${ApiConfig.maintenance}/${task.id}/status',
@@ -552,50 +558,52 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
       _loadTasks();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Status gewijzigd naar ${_getStatusLabel(status)}')),
+          SnackBar(content: Text(l10n.statusChangedTo(_getStatusLabel(status)))),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Kon status niet wijzigen')),
+          SnackBar(content: Text(l10n.couldNotChangeStatus)),
         );
       }
     }
   }
 
   String _getStatusLabel(String status) {
+    final l10n = AppLocalizations.of(context)!;
     switch (status) {
       case 'open':
-        return 'Open';
+        return l10n.statusOpen;
       case 'in_progress':
-        return 'Bezig';
+        return l10n.statusInProgress;
       case 'waiting':
-        return 'Wachtend';
+        return l10n.statusWaiting;
       case 'completed':
-        return 'Afgerond';
+        return l10n.statusCompletedValue;
       case 'cancelled':
-        return 'Geannuleerd';
+        return l10n.statusCancelledValue;
       default:
         return status;
     }
   }
 
   Future<void> _deleteTask(MaintenanceTask task) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Taak verwijderen?'),
-        content: Text('Weet je zeker dat je "${task.title}" wilt verwijderen?'),
+        title: Text(l10n.deleteTaskTitle),
+        content: Text(l10n.confirmDeleteTaskMessage(task.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuleren'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Verwijderen'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -608,13 +616,13 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
       _loadTasks();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Taak verwijderd')),
+          SnackBar(content: Text(l10n.taskDeletedSuccess)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Kon taak niet verwijderen')),
+          SnackBar(content: Text(l10n.couldNotDeleteTaskError)),
         );
       }
     }
@@ -719,16 +727,16 @@ class _TaskDetailSheet extends StatelessWidget {
                           _getStatusColor(task.status),
                         ),
                         if (task.isOverdue)
-                          _buildInfoChip('Verlopen', Colors.red),
+                          _buildInfoChip(AppLocalizations.of(context)!.overdueLabel, Colors.red),
                       ],
                     ),
                     const SizedBox(height: 20),
 
                     // Description
                     if (task.description != null && task.description!.isNotEmpty) ...[
-                      const Text(
-                        'Beschrijving',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.descriptionLabel,
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.grey,
@@ -746,8 +754,8 @@ class _TaskDetailSheet extends StatelessWidget {
                     if (task.dueDate != null) ...[
                       _buildDetailRow(
                         Icons.schedule,
-                        'Deadline',
-                        _formatFullDate(task.dueDate!),
+                        AppLocalizations.of(context)!.deadlineLabel,
+                        _formatFullDate(context, task.dueDate!),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -756,8 +764,10 @@ class _TaskDetailSheet extends StatelessWidget {
                     if (task.completedAt != null) ...[
                       _buildDetailRow(
                         Icons.check_circle,
-                        'Afgerond',
-                        '${_formatFullDate(task.completedAt!)}${task.completedBy != null ? ' door ${task.completedBy}' : ''}',
+                        AppLocalizations.of(context)!.completedDateLabel,
+                        task.completedBy != null
+                            ? AppLocalizations.of(context)!.completedByPerson(_formatFullDate(context, task.completedAt!), task.completedBy!)
+                            : _formatFullDate(context, task.completedAt!),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -765,9 +775,9 @@ class _TaskDetailSheet extends StatelessWidget {
                     // Photos
                     if (task.photos.isNotEmpty) ...[
                       const SizedBox(height: 8),
-                      const Text(
-                        "Foto's",
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.photosLabel,
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.grey,
@@ -810,9 +820,9 @@ class _TaskDetailSheet extends StatelessWidget {
                     // Notes
                     if (task.notes != null && task.notes!.isNotEmpty) ...[
                       const SizedBox(height: 20),
-                      const Text(
-                        'Notities',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.notesLabel,
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.grey,
@@ -840,7 +850,7 @@ class _TaskDetailSheet extends StatelessWidget {
                               child: OutlinedButton.icon(
                                 onPressed: () => onStatusChange('in_progress'),
                                 icon: const Icon(Icons.play_arrow),
-                                label: const Text('Start'),
+                                label: Text(AppLocalizations.of(context)!.startAction),
                               ),
                             ),
                           if (task.status == 'open') const SizedBox(width: 12),
@@ -848,7 +858,7 @@ class _TaskDetailSheet extends StatelessWidget {
                             child: ElevatedButton.icon(
                               onPressed: () => onStatusChange('completed'),
                               icon: const Icon(Icons.check),
-                              label: const Text('Afronden'),
+                              label: Text(AppLocalizations.of(context)!.completeAction),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
                                 foregroundColor: Colors.white,
@@ -864,9 +874,9 @@ class _TaskDetailSheet extends StatelessWidget {
                     TextButton.icon(
                       onPressed: onDelete,
                       icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      label: const Text(
-                        'Taak verwijderen',
-                        style: TextStyle(color: Colors.red),
+                      label: Text(
+                        AppLocalizations.of(context)!.deleteTaskAction,
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                   ],
@@ -943,10 +953,11 @@ class _TaskDetailSheet extends StatelessWidget {
     }
   }
 
-  String _formatFullDate(DateTime date) {
-    const months = [
-      'januari', 'februari', 'maart', 'april', 'mei', 'juni',
-      'juli', 'augustus', 'september', 'oktober', 'november', 'december'
+  String _formatFullDate(BuildContext context, DateTime date) {
+    final l10n = AppLocalizations.of(context)!;
+    final months = [
+      l10n.january, l10n.february, l10n.march, l10n.april, l10n.may, l10n.june,
+      l10n.july, l10n.august, l10n.september, l10n.october, l10n.november, l10n.december
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }

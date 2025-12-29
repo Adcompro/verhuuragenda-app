@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
@@ -83,9 +84,10 @@ class _GuestsListScreenState extends State<GuestsListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gasten'),
+        title: Text(l10n.guests),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: Padding(

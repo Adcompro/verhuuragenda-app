@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
@@ -71,7 +72,8 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
       });
     } catch (e) {
       setState(() {
-        _error = 'Kon schoonmaakschema niet laden: $e';
+        // Error message will be shown in UI which uses l10n
+        _error = e.toString();
         _isLoading = false;
       });
     }
@@ -79,16 +81,17 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text('Schoonmaak'),
+        title: Text(l10n.cleaning),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'Vandaag'),
-            Tab(text: 'Deze week'),
-            Tab(text: 'Alles'),
+          tabs: [
+            Tab(text: l10n.todayTab),
+            Tab(text: l10n.thisWeekTab),
+            Tab(text: l10n.allTab),
           ],
         ),
       ),
@@ -106,6 +109,7 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
   }
 
   Widget _buildStatsHeader() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -121,25 +125,25 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
       child: Row(
         children: [
           _buildStatCard(
-            'Totaal',
+            l10n.total,
             _stats!.total.toString(),
             Icons.cleaning_services,
             Colors.blue,
           ),
           _buildStatCard(
-            'Vandaag',
+            l10n.today,
             _stats!.today.toString(),
             Icons.today,
             Colors.orange,
           ),
           _buildStatCard(
-            'Spoed',
+            l10n.urgent,
             _stats!.urgent.toString(),
             Icons.priority_high,
             Colors.red,
           ),
           _buildStatCard(
-            'Klaar',
+            l10n.ready,
             _stats!.completed.toString(),
             Icons.check_circle,
             Colors.green,
@@ -191,6 +195,7 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
   }
 
   Widget _buildBody() {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -209,7 +214,7 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
               ElevatedButton.icon(
                 onPressed: () => _loadTasks(_currentPeriod),
                 icon: const Icon(Icons.refresh),
-                label: const Text('Opnieuw proberen'),
+                label: Text(l10n.retryButton),
               ),
             ],
           ),
@@ -225,12 +230,12 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
             Icon(Icons.cleaning_services_outlined, size: 80, color: Colors.grey[300]),
             const SizedBox(height: 16),
             Text(
-              'Geen schoonmaaktaken',
+              l10n.noCleaningTasks,
               style: TextStyle(fontSize: 18, color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             Text(
-              _getPeriodDescription(),
+              _getPeriodDescription(l10n),
               style: TextStyle(color: Colors.grey[500]),
             ),
           ],
@@ -250,7 +255,7 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
         children: [
           // Pending tasks
           if (pendingTasks.isNotEmpty) ...[
-            _buildSectionHeader('Te doen', pendingTasks.length, Colors.orange),
+            _buildSectionHeader(l10n.toDo, pendingTasks.length, Colors.orange),
             if (isTablet)
               GridView.builder(
                 shrinkWrap: true,
@@ -276,7 +281,7 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
           // Completed tasks
           if (completedTasks.isNotEmpty) ...[
             const SizedBox(height: 24),
-            _buildSectionHeader('Afgerond', completedTasks.length, Colors.green),
+            _buildSectionHeader(l10n.finishedSection, completedTasks.length, Colors.green),
             if (isTablet)
               GridView.builder(
                 shrinkWrap: true,
@@ -306,7 +311,7 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildSectionHeader(String title, int count, Color color) {
+  Widget _buildSectionHeader(String title, int count, Color color, {bool isCompleted = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -321,7 +326,7 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  title == 'Afgerond' ? Icons.check_circle : Icons.schedule,
+                  color == Colors.green ? Icons.check_circle : Icons.schedule,
                   size: 16,
                   color: color,
                 ),
@@ -341,12 +346,12 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
     );
   }
 
-  String _getPeriodDescription() {
+  String _getPeriodDescription(AppLocalizations l10n) {
     switch (_currentPeriod) {
       case 'today':
-        return 'voor vandaag';
+        return l10n.forToday;
       case 'week':
-        return 'deze week';
+        return l10n.thisWeek;
       default:
         return '';
     }
@@ -391,13 +396,14 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
       _loadTasks(_currentPeriod);
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
                 const Icon(Icons.check_circle, color: Colors.white),
                 const SizedBox(width: 8),
-                Text('${task.accommodationName} schoongemaakt!'),
+                Text(l10n.cleanedSuccess(task.accommodationName)),
               ],
             ),
             backgroundColor: Colors.green,
@@ -406,8 +412,9 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fout: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('${l10n.error}: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -429,22 +436,26 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
   }
 
   Future<void> _undoComplete(CleaningTask task) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Schoonmaak ongedaan maken?'),
-        content: Text('Weet je zeker dat je de schoonmaak van ${task.accommodationName} wilt resetten?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuleren'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Ja, reset'),
-          ),
-        ],
-      ),
+      builder: (context) {
+        final dialogL10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+          title: Text(dialogL10n.undoCleaningTitle),
+          content: Text(dialogL10n.undoCleaningMessage(task.accommodationName)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(dialogL10n.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(dialogL10n.yesReset),
+            ),
+          ],
+        );
+      },
     );
 
     if (confirmed != true) return;
@@ -455,13 +466,13 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Schoonmaakstatus gereset')),
+          SnackBar(content: Text(l10n.cleaningStatusReset)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fout: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('${l10n.error}: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -483,6 +494,7 @@ class _CleaningTaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isCompleted = task.cleaningCompleted;
     final isUrgent = task.hasSameDayCheckin;
     final isToday = task.isToday;
@@ -529,7 +541,7 @@ class _CleaningTaskCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Gast: ${task.guestName}',
+                        l10n.guestLabel(task.guestName),
                         style: TextStyle(color: Colors.grey[600], fontSize: 13),
                       ),
                     ],
@@ -543,14 +555,14 @@ class _CleaningTaskCard extends StatelessWidget {
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.warning, size: 14, color: Colors.white),
-                        SizedBox(width: 4),
+                        const Icon(Icons.warning, size: 14, color: Colors.white),
+                        const SizedBox(width: 4),
                         Text(
-                          'SPOED',
-                          style: TextStyle(
+                          l10n.urgent.toUpperCase(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -566,9 +578,9 @@ class _CleaningTaskCard extends StatelessWidget {
                       color: Colors.orange,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
-                      'VANDAAG',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.today.toUpperCase(),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -582,14 +594,14 @@ class _CleaningTaskCard extends StatelessWidget {
                       color: Colors.green,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.check, size: 14, color: Colors.white),
-                        SizedBox(width: 4),
+                        const Icon(Icons.check, size: 14, color: Colors.white),
+                        const SizedBox(width: 4),
                         Text(
-                          'KLAAR',
-                          style: TextStyle(
+                          l10n.ready.toUpperCase(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -647,8 +659,8 @@ class _CleaningTaskCard extends StatelessWidget {
                                 const SizedBox(width: 6),
                                 Text(
                                   _hasIssues(task.cleaningNotes!)
-                                      ? 'Meldingen'
-                                      : 'Notities',
+                                      ? l10n.reports
+                                      : l10n.notes,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: _hasIssues(task.cleaningNotes!)
@@ -682,12 +694,12 @@ class _CleaningTaskCard extends StatelessWidget {
                           Icon(Icons.check_circle, size: 16, color: Colors.green[600]),
                           const SizedBox(width: 8),
                           Text(
-                            'Afgerond: ${task.cleaningCompletedAt}',
+                            l10n.completedAt(task.cleaningCompletedAt ?? ''),
                             style: TextStyle(color: Colors.green[600], fontSize: 13),
                           ),
                           const Spacer(),
                           Text(
-                            'Bekijk details',
+                            l10n.viewDetails,
                             style: TextStyle(color: Colors.grey[500], fontSize: 12),
                           ),
                           Icon(Icons.chevron_right, color: Colors.grey[400], size: 16),
@@ -702,12 +714,12 @@ class _CleaningTaskCard extends StatelessWidget {
                       TextButton.icon(
                         onPressed: onViewDetails,
                         icon: const Icon(Icons.info_outline, size: 18),
-                        label: const Text('Details'),
+                        label: Text(l10n.details),
                       ),
                       TextButton.icon(
                         onPressed: onUndo,
                         icon: const Icon(Icons.undo, size: 18),
-                        label: const Text('Ongedaan maken'),
+                        label: Text(l10n.undo),
                         style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
                       ),
                     ],
@@ -720,7 +732,7 @@ class _CleaningTaskCard extends StatelessWidget {
                     child: ElevatedButton.icon(
                       onPressed: onComplete,
                       icon: const Icon(Icons.cleaning_services),
-                      label: const Text('Schoonmaak afronden'),
+                      label: Text(l10n.finishCleaning),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryColor,
                         padding: const EdgeInsets.all(14),
@@ -760,6 +772,7 @@ class _CleaningTaskCard extends StatelessWidget {
   }
 
   Widget _buildTimeWindow() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -774,9 +787,9 @@ class _CleaningTaskCard extends StatelessWidget {
               children: [
                 Icon(Icons.logout, color: Colors.red[400], size: 24),
                 const SizedBox(height: 4),
-                const Text(
-                  'Check-out',
-                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                Text(
+                  l10n.checkOut,
+                  style: const TextStyle(fontSize: 11, color: Colors.grey),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -815,7 +828,7 @@ class _CleaningTaskCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  task.hasSameDayCheckin ? 'Zelfde dag!' : 'Schoonmaakvenster',
+                  task.hasSameDayCheckin ? l10n.sameDay : l10n.cleaningWindow,
                   style: TextStyle(
                     fontSize: 11,
                     color: task.hasSameDayCheckin ? Colors.red : Colors.grey[600],
@@ -831,13 +844,13 @@ class _CleaningTaskCard extends StatelessWidget {
               children: [
                 Icon(Icons.login, color: Colors.green[400], size: 24),
                 const SizedBox(height: 4),
-                const Text(
-                  'Check-in',
-                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                Text(
+                  l10n.checkIn,
+                  style: const TextStyle(fontSize: 11, color: Colors.grey),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  task.hasSameDayCheckin ? task.checkOut : 'Flexibel',
+                  task.hasSameDayCheckin ? task.checkOut : l10n.flexible,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: task.hasSameDayCheckin ? Colors.red : Colors.grey[600],
@@ -875,13 +888,12 @@ class _CleaningCompleteSheetState extends State<_CleaningCompleteSheet> {
   final List<CleaningIssue> _issues = [];
   bool _isLoading = false;
 
-  // Quick issue types
-  final List<Map<String, dynamic>> _issueTypes = [
-    {'type': 'Extra vies', 'icon': Icons.dirty_lens, 'color': Colors.brown},
-    {'type': 'Schade', 'icon': Icons.broken_image, 'color': Colors.red},
-    {'type': 'Ontbrekend', 'icon': Icons.search_off, 'color': Colors.orange},
-    {'type': 'Reparatie nodig', 'icon': Icons.build, 'color': Colors.blue},
-    {'type': 'Anders', 'icon': Icons.more_horiz, 'color': Colors.grey},
+  List<Map<String, dynamic>> _getIssueTypes(AppLocalizations l10n) => [
+    {'type': l10n.extraDirty, 'icon': Icons.dirty_lens, 'color': Colors.brown},
+    {'type': l10n.damage, 'icon': Icons.broken_image, 'color': Colors.red},
+    {'type': l10n.missingItem, 'icon': Icons.search_off, 'color': Colors.orange},
+    {'type': l10n.repairNeeded, 'icon': Icons.build, 'color': Colors.blue},
+    {'type': l10n.other, 'icon': Icons.more_horiz, 'color': Colors.grey},
   ];
 
   @override
@@ -892,6 +904,8 @@ class _CleaningCompleteSheetState extends State<_CleaningCompleteSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final issueTypes = _getIssueTypes(l10n);
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -938,9 +952,9 @@ class _CleaningCompleteSheetState extends State<_CleaningCompleteSheet> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Schoonmaak afronden',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        Text(
+                          l10n.finishCleaning,
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           widget.task.accommodationName,
@@ -954,15 +968,15 @@ class _CleaningCompleteSheetState extends State<_CleaningCompleteSheet> {
               const SizedBox(height: 24),
 
               // Quick issue buttons
-              const Text(
-                'Iets te melden?',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              Text(
+                l10n.anythingToReport,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               ),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: _issueTypes.map((type) {
+                children: issueTypes.map((type) {
                   final hasIssue = _issues.any((i) => i.type == type['type']);
                   return FilterChip(
                     label: Row(
@@ -1003,8 +1017,8 @@ class _CleaningCompleteSheetState extends State<_CleaningCompleteSheet> {
                       return ListTile(
                         dense: true,
                         leading: Icon(
-                          _getIssueIcon(issue.type),
-                          color: _getIssueColor(issue.type),
+                          _getIssueIcon(issue.type, l10n),
+                          color: _getIssueColor(issue.type, l10n),
                           size: 20,
                         ),
                         title: Text(issue.type, style: const TextStyle(fontWeight: FontWeight.w500)),
@@ -1024,16 +1038,16 @@ class _CleaningCompleteSheetState extends State<_CleaningCompleteSheet> {
               const SizedBox(height: 24),
 
               // Notes
-              const Text(
-                'Notities (optioneel)',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              Text(
+                l10n.notesOptional,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: _notesController,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText: 'Extra opmerkingen over de schoonmaak...',
+                  hintText: l10n.extraCommentsPlaceholder,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1066,7 +1080,7 @@ class _CleaningCompleteSheetState extends State<_CleaningCompleteSheet> {
                         )
                       : const Icon(Icons.check_circle, size: 24),
                   label: Text(
-                    _isLoading ? 'Bezig...' : 'Schoonmaak afronden',
+                    _isLoading ? l10n.processing : l10n.finishCleaning,
                     style: const TextStyle(fontSize: 16),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -1087,90 +1101,75 @@ class _CleaningCompleteSheetState extends State<_CleaningCompleteSheet> {
 
   void _showAddIssueDialog(String type) {
     final descController = TextEditingController();
+    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(_getIssueIcon(type), color: _getIssueColor(type)),
-            const SizedBox(width: 8),
-            Text(type),
-          ],
-        ),
-        content: TextField(
-          controller: descController,
-          autofocus: true,
-          decoration: InputDecoration(
-            hintText: _getIssueHint(type),
-            border: const OutlineInputBorder(),
+      builder: (context) {
+        final dialogL10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(_getIssueIcon(type, dialogL10n), color: _getIssueColor(type, dialogL10n)),
+              const SizedBox(width: 8),
+              Text(type),
+            ],
           ),
-          maxLines: 2,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annuleren'),
+          content: TextField(
+            controller: descController,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: _getIssueHint(type, dialogL10n),
+              border: const OutlineInputBorder(),
+            ),
+            maxLines: 2,
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (descController.text.isNotEmpty) {
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(dialogL10n.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (descController.text.isNotEmpty) {
                 setState(() {
                   _issues.add(CleaningIssue(type: type, description: descController.text));
                 });
               }
               Navigator.pop(context);
             },
-            child: const Text('Toevoegen'),
+            child: Text(dialogL10n.add),
           ),
         ],
-      ),
+      );
+      },
     );
   }
 
-  IconData _getIssueIcon(String type) {
-    switch (type) {
-      case 'Extra vies':
-        return Icons.dirty_lens;
-      case 'Schade':
-        return Icons.broken_image;
-      case 'Ontbrekend':
-        return Icons.search_off;
-      case 'Reparatie nodig':
-        return Icons.build;
-      default:
-        return Icons.more_horiz;
-    }
+  IconData _getIssueIcon(String type, AppLocalizations l10n) {
+    if (type == l10n.extraDirty) return Icons.dirty_lens;
+    if (type == l10n.damage) return Icons.broken_image;
+    if (type == l10n.missingItem) return Icons.search_off;
+    if (type == l10n.repairNeeded) return Icons.build;
+    return Icons.more_horiz;
   }
 
-  Color _getIssueColor(String type) {
-    switch (type) {
-      case 'Extra vies':
-        return Colors.brown;
-      case 'Schade':
-        return Colors.red;
-      case 'Ontbrekend':
-        return Colors.orange;
-      case 'Reparatie nodig':
-        return Colors.blue;
-      default:
-        return Colors.grey;
-    }
+  Color _getIssueColor(String type, AppLocalizations l10n) {
+    if (type == l10n.extraDirty) return Colors.brown;
+    if (type == l10n.damage) return Colors.red;
+    if (type == l10n.missingItem) return Colors.orange;
+    if (type == l10n.repairNeeded) return Colors.blue;
+    return Colors.grey;
   }
 
-  String _getIssueHint(String type) {
-    switch (type) {
-      case 'Extra vies':
-        return 'Wat was extra vies? (bijv. keuken, badkamer)';
-      case 'Schade':
-        return 'Wat is er beschadigd?';
-      case 'Ontbrekend':
-        return 'Wat ontbreekt er?';
-      case 'Reparatie nodig':
-        return 'Wat moet gerepareerd worden?';
-      default:
-        return 'Beschrijf het probleem...';
-    }
+  String _getIssueHint(String type, AppLocalizations l10n) {
+    // These hints are not in l10n yet - they are internal hints for the dialog
+    // Keeping simple for now, can be localized later if needed
+    if (type == l10n.extraDirty) return 'What was extra dirty?';
+    if (type == l10n.damage) return 'What is damaged?';
+    if (type == l10n.missingItem) return 'What is missing?';
+    if (type == l10n.repairNeeded) return 'What needs repair?';
+    return 'Describe the issue...';
   }
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
@@ -70,19 +71,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
       body: SafeArea(
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _error != null
-                ? _buildErrorView()
+                ? _buildErrorView(l10n)
                 : _buildContent(),
       ),
     );
   }
 
-  Widget _buildErrorView() {
+  Widget _buildErrorView(AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -98,9 +100,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
               child: Icon(Icons.wifi_off, size: 48, color: Colors.red[300]),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Kon niet laden',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              l10n.couldNotLoad,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
@@ -112,7 +114,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ElevatedButton.icon(
               onPressed: _loadCalendarData,
               icon: const Icon(Icons.refresh),
-              label: const Text('Opnieuw'),
+              label: Text(l10n.retryShort),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               ),
@@ -125,22 +127,23 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   Widget _buildContent() {
     final daysToShow = _getDaysToShow(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       children: [
-        _buildHeader(),
-        _buildQuickStats(),
-        _buildDateNav(daysToShow),
+        _buildHeader(l10n),
+        _buildQuickStats(l10n),
+        _buildDateNav(daysToShow, l10n),
         Expanded(
           child: _accommodations.isEmpty
-              ? _buildEmptyState()
+              ? _buildEmptyState(l10n)
               : _buildAccommodationCards(daysToShow),
         ),
       ],
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
       child: Row(
@@ -149,16 +152,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Bezetting',
-                  style: TextStyle(
+                Text(
+                  l10n.occupancyTitle,
+                  style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1A1D26),
                   ),
                 ),
                 Text(
-                  '${_accommodations.length} accommodaties',
+                  l10n.accommodationsCountText(_accommodations.length),
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[600],
@@ -189,7 +192,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildQuickStats() {
+  Widget _buildQuickStats(AppLocalizations l10n) {
     final today = DateTime.now();
     final todayStr = _formatDate(today);
 
@@ -220,21 +223,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
           _statChip(
             Icons.home_rounded,
             '$occupiedToday/${_accommodations.length}',
-            'Bezet',
+            l10n.occupied,
             AppTheme.primaryColor,
           ),
           const SizedBox(width: 12),
           _statChip(
             Icons.login_rounded,
             '$checkInsToday',
-            'Check-in',
+            l10n.checkIn,
             AppTheme.successColor,
           ),
           const SizedBox(width: 12),
           _statChip(
             Icons.logout_rounded,
             '$checkOutsToday',
-            'Check-out',
+            l10n.checkOut,
             AppTheme.accentColor,
           ),
         ],
@@ -296,7 +299,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildDateNav(int daysToShow) {
+  Widget _buildDateNav(int daysToShow, AppLocalizations l10n) {
     final isWide = Responsive.useWideLayout(context);
     final horizontalMargin = isWide ? 24.0 : 20.0;
 
@@ -344,7 +347,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        isWide ? '$daysToShow dagen weergave' : 'Tik voor vandaag',
+                        isWide ? l10n.daysViewText(daysToShow) : l10n.tapForToday,
                         style: TextStyle(
                           fontSize: 10,
                           color: AppTheme.primaryColor,
@@ -392,7 +395,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -400,7 +403,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           Icon(Icons.villa_outlined, size: 64, color: Colors.grey[300]),
           const SizedBox(height: 16),
           Text(
-            'Geen accommodaties',
+            l10n.noAccommodationsShort,
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 16,
@@ -425,6 +428,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Widget _buildAccommodationCard(dynamic accommodation, int daysToShow) {
+    final l10n = AppLocalizations.of(context)!;
     final accId = accommodation['id'];
     final accColor = _parseColor(accommodation['color']);
     final accBookings = _bookings.where((b) => b['accommodation_id'] == accId).toList();
@@ -477,7 +481,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     ),
                   ),
                 ),
-                _getStatusBadge(accBookings, accBlocked),
+                _getStatusBadge(accBookings, accBlocked, l10n),
               ],
             ),
           ),
@@ -495,7 +499,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _getStatusBadge(List<dynamic> bookings, List<dynamic> blocked) {
+  Widget _getStatusBadge(List<dynamic> bookings, List<dynamic> blocked, AppLocalizations l10n) {
     final today = DateTime.now();
     final todayOnly = DateTime(today.year, today.month, today.day);
 
@@ -526,7 +530,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'Bezet',
+                  l10n.occupied,
                   style: TextStyle(
                     color: AppTheme.successColor,
                     fontSize: 12,
@@ -559,7 +563,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
           const SizedBox(width: 6),
           Text(
-            'Vrij',
+            l10n.availableStatus,
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 12,
@@ -642,6 +646,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Widget _buildBar(dynamic event, DateTime startDay, double cellWidth, int daysToShow, {required bool isBlocked}) {
+    final l10n = AppLocalizations.of(context)!;
     final DateTime eventStart;
     final DateTime eventEnd;
     final Color color;
@@ -653,7 +658,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       eventEnd = DateTime.parse(event['end_date']);
       final source = event['source'] ?? '';
       color = _getSourceColor(source);
-      label = _getSourceLabel(source);
+      label = _getSourceLabel(source, l10n);
     } else {
       eventStart = DateTime.parse(event['check_in']);
       eventEnd = DateTime.parse(event['check_out']);
@@ -705,6 +710,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   void _showBookingDetails(dynamic booking) {
+    final l10n = AppLocalizations.of(context)!;
     final color = _parseColor(booking['color']);
     final adults = booking['adults'] ?? 0;
     final children = booking['children'] ?? 0;
@@ -723,6 +729,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) {
+        final sheetL10n = AppLocalizations.of(context)!;
         return DraggableScrollableSheet(
           initialChildSize: 0.7,
           minChildSize: 0.5,
@@ -771,7 +778,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      booking['guest_name'] ?? 'Onbekend',
+                                      booking['guest_name'] ?? sheetL10n.unknown,
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -785,7 +792,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   ],
                                 ),
                               ),
-                              _buildStatusBadge(booking['status']),
+                              _buildStatusBadge(booking['status'], sheetL10n),
                             ],
                           ),
 
@@ -805,7 +812,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     children: [
                                       Icon(Icons.login_rounded, color: AppTheme.successColor),
                                       const SizedBox(height: 8),
-                                      const Text('Check-in', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                      Text(sheetL10n.checkIn, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                                       const SizedBox(height: 4),
                                       Text(
                                         _formatDisplayDate(booking['check_in']),
@@ -821,7 +828,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
-                                    '$nights nachten',
+                                    sheetL10n.nightsCount(nights),
                                     style: TextStyle(
                                       color: AppTheme.primaryColor,
                                       fontWeight: FontWeight.bold,
@@ -834,7 +841,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     children: [
                                       Icon(Icons.logout_rounded, color: AppTheme.accentColor),
                                       const SizedBox(height: 8),
-                                      const Text('Check-out', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                      Text(sheetL10n.checkOut, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                                       const SizedBox(height: 4),
                                       Text(
                                         _formatDisplayDate(booking['check_out']),
@@ -850,28 +857,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           const SizedBox(height: 20),
 
                           // Guests section
-                          const Text(
-                            'Gasten',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          Text(
+                            sheetL10n.guestsSection,
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 12),
                           Wrap(
                             spacing: 12,
                             runSpacing: 8,
                             children: [
-                              _guestChip(Icons.person, '$adults volwassenen'),
-                              if (children > 0) _guestChip(Icons.child_care, '$children kinderen'),
-                              if (babies > 0) _guestChip(Icons.baby_changing_station, '$babies baby\'s'),
-                              if (hasPet) _guestChip(Icons.pets, petDescription ?? 'Huisdier'),
+                              _guestChip(Icons.person, sheetL10n.adultsCount(adults)),
+                              if (children > 0) _guestChip(Icons.child_care, sheetL10n.childrenCount(children)),
+                              if (babies > 0) _guestChip(Icons.baby_changing_station, sheetL10n.babiesCount(babies)),
+                              if (hasPet) _guestChip(Icons.pets, petDescription ?? sheetL10n.pet),
                             ],
                           ),
 
                           const SizedBox(height: 24),
 
                           // Payment section
-                          const Text(
-                            'Betaling',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          Text(
+                            sheetL10n.payment,
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 12),
                           Container(
@@ -883,10 +890,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             ),
                             child: Column(
                               children: [
-                                _paymentRow('Totaalbedrag', totalAmount, isBold: true),
+                                _paymentRow(sheetL10n.totalAmount, totalAmount, isBold: true),
                                 const Divider(height: 20),
-                                _paymentRow('Betaald', paidAmount, color: AppTheme.successColor),
-                                _paymentRow('Nog te betalen', remainingAmount,
+                                _paymentRow(sheetL10n.paid, paidAmount, color: AppTheme.successColor),
+                                _paymentRow(sheetL10n.stillToPay, remainingAmount,
                                   color: remainingAmount > 0 ? Colors.red : AppTheme.successColor,
                                   isBold: true,
                                 ),
@@ -905,7 +912,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   _showAddPaymentDialog(booking);
                                 },
                                 icon: const Icon(Icons.add),
-                                label: const Text('Betaling toevoegen'),
+                                label: Text(sheetL10n.addPayment),
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(vertical: 14),
                                   backgroundColor: AppTheme.successColor,
@@ -918,9 +925,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           // Notes section
                           if (notes != null && notes.toString().isNotEmpty) ...[
                             const SizedBox(height: 24),
-                            const Text(
-                              'Notities',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            Text(
+                              sheetL10n.notes,
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 12),
                             Container(
@@ -962,7 +969,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                 }
                               },
                               icon: const Icon(Icons.open_in_full),
-                              label: const Text('Bekijk volledige boeking'),
+                              label: Text(sheetL10n.viewFullBooking),
                             ),
                           ),
                         ],
@@ -978,33 +985,33 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildStatusBadge(String? status) {
+  Widget _buildStatusBadge(String? status, AppLocalizations l10n) {
     Color color;
     String label;
     switch (status) {
       case 'confirmed':
         color = AppTheme.successColor;
-        label = 'Bevestigd';
+        label = l10n.confirmed;
         break;
       case 'option':
         color = Colors.orange;
-        label = 'Optie';
+        label = l10n.option;
         break;
       case 'inquiry':
         color = Colors.blue;
-        label = 'Aanvraag';
+        label = l10n.inquiry;
         break;
       case 'completed':
         color = AppTheme.successColor;
-        label = 'Afgerond';
+        label = l10n.completed;
         break;
       case 'cancelled':
         color = Colors.red;
-        label = 'Geannuleerd';
+        label = l10n.cancelled;
         break;
       default:
         color = Colors.grey;
-        label = status ?? 'Onbekend';
+        label = status ?? l10n.unknown;
     }
 
     return Container(
@@ -1069,6 +1076,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   void _showAddPaymentDialog(dynamic booking) {
+    final l10n = AppLocalizations.of(context)!;
     final amountController = TextEditingController();
     final remainingAmount = (booking['remaining_amount'] ?? 0).toDouble();
     String paymentMethod = 'bank_transfer';
@@ -1076,115 +1084,118 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('Betaling toevoegen'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Nog te betalen: € ${remainingAmount.toStringAsFixed(2)}',
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  labelText: 'Bedrag',
-                  prefixText: '€ ',
-                  border: OutlineInputBorder(),
+      builder: (context) {
+        final dialogL10n = AppLocalizations.of(context)!;
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            title: Text(dialogL10n.addPayment),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${dialogL10n.stillToPay}: € ${remainingAmount.toStringAsFixed(2)}',
+                  style: TextStyle(color: Colors.grey[600]),
                 ),
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: paymentMethod,
-                decoration: const InputDecoration(
-                  labelText: 'Betaalmethode',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: amountController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(
+                    labelText: dialogL10n.amount,
+                    prefixText: '€ ',
+                    border: const OutlineInputBorder(),
+                  ),
                 ),
-                items: const [
-                  DropdownMenuItem(value: 'bank_transfer', child: Text('Bankoverschrijving')),
-                  DropdownMenuItem(value: 'cash', child: Text('Contant')),
-                  DropdownMenuItem(value: 'ideal', child: Text('iDEAL')),
-                  DropdownMenuItem(value: 'creditcard', child: Text('Creditcard')),
-                  DropdownMenuItem(value: 'other', child: Text('Anders')),
-                ],
-                onChanged: (value) {
-                  setState(() => paymentMethod = value ?? 'bank_transfer');
-                },
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: isLoading ? null : () => Navigator.pop(context),
-              child: const Text('Annuleren'),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: paymentMethod,
+                  decoration: InputDecoration(
+                    labelText: dialogL10n.paymentMethod,
+                    border: const OutlineInputBorder(),
+                  ),
+                  items: [
+                    DropdownMenuItem(value: 'bank_transfer', child: Text(dialogL10n.bankTransfer)),
+                    DropdownMenuItem(value: 'cash', child: Text(dialogL10n.cash)),
+                    DropdownMenuItem(value: 'ideal', child: Text(dialogL10n.ideal)),
+                    DropdownMenuItem(value: 'creditcard', child: Text(dialogL10n.creditCard)),
+                    DropdownMenuItem(value: 'other', child: Text(dialogL10n.other)),
+                  ],
+                  onChanged: (value) {
+                    setState(() => paymentMethod = value ?? 'bank_transfer');
+                  },
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: isLoading
-                  ? null
-                  : () async {
-                      final amount = double.tryParse(
-                        amountController.text.replaceAll(',', '.'),
-                      );
-                      if (amount == null || amount <= 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Voer een geldig bedrag in'),
-                            backgroundColor: Colors.red,
-                          ),
+            actions: [
+              TextButton(
+                onPressed: isLoading ? null : () => Navigator.pop(context),
+                child: Text(dialogL10n.cancel),
+              ),
+              ElevatedButton(
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        final amount = double.tryParse(
+                          amountController.text.replaceAll(',', '.'),
                         );
-                        return;
-                      }
-
-                      setState(() => isLoading = true);
-
-                      try {
-                        await ApiClient.instance.post(
-                          '${ApiConfig.bookings}/${booking['id']}/payments',
-                          data: {
-                            'amount': amount,
-                            'method': paymentMethod,
-                            'paid_at': DateTime.now().toIso8601String(),
-                          },
-                        );
-
-                        if (context.mounted) {
-                          Navigator.pop(context);
+                        if (amount == null || amount <= 0) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Betaling toegevoegd'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                          // Reload calendar data
-                          _loadCalendarData();
-                        }
-                      } catch (e) {
-                        setState(() => isLoading = false);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Kon betaling niet toevoegen'),
+                            SnackBar(
+                              content: Text(dialogL10n.enterValidAmount),
                               backgroundColor: Colors.red,
                             ),
                           );
+                          return;
                         }
-                      }
-                    },
-              child: isLoading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Toevoegen'),
-            ),
-          ],
-        ),
-      ),
+
+                        setState(() => isLoading = true);
+
+                        try {
+                          await ApiClient.instance.post(
+                            '${ApiConfig.bookings}/${booking['id']}/payments',
+                            data: {
+                              'amount': amount,
+                              'method': paymentMethod,
+                              'paid_at': DateTime.now().toIso8601String(),
+                            },
+                          );
+
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(dialogL10n.paymentAdded),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                            // Reload calendar data
+                            _loadCalendarData();
+                          }
+                        } catch (e) {
+                          setState(() => isLoading = false);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(dialogL10n.couldNotAddPayment),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                child: isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(dialogL10n.add),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -1241,22 +1252,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
-  String _getStatusLabel(String? status) {
+  String _getStatusLabel(String? status, AppLocalizations l10n) {
     switch (status) {
-      case 'confirmed': return 'Bevestigd';
-      case 'option': return 'Optie';
-      case 'inquiry': return 'Aanvraag';
-      case 'completed': return 'Afgerond';
-      case 'cancelled': return 'Geannuleerd';
-      default: return status ?? 'Onbekend';
+      case 'confirmed': return l10n.confirmed;
+      case 'option': return l10n.option;
+      case 'inquiry': return l10n.inquiry;
+      case 'completed': return l10n.completed;
+      case 'cancelled': return l10n.cancelled;
+      default: return status ?? l10n.unknown;
     }
   }
 
-  String _getPaymentLabel(String? status) {
+  String _getPaymentLabel(String? status, AppLocalizations l10n) {
     switch (status) {
-      case 'paid': return 'Betaald';
-      case 'partial': return 'Aanbetaald';
-      case 'unpaid': return 'Openstaand';
+      case 'paid': return l10n.paid;
+      case 'partial': return l10n.partiallyPaid;
+      case 'unpaid': return l10n.unpaid;
       default: return status ?? '-';
     }
   }
@@ -1273,7 +1284,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
-  String _getSourceLabel(String source) {
+  String _getSourceLabel(String source, AppLocalizations l10n) {
     switch (source) {
       case 'airbnb': return 'Airbnb';
       case 'booking': return 'Booking';
@@ -1281,7 +1292,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       case 'holidu': return 'Holidu';
       case 'google': return 'Google';
       case 'belvilla': return 'Belvilla';
-      default: return 'Geblokkeerd';
+      default: return l10n.blocked;
     }
   }
 }

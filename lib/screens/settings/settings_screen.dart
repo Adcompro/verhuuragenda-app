@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/language_provider.dart';
 import 'subscription_screen.dart';
 import 'notifications_screen.dart';
 import 'about_screen.dart';
@@ -13,16 +16,41 @@ import 'profile_edit_screen.dart';
 import '../seasons/seasons_list_screen.dart';
 import '../team/team_list_screen.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  String _version = '';
+  String _buildNumber = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVersion();
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() {
+        _version = info.version;
+        _buildNumber = info.buildNumber;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final user = ref.watch(currentUserProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Instellingen'),
+        title: Text(l10n.settings),
       ),
       body: ListView(
         children: [
@@ -91,11 +119,11 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
 
-          const _SectionHeader(title: 'Account'),
+          _SectionHeader(title: l10n.profile),
           _SettingsItem(
             icon: Icons.person_outline,
-            title: 'Profiel bewerken',
-            subtitle: 'Naam, foto en contactgegevens',
+            title: l10n.editProfile,
+            subtitle: l10n.nameAndContact,
             onTap: () {
               Navigator.push(
                 context,
@@ -105,8 +133,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _SettingsItem(
             icon: Icons.notifications_outlined,
-            title: 'Notificaties',
-            subtitle: 'Push meldingen en herinneringen',
+            title: l10n.notifications,
+            subtitle: l10n.pushNotifications,
             onTap: () {
               Navigator.push(
                 context,
@@ -116,8 +144,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _SettingsItem(
             icon: Icons.credit_card_outlined,
-            title: 'Abonnement',
-            subtitle: 'Bekijk je plan en limieten',
+            title: l10n.subscription,
+            subtitle: l10n.viewPlanAndLimits,
             onTap: () {
               Navigator.push(
                 context,
@@ -125,12 +153,18 @@ class SettingsScreen extends ConsumerWidget {
               );
             },
           ),
+          _SettingsItem(
+            icon: Icons.language_outlined,
+            title: l10n.language,
+            subtitle: _getLanguageSubtitle(ref, l10n),
+            onTap: () => _showLanguageDialog(context, ref, l10n),
+          ),
 
-          const _SectionHeader(title: 'Beheer'),
+          _SectionHeader(title: l10n.management),
           _SettingsItem(
             icon: Icons.calendar_month_outlined,
-            title: 'Seizoenen',
-            subtitle: 'Laag-, midden- en hoogseizoen periodes',
+            title: l10n.seasons,
+            subtitle: l10n.seasonsDescription,
             onTap: () {
               Navigator.push(
                 context,
@@ -140,8 +174,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _SettingsItem(
             icon: Icons.group_outlined,
-            title: 'Team',
-            subtitle: 'Teamleden beheren (Premium)',
+            title: l10n.team,
+            subtitle: l10n.teamDescription,
             onTap: () {
               Navigator.push(
                 context,
@@ -150,11 +184,11 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
 
-          const _SectionHeader(title: 'Ondersteuning'),
+          _SectionHeader(title: l10n.support),
           _SettingsItem(
             icon: Icons.help_outline,
-            title: 'Help & Support',
-            subtitle: 'FAQ, contact en tutorials',
+            title: l10n.helpAndSupport,
+            subtitle: l10n.helpDescription,
             onTap: () {
               Navigator.push(
                 context,
@@ -164,8 +198,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _SettingsItem(
             icon: Icons.info_outline,
-            title: 'Over VerhuurAgenda',
-            subtitle: 'Versie, verhaal en links',
+            title: l10n.aboutApp,
+            subtitle: l10n.aboutDescription,
             onTap: () {
               Navigator.push(
                 context,
@@ -174,22 +208,22 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
 
-          const _SectionHeader(title: 'Gegevens'),
+          _SectionHeader(title: l10n.data),
           _SettingsItem(
             icon: Icons.download_outlined,
-            title: 'Gegevens exporteren',
-            subtitle: 'Download al je data',
+            title: l10n.exportData,
+            subtitle: l10n.exportDescription,
             onTap: () {
-              _showExportDialog(context);
+              _showExportDialog(context, l10n);
             },
           ),
           _SettingsItem(
             icon: Icons.delete_outline,
-            title: 'Account verwijderen',
-            subtitle: 'Verwijder je account permanent',
+            title: l10n.deleteAccount,
+            subtitle: l10n.deleteAccountDescription,
             textColor: Colors.red,
             onTap: () {
-              _showDeleteAccountDialog(context, ref);
+              _showDeleteAccountDialog(context, ref, l10n);
             },
           ),
 
@@ -200,9 +234,9 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: OutlinedButton.icon(
-              onPressed: () => _handleLogout(context, ref),
+              onPressed: () => _handleLogout(context, ref, l10n),
               icon: const Icon(Icons.logout, color: Colors.red),
-              label: const Text('Uitloggen'),
+              label: Text(l10n.logout),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.red,
                 side: const BorderSide(color: Colors.red),
@@ -216,7 +250,9 @@ class SettingsScreen extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 32),
               child: Text(
-                'VerhuurAgenda v1.0.0 (build 25)',
+                _version.isNotEmpty
+                    ? '${l10n.appName} v$_version (build $_buildNumber)'
+                    : l10n.appName,
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[400],
@@ -229,19 +265,90 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showExportDialog(BuildContext context) {
+  String _getLanguageSubtitle(WidgetRef ref, AppLocalizations l10n) {
+    final locale = ref.watch(languageProvider);
+    if (locale == null) {
+      return l10n.systemDefault;
+    }
+    switch (locale.languageCode) {
+      case 'nl':
+        return l10n.dutch;
+      case 'en':
+        return l10n.english;
+      default:
+        return l10n.systemDefault;
+    }
+  }
+
+  void _showLanguageDialog(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
+    final currentLocale = ref.read(languageProvider);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Gegevens exporteren'),
-        content: const Text(
-          'We sturen je een e-mail met een downloadlink voor al je gegevens. '
-          'Dit kan enkele minuten duren.',
+        title: Text(l10n.language),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _LanguageOption(
+              title: l10n.systemDefault,
+              subtitle: l10n.languageDescription,
+              isSelected: currentLocale == null,
+              onTap: () {
+                ref.read(languageProvider.notifier).setLanguage(null);
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.languageChanged)),
+                );
+              },
+            ),
+            const Divider(),
+            _LanguageOption(
+              title: l10n.dutch,
+              subtitle: 'Nederlands',
+              isSelected: currentLocale?.languageCode == 'nl',
+              onTap: () {
+                ref.read(languageProvider.notifier).setLanguage('nl');
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.languageChanged)),
+                );
+              },
+            ),
+            _LanguageOption(
+              title: l10n.english,
+              subtitle: 'English',
+              isSelected: currentLocale?.languageCode == 'en',
+              onTap: () {
+                ref.read(languageProvider.notifier).setLanguage('en');
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.languageChanged)),
+                );
+              },
+            ),
+          ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annuleren'),
+            child: Text(l10n.cancel),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showExportDialog(BuildContext context, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.exportDialog),
+        content: Text(l10n.exportDialogContent),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -250,8 +357,8 @@ class SettingsScreen extends ConsumerWidget {
                 await ApiClient.instance.post('${ApiConfig.profile}/export');
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Export aangevraagd. Check je e-mail.'),
+                    SnackBar(
+                      content: Text(l10n.exportRequested),
                       backgroundColor: Colors.green,
                     ),
                   );
@@ -259,22 +366,22 @@ class SettingsScreen extends ConsumerWidget {
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Kon export niet starten'),
+                    SnackBar(
+                      content: Text(l10n.exportFailed),
                       backgroundColor: Colors.red,
                     ),
                   );
                 }
               }
             },
-            child: const Text('Exporteren'),
+            child: Text(l10n.exportData),
           ),
         ],
       ),
     );
   }
 
-  void _showDeleteAccountDialog(BuildContext context, WidgetRef ref) {
+  void _showDeleteAccountDialog(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
     final emailController = TextEditingController();
     bool isDeleting = false;
 
@@ -286,29 +393,23 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               Icon(Icons.warning_amber_rounded, color: Colors.red[700]),
               const SizedBox(width: 12),
-              const Text('Account verwijderen'),
+              Text(l10n.deleteAccountTitle),
             ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Let op! Deze actie kan niet ongedaan worden gemaakt.',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Text(
+                l10n.deleteAccountWarning,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Als je je account verwijdert:\n'
-                '• Worden al je boekingen verwijderd\n'
-                '• Worden al je accommodaties verwijderd\n'
-                '• Worden al je gastgegevens verwijderd\n'
-                '• Wordt je abonnement beëindigd',
-              ),
+              Text(l10n.deleteAccountConsequences),
               const SizedBox(height: 20),
-              const Text(
-                'Typ je e-mailadres ter bevestiging:',
-                style: TextStyle(fontWeight: FontWeight.w500),
+              Text(
+                l10n.confirmEmail,
+                style: const TextStyle(fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 8),
               TextField(
@@ -324,7 +425,7 @@ class SettingsScreen extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: isDeleting ? null : () => Navigator.pop(context),
-              child: const Text('Annuleren'),
+              child: Text(l10n.cancel),
             ),
             ElevatedButton(
               onPressed: isDeleting
@@ -334,8 +435,8 @@ class SettingsScreen extends ConsumerWidget {
                       if (emailController.text.trim().toLowerCase() !=
                           user?.email.toLowerCase()) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('E-mailadres komt niet overeen'),
+                          SnackBar(
+                            content: Text(l10n.emailNotMatch),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -351,8 +452,8 @@ class SettingsScreen extends ConsumerWidget {
                           Navigator.pop(context);
                           context.go('/login');
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Account succesvol verwijderd'),
+                            SnackBar(
+                              content: Text(l10n.accountDeleted),
                             ),
                           );
                         }
@@ -360,8 +461,8 @@ class SettingsScreen extends ConsumerWidget {
                         setState(() => isDeleting = false);
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Kon account niet verwijderen. Neem contact op met support.'),
+                            SnackBar(
+                              content: Text(l10n.deleteAccountFailed),
                               backgroundColor: Colors.red,
                             ),
                           );
@@ -381,7 +482,7 @@ class SettingsScreen extends ConsumerWidget {
                         color: Colors.white,
                       ),
                     )
-                  : const Text('Permanent verwijderen'),
+                  : Text(l10n.permanentlyDelete),
             ),
           ],
         ),
@@ -389,20 +490,20 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
+  Future<void> _handleLogout(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Uitloggen'),
-        content: const Text('Weet je zeker dat je wilt uitloggen?'),
+        title: Text(l10n.logout),
+        content: Text(l10n.logoutConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuleren'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Uitloggen'),
+            child: Text(l10n.logout),
           ),
         ],
       ),
@@ -482,6 +583,37 @@ class _SettingsItem extends StatelessWidget {
             )
           : null,
       trailing: Icon(Icons.chevron_right, color: Colors.grey[400]),
+      onTap: onTap,
+    );
+  }
+}
+
+class _LanguageOption extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _LanguageOption({
+    required this.title,
+    required this.subtitle,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+      subtitle: Text(subtitle),
+      trailing: isSelected
+          ? Icon(Icons.check, color: AppTheme.primaryColor)
+          : null,
       onTap: onTap,
     );
   }

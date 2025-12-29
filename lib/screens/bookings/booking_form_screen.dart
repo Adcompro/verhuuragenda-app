@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
@@ -97,7 +98,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Kon gegevens niet laden: $e';
+        _error = e.toString();
         _isLoadingData = false;
       });
     }
@@ -159,9 +160,10 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nieuwe boeking'),
+        title: Text(l10n.newBooking),
       ),
       body: _isLoadingData
           ? const Center(child: CircularProgressIndicator())
@@ -170,11 +172,11 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(_error!),
+                      Text(l10n.couldNotLoadData(_error!)),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: _loadData,
-                        child: const Text('Opnieuw proberen'),
+                        child: Text(l10n.tryAgain),
                       ),
                     ],
                   ),
@@ -184,54 +186,55 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
   }
 
   Widget _buildForm() {
+    final l10n = AppLocalizations.of(context)!;
     return Form(
       key: _formKey,
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // Accommodation selection
-          _buildSectionTitle('Accommodatie'),
-          _buildAccommodationDropdown(),
+          _buildSectionTitle(l10n.accommodation),
+          _buildAccommodationDropdown(l10n),
           const SizedBox(height: 24),
 
           // Guest selection
-          _buildSectionTitle('Gast'),
-          _buildGuestDropdown(),
+          _buildSectionTitle(l10n.guest),
+          _buildGuestDropdown(l10n),
           const SizedBox(height: 24),
 
           // Dates
-          _buildSectionTitle('Periode'),
+          _buildSectionTitle(l10n.period),
           Row(
             children: [
-              Expanded(child: _buildDateField('Check-in', _checkIn, (date) {
+              Expanded(child: _buildDateField(l10n.checkIn, _checkIn, (date) {
                 setState(() => _checkIn = date);
                 _checkAvailability();
-              })),
+              }, l10n)),
               const SizedBox(width: 16),
-              Expanded(child: _buildDateField('Check-out', _checkOut, (date) {
+              Expanded(child: _buildDateField(l10n.checkOut, _checkOut, (date) {
                 setState(() => _checkOut = date);
                 _checkAvailability();
-              })),
+              }, l10n)),
             ],
           ),
           if (_checkIn != null && _checkOut != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                '${_checkOut!.difference(_checkIn!).inDays} nachten',
+                l10n.nightsCount(_checkOut!.difference(_checkIn!).inDays),
                 style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.w500),
               ),
             ),
 
           // Availability check result
           if (_isCheckingAvailability)
-            const Padding(
-              padding: EdgeInsets.only(top: 12),
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
               child: Row(
                 children: [
-                  SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
-                  SizedBox(width: 8),
-                  Text('Beschikbaarheid controleren...'),
+                  const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                  const SizedBox(width: 8),
+                  Text(l10n.checkingAvailability),
                 ],
               ),
             )
@@ -248,7 +251,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                 children: [
                   Icon(Icons.check_circle, color: Colors.green[700]),
                   const SizedBox(width: 8),
-                  Text('Beschikbaar!', style: TextStyle(color: Colors.green[800], fontWeight: FontWeight.w500)),
+                  Text(l10n.available, style: TextStyle(color: Colors.green[800], fontWeight: FontWeight.w500)),
                 ],
               ),
             )
@@ -270,7 +273,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Niet beschikbaar',
+                          l10n.notAvailable,
                           style: TextStyle(color: Colors.red[800], fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -278,7 +281,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                   ),
                   if (_conflicts.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    Text('Overlappende boekingen:', style: TextStyle(color: Colors.red[700], fontSize: 12)),
+                    Text(l10n.overlappingBookings, style: TextStyle(color: Colors.red[700], fontSize: 12)),
                     ..._conflicts.map((c) => Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
@@ -289,11 +292,11 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                   ],
                   if (_blockedDates.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    Text('Geblokkeerde periodes:', style: TextStyle(color: Colors.red[700], fontSize: 12)),
+                    Text(l10n.blockedPeriods, style: TextStyle(color: Colors.red[700], fontSize: 12)),
                     ..._blockedDates.map((bd) => Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
-                        '• ${bd['source'] ?? 'Extern'}: ${_formatDateShort(bd['start_date'])} - ${_formatDateShort(bd['end_date'])}',
+                        '• ${bd['source'] ?? l10n.external}: ${_formatDateShort(bd['start_date'])} - ${_formatDateShort(bd['end_date'])}',
                         style: TextStyle(color: Colors.red[700], fontSize: 12),
                       ),
                     )),
@@ -319,7 +322,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                         Icon(Icons.lightbulb_outline, color: Colors.blue[700]),
                         const SizedBox(width: 8),
                         Text(
-                          'Beschikbare alternatieven:',
+                          l10n.availableAlternatives,
                           style: TextStyle(color: Colors.blue[800], fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -348,45 +351,45 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           const SizedBox(height: 24),
 
           // Guests count
-          _buildSectionTitle('Aantal personen'),
+          _buildSectionTitle(l10n.numberOfPeople),
           Row(
             children: [
-              Expanded(child: _buildCounterField('Volwassenen', _adults, (v) => setState(() => _adults = v), min: 1)),
+              Expanded(child: _buildCounterField(l10n.adults, _adults, (v) => setState(() => _adults = v), min: 1)),
               const SizedBox(width: 12),
-              Expanded(child: _buildCounterField('Kinderen', _children, (v) => setState(() => _children = v))),
+              Expanded(child: _buildCounterField(l10n.children, _children, (v) => setState(() => _children = v))),
               const SizedBox(width: 12),
-              Expanded(child: _buildCounterField("Baby's", _babies, (v) => setState(() => _babies = v))),
+              Expanded(child: _buildCounterField(l10n.babies, _babies, (v) => setState(() => _babies = v))),
             ],
           ),
           const SizedBox(height: 24),
 
           // Status and source
-          _buildSectionTitle('Status & Bron'),
+          _buildSectionTitle(l10n.statusAndSource),
           Row(
             children: [
-              Expanded(child: _buildStatusDropdown()),
+              Expanded(child: _buildStatusDropdown(l10n)),
               const SizedBox(width: 16),
-              Expanded(child: _buildSourceDropdown()),
+              Expanded(child: _buildSourceDropdown(l10n)),
             ],
           ),
           const SizedBox(height: 24),
 
           // Financial
-          _buildSectionTitle('Financieel'),
+          _buildSectionTitle(l10n.financial),
           TextFormField(
             controller: _totalAmountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(
-              labelText: 'Totaalbedrag *',
+            decoration: InputDecoration(
+              labelText: '${l10n.totalAmount} *',
               prefixText: '€ ',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Voer een bedrag in';
+                return l10n.enterAmount;
               }
               if (double.tryParse(value.replaceAll(',', '.')) == null) {
-                return 'Voer een geldig bedrag in';
+                return l10n.enterValidAmount;
               }
               return null;
             },
@@ -398,10 +401,10 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                 child: TextFormField(
                   controller: _depositController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    labelText: 'Aanbetaling',
+                  decoration: InputDecoration(
+                    labelText: l10n.downPayment,
                     prefixText: '€ ',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
               ),
@@ -410,10 +413,10 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                 child: TextFormField(
                   controller: _cleaningFeeController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    labelText: 'Schoonmaak',
+                  decoration: InputDecoration(
+                    labelText: l10n.cleaning,
                     prefixText: '€ ',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
               ),
@@ -422,13 +425,13 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           const SizedBox(height: 24),
 
           // Notes
-          _buildSectionTitle('Notities'),
+          _buildSectionTitle(l10n.notes),
           TextFormField(
             controller: _notesController,
             maxLines: 3,
-            decoration: const InputDecoration(
-              hintText: 'Interne notities...',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l10n.internalNotesHint,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 32),
@@ -445,7 +448,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
-                  : const Text('Boeking opslaan', style: TextStyle(fontSize: 16)),
+                  : Text(l10n.saveBooking, style: const TextStyle(fontSize: 16)),
             ),
           ),
           const SizedBox(height: 32),
@@ -467,12 +470,12 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     );
   }
 
-  Widget _buildAccommodationDropdown() {
+  Widget _buildAccommodationDropdown(AppLocalizations l10n) {
     return DropdownButtonFormField<int>(
       value: _selectedAccommodationId,
-      decoration: const InputDecoration(
-        labelText: 'Selecteer accommodatie *',
-        border: OutlineInputBorder(),
+      decoration: InputDecoration(
+        labelText: '${l10n.selectAccommodation} *',
+        border: const OutlineInputBorder(),
       ),
       items: _accommodations.map((acc) {
         return DropdownMenuItem(
@@ -504,20 +507,20 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
         // Check availability
         _checkAvailability();
       },
-      validator: (value) => value == null ? 'Selecteer een accommodatie' : null,
+      validator: (value) => value == null ? l10n.selectAnAccommodation : null,
     );
   }
 
-  Widget _buildGuestDropdown() {
+  Widget _buildGuestDropdown(AppLocalizations l10n) {
     return DropdownButtonFormField<int>(
       value: _selectedGuestId,
       decoration: InputDecoration(
-        labelText: 'Selecteer gast *',
+        labelText: '${l10n.selectGuest} *',
         border: const OutlineInputBorder(),
         suffixIcon: IconButton(
           icon: const Icon(Icons.person_add),
           onPressed: _showAddGuestDialog,
-          tooltip: 'Nieuwe gast',
+          tooltip: l10n.newGuest,
         ),
       ),
       items: _guests.map((guest) {
@@ -527,13 +530,13 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
         );
       }).toList(),
       onChanged: (value) => setState(() => _selectedGuestId = value),
-      validator: (value) => value == null ? 'Selecteer een gast' : null,
+      validator: (value) => value == null ? l10n.selectAGuest : null,
     );
   }
 
-  Widget _buildDateField(String label, DateTime? value, Function(DateTime) onChanged) {
+  Widget _buildDateField(String label, DateTime? value, Function(DateTime) onChanged, AppLocalizations l10n) {
     return InkWell(
-      onTap: () => _showCupertinoDatePicker(value, onChanged),
+      onTap: () => _showCupertinoDatePicker(value, onChanged, l10n),
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: label,
@@ -541,7 +544,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           suffixIcon: const Icon(Icons.calendar_today),
         ),
         child: Text(
-          value != null ? _formatDate(value) : 'Selecteer datum',
+          value != null ? _formatDate(value) : l10n.selectDate,
           style: TextStyle(
             color: value != null ? Colors.black : Colors.grey[600],
           ),
@@ -550,7 +553,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     );
   }
 
-  void _showCupertinoDatePicker(DateTime? initialDate, Function(DateTime) onChanged) {
+  void _showCupertinoDatePicker(DateTime? initialDate, Function(DateTime) onChanged, AppLocalizations l10n) {
     DateTime tempDate = initialDate ?? DateTime.now();
 
     showCupertinoModalPopup(
@@ -569,13 +572,13 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CupertinoButton(
-                      child: const Text('Annuleren'),
+                      child: Text(l10n.cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     CupertinoButton(
-                      child: const Text(
-                        'Gereed',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      child: Text(
+                        l10n.done,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       onPressed: () {
                         onChanged(tempDate);
@@ -675,41 +678,42 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     );
   }
 
-  Widget _buildStatusDropdown() {
+  Widget _buildStatusDropdown(AppLocalizations l10n) {
     return DropdownButtonFormField<String>(
       value: _status,
-      decoration: const InputDecoration(
-        labelText: 'Status',
-        border: OutlineInputBorder(),
+      decoration: InputDecoration(
+        labelText: l10n.status,
+        border: const OutlineInputBorder(),
       ),
-      items: const [
-        DropdownMenuItem(value: 'inquiry', child: Text('Aanvraag')),
-        DropdownMenuItem(value: 'option', child: Text('Optie')),
-        DropdownMenuItem(value: 'confirmed', child: Text('Bevestigd')),
+      items: [
+        DropdownMenuItem(value: 'inquiry', child: Text(l10n.inquiry)),
+        DropdownMenuItem(value: 'option', child: Text(l10n.option)),
+        DropdownMenuItem(value: 'confirmed', child: Text(l10n.confirmed)),
       ],
       onChanged: (value) => setState(() => _status = value!),
     );
   }
 
-  Widget _buildSourceDropdown() {
+  Widget _buildSourceDropdown(AppLocalizations l10n) {
     return DropdownButtonFormField<String>(
       value: _source,
-      decoration: const InputDecoration(
-        labelText: 'Bron',
-        border: OutlineInputBorder(),
+      decoration: InputDecoration(
+        labelText: l10n.source,
+        border: const OutlineInputBorder(),
       ),
-      items: const [
-        DropdownMenuItem(value: 'direct', child: Text('Direct')),
-        DropdownMenuItem(value: 'website', child: Text('Website')),
-        DropdownMenuItem(value: 'airbnb', child: Text('Airbnb')),
-        DropdownMenuItem(value: 'booking', child: Text('Booking.com')),
-        DropdownMenuItem(value: 'other', child: Text('Anders')),
+      items: [
+        DropdownMenuItem(value: 'direct', child: Text(l10n.direct)),
+        DropdownMenuItem(value: 'website', child: Text(l10n.website)),
+        const DropdownMenuItem(value: 'airbnb', child: Text('Airbnb')),
+        const DropdownMenuItem(value: 'booking', child: Text('Booking.com')),
+        DropdownMenuItem(value: 'other', child: Text(l10n.other)),
       ],
       onChanged: (value) => setState(() => _source = value!),
     );
   }
 
   void _showAddGuestDialog() {
+    final l10n = AppLocalizations.of(context)!;
     final firstNameController = TextEditingController();
     final lastNameController = TextEditingController();
     final emailController = TextEditingController();
@@ -718,27 +722,27 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Nieuwe gast'),
+        title: Text(l10n.newGuest),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: firstNameController,
-                decoration: const InputDecoration(labelText: 'Voornaam *'),
+                decoration: InputDecoration(labelText: '${l10n.firstName} *'),
               ),
               TextField(
                 controller: lastNameController,
-                decoration: const InputDecoration(labelText: 'Achternaam'),
+                decoration: InputDecoration(labelText: l10n.lastName),
               ),
               TextField(
                 controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email *'),
+                decoration: InputDecoration(labelText: '${l10n.email} *'),
                 keyboardType: TextInputType.emailAddress,
               ),
               TextField(
                 controller: phoneController,
-                decoration: const InputDecoration(labelText: 'Telefoon'),
+                decoration: InputDecoration(labelText: l10n.phone),
                 keyboardType: TextInputType.phone,
               ),
             ],
@@ -747,13 +751,13 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annuleren'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
               if (firstNameController.text.isEmpty || emailController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Voornaam en email zijn verplicht')),
+                  SnackBar(content: Text(l10n.firstNameAndEmailRequired)),
                 );
                 return;
               }
@@ -779,12 +783,12 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Fout: $e')),
+                    SnackBar(content: Text(l10n.error(e.toString()))),
                   );
                 }
               }
             },
-            child: const Text('Toevoegen'),
+            child: Text(l10n.add),
           ),
         ],
       ),
@@ -792,18 +796,19 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
   }
 
   Future<void> _submitForm() async {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
     if (_checkIn == null || _checkOut == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecteer check-in en check-out datum')),
+        SnackBar(content: Text(l10n.selectCheckInAndCheckOutDate)),
       );
       return;
     }
 
     if (_checkOut!.isBefore(_checkIn!) || _checkOut!.isAtSameMomentAs(_checkIn!)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Check-out moet na check-in zijn')),
+        SnackBar(content: Text(l10n.checkOutMustBeAfterCheckIn)),
       );
       return;
     }
@@ -839,14 +844,14 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Boeking aangemaakt!')),
+          SnackBar(content: Text(l10n.bookingCreated)),
         );
         context.go('/bookings/$bookingId');
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fout: $e')),
+          SnackBar(content: Text(l10n.error(e.toString()))),
         );
       }
     } finally {

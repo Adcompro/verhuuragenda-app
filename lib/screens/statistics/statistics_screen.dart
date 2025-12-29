@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -41,7 +42,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Kon statistieken niet laden';
+        _error = e.toString();
         _isLoading = false;
       });
     }
@@ -49,9 +50,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Statistieken'),
+        title: Text(l10n.statisticsTitle),
         actions: [
           // Year selector
           PopupMenuButton<int>(
@@ -87,7 +90,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? _buildError()
+              ? _buildError(l10n)
               : RefreshIndicator(
                   onRefresh: _loadStatistics,
                   child: SingleChildScrollView(
@@ -97,27 +100,27 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // KPI Cards
-                        _buildKPICards(),
+                        _buildKPICards(l10n),
                         const SizedBox(height: 24),
 
                         // Revenue chart
-                        _buildSectionTitle('Omzet per maand'),
-                        _buildRevenueChart(),
+                        _buildSectionTitle(l10n.statisticsRevenueByMonth),
+                        _buildRevenueChart(l10n),
                         const SizedBox(height: 24),
 
                         // Occupancy chart
-                        _buildSectionTitle('Bezettingsgraad'),
-                        _buildOccupancyChart(),
+                        _buildSectionTitle(l10n.statisticsOccupancyRate),
+                        _buildOccupancyChart(l10n),
                         const SizedBox(height: 24),
 
                         // Bookings by source
-                        _buildSectionTitle('Boekingen per bron'),
-                        _buildSourceChart(),
+                        _buildSectionTitle(l10n.statisticsBookingsBySource),
+                        _buildSourceChart(l10n),
                         const SizedBox(height: 24),
 
                         // Top accommodations
-                        _buildSectionTitle('Top accommodaties'),
-                        _buildTopAccommodations(),
+                        _buildSectionTitle(l10n.statisticsTopAccommodations),
+                        _buildTopAccommodations(l10n),
                         const SizedBox(height: 32),
                       ],
                     ),
@@ -126,7 +129,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildError() {
+  Widget _buildError(AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -136,13 +139,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              _error!,
+              l10n.statisticsNoData,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadStatistics,
-              child: const Text('Opnieuw proberen'),
+              child: Text(l10n.retry),
             ),
           ],
         ),
@@ -163,7 +166,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildKPICards() {
+  Widget _buildKPICards(AppLocalizations l10n) {
     final kpis = _stats['kpis'] as Map<String, dynamic>? ?? {};
 
     // Helper to safely convert to double
@@ -189,26 +192,26 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       childAspectRatio: 1.5,
       children: [
         _buildKPICard(
-          'Totale Omzet',
+          l10n.totalRevenue,
           _formatCurrency(totalRevenue),
           Icons.euro,
           AppTheme.primaryColor,
           change: revenueChange,
         ),
         _buildKPICard(
-          'Boekingen',
+          l10n.bookings,
           '${kpis['total_bookings'] ?? 0}',
           Icons.calendar_today,
           Colors.blue,
         ),
         _buildKPICard(
-          'Gem. Verblijf',
-          '${averageStay.toStringAsFixed(1)} nachten',
+          l10n.statisticsAverageStayDuration,
+          '${averageStay.toStringAsFixed(1)} ${l10n.nights}',
           Icons.nights_stay,
           Colors.purple,
         ),
         _buildKPICard(
-          'Bezetting',
+          l10n.occupancy,
           '${occupancyRate.toStringAsFixed(1)}%',
           Icons.home,
           Colors.orange,
@@ -290,14 +293,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildRevenueChart() {
+  Widget _buildRevenueChart(AppLocalizations l10n) {
     final revenueData = (_stats['revenue_by_month'] as List<dynamic>?)
             ?.map((e) => Map<String, dynamic>.from(e))
             .toList() ??
         [];
 
     if (revenueData.isEmpty) {
-      return _buildEmptyChart('Geen omzetgegevens beschikbaar');
+      return _buildEmptyChart(l10n.statisticsNoData);
     }
 
     final maxRevenue = revenueData
@@ -389,14 +392,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildOccupancyChart() {
+  Widget _buildOccupancyChart(AppLocalizations l10n) {
     final occupancyData = (_stats['occupancy_by_month'] as List<dynamic>?)
             ?.map((e) => Map<String, dynamic>.from(e))
             .toList() ??
         [];
 
     if (occupancyData.isEmpty) {
-      return _buildEmptyChart('Geen bezettingsgegevens beschikbaar');
+      return _buildEmptyChart(l10n.statisticsNoData);
     }
 
     return Card(
@@ -500,14 +503,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildSourceChart() {
+  Widget _buildSourceChart(AppLocalizations l10n) {
     final sourceData = (_stats['bookings_by_source'] as List<dynamic>?)
             ?.map((e) => Map<String, dynamic>.from(e))
             .toList() ??
         [];
 
     if (sourceData.isEmpty) {
-      return _buildEmptyChart('Geen brongegevens beschikbaar');
+      return _buildEmptyChart(l10n.statisticsNoData);
     }
 
     final colors = [
@@ -592,14 +595,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildTopAccommodations() {
+  Widget _buildTopAccommodations(AppLocalizations l10n) {
     final topAccommodations = (_stats['top_accommodations'] as List<dynamic>?)
             ?.map((e) => Map<String, dynamic>.from(e))
             .toList() ??
         [];
 
     if (topAccommodations.isEmpty) {
-      return _buildEmptyChart('Geen accommodatiegegevens beschikbaar');
+      return _buildEmptyChart(l10n.statisticsNoData);
     }
 
     final maxRevenue = topAccommodations
@@ -663,7 +666,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            '${item['bookings']} boekingen',
+                            '${item['bookings']} ${l10n.bookings.toLowerCase()}',
                             style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                           ),
                         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -75,18 +76,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       );
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Voorkeuren opgeslagen'),
+          SnackBar(
+            content: Text(l10n.preferencesSaved),
             backgroundColor: Colors.green,
           ),
         );
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Kon voorkeuren niet opslaan'),
+          SnackBar(
+            content: Text(l10n.couldNotSavePreferences),
             backgroundColor: Colors.red,
           ),
         );
@@ -98,9 +101,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notificaties'),
+        title: Text(l10n.notificationsTitle),
         actions: [
           if (_isSaving)
             const Center(
@@ -116,7 +120,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           else
             TextButton(
               onPressed: _savePreferences,
-              child: const Text('Opslaan'),
+              child: Text(l10n.save),
             ),
         ],
       ),
@@ -124,66 +128,66 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               children: [
-                _buildSectionHeader('Boekingen'),
+                _buildSectionHeader(l10n.bookingsSection),
                 _buildSwitchTile(
                   icon: Icons.add_circle_outline,
-                  title: 'Nieuwe boeking',
-                  subtitle: 'Ontvang een melding bij nieuwe boekingen',
+                  title: l10n.newBookingNotification,
+                  subtitle: l10n.newBookingNotificationSubtitle,
                   value: _newBooking,
                   onChanged: (v) => setState(() => _newBooking = v),
                 ),
                 _buildSwitchTile(
                   icon: Icons.cancel_outlined,
-                  title: 'Annulering',
-                  subtitle: 'Melding wanneer een boeking wordt geannuleerd',
+                  title: l10n.cancellationNotification,
+                  subtitle: l10n.cancellationNotificationSubtitle,
                   value: _bookingCancelled,
                   onChanged: (v) => setState(() => _bookingCancelled = v),
                 ),
                 _buildSwitchTile(
                   icon: Icons.euro,
-                  title: 'Betaling ontvangen',
-                  subtitle: 'Melding bij ontvangst van betalingen',
+                  title: l10n.paymentReceivedNotification,
+                  subtitle: l10n.paymentReceivedNotificationSubtitle,
                   value: _paymentReceived,
                   onChanged: (v) => setState(() => _paymentReceived = v),
                 ),
                 const Divider(),
 
-                _buildSectionHeader('Herinneringen'),
+                _buildSectionHeader(l10n.remindersSection),
                 _buildSwitchTile(
                   icon: Icons.login,
-                  title: 'Check-in herinnering',
-                  subtitle: 'Herinnering 1 dag voor check-in van gasten',
+                  title: l10n.checkInReminderNotification,
+                  subtitle: l10n.checkInReminderNotificationSubtitle,
                   value: _checkInReminder,
                   onChanged: (v) => setState(() => _checkInReminder = v),
                 ),
                 _buildSwitchTile(
                   icon: Icons.logout,
-                  title: 'Check-out herinnering',
-                  subtitle: 'Herinnering op de dag van check-out',
+                  title: l10n.checkOutReminderNotification,
+                  subtitle: l10n.checkOutReminderNotificationSubtitle,
                   value: _checkOutReminder,
                   onChanged: (v) => setState(() => _checkOutReminder = v),
                 ),
                 _buildSwitchTile(
                   icon: Icons.cleaning_services,
-                  title: 'Schoonmaak herinnering',
-                  subtitle: 'Herinnering voor schoonmaaktaken',
+                  title: l10n.cleaningReminderNotification,
+                  subtitle: l10n.cleaningReminderNotificationSubtitle,
                   value: _cleaningReminder,
                   onChanged: (v) => setState(() => _cleaningReminder = v),
                 ),
                 const Divider(),
 
-                _buildSectionHeader('Overig'),
+                _buildSectionHeader(l10n.otherSection),
                 _buildSwitchTile(
                   icon: Icons.build,
-                  title: 'Onderhoud updates',
-                  subtitle: 'Meldingen over onderhoudstaken',
+                  title: l10n.maintenanceUpdatesNotification,
+                  subtitle: l10n.maintenanceUpdatesNotificationSubtitle,
                   value: _maintenanceUpdates,
                   onChanged: (v) => setState(() => _maintenanceUpdates = v),
                 ),
                 _buildSwitchTile(
                   icon: Icons.mail_outline,
-                  title: 'Nieuwsbrief & tips',
-                  subtitle: 'Ontvang tips en updates over VerhuurAgenda',
+                  title: l10n.newsletterAndTipsNotification,
+                  subtitle: l10n.newsletterAndTipsNotificationSubtitle,
                   value: _marketingEmails,
                   onChanged: (v) => setState(() => _marketingEmails = v),
                 ),
@@ -205,7 +209,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Push notificaties worden verstuurd naar dit apparaat. Zorg dat notificaties zijn ingeschakeld in je telefooninstellingen.',
+                            l10n.pushNotificationsInfo,
                             style: TextStyle(
                               color: Colors.blue[800],
                               fontSize: 13,

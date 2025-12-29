@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -40,7 +41,7 @@ class _SeasonsListScreenState extends State<SeasonsListScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Kon seizoenen niet laden: ${e.toString()}';
+        _error = e.toString();
         _isLoading = false;
       });
     }
@@ -63,20 +64,21 @@ class _SeasonsListScreenState extends State<SeasonsListScreen> {
   }
 
   Future<void> _deleteSeason(Season season) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Seizoen verwijderen'),
-        content: Text('Weet je zeker dat je "${season.name}" wilt verwijderen?'),
+        title: Text(l10n.deleteSeasonTitle),
+        content: Text(l10n.deleteSeasonConfirmMessage(season.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuleren'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Verwijderen'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -87,14 +89,14 @@ class _SeasonsListScreenState extends State<SeasonsListScreen> {
         await ApiClient.instance.delete('${ApiConfig.seasons}/${season.id}');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Seizoen verwijderd'), backgroundColor: Colors.green),
+            SnackBar(content: Text(l10n.seasonDeleted), backgroundColor: Colors.green),
           );
         }
         _loadSeasons();
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Kon niet verwijderen: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(l10n.couldNotDeleteError(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -103,9 +105,10 @@ class _SeasonsListScreenState extends State<SeasonsListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Seizoenen'),
+        title: Text(l10n.seasons),
         actions: [
           // Year selector
           PopupMenuButton<int>(
@@ -127,16 +130,16 @@ class _SeasonsListScreenState extends State<SeasonsListScreen> {
           ),
         ],
       ),
-      body: _buildBody(),
+      body: _buildBody(l10n),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _navigateToForm(null),
         icon: const Icon(Icons.add),
-        label: const Text('Nieuw seizoen'),
+        label: Text(l10n.newSeason),
       ),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(AppLocalizations l10n) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -150,12 +153,12 @@ class _SeasonsListScreenState extends State<SeasonsListScreen> {
             children: [
               Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
               const SizedBox(height: 16),
-              Text(_error!, textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600])),
+              Text(l10n.couldNotLoadSeasonsError(_error!), textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600])),
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: _loadSeasons,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Opnieuw proberen'),
+                label: Text(l10n.retry),
               ),
             ],
           ),
@@ -175,12 +178,12 @@ class _SeasonsListScreenState extends State<SeasonsListScreen> {
               Icon(Icons.calendar_month_outlined, size: 64, color: Colors.grey[400]),
               const SizedBox(height: 16),
               Text(
-                'Geen seizoenen voor $_selectedYear',
+                l10n.noSeasonsForYear(_selectedYear),
                 style: TextStyle(color: Colors.grey[600], fontSize: 16),
               ),
               const SizedBox(height: 8),
               Text(
-                'Voeg seizoenen toe om verschillende prijzen per periode te gebruiken',
+                l10n.addSeasonsHint,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey[500], fontSize: 14),
               ),

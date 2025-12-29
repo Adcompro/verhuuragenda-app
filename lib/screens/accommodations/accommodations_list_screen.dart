@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
@@ -49,8 +50,9 @@ class _AccommodationsListScreenState extends State<AccommodationsListScreen> {
         _isLoading = false;
       });
     } catch (e) {
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
-        _error = 'Kon accommodaties niet laden: ${e.toString()}';
+        _error = '${l10n.couldNotLoadAccommodations}: ${e.toString()}';
         _isLoading = false;
       });
     }
@@ -70,20 +72,23 @@ class _AccommodationsListScreenState extends State<AccommodationsListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Accommodaties'),
+        title: Text(l10n.accommodations),
       ),
       body: _buildBody(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _navigateToEdit(null),
         icon: const Icon(Icons.add),
-        label: const Text('Nieuw'),
+        label: Text(l10n.newItem),
       ),
     );
   }
 
   Widget _buildBody() {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -106,7 +111,7 @@ class _AccommodationsListScreenState extends State<AccommodationsListScreen> {
               ElevatedButton.icon(
                 onPressed: _loadAccommodations,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Opnieuw proberen'),
+                label: Text(l10n.retry),
               ),
             ],
           ),
@@ -122,7 +127,7 @@ class _AccommodationsListScreenState extends State<AccommodationsListScreen> {
             Icon(Icons.home_work_outlined, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Geen accommodaties gevonden',
+              l10n.noAccommodationsFound,
               style: TextStyle(color: Colors.grey[600], fontSize: 16),
             ),
           ],
@@ -155,6 +160,7 @@ class _AccommodationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       clipBehavior: Clip.antiAlias,
@@ -192,7 +198,7 @@ class _AccommodationCard extends StatelessWidget {
                             ),
                       ),
                     ),
-                    _buildStatusBadge(),
+                    _buildStatusBadge(l10n),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -225,17 +231,17 @@ class _AccommodationCard extends StatelessWidget {
                     if (accommodation.maxGuests != null)
                       _buildInfoChip(
                         Icons.people,
-                        '${accommodation.maxGuests} gasten',
+                        l10n.nGuestsCount(accommodation.maxGuests!),
                       ),
                     if (accommodation.bedrooms != null)
                       _buildInfoChip(
                         Icons.bed,
-                        '${accommodation.bedrooms} slpk',
+                        l10n.nBedroomsShort(accommodation.bedrooms!),
                       ),
                     if (accommodation.bathrooms != null)
                       _buildInfoChip(
                         Icons.bathtub,
-                        '${accommodation.bathrooms} badk',
+                        l10n.nBathroomsShort(accommodation.bathrooms!),
                       ),
                   ],
                 ),
@@ -261,7 +267,7 @@ class _AccommodationCard extends StatelessWidget {
                       if (accommodation.icalBelvillaUrl != null && accommodation.icalBelvillaUrl!.isNotEmpty)
                         _buildSyncBadge('Belvilla', const Color(0xFFE85D04)),
                       if (accommodation.icalOtherUrl != null && accommodation.icalOtherUrl!.isNotEmpty)
-                        _buildSyncBadge('Overig', Colors.grey),
+                        _buildSyncBadge(l10n.other, Colors.grey),
                     ],
                   ),
                 ],
@@ -274,11 +280,11 @@ class _AccommodationCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       if (accommodation.basePriceLow != null)
-                        _buildPriceColumn('Laagseizoen', accommodation.basePriceLow!),
+                        _buildPriceColumn(l10n.lowSeason, accommodation.basePriceLow!, l10n),
                       if (accommodation.basePriceMid != null)
-                        _buildPriceColumn('Midden', accommodation.basePriceMid!),
+                        _buildPriceColumn(l10n.midSeasonShort, accommodation.basePriceMid!, l10n),
                       if (accommodation.basePriceHigh != null)
-                        _buildPriceColumn('Hoogseizoen', accommodation.basePriceHigh!),
+                        _buildPriceColumn(l10n.highSeason, accommodation.basePriceHigh!, l10n),
                     ],
                   ),
                 ],
@@ -327,7 +333,7 @@ class _AccommodationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge() {
+  Widget _buildStatusBadge(AppLocalizations l10n) {
     final isActive = accommodation.isActive;
     final isPublished = accommodation.isPublished;
 
@@ -338,9 +344,9 @@ class _AccommodationCard extends StatelessWidget {
           color: Colors.red.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Text(
-          'Inactief',
-          style: TextStyle(
+        child: Text(
+          l10n.inactive,
+          style: const TextStyle(
             fontSize: 11,
             color: Colors.red,
             fontWeight: FontWeight.w500,
@@ -356,7 +362,7 @@ class _AccommodationCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        isPublished ? 'Gepubliceerd' : 'Concept',
+        isPublished ? l10n.published : l10n.draft,
         style: TextStyle(
           fontSize: 11,
           color: isPublished ? Colors.green : Colors.orange,
@@ -383,7 +389,7 @@ class _AccommodationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceColumn(String label, double price) {
+  Widget _buildPriceColumn(String label, double price, AppLocalizations l10n) {
     return Column(
       children: [
         Text(
@@ -395,14 +401,14 @@ class _AccommodationCard extends StatelessWidget {
         ),
         const SizedBox(height: 2),
         Text(
-          '€${price.toStringAsFixed(0)}',
+          '${price.toStringAsFixed(0)}',
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         Text(
-          '/week',
+          '/${l10n.perWeek.replaceAll('per ', '')}',
           style: TextStyle(
             fontSize: 10,
             color: Colors.grey[500],

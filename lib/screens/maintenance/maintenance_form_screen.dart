@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -98,9 +99,10 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Taak bewerken' : 'Nieuwe onderhoudstaak'),
+        title: Text(isEditing ? l10n.editTaskTitle : l10n.newMaintenanceTask),
       ),
       body: _isLoadingData
           ? const Center(child: CircularProgressIndicator())
@@ -109,6 +111,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   }
 
   Widget _buildForm() {
+    final l10n = AppLocalizations.of(context)!;
     final isTablet = Responsive.useWideLayout(context);
     final maxWidth = isTablet ? 600.0 : double.infinity;
 
@@ -121,16 +124,16 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
             padding: EdgeInsets.all(isTablet ? 24 : 16),
             children: [
           // Title
-          _buildSectionTitle('Titel'),
+          _buildSectionTitle(l10n.titleLabel),
           TextFormField(
             controller: _titleController,
-            decoration: const InputDecoration(
-              hintText: 'Bijv. Lekkende kraan badkamer',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l10n.titleHint,
+              border: const OutlineInputBorder(),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Voer een titel in';
+                return l10n.enterTitleError;
               }
               return null;
             },
@@ -138,17 +141,17 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
           const SizedBox(height: 24),
 
           // Accommodation
-          _buildSectionTitle('Accommodatie'),
+          _buildSectionTitle(l10n.accommodationLabel),
           DropdownButtonFormField<int>(
             value: _selectedAccommodationId,
-            decoration: const InputDecoration(
-              hintText: 'Selecteer accommodatie (optioneel)',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l10n.selectAccommodationOptional,
+              border: const OutlineInputBorder(),
             ),
             items: [
-              const DropdownMenuItem<int>(
+              DropdownMenuItem<int>(
                 value: null,
-                child: Text('Geen specifieke accommodatie'),
+                child: Text(l10n.noSpecificAccommodation),
               ),
               ..._accommodations.map((acc) {
                 return DropdownMenuItem(
@@ -176,45 +179,45 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
           const SizedBox(height: 24),
 
           // Description
-          _buildSectionTitle('Beschrijving'),
+          _buildSectionTitle(l10n.descriptionLabel),
           TextFormField(
             controller: _descriptionController,
             maxLines: 4,
-            decoration: const InputDecoration(
-              hintText: 'Beschrijf het probleem of de taak...',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l10n.descriptionHint,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 24),
 
           // Priority
-          _buildSectionTitle('Prioriteit'),
+          _buildSectionTitle(l10n.priorityLabel),
           _buildPrioritySelector(),
           const SizedBox(height: 24),
 
           // Category
-          _buildSectionTitle('Categorie'),
+          _buildSectionTitle(l10n.categoryLabel),
           _buildCategorySelector(),
           const SizedBox(height: 24),
 
           // Due date
-          _buildSectionTitle('Deadline'),
+          _buildSectionTitle(l10n.deadlineFieldLabel),
           _buildDateField(),
           const SizedBox(height: 24),
 
           // Photos
-          _buildSectionTitle("Foto's"),
+          _buildSectionTitle(l10n.photosLabel),
           _buildPhotoSection(),
           const SizedBox(height: 24),
 
           // Notes
-          _buildSectionTitle('Notities'),
+          _buildSectionTitle(l10n.notesLabel),
           TextFormField(
             controller: _notesController,
             maxLines: 3,
-            decoration: const InputDecoration(
-              hintText: 'Extra opmerkingen...',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l10n.notesHint,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 32),
@@ -232,7 +235,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
                   : Text(
-                      isEditing ? 'Opslaan' : 'Taak aanmaken',
+                      isEditing ? l10n.save : l10n.createTask,
                       style: const TextStyle(fontSize: 16),
                     ),
             ),
@@ -259,15 +262,16 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   }
 
   Widget _buildPrioritySelector() {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
-        _buildPriorityOption('low', 'Laag', Colors.green),
+        _buildPriorityOption('low', l10n.priorityLowEmoji, Colors.green),
         const SizedBox(width: 8),
-        _buildPriorityOption('medium', 'Gemiddeld', Colors.amber[700]!),
+        _buildPriorityOption('medium', l10n.priorityMediumEmoji, Colors.amber[700]!),
         const SizedBox(width: 8),
-        _buildPriorityOption('high', 'Hoog', Colors.orange),
+        _buildPriorityOption('high', l10n.priorityHighEmoji, Colors.orange),
         const SizedBox(width: 8),
-        _buildPriorityOption('urgent', 'Spoed', Colors.red),
+        _buildPriorityOption('urgent', l10n.priorityUrgentEmoji, Colors.red),
       ],
     );
   }
@@ -314,13 +318,14 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   }
 
   Widget _buildCategorySelector() {
+    final l10n = AppLocalizations.of(context)!;
     final categories = [
-      {'value': 'repair', 'label': 'Reparatie', 'icon': Icons.build},
-      {'value': 'maintenance', 'label': 'Onderhoud', 'icon': Icons.settings},
-      {'value': 'cleaning', 'label': 'Schoonmaak', 'icon': Icons.cleaning_services},
-      {'value': 'inventory', 'label': 'Inventaris', 'icon': Icons.inventory},
-      {'value': 'inspection', 'label': 'Inspectie', 'icon': Icons.search},
-      {'value': 'other', 'label': 'Overig', 'icon': Icons.more_horiz},
+      {'value': 'repair', 'label': l10n.categoryRepair, 'icon': Icons.build},
+      {'value': 'maintenance', 'label': l10n.categoryMaintenance, 'icon': Icons.settings},
+      {'value': 'cleaning', 'label': l10n.categoryCleaning, 'icon': Icons.cleaning_services},
+      {'value': 'inventory', 'label': l10n.categoryInventory, 'icon': Icons.inventory},
+      {'value': 'inspection', 'label': l10n.categoryInspection, 'icon': Icons.search},
+      {'value': 'other', 'label': l10n.categoryOther, 'icon': Icons.more_horiz},
     ];
 
     return Wrap(
@@ -366,6 +371,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   }
 
   Widget _buildDateField() {
+    final l10n = AppLocalizations.of(context)!;
     return InkWell(
       onTap: _showDatePicker,
       child: InputDecorator(
@@ -385,7 +391,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
           ),
         ),
         child: Text(
-          _dueDate != null ? _formatDate(_dueDate!) : 'Geen deadline',
+          _dueDate != null ? _formatDate(_dueDate!) : l10n.noDeadline,
           style: TextStyle(
             color: _dueDate != null ? Colors.black : Colors.grey[600],
           ),
@@ -395,6 +401,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   }
 
   void _showDatePicker() {
+    final l10n = AppLocalizations.of(context)!;
     DateTime tempDate = _dueDate ?? DateTime.now();
 
     showCupertinoModalPopup(
@@ -412,13 +419,13 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CupertinoButton(
-                      child: const Text('Annuleren'),
+                      child: Text(l10n.cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     CupertinoButton(
-                      child: const Text(
-                        'Gereed',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      child: Text(
+                        l10n.readyButton,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       onPressed: () {
                         setState(() => _dueDate = tempDate);
@@ -566,24 +573,29 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
         ],
 
         // Add photo buttons
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: _isUploadingPhotos ? null : () => _pickImage(ImageSource.camera),
-                icon: const Icon(Icons.camera_alt),
-                label: const Text('Camera'),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: _isUploadingPhotos ? null : () => _pickImage(ImageSource.gallery),
-                icon: const Icon(Icons.photo_library),
-                label: const Text('Galerij'),
-              ),
-            ),
-          ],
+        Builder(
+          builder: (context) {
+            final l10n = AppLocalizations.of(context)!;
+            return Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _isUploadingPhotos ? null : () => _pickImage(ImageSource.camera),
+                    icon: const Icon(Icons.camera_alt),
+                    label: Text(l10n.cameraButton),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _isUploadingPhotos ? null : () => _pickImage(ImageSource.gallery),
+                    icon: const Icon(Icons.photo_library),
+                    label: Text(l10n.galleryButton),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
 
         if (_isUploadingPhotos) ...[
@@ -591,7 +603,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
           const LinearProgressIndicator(),
           const SizedBox(height: 8),
           Text(
-            "Foto's uploaden...",
+            AppLocalizations.of(context)!.uploadingPhotos,
             style: TextStyle(color: Colors.grey[600], fontSize: 12),
           ),
         ],
@@ -600,6 +612,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final XFile? image = await _picker.pickImage(
         source: source,
@@ -616,7 +629,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Kon foto niet laden: $e')),
+          SnackBar(content: Text(l10n.couldNotLoadPhotoError(e.toString()))),
         );
       }
     }
@@ -683,17 +696,19 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
       }
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(isEditing ? 'Taak bijgewerkt' : 'Taak aangemaakt'),
+            content: Text(isEditing ? l10n.taskUpdatedSuccess : l10n.taskCreatedSuccess),
           ),
         );
         Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fout: $e')),
+          SnackBar(content: Text(l10n.errorWithMessage(e.toString()))),
         );
       }
     } finally {

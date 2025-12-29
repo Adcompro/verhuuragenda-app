@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -53,11 +54,12 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
   }
 
   Future<void> _save() async {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
     if (_selectedRole == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecteer een rol'), backgroundColor: Colors.red),
+        SnackBar(content: Text(l10n.selectRoleError), backgroundColor: Colors.red),
       );
       return;
     }
@@ -88,7 +90,7 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(_isEditing ? 'Teamlid bijgewerkt' : 'Teamlid toegevoegd'),
+            content: Text(_isEditing ? l10n.teamMemberSaved : l10n.teamMemberCreated),
             backgroundColor: Colors.green,
           ),
         );
@@ -97,9 +99,9 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
     } catch (e) {
       setState(() => _isSaving = false);
       if (mounted) {
-        String errorMessage = 'Kon niet opslaan';
+        String errorMessage = l10n.couldNotSave;
         if (e.toString().contains('email')) {
-          errorMessage = 'Dit e-mailadres is al in gebruik';
+          errorMessage = l10n.emailInUse;
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
@@ -110,9 +112,10 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Teamlid bewerken' : 'Nieuw teamlid'),
+        title: Text(_isEditing ? l10n.editTeamMemberTitle : l10n.newTeamMemberTitle),
       ),
       body: Form(
         key: _formKey,
@@ -122,15 +125,15 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
             // Name
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Naam',
-                prefixIcon: Icon(Icons.person_outline),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.name,
+                prefixIcon: const Icon(Icons.person_outline),
+                border: const OutlineInputBorder(),
               ),
               textCapitalization: TextCapitalization.words,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Vul een naam in';
+                  return l10n.enterNameField;
                 }
                 return null;
               },
@@ -140,18 +143,18 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
             // Email
             TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'E-mailadres',
-                prefixIcon: Icon(Icons.email_outlined),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.emailAddressLabel,
+                prefixIcon: const Icon(Icons.email_outlined),
+                border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Vul een e-mailadres in';
+                  return l10n.enterEmailField;
                 }
                 if (!value.contains('@') || !value.contains('.')) {
-                  return 'Vul een geldig e-mailadres in';
+                  return l10n.enterValidEmailField;
                 }
                 return null;
               },
@@ -163,7 +166,7 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
               controller: _passwordController,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
-                labelText: _isEditing ? 'Nieuw wachtwoord (optioneel)' : 'Wachtwoord',
+                labelText: _isEditing ? l10n.newPasswordOptional : l10n.password,
                 prefixIcon: const Icon(Icons.lock_outline),
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
@@ -173,10 +176,10 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
               ),
               validator: (value) {
                 if (!_isEditing && (value == null || value.isEmpty)) {
-                  return 'Vul een wachtwoord in';
+                  return l10n.enterPasswordField;
                 }
                 if (value != null && value.isNotEmpty && value.length < 8) {
-                  return 'Wachtwoord moet minimaal 8 tekens bevatten';
+                  return l10n.passwordMinChars;
                 }
                 return null;
               },
@@ -184,9 +187,9 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
             const SizedBox(height: 24),
 
             // Role selection
-            const Text(
-              'Rol',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+            Text(
+              l10n.roleLabel,
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             ),
             const SizedBox(height: 12),
             ...widget.availableRoles.map((role) => _buildRoleOption(role)),
@@ -194,8 +197,8 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
 
             // Active toggle
             SwitchListTile(
-              title: const Text('Actief'),
-              subtitle: const Text('Inactieve leden kunnen niet inloggen'),
+              title: Text(l10n.activeToggle),
+              subtitle: Text(l10n.inactiveMembersCannotLogin),
               value: _isActive,
               onChanged: (value) => setState(() => _isActive = value),
               secondary: Icon(
@@ -221,15 +224,14 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
                       Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        'Over teamrollen',
+                        l10n.aboutTeamRoles,
                         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[800]),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Teamleden krijgen toegang tot je VerhuurAgenda op basis van hun rol. '
-                    'Ze loggen in met hun eigen e-mailadres en wachtwoord.',
+                    l10n.teamRolesInfo,
                     style: TextStyle(color: Colors.blue[700], fontSize: 13),
                   ),
                 ],
@@ -249,7 +251,7 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                       )
                     : const Icon(Icons.check),
-                label: Text(_isSaving ? 'Opslaan...' : 'Opslaan'),
+                label: Text(_isSaving ? l10n.saving : l10n.save),
               ),
             ),
           ],

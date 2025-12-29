@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -72,11 +73,12 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
   }
 
   Future<void> _save() async {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
     if (_startDate == null || _endDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecteer start- en einddatum'), backgroundColor: Colors.red),
+        SnackBar(content: Text(l10n.selectStartAndEndDate), backgroundColor: Colors.red),
       );
       return;
     }
@@ -101,7 +103,7 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(_isEditing ? 'Seizoen bijgewerkt' : 'Seizoen aangemaakt'),
+            content: Text(_isEditing ? l10n.seasonUpdated : l10n.seasonAdded),
             backgroundColor: Colors.green,
           ),
         );
@@ -111,7 +113,7 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
       setState(() => _isSaving = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Kon niet opslaan: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.couldNotSaveError(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
@@ -129,9 +131,10 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Seizoen bewerken' : 'Nieuw seizoen'),
+        title: Text(_isEditing ? l10n.editSeason : l10n.newSeason),
       ),
       body: Form(
         key: _formKey,
@@ -141,15 +144,15 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
             // Season name
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Naam',
-                hintText: 'bijv. Kerstvakantie, Zomervakantie',
-                prefixIcon: Icon(Icons.label_outline),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.name,
+                hintText: l10n.nameHint,
+                prefixIcon: const Icon(Icons.label_outline),
+                border: const OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Vul een naam in';
+                  return l10n.enterNameValidation;
                 }
                 return null;
               },
@@ -159,10 +162,10 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
             // Year selector
             DropdownButtonFormField<int>(
               value: _selectedYear,
-              decoration: const InputDecoration(
-                labelText: 'Jaar',
-                prefixIcon: Icon(Icons.calendar_today),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.yearLabel,
+                prefixIcon: const Icon(Icons.calendar_today),
+                border: const OutlineInputBorder(),
               ),
               items: [
                 for (int year = DateTime.now().year - 1; year <= DateTime.now().year + 2; year++)
@@ -182,40 +185,41 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
             const SizedBox(height: 24),
 
             // Season type
-            const Text(
-              'Seizoenstype',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+            Text(
+              l10n.seasonTypeLabel,
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             ),
             const SizedBox(height: 12),
             Row(
               children: [
-                Expanded(child: _buildTypeOption('low', 'Laagseizoen', Icons.ac_unit, Colors.blue)),
+                Expanded(child: _buildTypeOption('low', l10n.lowSeason, Icons.ac_unit, Colors.blue)),
                 const SizedBox(width: 8),
-                Expanded(child: _buildTypeOption('mid', 'Middenseizoen', Icons.cloud, Colors.grey)),
+                Expanded(child: _buildTypeOption('mid', l10n.midSeason, Icons.cloud, Colors.grey)),
                 const SizedBox(width: 8),
-                Expanded(child: _buildTypeOption('high', 'Hoogseizoen', Icons.wb_sunny, Colors.orange)),
+                Expanded(child: _buildTypeOption('high', l10n.highSeason, Icons.wb_sunny, Colors.orange)),
               ],
             ),
             const SizedBox(height: 8),
             Text(
-              _getTypeDescription(),
+              _getTypeDescription(l10n),
               style: TextStyle(color: Colors.grey[600], fontSize: 12),
             ),
             const SizedBox(height: 24),
 
             // Date range
-            const Text(
-              'Periode',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+            Text(
+              l10n.period,
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             ),
             const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
                   child: _buildDateButton(
-                    label: 'Startdatum',
+                    label: l10n.startDate,
                     date: _startDate,
                     onTap: () => _selectDate(true),
+                    l10n: l10n,
                   ),
                 ),
                 const Padding(
@@ -224,9 +228,10 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
                 ),
                 Expanded(
                   child: _buildDateButton(
-                    label: 'Einddatum',
+                    label: l10n.endDate,
                     date: _endDate,
                     onTap: () => _selectDate(false),
+                    l10n: l10n,
                   ),
                 ),
               ],
@@ -245,7 +250,7 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
                     Icon(Icons.info_outline, color: AppTheme.primaryColor, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      '${_endDate!.difference(_startDate!).inDays + 1} dagen',
+                      l10n.daysCount(_endDate!.difference(_startDate!).inDays + 1),
                       style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.w500),
                     ),
                   ],
@@ -271,15 +276,14 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
                       Icon(Icons.lightbulb_outline, color: Colors.blue[700], size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        'Hoe werken seizoenen?',
+                        l10n.howDoSeasonsWork,
                         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[800]),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Seizoenen bepalen welke prijs wordt gebruikt voor boekingen. '
-                    'Stel per accommodatie de prijzen in voor laag-, midden- en hoogseizoen.',
+                    l10n.seasonsExplanation,
                     style: TextStyle(color: Colors.blue[700], fontSize: 13),
                   ),
                 ],
@@ -300,7 +304,7 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                       )
                     : const Icon(Icons.check),
-                label: Text(_isSaving ? 'Opslaan...' : 'Opslaan'),
+                label: Text(_isSaving ? l10n.saving : l10n.save),
               ),
             ),
           ],
@@ -343,14 +347,14 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
     );
   }
 
-  String _getTypeDescription() {
+  String _getTypeDescription(AppLocalizations l10n) {
     switch (_selectedType) {
       case 'low':
-        return 'Laagseizoen: rustige periodes met lagere prijzen';
+        return l10n.lowSeasonDescription;
       case 'high':
-        return 'Hoogseizoen: drukke periodes met hogere prijzen';
+        return l10n.highSeasonDescription;
       default:
-        return 'Middenseizoen: gemiddelde prijzen';
+        return l10n.midSeasonDescription;
     }
   }
 
@@ -358,6 +362,7 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
     required String label,
     required DateTime? date,
     required VoidCallback onTap,
+    required AppLocalizations l10n,
   }) {
     return InkWell(
       onTap: onTap,
@@ -386,7 +391,7 @@ class _SeasonFormScreenState extends State<SeasonFormScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    date != null ? _formatDate(date) : 'Selecteer',
+                    date != null ? _formatDate(date) : l10n.selectDate,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: date != null ? Colors.black87 : Colors.grey[500],

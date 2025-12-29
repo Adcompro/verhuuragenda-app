@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
@@ -89,7 +90,7 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Kon boekingen niet laden: ${e.toString()}';
+        _error = e.toString();
         _isLoading = false;
       });
     }
@@ -101,14 +102,15 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Boekingen'),
+        title: Text(l10n.bookings),
         actions: [
           IconButton(
             icon: const Icon(Icons.date_range),
             onPressed: _showPeriodFilter,
-            tooltip: 'Periode filter',
+            tooltip: l10n.selectPeriod,
           ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.filter_list),
@@ -119,26 +121,26 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
               _loadBookings();
             },
             itemBuilder: (context) => [
-              _buildFilterMenuItem('all', 'Alle statussen'),
-              _buildFilterMenuItem('confirmed', 'Bevestigd'),
-              _buildFilterMenuItem('option', 'Optie'),
-              _buildFilterMenuItem('inquiry', 'Aanvraag'),
-              _buildFilterMenuItem('cancelled', 'Geannuleerd'),
+              _buildFilterMenuItem('all', l10n.all, l10n),
+              _buildFilterMenuItem('confirmed', l10n.confirmed, l10n),
+              _buildFilterMenuItem('option', l10n.option, l10n),
+              _buildFilterMenuItem('inquiry', l10n.inquiry, l10n),
+              _buildFilterMenuItem('cancelled', l10n.cancelled, l10n),
             ],
           ),
         ],
-        bottom: _buildFilterChips(),
+        bottom: _buildFilterChips(l10n),
       ),
-      body: _buildBody(),
+      body: _buildBody(l10n),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/bookings/new'),
         icon: const Icon(Icons.add),
-        label: const Text('Nieuwe boeking'),
+        label: Text(l10n.newBooking),
       ),
     );
   }
 
-  PopupMenuItem<String> _buildFilterMenuItem(String value, String label) {
+  PopupMenuItem<String> _buildFilterMenuItem(String value, String label, AppLocalizations l10n) {
     final isSelected = _statusFilter == value;
     return PopupMenuItem(
       value: value,
@@ -155,7 +157,7 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
     );
   }
 
-  PreferredSize _buildFilterChips() {
+  PreferredSize _buildFilterChips(AppLocalizations l10n) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(50),
       child: Container(
@@ -164,13 +166,13 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: [
-            _buildPeriodChip('upcoming', 'Aankomend'),
+            _buildPeriodChip('upcoming', l10n.upcoming),
             const SizedBox(width: 8),
-            _buildPeriodChip('all', 'Alles'),
+            _buildPeriodChip('all', l10n.allTab),
             const SizedBox(width: 8),
-            _buildPeriodChip('past', 'Afgelopen'),
+            _buildPeriodChip('past', l10n.past),
             const SizedBox(width: 8),
-            _buildPeriodChip('custom', 'Aangepast'),
+            _buildPeriodChip('custom', l10n.custom),
           ],
         ),
       ),
@@ -200,6 +202,7 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
   }
 
   void _showPeriodFilter() {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -211,15 +214,15 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Periode selecteren',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              l10n.selectPeriod,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             ListTile(
               leading: const Icon(Icons.upcoming),
-              title: const Text('Aankomende boekingen'),
-              subtitle: const Text('Vanaf vandaag'),
+              title: Text(l10n.upcomingBookings),
+              subtitle: Text(l10n.fromToday),
               selected: _periodFilter == 'upcoming',
               onTap: () {
                 Navigator.pop(context);
@@ -229,8 +232,8 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.all_inclusive),
-              title: const Text('Alle boekingen'),
-              subtitle: const Text('Zonder datumfilter'),
+              title: Text(l10n.allBookings),
+              subtitle: Text(l10n.withoutDateFilter),
               selected: _periodFilter == 'all',
               onTap: () {
                 Navigator.pop(context);
@@ -240,8 +243,8 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.history),
-              title: const Text('Afgelopen boekingen'),
-              subtitle: const Text('Tot vandaag'),
+              title: Text(l10n.pastBookings),
+              subtitle: Text(l10n.untilToday),
               selected: _periodFilter == 'past',
               onTap: () {
                 Navigator.pop(context);
@@ -251,10 +254,10 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.date_range),
-              title: const Text('Aangepaste periode'),
+              title: Text(l10n.customPeriod),
               subtitle: Text(_startDate != null && _endDate != null
                   ? '${_formatDate(_startDate!)} - ${_formatDate(_endDate!)}'
-                  : 'Kies een datumbereik'),
+                  : l10n.chooseADateRange),
               selected: _periodFilter == 'custom',
               onTap: () {
                 Navigator.pop(context);
@@ -299,7 +302,7 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
     }
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(AppLocalizations l10n) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -313,12 +316,12 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
             children: [
               Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
               const SizedBox(height: 16),
-              Text(_error!, textAlign: TextAlign.center),
+              Text(l10n.couldNotLoadBookings(_error!), textAlign: TextAlign.center),
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: _loadBookings,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Opnieuw proberen'),
+                label: Text(l10n.tryAgain),
               ),
             ],
           ),
@@ -334,12 +337,12 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
             Icon(Icons.event_busy, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Geen boekingen gevonden',
+              l10n.noBookingsFound,
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             Text(
-              _getPeriodDescription(),
+              _getPeriodDescription(l10n),
               style: TextStyle(fontSize: 14, color: Colors.grey[500]),
             ),
           ],
@@ -359,7 +362,7 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
             padding: EdgeInsets.fromLTRB(padding.left, padding.top, padding.right, 12),
             sliver: SliverToBoxAdapter(
               child: Text(
-                '${_bookings.length} boeking${_bookings.length == 1 ? '' : 'en'}',
+                l10n.bookingsCount(_bookings.length),
                 style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
             ),
@@ -408,15 +411,15 @@ class _BookingsListScreenState extends State<BookingsListScreen> {
     );
   }
 
-  String _getPeriodDescription() {
+  String _getPeriodDescription(AppLocalizations l10n) {
     switch (_periodFilter) {
       case 'upcoming':
-        return 'voor aankomende periode';
+        return l10n.forUpcomingPeriod;
       case 'past':
-        return 'in afgelopen periode';
+        return l10n.inPastPeriod;
       case 'custom':
         if (_startDate != null && _endDate != null) {
-          return 'van ${_formatDate(_startDate!)} tot ${_formatDate(_endDate!)}';
+          return l10n.fromDateToDate(_formatDate(_startDate!), _formatDate(_endDate!));
         }
         return '';
       default:
@@ -437,6 +440,7 @@ class _BookingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isUpcoming = booking.checkIn.isAfter(DateTime.now());
     final isOngoing = booking.checkIn.isBefore(DateTime.now()) &&
                       booking.checkOut.isAfter(DateTime.now());
@@ -455,7 +459,7 @@ class _BookingCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      booking.guest?.fullName ?? 'Onbekend',
+                      booking.guest?.fullName ?? l10n.unknown,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -481,7 +485,7 @@ class _BookingCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      booking.accommodation?.name ?? 'Onbekend',
+                      booking.accommodation?.name ?? l10n.unknown,
                       style: TextStyle(color: Colors.grey[600]),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -517,9 +521,9 @@ class _BookingCard extends StatelessWidget {
                         color: Colors.blue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text(
-                        'Nu',
-                        style: TextStyle(
+                      child: Text(
+                        l10n.now,
+                        style: const TextStyle(
                           color: Colors.blue,
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
@@ -572,29 +576,30 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     Color color;
     String label;
 
     switch (status) {
       case 'confirmed':
         color = AppTheme.statusConfirmed;
-        label = 'Bevestigd';
+        label = l10n.confirmed;
         break;
       case 'option':
         color = AppTheme.statusOption;
-        label = 'Optie';
+        label = l10n.option;
         break;
       case 'inquiry':
         color = AppTheme.statusInquiry;
-        label = 'Aanvraag';
+        label = l10n.inquiry;
         break;
       case 'cancelled':
         color = AppTheme.statusCancelled;
-        label = 'Geannuleerd';
+        label = l10n.cancelled;
         break;
       case 'completed':
         color = Colors.purple;
-        label = 'Afgerond';
+        label = l10n.completed;
         break;
       default:
         color = Colors.grey;
@@ -626,21 +631,22 @@ class _PaymentBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     Color color;
     String label;
 
     switch (status) {
       case 'paid':
         color = AppTheme.paymentPaid;
-        label = 'Betaald';
+        label = l10n.paid;
         break;
       case 'partial':
         color = AppTheme.paymentPartial;
-        label = 'Aanbetaald';
+        label = l10n.partiallyPaid;
         break;
       default:
         color = AppTheme.paymentUnpaid;
-        label = 'Openstaand';
+        label = l10n.outstanding;
     }
 
     return Row(

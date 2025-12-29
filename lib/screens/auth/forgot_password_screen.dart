@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 
@@ -52,6 +53,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_emailSent) {
       return _buildSuccessScreen();
     }
@@ -91,16 +94,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ),
 
-                const Text(
-                  'Wachtwoord vergeten?',
-                  style: TextStyle(
+                Text(
+                  l10n.forgotPasswordTitle,
+                  style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Geen probleem! Voer je e-mailadres in en we sturen je een link om je wachtwoord opnieuw in te stellen.',
+                  l10n.forgotPasswordDescription,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey[600],
@@ -140,17 +143,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _handleSubmit(),
-                  decoration: const InputDecoration(
-                    labelText: 'E-mailadres',
-                    prefixIcon: Icon(Icons.email_outlined),
-                    hintText: 'je@email.nl',
+                  decoration: InputDecoration(
+                    labelText: l10n.email,
+                    prefixIcon: const Icon(Icons.email_outlined),
+                    hintText: l10n.emailHint,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Voer je e-mailadres in';
+                      return l10n.enterEmail;
                     }
                     if (!value.contains('@') || !value.contains('.')) {
-                      return 'Voer een geldig e-mailadres in';
+                      return l10n.enterValidEmail;
                     }
                     return null;
                   },
@@ -173,9 +176,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'Verstuur reset link',
-                          style: TextStyle(fontSize: 16),
+                      : Text(
+                          l10n.sendResetLink,
+                          style: const TextStyle(fontSize: 16),
                         ),
                 ),
 
@@ -188,7 +191,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     Icon(Icons.arrow_back, size: 18, color: Colors.grey[600]),
                     TextButton(
                       onPressed: () => context.go('/login'),
-                      child: const Text('Terug naar inloggen'),
+                      child: Text(l10n.backToLogin),
                     ),
                   ],
                 ),
@@ -201,6 +204,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Widget _buildSuccessScreen() {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -221,9 +226,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              const Text(
-                'Check je inbox!',
-                style: TextStyle(
+              Text(
+                l10n.checkInbox,
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -231,10 +236,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Als er een account bestaat met het e-mailadres '
-                '${_emailController.text}, dan heb je binnen enkele '
-                'minuten een e-mail ontvangen met instructies om je '
-                'wachtwoord opnieuw in te stellen.',
+                l10n.resetEmailDescription(_emailController.text),
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -256,17 +258,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       children: [
                         Icon(Icons.tips_and_updates, color: Colors.amber[700]),
                         const SizedBox(width: 12),
-                        const Text(
-                          'Tips',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        Text(
+                          l10n.tips,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      '• Check ook je spam/ongewenste map\n'
-                      '• De link is 60 minuten geldig\n'
-                      '• Geen mail ontvangen? Probeer opnieuw',
+                      '• ${l10n.tipCheckSpam}\n'
+                      '• ${l10n.tipLinkValid}\n'
+                      '• ${l10n.tipNoEmail}',
                       style: TextStyle(
                         color: Colors.grey[700],
                         height: 1.5,
@@ -283,9 +285,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: const Text(
-                    'Terug naar inloggen',
-                    style: TextStyle(fontSize: 16),
+                  child: Text(
+                    l10n.backToLogin,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),
@@ -297,7 +299,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     _emailController.clear();
                   });
                 },
-                child: const Text('Andere e-mail proberen'),
+                child: Text(l10n.tryDifferentEmail),
               ),
             ],
           ),
