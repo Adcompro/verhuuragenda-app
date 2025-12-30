@@ -293,6 +293,7 @@
   "ok": "OK",
   "done": "Fertig",
   "next": "Weiter",
+  "continueText": "Fortfahren",
   "back": "Zurück",
   "retry": "Erneut versuchen",
   "loading": "Laden...",

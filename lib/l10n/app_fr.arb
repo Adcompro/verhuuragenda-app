@@ -297,6 +297,7 @@
   "ok": "OK",
   "done": "Terminé",
   "next": "Suivant",
+  "continueText": "Continuer",
   "back": "Retour",
   "retry": "Réessayer",
   "loading": "Chargement...",

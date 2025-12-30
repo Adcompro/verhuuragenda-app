@@ -277,6 +277,7 @@ abstract class AppLocalizations {
   String get ok;
   String get done;
   String get next;
+  String get continueText;
   String get back;
   String get retry;
   String get loading;

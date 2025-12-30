@@ -781,6 +781,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get next => 'Avanti';
 
   @override
+  String get continueText => 'Continua';
+
+  @override
   String get back => 'Indietro';
 
   @override

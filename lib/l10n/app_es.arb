@@ -297,6 +297,7 @@
   "ok": "OK",
   "done": "Hecho",
   "next": "Siguiente",
+  "continueText": "Continuar",
   "back": "Atrás",
   "retry": "Reintentar",
   "loading": "Cargando...",

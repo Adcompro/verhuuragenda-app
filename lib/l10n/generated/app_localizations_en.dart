@@ -521,6 +521,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get next => 'Next';
   @override
+  String get continueText => 'Continue';
+  @override
   String get back => 'Back';
   @override
   String get retry => 'Try again';

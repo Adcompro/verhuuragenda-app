@@ -521,6 +521,8 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get next => 'Volgende';
   @override
+  String get continueText => 'Doorgaan';
+  @override
   String get back => 'Terug';
   @override
   String get retry => 'Opnieuw proberen';

@@ -781,6 +781,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get next => 'Suivant';
 
   @override
+  String get continueText => 'Continuer';
+
+  @override
   String get back => 'Retour';
 
   @override
