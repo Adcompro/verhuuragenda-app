@@ -1248,5 +1248,27 @@
     "placeholders": {
       "error": {"type": "String"}
     }
-  }
+  },
+
+  "financialYear": "Geschäftsjahr",
+  "financialYearDescription": "Jahresberichte und Saisonverwaltung",
+  "yearOverview": "Jahresübersicht",
+  "exportYearReport": "Jahresbericht exportieren",
+  "copySeasonsToYear": "Saisons in neues Jahr kopieren",
+  "outstandingPayments": "Offene Zahlungen",
+  "selectSourceYear": "Von Jahr",
+  "selectTargetYear": "Nach Jahr",
+  "seasonsCopied": "Saisons erfolgreich kopiert",
+  "seasonsAlreadyExist": "Für dieses Jahr existieren bereits Saisons",
+  "noSeasonsForSourceYear": "Keine Saisons für Quelljahr gefunden",
+  "bookingsWithOutstanding": "{count} Buchungen mit offenem Betrag",
+  "@bookingsWithOutstanding": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "totalOutstanding": "Gesamt offen",
+  "copySeasons": "Saisons kopieren",
+  "reportExported": "Bericht erfolgreich exportiert",
+  "occupancyRateLabel": "Auslastung"
 }

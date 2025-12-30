@@ -2801,4 +2801,52 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pastBookings => 'Réservations passées';
+
+  @override
+  String get financialYear => 'Année Fiscale';
+
+  @override
+  String get financialYearDescription => 'Rapports annuels et gestion des saisons';
+
+  @override
+  String get yearOverview => 'Aperçu de l\'Année';
+
+  @override
+  String get exportYearReport => 'Exporter le Rapport Annuel';
+
+  @override
+  String get copySeasonsToYear => 'Copier les Saisons vers une Nouvelle Année';
+
+  @override
+  String get outstandingPayments => 'Paiements en Attente';
+
+  @override
+  String get selectSourceYear => 'De l\'année';
+
+  @override
+  String get selectTargetYear => 'Vers l\'année';
+
+  @override
+  String get seasonsCopied => 'Saisons copiées avec succès';
+
+  @override
+  String get seasonsAlreadyExist => 'Des saisons existent déjà pour cette année';
+
+  @override
+  String get noSeasonsForSourceYear => 'Aucune saison trouvée pour l\'année source';
+
+  @override
+  String bookingsWithOutstanding(int count) => '$count réservations avec solde impayé';
+
+  @override
+  String get totalOutstanding => 'Total en attente';
+
+  @override
+  String get copySeasons => 'Copier les Saisons';
+
+  @override
+  String get reportExported => 'Rapport exporté avec succès';
+
+  @override
+  String get occupancyRateLabel => 'Occupation';
 }

@@ -1868,4 +1868,36 @@ class AppLocalizationsNl extends AppLocalizations {
   String fromDateToDate(String startDate, String endDate) => 'van $startDate tot $endDate';
   @override
   String couldNotLoadBookings(String error) => 'Kon boekingen niet laden: $error';
+  @override
+  String get financialYear => 'Financieel Jaar';
+  @override
+  String get financialYearDescription => 'Jaaroverzichten en seizoenenbeheer';
+  @override
+  String get yearOverview => 'Jaaroverzicht';
+  @override
+  String get exportYearReport => 'Exporteer Jaarrapport';
+  @override
+  String get copySeasonsToYear => 'Kopieer Seizoenen naar Nieuw Jaar';
+  @override
+  String get outstandingPayments => 'Openstaande Betalingen';
+  @override
+  String get selectSourceYear => 'Van jaar';
+  @override
+  String get selectTargetYear => 'Naar jaar';
+  @override
+  String get seasonsCopied => 'Seizoenen succesvol gekopieerd';
+  @override
+  String get seasonsAlreadyExist => 'Er bestaan al seizoenen voor dit jaar';
+  @override
+  String get noSeasonsForSourceYear => 'Geen seizoenen gevonden voor bronjaar';
+  @override
+  String bookingsWithOutstanding(int count) => '$count boekingen met openstaand bedrag';
+  @override
+  String get totalOutstanding => 'Totaal openstaand';
+  @override
+  String get copySeasons => 'Kopieer Seizoenen';
+  @override
+  String get reportExported => 'Rapport succesvol geëxporteerd';
+  @override
+  String get occupancyRateLabel => 'Bezetting';
 }

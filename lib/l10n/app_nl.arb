@@ -1253,5 +1253,27 @@
   "fromToday": "vanaf vandaag",
   "allBookings": "Alle boekingen",
   "withoutDateFilter": "zonder datumfilter",
-  "pastBookings": "Vorige boekingen"
+  "pastBookings": "Vorige boekingen",
+
+  "financialYear": "Financieel Jaar",
+  "financialYearDescription": "Jaaroverzichten en seizoenenbeheer",
+  "yearOverview": "Jaaroverzicht",
+  "exportYearReport": "Exporteer Jaarrapport",
+  "copySeasonsToYear": "Kopieer Seizoenen naar Nieuw Jaar",
+  "outstandingPayments": "Openstaande Betalingen",
+  "selectSourceYear": "Van jaar",
+  "selectTargetYear": "Naar jaar",
+  "seasonsCopied": "Seizoenen succesvol gekopieerd",
+  "seasonsAlreadyExist": "Er bestaan al seizoenen voor dit jaar",
+  "noSeasonsForSourceYear": "Geen seizoenen gevonden voor bronjaar",
+  "bookingsWithOutstanding": "{count} boekingen met openstaand bedrag",
+  "@bookingsWithOutstanding": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "totalOutstanding": "Totaal openstaand",
+  "copySeasons": "Kopieer Seizoenen",
+  "reportExported": "Rapport succesvol geëxporteerd",
+  "occupancyRateLabel": "Bezetting"
 }

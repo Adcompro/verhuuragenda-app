@@ -951,6 +951,22 @@ abstract class AppLocalizations {
   String bookingsCount(int count);
   String fromDateToDate(String startDate, String endDate);
   String couldNotLoadBookings(String error);
+  String get financialYear;
+  String get financialYearDescription;
+  String get yearOverview;
+  String get exportYearReport;
+  String get copySeasonsToYear;
+  String get outstandingPayments;
+  String get selectSourceYear;
+  String get selectTargetYear;
+  String get seasonsCopied;
+  String get seasonsAlreadyExist;
+  String get noSeasonsForSourceYear;
+  String bookingsWithOutstanding(int count);
+  String get totalOutstanding;
+  String get copySeasons;
+  String get reportExported;
+  String get occupancyRateLabel;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

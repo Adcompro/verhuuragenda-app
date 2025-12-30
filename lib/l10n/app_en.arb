@@ -1253,5 +1253,27 @@
   "fromToday": "from today",
   "allBookings": "All bookings",
   "withoutDateFilter": "without date filter",
-  "pastBookings": "Past bookings"
+  "pastBookings": "Past bookings",
+
+  "financialYear": "Financial Year",
+  "financialYearDescription": "Year reports and season management",
+  "yearOverview": "Year Overview",
+  "exportYearReport": "Export Year Report",
+  "copySeasonsToYear": "Copy Seasons to New Year",
+  "outstandingPayments": "Outstanding Payments",
+  "selectSourceYear": "From year",
+  "selectTargetYear": "To year",
+  "seasonsCopied": "Seasons copied successfully",
+  "seasonsAlreadyExist": "Seasons already exist for this year",
+  "noSeasonsForSourceYear": "No seasons found for source year",
+  "bookingsWithOutstanding": "{count} bookings with outstanding balance",
+  "@bookingsWithOutstanding": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "totalOutstanding": "Total outstanding",
+  "copySeasons": "Copy Seasons",
+  "reportExported": "Report exported successfully",
+  "occupancyRateLabel": "Occupancy"
 }

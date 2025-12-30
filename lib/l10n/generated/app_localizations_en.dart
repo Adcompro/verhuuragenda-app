@@ -1868,4 +1868,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String fromDateToDate(String startDate, String endDate) => 'from $startDate to $endDate';
   @override
   String couldNotLoadBookings(String error) => 'Could not load bookings: $error';
+  @override
+  String get financialYear => 'Financial Year';
+  @override
+  String get financialYearDescription => 'Year reports and season management';
+  @override
+  String get yearOverview => 'Year Overview';
+  @override
+  String get exportYearReport => 'Export Year Report';
+  @override
+  String get copySeasonsToYear => 'Copy Seasons to New Year';
+  @override
+  String get outstandingPayments => 'Outstanding Payments';
+  @override
+  String get selectSourceYear => 'From year';
+  @override
+  String get selectTargetYear => 'To year';
+  @override
+  String get seasonsCopied => 'Seasons copied successfully';
+  @override
+  String get seasonsAlreadyExist => 'Seasons already exist for this year';
+  @override
+  String get noSeasonsForSourceYear => 'No seasons found for source year';
+  @override
+  String bookingsWithOutstanding(int count) => '$count bookings with outstanding balance';
+  @override
+  String get totalOutstanding => 'Total outstanding';
+  @override
+  String get copySeasons => 'Copy Seasons';
+  @override
+  String get reportExported => 'Report exported successfully';
+  @override
+  String get occupancyRateLabel => 'Occupancy';
 }

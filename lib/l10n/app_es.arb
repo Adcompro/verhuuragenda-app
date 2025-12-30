@@ -1252,5 +1252,27 @@
   "fromToday": "desde hoy",
   "allBookings": "Todas las reservas",
   "withoutDateFilter": "sin filtro de fecha",
-  "pastBookings": "Reservas pasadas"
+  "pastBookings": "Reservas pasadas",
+
+  "financialYear": "Año Fiscal",
+  "financialYearDescription": "Informes anuales y gestión de temporadas",
+  "yearOverview": "Resumen del Año",
+  "exportYearReport": "Exportar Informe Anual",
+  "copySeasonsToYear": "Copiar Temporadas al Nuevo Año",
+  "outstandingPayments": "Pagos Pendientes",
+  "selectSourceYear": "Desde año",
+  "selectTargetYear": "Hasta año",
+  "seasonsCopied": "Temporadas copiadas con éxito",
+  "seasonsAlreadyExist": "Ya existen temporadas para este año",
+  "noSeasonsForSourceYear": "No se encontraron temporadas para el año origen",
+  "bookingsWithOutstanding": "{count} reservas con saldo pendiente",
+  "@bookingsWithOutstanding": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "totalOutstanding": "Total pendiente",
+  "copySeasons": "Copiar Temporadas",
+  "reportExported": "Informe exportado con éxito",
+  "occupancyRateLabel": "Ocupación"
 }

@@ -1261,5 +1261,27 @@
   "fromToday": "da oggi",
   "allBookings": "Tutte le prenotazioni",
   "withoutDateFilter": "senza filtro data",
-  "pastBookings": "Prenotazioni passate"
+  "pastBookings": "Prenotazioni passate",
+
+  "financialYear": "Anno Fiscale",
+  "financialYearDescription": "Report annuali e gestione delle stagioni",
+  "yearOverview": "Panoramica dell'Anno",
+  "exportYearReport": "Esporta Report Annuale",
+  "copySeasonsToYear": "Copia Stagioni nel Nuovo Anno",
+  "outstandingPayments": "Pagamenti in Sospeso",
+  "selectSourceYear": "Dall'anno",
+  "selectTargetYear": "All'anno",
+  "seasonsCopied": "Stagioni copiate con successo",
+  "seasonsAlreadyExist": "Esistono già stagioni per quest'anno",
+  "noSeasonsForSourceYear": "Nessuna stagione trovata per l'anno di origine",
+  "bookingsWithOutstanding": "{count} prenotazioni con saldo in sospeso",
+  "@bookingsWithOutstanding": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "totalOutstanding": "Totale in sospeso",
+  "copySeasons": "Copia Stagioni",
+  "reportExported": "Report esportato con successo",
+  "occupancyRateLabel": "Occupazione"
 }

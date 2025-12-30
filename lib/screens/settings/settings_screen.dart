@@ -15,6 +15,7 @@ import 'help_screen.dart';
 import 'profile_edit_screen.dart';
 import '../seasons/seasons_list_screen.dart';
 import '../team/team_list_screen.dart';
+import 'financial_year_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -169,6 +170,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const SeasonsListScreen()),
+              );
+            },
+          ),
+          _SettingsItem(
+            icon: Icons.account_balance_wallet_outlined,
+            title: l10n.financialYear,
+            subtitle: l10n.financialYearDescription,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const FinancialYearScreen()),
               );
             },
           ),
