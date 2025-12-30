@@ -138,9 +138,13 @@ class _FinancialYearScreenState extends State<FinancialYearScreen> {
       final file = File('${directory.path}/jaarrapport_$_selectedYear.csv');
       await file.writeAsString(buffer.toString());
 
+      final box = context.findRenderObject() as RenderBox?;
       await Share.shareXFiles(
         [XFile(file.path)],
         subject: 'VerhuurAgenda ${l10n.yearOverview} $_selectedYear',
+        sharePositionOrigin: box != null
+            ? box.localToGlobal(Offset.zero) & box.size
+            : const Rect.fromLTWH(0, 0, 100, 100),
       );
 
       if (mounted) {
