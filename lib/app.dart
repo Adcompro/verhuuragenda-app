@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'config/theme.dart';
 import 'config/router.dart';
@@ -23,16 +22,8 @@ class VerhuurAgendaApp extends ConsumerWidget {
       routerConfig: router,
 
       // Localization
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('nl'), // Dutch (default)
-        Locale('en'), // English
-      ],
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       // Use preferred locale if set, otherwise use system default
       locale: preferredLocale,
     );
