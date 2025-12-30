@@ -275,6 +275,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         return l10n.dutch;
       case 'en':
         return l10n.english;
+      case 'es':
+        return l10n.spanish;
+      case 'de':
+        return l10n.german;
+      case 'fr':
+        return l10n.french;
+      case 'it':
+        return l10n.italian;
       default:
         return l10n.systemDefault;
     }
@@ -321,6 +329,54 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               isSelected: currentLocale?.languageCode == 'en',
               onTap: () {
                 ref.read(languageProvider.notifier).setLanguage('en');
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.languageChanged)),
+                );
+              },
+            ),
+            _LanguageOption(
+              title: l10n.german,
+              subtitle: 'Deutsch',
+              isSelected: currentLocale?.languageCode == 'de',
+              onTap: () {
+                ref.read(languageProvider.notifier).setLanguage('de');
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.languageChanged)),
+                );
+              },
+            ),
+            _LanguageOption(
+              title: l10n.french,
+              subtitle: 'Français',
+              isSelected: currentLocale?.languageCode == 'fr',
+              onTap: () {
+                ref.read(languageProvider.notifier).setLanguage('fr');
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.languageChanged)),
+                );
+              },
+            ),
+            _LanguageOption(
+              title: l10n.spanish,
+              subtitle: 'Español',
+              isSelected: currentLocale?.languageCode == 'es',
+              onTap: () {
+                ref.read(languageProvider.notifier).setLanguage('es');
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.languageChanged)),
+                );
+              },
+            ),
+            _LanguageOption(
+              title: l10n.italian,
+              subtitle: 'Italiano',
+              isSelected: currentLocale?.languageCode == 'it',
+              onTap: () {
+                ref.read(languageProvider.notifier).setLanguage('it');
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(l10n.languageChanged)),
