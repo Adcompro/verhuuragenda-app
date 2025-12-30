@@ -1,0 +1,1250 @@
+{
+  "@@locale": "de",
+
+  "appName": "VerhuurAgenda",
+
+  "login": "Anmelden",
+  "logout": "Abmelden",
+  "register": "Registrieren",
+  "freeRegister": "Kostenlos registrieren",
+  "email": "E-Mail-Adresse",
+  "password": "Passwort",
+  "confirmPassword": "Passwort bestätigen",
+  "forgotPassword": "Passwort vergessen?",
+  "rememberMe": "Angemeldet bleiben",
+  "name": "Name",
+  "fullName": "Vollständiger Name",
+  "companyName": "Firmenname",
+  "companyNameOptional": "Firmenname (optional)",
+  "phone": "Telefon",
+
+  "loginTitle": "Melden Sie sich an, um Ihre Vermietungen zu verwalten",
+  "registerTitle": "Konto erstellen",
+  "registerSubtitle": "Starten Sie kostenlos mit der Verwaltung Ihrer Ferienvermietungen",
+  "noAccount": "Noch kein Konto?",
+  "hasAccount": "Haben Sie bereits ein Konto?",
+  "resetPassword": "Passwort zurücksetzen",
+  "resetPasswordInstructions": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
+  "sendResetLink": "Link senden",
+  "backToLogin": "Zurück zur Anmeldung",
+  "resetEmailSent": "Link gesendet! Prüfen Sie Ihre E-Mail.",
+
+  "enterEmail": "Geben Sie Ihre E-Mail-Adresse ein",
+  "enterValidEmail": "Geben Sie eine gültige E-Mail-Adresse ein",
+  "enterPassword": "Geben Sie Ihr Passwort ein",
+  "enterName": "Geben Sie Ihren Namen ein",
+  "passwordMinLength": "Das Passwort muss mindestens 8 Zeichen haben",
+  "passwordsNotMatch": "Passwörter stimmen nicht überein",
+  "invalidCredentials": "Ungültige Anmeldedaten.",
+  "accountDeactivated": "Dieses Konto wurde deaktiviert.",
+  "emailAlreadyExists": "Diese E-Mail-Adresse wird bereits verwendet.",
+  "registrationFailed": "Registrierung fehlgeschlagen. Diese E-Mail wird möglicherweise bereits verwendet.",
+
+  "agreeToTerms": "Ich akzeptiere die",
+  "termsAndConditions": "Allgemeinen Geschäftsbedingungen",
+  "and": "und die",
+  "privacyPolicy": "Datenschutzrichtlinie",
+  "mustAgreeToTerms": "Sie müssen die Allgemeinen Geschäftsbedingungen akzeptieren",
+
+  "freeAccount": "Kostenloses Konto",
+  "freeAccountFeature1": "1 Unterkunft verwalten",
+  "freeAccountFeature2": "10 Buchungen pro Jahr",
+  "freeAccountFeature3": "iCal-Synchronisation",
+  "freeAccountFeature4": "Jederzeit auf Premium upgraden",
+  "welcomeTitle": "Willkommen bei VerhuurAgenda!",
+  "accountCreated": "Ihr Konto wurde erfolgreich erstellt.",
+  "emailSentTo": "Wir haben eine Bestätigungs-E-Mail gesendet an:",
+  "canLoginNow": "Sie können sich jetzt anmelden und loslegen!",
+  "goToLogin": "Zur Anmeldung",
+
+  "dashboard": "Dashboard",
+  "calendar": "Kalender",
+  "accommodations": "Unterkünfte",
+  "bookings": "Buchungen",
+  "guests": "Gäste",
+  "cleaning": "Reinigung",
+  "settings": "Einstellungen",
+  "more": "Mehr",
+
+  "today": "Heute",
+  "yesterday": "Gestern",
+  "tomorrow": "Morgen",
+  "thisWeek": "Diese Woche",
+  "thisMonth": "Dieser Monat",
+  "thisYear": "Dieses Jahr",
+
+  "checkIn": "Check-in",
+  "checkOut": "Check-out",
+  "checkIns": "Check-ins",
+  "checkOuts": "Check-outs",
+  "nights": "Nächte",
+  "night": "Nacht",
+  "guests_count": "Gäste",
+  "guest_count": "Gast",
+  "adults": "Erwachsene",
+  "children": "Kinder",
+  "babies": "Babys",
+
+  "accommodation": "Unterkunft",
+  "addAccommodation": "Unterkunft hinzufügen",
+  "editAccommodation": "Unterkunft bearbeiten",
+  "deleteAccommodation": "Unterkunft löschen",
+  "accommodationName": "Name der Unterkunft",
+  "accommodationType": "Unterkunftstyp",
+  "maxGuests": "Max. Gäste",
+  "bedrooms": "Schlafzimmer",
+  "bathrooms": "Badezimmer",
+  "address": "Adresse",
+  "city": "Stadt",
+  "country": "Land",
+  "description": "Beschreibung",
+
+  "house": "Haus",
+  "apartment": "Wohnung",
+  "villa": "Villa",
+  "cabin": "Hütte",
+  "cottage": "Ferienhaus",
+  "chalet": "Chalet",
+  "bungalow": "Bungalow",
+  "studio": "Studio",
+  "other": "Sonstiges",
+
+  "pricing": "Preise",
+  "basePrice": "Grundpreis",
+  "cleaningFee": "Reinigungsgebühr",
+  "lowSeason": "Nebensaison",
+  "midSeason": "Zwischensaison",
+  "highSeason": "Hauptsaison",
+  "perWeek": "pro Woche",
+  "perNight": "pro Nacht",
+
+  "icalSync": "iCal-Synchronisation",
+  "icalAirbnb": "Airbnb iCal-URL",
+  "icalBooking": "Booking.com iCal-URL",
+  "icalVrbo": "VRBO iCal-URL",
+  "icalGoogle": "Google Vacation Rentals iCal-URL",
+  "icalHolidu": "Holidu iCal-URL",
+  "icalBelvilla": "Belvilla/Novasol iCal-URL",
+  "icalOther": "Andere iCal-URL",
+  "icalPasteUrl": "iCal-URL hier einfügen",
+
+  "houseRules": "Hausregeln",
+  "arrivalInstructions": "Anreiseinformationen",
+  "wifiNetwork": "WLAN-Netzwerk",
+  "wifiPassword": "WLAN-Passwort",
+  "alarmCode": "Alarmcode",
+  "checkInTime": "Check-in-Zeit",
+  "checkOutTime": "Check-out-Zeit",
+
+  "booking": "Buchung",
+  "addBooking": "Buchung hinzufügen",
+  "editBooking": "Buchung bearbeiten",
+  "deleteBooking": "Buchung löschen",
+  "bookingDetails": "Buchungsdetails",
+  "newBooking": "Neue Buchung",
+  "selectAccommodation": "Unterkunft auswählen",
+  "selectGuest": "Gast auswählen",
+  "selectDates": "Daten auswählen",
+  "arrival": "Anreise",
+  "departure": "Abreise",
+
+  "status": "Status",
+  "statusInquiry": "Anfrage",
+  "statusOption": "Option",
+  "statusConfirmed": "Bestätigt",
+  "statusCancelled": "Storniert",
+  "statusCompleted": "Abgeschlossen",
+
+  "source": "Quelle",
+  "sourceDirect": "Direkt",
+  "sourceAirbnb": "Airbnb",
+  "sourceBooking": "Booking.com",
+  "sourceVrbo": "VRBO",
+  "sourceOther": "Sonstiges",
+  "externalBooking": "Externe Buchung",
+
+  "totalAmount": "Gesamtbetrag",
+  "depositAmount": "Anzahlung",
+  "remainingAmount": "Restbetrag",
+  "paid": "Bezahlt",
+  "unpaid": "Unbezahlt",
+  "partiallyPaid": "Teilweise bezahlt",
+  "internalNotes": "Interne Notizen",
+  "guestNotes": "Hinweise für Gäste",
+
+  "guest": "Gast",
+  "addGuest": "Gast hinzufügen",
+  "editGuest": "Gast bearbeiten",
+  "guestDetails": "Gästedaten",
+  "firstName": "Vorname",
+  "lastName": "Nachname",
+  "returningGuest": "Wiederkehrender Gast",
+  "totalBookings": "Buchungen insgesamt",
+
+  "cleaningSchedule": "Reinigungsplan",
+  "cleaningRequired": "Reinigung erforderlich",
+  "cleaningDone": "Reinigung erledigt",
+  "markAsCleaned": "Als gereinigt markieren",
+
+  "subscription": "Abonnement",
+  "currentSubscription": "Aktuelles Abonnement",
+  "free": "Kostenlos",
+  "premium": "Premium",
+  "premiumMonthly": "Premium Monatlich",
+  "premiumYearly": "Premium Jährlich",
+  "active": "Aktiv",
+  "expired": "Abgelaufen",
+  "trial": "Testversion",
+  "trialEnds": "Testversion endet",
+  "validUntil": "Gültig bis",
+  "daysRemaining": "Verbleibende Tage",
+  "days": "Tage",
+
+  "upgradeTitle": "Benötigen Sie mehr Funktionen?",
+  "upgradeToPremium": "Auf Premium upgraden",
+  "premiumBenefits": "Premium-Vorteile:",
+  "benefitUnlimitedAccommodations": "Unbegrenzte Unterkünfte",
+  "benefitUnlimitedBookings": "Unbegrenzte Buchungen",
+  "benefitMultipleUsers": "Mehrere Teammitglieder",
+  "benefitEmailCampaigns": "E-Mail-Kampagnen",
+  "benefitPrioritySupport": "Prioritäts-Support",
+
+  "buyNow": "Jetzt kaufen",
+  "restorePurchases": "Käufe wiederherstellen",
+  "restoring": "Wiederherstellen...",
+  "recommended": "Empfohlen",
+  "save17percent": "17% sparen",
+  "flexibleCancellation": "Flexible Stornierung",
+  "perMonth": "/Monat",
+  "perYear": "/Jahr",
+
+  "subscriptionActivated": "Abonnement aktiviert!",
+  "subscriptionRestored": "Abonnement wiederhergestellt!",
+  "purchasePending": "Kauf wird bearbeitet...",
+  "purchaseCancelled": "Kauf abgebrochen",
+  "purchaseFailed": "Kauf fehlgeschlagen",
+  "verificationFailed": "Verifizierung fehlgeschlagen",
+  "storeNotAvailable": "App Store nicht verfügbar",
+  "productNotFound": "Produkt nicht gefunden",
+
+  "manageSubscription": "Abonnement verwalten",
+  "appleSubscription": "Sie haben ein Apple App Store-Abonnement.",
+  "manageInSettings": "Verwalten Sie Ihr Abonnement in den iOS-Einstellungen unter \"Abonnements\".",
+  "openSettings": "iOS-Einstellungen öffnen",
+
+  "usageAndLimits": "Nutzung & Limits",
+  "accommodationsUsed": "Unterkünfte",
+  "bookingsThisYear": "Buchungen dieses Jahr",
+  "teamMembers": "Teammitglieder",
+  "unlimited": "Unbegrenzt",
+  "upgradeBanner": "Auf Premium upgraden für unbegrenzte Nutzung!",
+  "included": "Inklusive:",
+
+  "guestPortal": "Gästeportal",
+  "profile": "Profil",
+  "editProfile": "Profil bearbeiten",
+  "nameAndContact": "Name, Foto und Kontaktdaten",
+  "notifications": "Benachrichtigungen",
+  "pushNotifications": "Push-Benachrichtigungen und Erinnerungen",
+
+  "management": "Verwaltung",
+  "seasons": "Saisonen",
+  "seasonsDescription": "Neben-, Zwischen- und Hauptsaison",
+  "team": "Team",
+  "teamDescription": "Teammitglieder verwalten (Premium)",
+
+  "support": "Support",
+  "helpAndSupport": "Hilfe & Support",
+  "helpDescription": "FAQ, Kontakt und Tutorials",
+  "aboutApp": "Über VerhuurAgenda",
+  "aboutDescription": "VerhuurAgenda ist die intelligente App für die Verwaltung von Ferienvermietungen. Verwalten Sie Ihre Buchungen, Gäste und Unterkünfte einfach von Ihrem Telefon aus.",
+
+  "data": "Daten",
+  "exportData": "Daten exportieren",
+  "exportDescription": "Alle Ihre Daten herunterladen",
+  "deleteAccount": "Konto löschen",
+  "deleteAccountDescription": "Konto dauerhaft löschen",
+
+  "exportDialog": "Daten exportieren",
+  "exportDialogContent": "Wir senden Ihnen eine E-Mail mit einem Download-Link für alle Ihre Daten. Dies kann einige Minuten dauern.",
+  "exportRequested": "Export angefordert. Prüfen Sie Ihre E-Mail.",
+  "exportFailed": "Export konnte nicht gestartet werden",
+
+  "deleteAccountTitle": "Konto löschen",
+  "deleteAccountWarning": "Achtung! Diese Aktion kann nicht rückgängig gemacht werden.",
+  "deleteAccountConsequences": "Wenn Sie Ihr Konto löschen:\n• Alle Ihre Buchungen werden gelöscht\n• Alle Ihre Unterkünfte werden gelöscht\n• Alle Gästedaten werden gelöscht\n• Ihr Abonnement wird beendet",
+  "confirmEmail": "Geben Sie Ihre E-Mail-Adresse zur Bestätigung ein:",
+  "emailNotMatch": "E-Mail-Adresse stimmt nicht überein",
+  "permanentlyDelete": "Dauerhaft löschen",
+  "accountDeleted": "Konto erfolgreich gelöscht",
+  "deleteAccountFailed": "Konto konnte nicht gelöscht werden. Bitte kontaktieren Sie den Support.",
+
+  "logoutConfirm": "Möchten Sie sich wirklich abmelden?",
+
+  "cancel": "Abbrechen",
+  "save": "Speichern",
+  "delete": "Löschen",
+  "edit": "Bearbeiten",
+  "add": "Hinzufügen",
+  "close": "Schließen",
+  "confirm": "Bestätigen",
+  "yes": "Ja",
+  "no": "Nein",
+  "ok": "OK",
+  "done": "Fertig",
+  "next": "Weiter",
+  "back": "Zurück",
+  "retry": "Erneut versuchen",
+  "loading": "Laden...",
+  "saving": "Speichern...",
+  "searching": "Suchen...",
+  "noResults": "Keine Ergebnisse",
+  "error": "Fehler",
+  "success": "Erfolg",
+  "warning": "Warnung",
+  "search": "Suchen",
+  "filter": "Filtern",
+  "sort": "Sortieren",
+  "refresh": "Aktualisieren",
+  "share": "Teilen",
+  "copy": "Kopieren",
+  "copied": "Kopiert",
+
+  "noAccommodations": "Noch keine Unterkünfte",
+  "addFirstAccommodation": "Fügen Sie Ihre erste Unterkunft hinzu",
+  "noBookings": "Noch keine Buchungen",
+  "noUpcomingBookings": "Keine anstehenden Buchungen",
+  "noGuests": "Noch keine Gäste",
+  "confirmDelete": "Möchten Sie dies wirklich löschen?",
+  "cannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
+
+  "occupancy": "Belegung",
+  "revenue": "Umsatz",
+  "averageStay": "Durchschn. Aufenthalt",
+  "statistics": "Statistiken",
+
+  "january": "Januar",
+  "february": "Februar",
+  "march": "März",
+  "april": "April",
+  "may": "Mai",
+  "june": "Juni",
+  "july": "Juli",
+  "august": "August",
+  "september": "September",
+  "october": "Oktober",
+  "november": "November",
+  "december": "Dezember",
+
+  "monday": "Montag",
+  "tuesday": "Dienstag",
+  "wednesday": "Mittwoch",
+  "thursday": "Donnerstag",
+  "friday": "Freitag",
+  "saturday": "Samstag",
+  "sunday": "Sonntag",
+  "mon": "Mo",
+  "tue": "Di",
+  "wed": "Mi",
+  "thu": "Do",
+  "fri": "Fr",
+  "sat": "Sa",
+  "sun": "So",
+
+  "couldNotLoad": "Konnte nicht geladen werden",
+  "somethingWentWrong": "Etwas ist schiefgelaufen",
+  "tryAgain": "Erneut versuchen",
+  "noInternet": "Keine Internetverbindung",
+  "checkConnection": "Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut",
+
+  "terms": "Allgemeine Geschäftsbedingungen",
+  "privacy": "Datenschutzrichtlinie",
+  "forgotPasswordTitle": "Passwort vergessen?",
+  "forgotPasswordDescription": "Kein Problem! Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
+  "emailHint": "ihre@email.de",
+  "checkInbox": "Prüfen Sie Ihren Posteingang!",
+  "tips": "Tipps",
+  "tipCheckSpam": "Prüfen Sie auch Ihren Spam-Ordner",
+  "tipLinkValid": "Der Link ist 60 Minuten gültig",
+  "tipNoEmail": "Keine E-Mail erhalten? Versuchen Sie es erneut",
+  "tryDifferentEmail": "Andere E-Mail versuchen",
+
+  "welcome": "Willkommen",
+  "activeBookings": "Aktive Buchungen",
+  "next7days": "nächste 7 Tage",
+  "monthlyRevenue": "Umsatz diesen Monat",
+  "upcomingCheckins": "Anstehende Check-ins",
+  "upcomingCheckouts": "Anstehende Check-outs",
+  "recentBookings": "Aktuelle Buchungen",
+  "noCheckinsScheduled": "Keine Check-ins geplant",
+  "noCheckoutsScheduled": "Keine Check-outs geplant",
+  "unknown": "Unbekannt",
+  "day": "Tag",
+  "now": "JETZT",
+  "total": "Gesamt",
+  "open": "offen",
+  "call": "Anrufen",
+  "sendEmail": "E-Mail senden",
+  "couldNotLoadDashboard": "Dashboard konnte nicht geladen werden",
+  "noDataAvailable": "Keine Daten verfügbar",
+  "currentGuestsStaying": "Aktuelle Gäste",
+  "checkInsNext7Days": "Check-ins in den nächsten 7 Tagen",
+  "checkOutsNext7Days": "Check-outs in den nächsten 7 Tagen",
+  "noItems": "Keine Einträge",
+  "revenueThisMonth": "Umsatz diesen Monat",
+  "basedOnPayments": "Basierend auf Zahlungen dieses Monats",
+  "totalRevenue": "Gesamtumsatz",
+  "viewPlanAndLimits": "Plan und Limits anzeigen",
+  "home": "Start",
+  "maintenance": "Wartung",
+  "campaigns": "Kampagnen",
+  "popular": "Beliebt",
+
+  "couldNotLoadSubscription": "Abonnementdaten konnten nicht geladen werden",
+  "currentPlan": "Aktuelles Abonnement",
+  "planPremium": "Premium",
+  "planPremiumTrial": "Premium-Testversion",
+  "planFree": "Kostenlos",
+  "trialPeriod": "Testzeitraum",
+  "oneAccommodation": "1 Unterkunft",
+  "tenBookingsPerYear": "10 Buchungen pro Jahr",
+  "trialExpiresSoon": "Ihre Testversion läuft bald ab. Upgraden Sie auf Premium!",
+  "subscriptionExpiresSoon": "Ihr Abonnement läuft bald ab. Verlängern Sie rechtzeitig.",
+  "manageSubscriptionWeb": "Verwalten Sie Ihr Abonnement oder sehen Sie Rechnungen auf der Website.",
+  "couldNotOpenWebsite": "Website konnte nicht geöffnet werden",
+  "viewAllOptions": "Alle Optionen anzeigen",
+  "storeAvailable": "Verfügbar",
+  "storeNotAvailableShort": "Nicht verfügbar",
+  "productsLoaded": "Produkte geladen",
+  "checkCapability": "Prüfen: In-App-Kauf-Funktion in Xcode, Sandbox-Testkonto oder auf einem echten Gerät ausführen.",
+  "monthly": "Monatlich",
+  "yearly": "Jährlich",
+  "discount17": "17% Rabatt",
+  "volw": "Erw.",
+  "kind": "Kind",
+
+  "language": "Sprache",
+  "languageDescription": "Wählen Sie Ihre bevorzugte Sprache",
+  "systemDefault": "Systemstandard",
+  "dutch": "Niederländisch",
+  "english": "Englisch",
+  "spanish": "Spanisch",
+  "german": "Deutsch",
+  "languageChanged": "Sprache geändert",
+
+  "all": "Alle",
+  "newItem": "Neu",
+  "createAccommodation": "Unterkunft erstellen",
+  "upcoming": "Anstehend",
+  "past": "Vergangen",
+  "custom": "Benutzerdefiniert",
+  "selectPeriod": "Zeitraum auswählen",
+  "from": "Von",
+  "until": "Bis",
+  "apply": "Anwenden",
+
+  "inquiry": "Anfrage",
+  "option": "Option",
+  "confirmed": "Bestätigt",
+  "cancelled": "Storniert",
+  "completed": "Abgeschlossen",
+  "direct": "Direkt",
+  "blocked": "Blockiert",
+  "external": "Extern",
+
+  "thisWeekTab": "Diese Woche",
+  "allTab": "Alle",
+  "todayTab": "Heute",
+  "pending": "Ausstehend",
+  "inProgress": "In Bearbeitung",
+  "high": "Hoch",
+  "medium": "Mittel",
+  "low": "Niedrig",
+
+  "newPassword": "Neues Passwort",
+  "newPasswordOptional": "Neues Passwort (optional)",
+  "createTask": "Aufgabe erstellen",
+  "task": "Aufgabe",
+  "priority": "Priorität",
+  "dueDate": "Fälligkeitsdatum",
+  "assignedTo": "Zugewiesen an",
+  "selectDate": "Datum auswählen",
+  "noTasksYet": "Noch keine Aufgaben",
+  "addFirstTask": "Fügen Sie Ihre erste Aufgabe hinzu",
+  "deleteTask": "Aufgabe löschen",
+  "deleteTaskConfirm": "Möchten Sie diese Aufgabe wirklich löschen?",
+  "markComplete": "Als erledigt markieren",
+  "markIncomplete": "Als unerledigt markieren",
+  "addNote": "Notiz hinzufügen",
+  "noteAdded": "Notiz hinzugefügt",
+  "couldNotAddNote": "Notiz konnte nicht hinzugefügt werden",
+  "couldNotUpdateTask": "Aufgabe konnte nicht aktualisiert werden",
+  "couldNotDeleteTask": "Aufgabe konnte nicht gelöscht werden",
+  "couldNotLoadTasks": "Aufgaben konnten nicht geladen werden",
+
+  "role": "Rolle",
+  "admin": "Administrator",
+  "member": "Mitglied",
+  "inviteTeamMember": "Teammitglied einladen",
+  "editTeamMember": "Teammitglied bearbeiten",
+  "deleteTeamMember": "Teammitglied löschen",
+  "deleteTeamMemberConfirm": "Möchten Sie dieses Teammitglied wirklich entfernen?",
+  "teamMemberAdded": "Teammitglied hinzugefügt",
+  "teamMemberUpdated": "Teammitglied aktualisiert",
+  "teamMemberDeleted": "Teammitglied gelöscht",
+  "couldNotLoadTeam": "Team konnte nicht geladen werden",
+  "couldNotSaveTeamMember": "Teammitglied konnte nicht gespeichert werden",
+  "noTeamMembersYet": "Noch keine Teammitglieder",
+
+  "seasonName": "Saisonname",
+  "seasonType": "Saisontyp",
+  "startDate": "Startdatum",
+  "endDate": "Enddatum",
+  "addSeason": "Saison hinzufügen",
+  "editSeason": "Saison bearbeiten",
+  "deleteSeason": "Saison löschen",
+  "deleteSeasonConfirm": "Möchten Sie diese Saison wirklich löschen?",
+  "seasonAdded": "Saison hinzugefügt",
+  "seasonUpdated": "Saison aktualisiert",
+  "seasonDeleted": "Saison gelöscht",
+  "couldNotLoadSeasons": "Saisonen konnten nicht geladen werden",
+  "couldNotSaveSeason": "Saison konnte nicht gespeichert werden",
+  "noSeasonsYet": "Noch keine Saisonen definiert",
+
+  "profileUpdated": "Profil aktualisiert",
+  "couldNotUpdateProfile": "Profil konnte nicht aktualisiert werden",
+  "notificationSettings": "Benachrichtigungseinstellungen",
+  "emailNotifications": "E-Mail-Benachrichtigungen",
+  "pushNotificationsLabel": "Push-Benachrichtigungen",
+  "bookingReminders": "Buchungserinnerungen",
+  "checkInReminders": "Check-in-Erinnerungen",
+  "checkOutReminders": "Check-out-Erinnerungen",
+  "cleaningReminders": "Reinigungserinnerungen",
+  "paymentReminders": "Zahlungserinnerungen",
+  "marketingEmails": "Marketing-E-Mails",
+  "settingsSaved": "Einstellungen gespeichert",
+  "couldNotSaveSettings": "Einstellungen konnten nicht gespeichert werden",
+
+  "help": "Hilfe",
+  "faq": "FAQ",
+  "contactSupport": "Support kontaktieren",
+  "tutorials": "Tutorials",
+  "documentation": "Dokumentation",
+  "about": "Über",
+  "version": "Version",
+  "madeWithLove": "Mit Liebe in den Niederlanden gemacht",
+  "termsOfService": "Nutzungsbedingungen",
+  "allRightsReserved": "Alle Rechte vorbehalten",
+  "couldNotLaunchUrl": "Link konnte nicht geöffnet werden",
+
+  "occupancyTitle": "Belegung",
+  "occupied": "Belegt",
+  "availableStatus": "Verfügbar",
+  "tapForToday": "Tippen für heute",
+  "noAccommodationsShort": "Keine Unterkünfte",
+
+  "addPayment": "Zahlung hinzufügen",
+  "amount": "Betrag",
+  "paymentMethod": "Zahlungsmethode",
+  "bankTransfer": "Banküberweisung",
+  "cash": "Bargeld",
+  "ideal": "iDEAL",
+  "creditCard": "Kreditkarte",
+  "enterValidAmount": "Geben Sie einen gültigen Betrag ein",
+  "paymentAdded": "Zahlung hinzugefügt",
+  "couldNotAddPayment": "Zahlung konnte nicht hinzugefügt werden",
+  "viewFullBooking": "Vollständige Buchung anzeigen",
+  "payment": "Zahlung",
+  "guestsSection": "Gäste",
+  "pet": "Haustier",
+  "stillToPay": "Noch zu zahlen",
+  "notes": "Notizen",
+
+  "noCleaningTasks": "Keine Reinigungsaufgaben",
+  "urgent": "Dringend",
+  "ready": "Fertig",
+  "toDo": "Zu erledigen",
+  "finishedSection": "Erledigt",
+  "forToday": "für heute",
+  "cleaningWindow": "Reinigungszeitraum",
+  "sameDay": "Gleicher Tag!",
+  "flexible": "Flexibel",
+  "finishCleaning": "Reinigung abschließen",
+  "undo": "Rückgängig",
+  "details": "Details",
+  "anythingToReport": "Etwas zu melden?",
+  "extraDirty": "Besonders schmutzig",
+  "damage": "Schaden",
+  "missingItem": "Fehlend",
+  "repairNeeded": "Reparatur erforderlich",
+  "notesOptional": "Notizen (optional)",
+  "extraCommentsPlaceholder": "Zusätzliche Kommentare zur Reinigung...",
+  "processing": "Verarbeiten...",
+  "undoCleaningTitle": "Reinigung rückgängig machen?",
+  "yesReset": "Ja, zurücksetzen",
+  "cleaningStatusReset": "Reinigungsstatus zurückgesetzt",
+  "cleaningCompletedAt": "Reinigung abgeschlossen",
+  "reportedIssues": "Gemeldete Probleme",
+  "cleaningCompletedWithoutIssues": "Reinigung ohne Probleme abgeschlossen",
+  "reports": "Berichte",
+  "viewDetails": "Details anzeigen",
+  "couldNotLoadCleaning": "Reinigungsplan konnte nicht geladen werden",
+  "retryButton": "Erneut versuchen",
+  "retryShort": "Wiederholen",
+
+  "couldNotLoadAccommodations": "Unterkünfte konnten nicht geladen werden",
+  "couldNotLoadAccommodation": "Unterkunft konnte nicht geladen werden",
+  "noAccommodationsFound": "Keine Unterkünfte gefunden",
+  "bedroomsShort": "Schlafz.",
+  "bathroomsShort": "Bad",
+  "inactive": "Inaktiv",
+  "published": "Veröffentlicht",
+  "draft": "Entwurf",
+  "midSeasonShort": "Zwischen",
+  "newAccommodation": "Neue Unterkunft",
+  "generalInfo": "Allgemeine Informationen",
+  "nameRequired": "Name *",
+  "accommodationNameExample": "z.B. Strandhaus Die Möwen",
+  "nameIsRequired": "Name ist erforderlich",
+  "type": "Typ",
+  "maxGuestsRequired": "Max. Gäste *",
+  "required": "Erforderlich",
+  "color": "Farbe",
+  "accommodationAvailableForBookings": "Unterkunft ist für Buchungen verfügbar",
+  "pricesPerWeek": "Preise (pro Woche)",
+  "location": "Standort",
+  "checkInCheckOut": "Check-in & Check-out",
+  "checkInFrom": "Check-in ab",
+  "checkInUntil": "Check-in bis",
+  "wifiAndAccess": "WLAN & Zugang",
+  "alarmCodeKeybox": "Alarmcode / Schlüsselbox-Code",
+  "calendarSync": "Kalendersynchronisation",
+  "vrboHelperText": "Groß in den USA, wächst in Europa",
+  "googleHelperText": "Kostenlose Sichtbarkeit, Direktbuchungen",
+  "holiduHelperText": "Beliebt in Deutschland & Niederlanden",
+  "belvillaHelperText": "Europäischer Markt",
+  "otherIcalUrl": "Andere iCal-URL",
+  "otherIcalHelperText": "Für andere Plattformen oder manuellen Import",
+  "exportUrlLabel": "Export-URL",
+  "houseRulesAndInstructions": "Hausregeln & Anweisungen",
+  "accommodationUpdated": "Unterkunft aktualisiert",
+  "accommodationCreated": "Unterkunft erstellt",
+  "deleteAccommodationConfirm": "Unterkunft löschen?",
+  "accommodationDeleted": "Unterkunft gelöscht",
+  "deleteError": "Fehler beim Löschen",
+  "houseLabel": "Haus",
+  "cabinLabel": "Hütte",
+
+  "newSeason": "Neue Saison",
+  "addSeasonsHint": "Fügen Sie Saisonen hinzu, um verschiedene Preise pro Zeitraum zu verwenden",
+  "deleteSeasonTitle": "Saison löschen",
+  "yearLabel": "Jahr",
+  "seasonTypeLabel": "Saisontyp",
+  "period": "Zeitraum",
+  "nameHint": "z.B. Weihnachtsferien, Sommerferien",
+  "enterNameValidation": "Geben Sie einen Namen ein",
+  "selectStartAndEndDate": "Start- und Enddatum auswählen",
+  "howDoSeasonsWork": "Wie funktionieren Saisonen?",
+  "seasonsExplanation": "Saisonen bestimmen, welcher Preis für Buchungen verwendet wird. Legen Sie Preise pro Unterkunft für Neben-, Zwischen- und Hauptsaison fest.",
+  "lowSeasonDescription": "Nebensaison: ruhige Zeiten mit niedrigeren Preisen",
+  "midSeasonDescription": "Zwischensaison: durchschnittliche Preise",
+  "highSeasonDescription": "Hauptsaison: stark frequentierte Zeiten mit höheren Preisen",
+
+  "phoneNumber": "Telefonnummer",
+  "changePhoto": "Foto ändern",
+  "photoUploadComingSoon": "Foto-Upload demnächst verfügbar",
+  "personalDetails": "Persönliche Daten",
+  "companyDetails": "Firmendaten",
+  "websiteLabel": "Website",
+  "websiteHint": "https://ihrewebsite.de",
+  "streetAndNumber": "Straße und Hausnummer",
+  "postalCode": "Postleitzahl",
+  "changePassword": "Passwort ändern",
+  "chooseNewPassword": "Wählen Sie ein neues Passwort",
+  "currentPassword": "Aktuelles Passwort",
+  "confirmNewPassword": "Neues Passwort bestätigen",
+  "minimumCharacters": "Mindestens 8 Zeichen",
+  "passwordChanged": "Passwort geändert",
+  "couldNotChangePassword": "Passwort konnte nicht geändert werden. Überprüfen Sie Ihr aktuelles Passwort.",
+  "change": "Ändern",
+  "couldNotSaveProfile": "Profil konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+  "enterYourName": "Geben Sie Ihren Namen ein",
+  "enterYourEmail": "Geben Sie Ihre E-Mail-Adresse ein",
+  "enterValidEmailAddress": "Geben Sie eine gültige E-Mail-Adresse ein",
+
+  "notificationsTitle": "Benachrichtigungen",
+  "preferencesSaved": "Einstellungen gespeichert",
+  "couldNotSavePreferences": "Einstellungen konnten nicht gespeichert werden",
+  "bookingsSection": "Buchungen",
+  "newBookingNotification": "Neue Buchung",
+  "newBookingNotificationSubtitle": "Benachrichtigung bei neuen Buchungen erhalten",
+  "cancellationNotification": "Stornierung",
+  "cancellationNotificationSubtitle": "Benachrichtigung bei Stornierung einer Buchung",
+  "paymentReceivedNotification": "Zahlung erhalten",
+  "paymentReceivedNotificationSubtitle": "Benachrichtigung bei Zahlungseingang",
+  "remindersSection": "Erinnerungen",
+  "checkInReminderNotification": "Check-in-Erinnerung",
+  "checkInReminderNotificationSubtitle": "Erinnerung 1 Tag vor Check-in des Gastes",
+  "checkOutReminderNotification": "Check-out-Erinnerung",
+  "checkOutReminderNotificationSubtitle": "Erinnerung am Tag des Check-outs",
+  "cleaningReminderNotification": "Reinigungserinnerung",
+  "cleaningReminderNotificationSubtitle": "Erinnerung für Reinigungsaufgaben",
+  "otherSection": "Sonstiges",
+  "maintenanceUpdatesNotification": "Wartungsupdates",
+  "maintenanceUpdatesNotificationSubtitle": "Benachrichtigungen über Wartungsaufgaben",
+  "newsletterAndTipsNotification": "Newsletter & Tipps",
+  "newsletterAndTipsNotificationSubtitle": "Tipps und Updates von VerhuurAgenda erhalten",
+  "pushNotificationsInfo": "Push-Benachrichtigungen werden an dieses Gerät gesendet. Stellen Sie sicher, dass Benachrichtigungen in Ihren Telefoneinstellungen aktiviert sind.",
+
+  "teamTitle": "Team",
+  "newTeamMember": "Neues Mitglied",
+  "deleteTeamMemberTitle": "Teammitglied löschen",
+  "premiumFeature": "Premium-Funktion",
+  "teamManagementPremium": "Teamverwaltung ist nur mit einem Premium-Abonnement verfügbar. Upgraden Sie, um Teammitglieder hinzuzufügen und zusammenzuarbeiten.",
+  "viewPremium": "Premium anzeigen",
+  "noTeamMembers": "Noch keine Teammitglieder",
+  "addTeamMembersToCollaborate": "Fügen Sie Teammitglieder hinzu, um zusammenzuarbeiten",
+  "editTeamMemberTitle": "Teammitglied bearbeiten",
+  "newTeamMemberTitle": "Neues Teammitglied",
+  "selectRoleError": "Wählen Sie eine Rolle",
+  "teamMemberSaved": "Teammitglied aktualisiert",
+  "teamMemberCreated": "Teammitglied hinzugefügt",
+  "emailInUse": "Diese E-Mail-Adresse wird bereits verwendet",
+  "couldNotSave": "Konnte nicht gespeichert werden",
+  "enterNameField": "Geben Sie einen Namen ein",
+  "emailAddressLabel": "E-Mail-Adresse",
+  "enterEmailField": "Geben Sie eine E-Mail-Adresse ein",
+  "enterValidEmailField": "Geben Sie eine gültige E-Mail-Adresse ein",
+  "enterPasswordField": "Geben Sie ein Passwort ein",
+  "passwordMinChars": "Passwort muss mindestens 8 Zeichen haben",
+  "roleLabel": "Rolle",
+  "aboutTeamRoles": "Über Teamrollen",
+  "teamRolesInfo": "Teammitglieder erhalten basierend auf ihrer Rolle Zugang zu Ihrer VerhuurAgenda. Sie melden sich mit ihrer eigenen E-Mail-Adresse und Passwort an.",
+  "activeToggle": "Aktiv",
+  "inactiveMembersCannotLogin": "Inaktive Mitglieder können sich nicht anmelden",
+
+  "maintenanceTitle": "Wartung",
+  "newTask": "Neue Aufgabe",
+  "filterOpen": "Offen",
+  "filterCompleted": "Erledigt",
+  "priorityUrgentEmoji": "Dringend",
+  "priorityHighEmoji": "Hoch",
+  "priorityMediumEmoji": "Mittel",
+  "priorityLowEmoji": "Niedrig",
+  "couldNotLoadTasksError": "Aufgaben konnten nicht geladen werden",
+  "noOpenTasks": "Keine offenen Aufgaben",
+  "noTasksFound": "Keine Aufgaben gefunden",
+  "tapToAddTask": "Tippen Sie auf + um eine neue Aufgabe hinzuzufügen",
+  "couldNotChangeStatus": "Status konnte nicht geändert werden",
+  "statusOpen": "Offen",
+  "statusInProgress": "In Bearbeitung",
+  "statusWaiting": "Wartend",
+  "statusCompletedValue": "Erledigt",
+  "statusCancelledValue": "Abgebrochen",
+  "deleteTaskTitle": "Aufgabe löschen?",
+  "taskDeletedSuccess": "Aufgabe gelöscht",
+  "couldNotDeleteTaskError": "Aufgabe konnte nicht gelöscht werden",
+  "descriptionLabel": "Beschreibung",
+  "deadlineLabel": "Frist",
+  "completedDateLabel": "Erledigt",
+  "photosLabel": "Fotos",
+  "notesLabel": "Notizen",
+  "startAction": "Starten",
+  "completeAction": "Abschließen",
+  "deleteTaskAction": "Aufgabe löschen",
+  "overdueLabel": "Überfällig",
+  "editTaskTitle": "Aufgabe bearbeiten",
+  "newMaintenanceTask": "Neue Wartungsaufgabe",
+  "titleLabel": "Titel",
+  "titleHint": "z.B. Tropfender Wasserhahn Bad",
+  "enterTitleError": "Geben Sie einen Titel ein",
+  "accommodationLabel": "Unterkunft",
+  "selectAccommodationOptional": "Unterkunft auswählen (optional)",
+  "noSpecificAccommodation": "Keine bestimmte Unterkunft",
+  "descriptionHint": "Beschreiben Sie das Problem oder die Aufgabe...",
+  "priorityLabel": "Priorität",
+  "categoryLabel": "Kategorie",
+  "categoryRepair": "Reparatur",
+  "categoryMaintenance": "Wartung",
+  "categoryCleaning": "Reinigung",
+  "categoryInventory": "Inventar",
+  "categoryInspection": "Inspektion",
+  "categoryOther": "Sonstiges",
+  "deadlineFieldLabel": "Frist",
+  "noDeadline": "Keine Frist",
+  "cameraButton": "Kamera",
+  "galleryButton": "Galerie",
+  "uploadingPhotos": "Fotos werden hochgeladen...",
+  "notesHint": "Zusätzliche Kommentare...",
+  "taskUpdatedSuccess": "Aufgabe aktualisiert",
+  "taskCreatedSuccess": "Aufgabe erstellt",
+  "readyButton": "Fertig",
+
+  "campaignsTitle": "Kampagnen",
+  "campaignStatusDraft": "Entwurf",
+  "campaignStatusScheduled": "Geplant",
+  "campaignStatusSending": "Wird gesendet...",
+  "campaignStatusSent": "Gesendet",
+  "campaignStatusPaused": "Pausiert",
+  "campaignStatusCancelled": "Abgebrochen",
+  "couldNotLoadCampaigns": "Kampagnen konnten nicht geladen werden",
+  "campaignsInfoBanner": "Erstellen und bearbeiten Sie Kampagnen auf der Website. Hier können Sie die Statistiken einsehen.",
+  "allFilter": "Alle",
+  "sentFilter": "Gesendet",
+  "scheduledFilter": "Geplant",
+  "draftsFilter": "Entwürfe",
+  "noCampaignsFound": "Keine Kampagnen gefunden",
+  "noCampaignsDescription": "Erstellen Sie Ihre erste Kampagne auf der Website, um Ihre Gäste zu erreichen.",
+  "opened": "Geöffnet",
+  "clicked": "Geklickt",
+  "unsubscribedLabel": "Abgemeldet",
+  "subject": "Betreff",
+  "openWebsiteToEdit": "Öffnen Sie die Website, um diese Kampagne zu bearbeiten",
+  "viewOnWebsite": "Auf Website anzeigen",
+  "splashLoading": "Laden...",
+
+  "helpTitle": "Hilfe & Support",
+  "helpSearchPlaceholder": "Häufig gestellte Fragen durchsuchen...",
+  "faqTitle": "Häufig gestellte Fragen",
+  "contactSupportTitle": "Kontaktieren Sie uns",
+  "contactSupportDescription": "Haben Sie eine Frage, die hier nicht beantwortet wird? Kontaktieren Sie uns.",
+  "sendEmailButton": "E-Mail senden",
+  "callUsButton": "Rufen Sie uns an",
+  "officeHours": "Verfügbar an Wochentagen von 9:00 - 17:00 Uhr",
+  "aboutTitle": "Über VerhuurAgenda",
+  "versionLabel": "Version",
+  "developerLabel": "Entwickler",
+  "developerName": "VerhuurAgenda B.V.",
+  "contactLabel": "Kontakt",
+  "followUs": "Folgen Sie uns",
+  "rateApp": "App bewerten",
+  "rateAppDescription": "Finden Sie VerhuurAgenda nützlich? Hinterlassen Sie eine Bewertung!",
+  "shareApp": "App teilen",
+  "shareAppMessage": "Schauen Sie sich VerhuurAgenda an - die intelligente App für die Verwaltung von Ferienvermietungen!",
+  "legalSection": "Rechtliches",
+  "acknowledgements": "Danksagungen",
+  "acknowledgementsDescription": "Diese App wurde mit Flutter erstellt und verwendet verschiedene Open-Source-Pakete.",
+  "privacyTitle": "Datenschutzrichtlinie",
+  "privacyIntro": "Bei VerhuurAgenda nehmen wir Ihre Privatsphäre ernst. Diese Richtlinie beschreibt, wie wir Ihre Daten sammeln, verwenden und schützen.",
+  "privacySection1Title": "Welche Daten sammeln wir?",
+  "privacySection1Content": "Wir sammeln Daten, die Sie selbst eingeben, wie Ihren Namen, Ihre E-Mail-Adresse, Unterkunftsdaten und Buchungsinformationen. Wir sammeln auch automatisch bestimmte technische Daten wie Gerätetyp und App-Nutzung.",
+  "privacySection2Title": "Wie verwenden wir Ihre Daten?",
+  "privacySection2Content": "Ihre Daten werden verwendet, um die App zu betreiben, Ihre Buchungen zu verwalten und den Service zu verbessern. Wir teilen Ihre Daten niemals zu Marketingzwecken mit Dritten.",
+  "privacySection3Title": "Wie schützen wir Ihre Daten?",
+  "privacySection3Content": "Wir verwenden branchenübliche Sicherheitsmaßnahmen zum Schutz Ihrer Daten, einschließlich Verschlüsselung und sicherer Server.",
+  "privacySection4Title": "Ihre Rechte",
+  "privacySection4Content": "Sie haben das Recht, Ihre Daten einzusehen, zu korrigieren oder zu löschen. Kontaktieren Sie uns, wenn Sie diese Rechte ausüben möchten.",
+  "privacyContactUs": "Fragen zum Datenschutz? Kontaktieren Sie uns unter privacy@verhuuragenda.nl",
+  "termsTitle": "Allgemeine Geschäftsbedingungen",
+  "termsIntro": "Durch die Nutzung von VerhuurAgenda stimmen Sie diesen Bedingungen zu.",
+  "termsSection1Title": "Nutzung des Dienstes",
+  "termsSection1Content": "VerhuurAgenda ist für die Verwaltung von Ferienvermietungen bestimmt. Sie sind für die Richtigkeit der von Ihnen eingegebenen Daten verantwortlich.",
+  "termsSection2Title": "Konto und Sicherheit",
+  "termsSection2Content": "Sie sind dafür verantwortlich, Ihre Anmeldedaten geheim zu halten. Melden Sie verdächtige Aktivitäten sofort.",
+  "termsSection3Title": "Abonnements und Zahlungen",
+  "termsSection3Content": "Premium-Funktionen sind über ein kostenpflichtiges Abonnement verfügbar. Abonnements verlängern sich automatisch, es sei denn, Sie kündigen.",
+  "termsSection4Title": "Haftung",
+  "termsSection4Content": "VerhuurAgenda haftet nicht für Schäden, die aus der Nutzung der App entstehen. Wir tun unser Bestes, um den Dienst verfügbar und zuverlässig zu halten.",
+  "termsSection5Title": "Änderungen",
+  "termsSection5Content": "Wir können diese Bedingungen von Zeit zu Zeit anpassen. Wir informieren Sie über wichtige Änderungen per E-Mail oder in der App.",
+  "termsContactUs": "Fragen? Kontaktieren Sie uns unter info@verhuuragenda.nl",
+
+  "statisticsTitle": "Statistiken",
+  "statisticsOverview": "Übersicht",
+  "statisticsPeriod": "Zeitraum",
+  "statisticsThisMonth": "Dieser Monat",
+  "statisticsThisYear": "Dieses Jahr",
+  "statisticsAllTime": "Gesamtzeitraum",
+  "statisticsCustomPeriod": "Benutzerdefinierter Zeitraum",
+  "statisticsTotalBookings": "Buchungen gesamt",
+  "statisticsConfirmedBookings": "Bestätigte Buchungen",
+  "statisticsCancelledBookings": "Stornierte Buchungen",
+  "statisticsOccupancyRate": "Belegungsrate",
+  "statisticsAverageStayDuration": "Durchschn. Aufenthaltsdauer",
+  "statisticsAverageBookingValue": "Durchschn. Buchungswert",
+  "statisticsRevenueByMonth": "Umsatz nach Monat",
+  "statisticsBookingsBySource": "Buchungen nach Quelle",
+  "statisticsTopAccommodations": "Top-Unterkünfte",
+  "statisticsNoData": "Keine Daten für diesen Zeitraum verfügbar",
+  "statisticsExport": "Exportieren",
+
+  "helpHowCanWeHelp": "Wie können wir Ihnen helfen?",
+  "helpTeamAvailable": "Unser Team ist an Wochentagen\nvon 9:00 bis 17:00 Uhr erreichbar",
+  "helpContactUs": "Kontaktieren Sie uns",
+  "helpEmailTitle": "E-Mail",
+  "helpEmailResponse": "Wir antworten innerhalb von 24 Stunden",
+  "helpPhoneTitle": "Telefon",
+  "helpPhoneHours": "Mo-Fr 9:00 - 17:00 Uhr",
+  "helpWhatsAppTitle": "WhatsApp",
+  "helpWhatsAppSubtitle": "Chatten Sie mit uns",
+  "helpWhatsAppResponse": "Schnelle Antwort an Wochentagen",
+  "helpFaqTitle": "Häufig gestellte Fragen",
+  "helpFaq1Question": "Wie füge ich eine neue Unterkunft hinzu?",
+  "helpFaq1Answer": "Gehen Sie zu Unterkünfte im Menü und tippen Sie auf die + Schaltfläche. Füllen Sie die Details aus und fügen Sie Fotos hinzu. Sie können später jederzeit Änderungen vornehmen.",
+  "helpFaq2Question": "Wie synchronisiere ich mit Airbnb oder Booking.com?",
+  "helpFaq2Answer": "Gehen Sie zu Ihren Unterkunftseinstellungen und fügen Sie die iCal-URL Ihrer externen Plattform hinzu. VerhuurAgenda ruft die Buchungen automatisch ab.",
+  "helpFaq3Question": "Wie funktioniert das Gästeportal?",
+  "helpFaq3Answer": "Für jede Buchung wird automatisch ein einzigartiger Link generiert. Teilen Sie diesen mit Ihren Gästen, damit sie einchecken und alle Informationen einsehen können.",
+  "helpFaq4Question": "Kann ich mehrere Benutzer hinzufügen?",
+  "helpFaq4Answer": "Ja, abhängig von Ihrem Abonnement können Sie Teammitglieder einladen. Gehen Sie zu Einstellungen > Abonnement, um Ihre Limits einzusehen.",
+  "helpFaq5Question": "Wie kann ich mein Abonnement verlängern?",
+  "helpFaq5Answer": "Gehen Sie zu Einstellungen > Abonnement und tippen Sie auf \"Zur Zahlung auf der Website\". Sie werden zu unserer sicheren Zahlungsseite weitergeleitet.",
+  "helpFeedbackTitle": "Haben Sie eine Idee oder einen Vorschlag?",
+  "helpFeedbackDescription": "Wir würden gerne Ihr Feedback hören! Senden Sie uns eine Nachricht mit Ihrer Idee und wer weiß, vielleicht ist sie im nächsten Update dabei.",
+  "helpFeedbackButton": "Feedback senden",
+
+  "selectCheckInAndCheckOutDate": "Check-in- und Check-out-Datum auswählen",
+  "checkOutMustBeAfterCheckIn": "Check-out muss nach dem Check-in sein",
+  "bookingCreated": "Buchung erstellt",
+  "bookingUpdated": "Buchung aktualisiert",
+  "couldNotCreateBooking": "Buchung konnte nicht erstellt werden",
+  "couldNotUpdateBooking": "Buchung konnte nicht aktualisiert werden",
+  "newGuest": "Neuer Gast",
+  "selectAGuest": "Wählen Sie einen Gast",
+  "website": "Website",
+  "firstNameAndEmailRequired": "Vorname und E-Mail sind erforderlich",
+  "enterAmount": "Geben Sie einen Betrag ein",
+  "downPayment": "Anzahlung",
+  "internalNotesHint": "Interne Notizen zu dieser Buchung...",
+  "saveBooking": "Buchung speichern",
+  "selectAnAccommodation": "Wählen Sie eine Unterkunft",
+  "blockedPeriods": "Blockierte Zeiträume",
+  "availableAlternatives": "Verfügbare Alternativen",
+  "numberOfPeople": "Personenzahl",
+  "statusAndSource": "Status & Quelle",
+  "financial": "Finanzen",
+
+  "checkingAvailability": "Verfügbarkeit wird geprüft...",
+  "available": "Verfügbar",
+  "notAvailable": "Nicht verfügbar",
+  "overlappingBookings": "Überlappende Buchungen",
+  "bank": "Bank",
+  "creditcard": "Kreditkarte",
+  "registerPayment": "Zahlung erfassen",
+  "yourBookingDetails": "Ihre Buchungsdetails",
+  "deleteBookingQuestion": "Buchung löschen?",
+  "deleteBookingConfirmation": "Möchten Sie diese Buchung wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
+  "bookingDeleted": "Buchung gelöscht",
+  "copyLink": "Link kopieren",
+  "linkCopied": "Link kopiert",
+  "changeStatus": "Status ändern",
+  "statusUpdated": "Status aktualisiert",
+  "cleaningCosts": "Reinigungskosten",
+  "deposit": "Kaution",
+  "outstanding": "Ausstehend",
+  "payments": "Zahlungen",
+  "pinCopied": "PIN kopiert",
+  "shareGuestPortal": "Gästeportal teilen",
+  "bookingNotFound": "Buchung nicht gefunden",
+  "stay": "Aufenthalt",
+  "forUpcomingPeriod": "anstehend",
+  "inPastPeriod": "in der Vergangenheit",
+  "untilToday": "bis heute",
+  "customPeriod": "Benutzerdefinierter Zeitraum",
+  "chooseADateRange": "Wählen Sie einen Datumsbereich",
+  "noBookingsFound": "Keine Buchungen gefunden",
+  "upcomingBookings": "Anstehende Buchungen",
+  "fromToday": "ab heute",
+  "allBookings": "Alle Buchungen",
+  "withoutDateFilter": "ohne Datumsfilter",
+  "pastBookings": "Vergangene Buchungen",
+
+  "resetEmailDescription": "Wenn ein Konto mit der E-Mail-Adresse {email} existiert, erhalten Sie innerhalb weniger Minuten eine E-Mail mit Anweisungen zum Zurücksetzen Ihres Passworts.",
+  "@resetEmailDescription": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "accommodationsCountText": "{count} Unterkünfte",
+  "@accommodationsCountText": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "daysViewText": "{count}-Tage-Ansicht",
+  "@daysViewText": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "adultsCount": "{count} Erwachsene",
+  "@adultsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "childrenCount": "{count} Kinder",
+  "@childrenCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "babiesCount": "{count} Babys",
+  "@babiesCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nightsCount": "{count} Nächte",
+  "@nightsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cleanedSuccess": "{name} gereinigt!",
+  "@cleanedSuccess": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "undoCleaningMessage": "Möchten Sie die Reinigung von {name} wirklich zurücksetzen?",
+  "@undoCleaningMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "completedAt": "Erledigt: {time}",
+  "@completedAt": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "guestLabel": "Gast: {name}",
+  "@guestLabel": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "deleteAccommodationMessage": "Möchten Sie \"{name}\" wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
+  "@deleteAccommodationMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "nGuestsCount": "{count} Gäste",
+  "@nGuestsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nBedroomsShort": "{count} Schlafz.",
+  "@nBedroomsShort": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "nBathroomsShort": "{count} Bad",
+  "@nBathroomsShort": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "couldNotLoadSeasonsError": "Saisonen konnten nicht geladen werden: {error}",
+  "@couldNotLoadSeasonsError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "noSeasonsForYear": "Keine Saisonen für {year}",
+  "@noSeasonsForYear": {
+    "placeholders": {
+      "year": {"type": "int"}
+    }
+  },
+  "deleteSeasonConfirmMessage": "Möchten Sie \"{name}\" wirklich löschen?",
+  "@deleteSeasonConfirmMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "couldNotDeleteError": "Konnte nicht gelöscht werden: {error}",
+  "@couldNotDeleteError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "couldNotSaveError": "Konnte nicht gespeichert werden: {error}",
+  "@couldNotSaveError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "daysCount": "{count} Tage",
+  "@daysCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "confirmDeleteTeamMember": "Möchten Sie \"{name}\" wirklich aus Ihrem Team entfernen?",
+  "@confirmDeleteTeamMember": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "couldNotLoadTeamMembersError": "Teammitglieder konnten nicht geladen werden: {error}",
+  "@couldNotLoadTeamMembersError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "completedOnDate": "Erledigt {date}",
+  "@completedOnDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "overdueDate": "Überfällig: {date}",
+  "@overdueDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "deadlineDate": "Frist: {date}",
+  "@deadlineDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "statusChangedTo": "Status geändert zu {status}",
+  "@statusChangedTo": {
+    "placeholders": {
+      "status": {"type": "String"}
+    }
+  },
+  "confirmDeleteTaskMessage": "Möchten Sie \"{title}\" wirklich löschen?",
+  "@confirmDeleteTaskMessage": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "completedByPerson": "{date} von {person}",
+  "@completedByPerson": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "person": {"type": "String"}
+    }
+  },
+  "couldNotLoadPhotoError": "Foto konnte nicht geladen werden: {error}",
+  "@couldNotLoadPhotoError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "errorWithMessage": "Fehler: {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "sentOnDate": "Gesendet am {date}",
+  "@sentOnDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "scheduledForDate": "Geplant für {date}",
+  "@scheduledForDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "recipientsCount": "{count} Empfänger",
+  "@recipientsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "contactsCount": "{count} Kontakte",
+  "@contactsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "emailsBouncedCount": "{count} E-Mails wurden nicht zugestellt (zurückgewiesen)",
+  "@emailsBouncedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "allRightsReservedFull": "© {year} VerhuurAgenda. Alle Rechte vorbehalten.",
+  "@allRightsReservedFull": {
+    "placeholders": {
+      "year": {"type": "int"}
+    }
+  },
+  "privacyLastUpdated": "Zuletzt aktualisiert: {date}",
+  "@privacyLastUpdated": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "termsLastUpdated": "Zuletzt aktualisiert: {date}",
+  "@termsLastUpdated": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "helpCopied": "{text} kopiert",
+  "@helpCopied": {
+    "placeholders": {
+      "text": {"type": "String"}
+    }
+  },
+  "couldNotLoadData": "Daten konnten nicht geladen werden: {error}",
+  "@couldNotLoadData": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "errorDeleting": "Fehler beim Löschen: {error}",
+  "@errorDeleting": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "portalShareMessage": "Hallo {guestName},\n\nHier ist der Link zu Ihrem Gästeportal: {portalUrl}\n\nIhr PIN-Code lautet: {pin}\n\nMit freundlichen Grüßen",
+  "@portalShareMessage": {
+    "placeholders": {
+      "guestName": {"type": "String"},
+      "portalUrl": {"type": "String"},
+      "pin": {"type": "String"}
+    }
+  },
+  "errorUpdating": "Fehler beim Aktualisieren: {error}",
+  "@errorUpdating": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "bookingWithId": "Buchung #{id}",
+  "@bookingWithId": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "couldNotLoadBooking": "Buchung konnte nicht geladen werden: {error}",
+  "@couldNotLoadBooking": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "bookingsCount": "{count} Buchungen",
+  "@bookingsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "fromDateToDate": "von {startDate} bis {endDate}",
+  "@fromDateToDate": {
+    "placeholders": {
+      "startDate": {"type": "String"},
+      "endDate": {"type": "String"}
+    }
+  },
+  "couldNotLoadBookings": "Buchungen konnten nicht geladen werden: {error}",
+  "@couldNotLoadBookings": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  }
+}
