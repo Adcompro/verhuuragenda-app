@@ -229,8 +229,8 @@ class _FinancialYearScreenState extends State<FinancialYearScreen> {
 
   String _formatNumber(dynamic value) {
     if (value == null) return '0';
-    final num = value is num ? value : double.tryParse(value.toString()) ?? 0;
-    return num.toStringAsFixed(2).replaceAll('.', ',');
+    final number = value is num ? value : double.tryParse(value.toString()) ?? 0;
+    return number.toStringAsFixed(2).replaceAll('.', ',');
   }
 
   @override
