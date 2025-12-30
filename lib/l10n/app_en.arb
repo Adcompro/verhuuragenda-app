@@ -1275,5 +1275,12 @@
   "totalOutstanding": "Total outstanding",
   "copySeasons": "Copy Seasons",
   "reportExported": "Report exported successfully",
-  "occupancyRateLabel": "Occupancy"
+  "occupancyRateLabel": "Occupancy",
+  "copySeasonsConfirmation": "Are you sure you want to copy the seasons from {fromYear} to {toYear}?\n\nThis cannot be undone.",
+  "@copySeasonsConfirmation": {
+    "placeholders": {
+      "fromYear": {"type": "int"},
+      "toYear": {"type": "int"}
+    }
+  }
 }

@@ -2849,4 +2849,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get occupancyRateLabel => 'Occupation';
+
+  @override
+  String copySeasonsConfirmation(int fromYear, int toYear) => 'Êtes-vous sûr de vouloir copier les saisons de $fromYear vers $toYear ?\n\nCette action ne peut pas être annulée.';
 }

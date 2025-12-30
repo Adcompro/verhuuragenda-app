@@ -1283,5 +1283,12 @@
   "totalOutstanding": "Total en attente",
   "copySeasons": "Copier les Saisons",
   "reportExported": "Rapport exporté avec succès",
-  "occupancyRateLabel": "Occupation"
+  "occupancyRateLabel": "Occupation",
+  "copySeasonsConfirmation": "Êtes-vous sûr de vouloir copier les saisons de {fromYear} vers {toYear} ?\n\nCette action ne peut pas être annulée.",
+  "@copySeasonsConfirmation": {
+    "placeholders": {
+      "fromYear": {"type": "int"},
+      "toYear": {"type": "int"}
+    }
+  }
 }

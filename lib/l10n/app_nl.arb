@@ -1275,5 +1275,12 @@
   "totalOutstanding": "Totaal openstaand",
   "copySeasons": "Kopieer Seizoenen",
   "reportExported": "Rapport succesvol geëxporteerd",
-  "occupancyRateLabel": "Bezetting"
+  "occupancyRateLabel": "Bezetting",
+  "copySeasonsConfirmation": "Weet je zeker dat je de seizoenen van {fromYear} naar {toYear} wilt kopiëren?\n\nDit kan niet ongedaan worden gemaakt.",
+  "@copySeasonsConfirmation": {
+    "placeholders": {
+      "fromYear": {"type": "int"},
+      "toYear": {"type": "int"}
+    }
+  }
 }

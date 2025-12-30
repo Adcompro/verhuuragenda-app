@@ -1283,5 +1283,12 @@
   "totalOutstanding": "Totale in sospeso",
   "copySeasons": "Copia Stagioni",
   "reportExported": "Report esportato con successo",
-  "occupancyRateLabel": "Occupazione"
+  "occupancyRateLabel": "Occupazione",
+  "copySeasonsConfirmation": "Sei sicuro di voler copiare le stagioni da {fromYear} a {toYear}?\n\nQuesta azione non può essere annullata.",
+  "@copySeasonsConfirmation": {
+    "placeholders": {
+      "fromYear": {"type": "int"},
+      "toYear": {"type": "int"}
+    }
+  }
 }

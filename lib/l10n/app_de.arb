@@ -1270,5 +1270,12 @@
   "totalOutstanding": "Gesamt offen",
   "copySeasons": "Saisons kopieren",
   "reportExported": "Bericht erfolgreich exportiert",
-  "occupancyRateLabel": "Auslastung"
+  "occupancyRateLabel": "Auslastung",
+  "copySeasonsConfirmation": "Sind Sie sicher, dass Sie die Saisons von {fromYear} nach {toYear} kopieren möchten?\n\nDies kann nicht rückgängig gemacht werden.",
+  "@copySeasonsConfirmation": {
+    "placeholders": {
+      "fromYear": {"type": "int"},
+      "toYear": {"type": "int"}
+    }
+  }
 }

@@ -967,6 +967,7 @@ abstract class AppLocalizations {
   String get copySeasons;
   String get reportExported;
   String get occupancyRateLabel;
+  String copySeasonsConfirmation(int fromYear, int toYear);
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

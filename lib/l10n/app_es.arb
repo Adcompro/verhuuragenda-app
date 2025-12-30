@@ -1274,5 +1274,12 @@
   "totalOutstanding": "Total pendiente",
   "copySeasons": "Copiar Temporadas",
   "reportExported": "Informe exportado con éxito",
-  "occupancyRateLabel": "Ocupación"
+  "occupancyRateLabel": "Ocupación",
+  "copySeasonsConfirmation": "¿Estás seguro de que deseas copiar las temporadas de {fromYear} a {toYear}?\n\nEsta acción no se puede deshacer.",
+  "@copySeasonsConfirmation": {
+    "placeholders": {
+      "fromYear": {"type": "int"},
+      "toYear": {"type": "int"}
+    }
+  }
 }

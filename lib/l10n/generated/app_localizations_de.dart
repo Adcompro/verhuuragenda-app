@@ -1900,4 +1900,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get reportExported => 'Bericht erfolgreich exportiert';
   @override
   String get occupancyRateLabel => 'Auslastung';
+  @override
+  String copySeasonsConfirmation(int fromYear, int toYear) => 'Sind Sie sicher, dass Sie die Saisons von $fromYear nach $toYear kopieren möchten?\n\nDies kann nicht rückgängig gemacht werden.';
 }
