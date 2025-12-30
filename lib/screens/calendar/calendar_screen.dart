@@ -593,6 +593,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
         final cellWidth = constraints.maxWidth / daysToShow;
         final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
 
+        // Pre-calculate booking positions for hit testing
+        final bookingRects = <Map<String, dynamic>>[];
+        for (final booking in bookings) {
+          final eventStart = DateTime.parse(booking['check_in']);
+          final eventEnd = DateTime.parse(booking['check_out']);
+          final startOffset = eventStart.difference(startDay).inDays;
+          final duration = eventEnd.difference(eventStart).inDays;
+
+          if (startOffset + duration >= 0 && startOffset < daysToShow) {
+            final visibleStart = startOffset < 0 ? 0 : startOffset;
+            final visibleEnd = (startOffset + duration) > daysToShow ? daysToShow : (startOffset + duration);
+            if (visibleEnd > visibleStart) {
+              bookingRects.add({
+                'booking': booking,
+                'left': visibleStart * cellWidth,
+                'right': visibleEnd * cellWidth,
+              });
+            }
+          }
+        }
+
         return Column(
           children: [
             // Day numbers row
@@ -614,18 +635,34 @@ class _CalendarScreenState extends State<CalendarScreen> {
               }).toList(),
             ),
             const SizedBox(height: 4),
-            // Timeline bars
+            // Timeline bars with single GestureDetector
             Expanded(
-              child: Stack(
-                children: [
-                  // Day backgrounds - tappable for creating new booking
-                  Row(
-                    children: dates.map((date) {
-                      final isToday = _isToday(date);
-                      final isWeekend = date.weekday >= 6;
-                      return Expanded(
-                        child: GestureDetector(
-                          onTap: () => _showNewBookingDialog(date, accommodationId, accommodationName),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (details) {
+                  final tapX = details.localPosition.dx;
+
+                  // Check if tap is on a booking (check in reverse order - top bookings first)
+                  for (final rect in bookingRects.reversed) {
+                    if (tapX >= rect['left'] && tapX < rect['right']) {
+                      _showBookingDetails(rect['booking']);
+                      return;
+                    }
+                  }
+
+                  // Not on a booking - create new booking for the tapped day
+                  final dayIndex = (tapX / cellWidth).floor().clamp(0, daysToShow - 1);
+                  final date = dates[dayIndex];
+                  _showNewBookingDialog(date, accommodationId, accommodationName);
+                },
+                child: Stack(
+                  children: [
+                    // Day backgrounds (visual only, no gesture detection)
+                    Row(
+                      children: dates.map((date) {
+                        final isToday = _isToday(date);
+                        final isWeekend = date.weekday >= 6;
+                        return Expanded(
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 1),
                             decoration: BoxDecoration(
@@ -637,15 +674,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  // Blocked dates
-                  ...blocked.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: true)),
-                  // Bookings
-                  ...bookings.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: false)),
-                ],
+                        );
+                      }).toList(),
+                    ),
+                    // Blocked dates (visual only)
+                    ...blocked.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: true)),
+                    // Bookings (visual only)
+                    ...bookings.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: false)),
+                  ],
+                ),
               ),
             ),
           ],
@@ -861,14 +898,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     final barWidth = visibleDuration * cellWidth - 2;
 
+    // Visual only - tap handling is done in _buildTimeline
     return Positioned(
       left: visibleStart * cellWidth + 1,
       top: 2,
       bottom: 2,
       width: barWidth,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: isBlocked ? null : () => _showBookingDetails(event),
+      child: IgnorePointer(
         child: Container(
           decoration: BoxDecoration(
             color: color,
