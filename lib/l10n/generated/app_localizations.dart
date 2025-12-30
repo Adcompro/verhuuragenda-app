@@ -956,6 +956,7 @@ abstract class AppLocalizations {
   String get yearOverview;
   String get exportYearReport;
   String get copySeasonsToYear;
+  String get copySeasonsDescription;
   String get outstandingPayments;
   String get selectSourceYear;
   String get selectTargetYear;

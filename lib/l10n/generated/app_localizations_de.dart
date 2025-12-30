@@ -1875,9 +1875,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get yearOverview => 'Jahresübersicht';
   @override
-  String get exportYearReport => 'Jahresbericht exportieren';
+  String get exportYearReport => 'Jahresbericht exportieren (CSV)';
   @override
-  String get copySeasonsToYear => 'Saisons in neues Jahr kopieren';
+  String get copySeasonsToYear => 'Preissaison-Zeiträume kopieren';
+  @override
+  String get copySeasonsDescription => 'Kopieren Sie Neben-/Mittel-/Hochsaison-Zeiträume in ein anderes Jahr';
   @override
   String get outstandingPayments => 'Offene Zahlungen';
   @override

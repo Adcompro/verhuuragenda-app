@@ -1250,11 +1250,12 @@
     }
   },
 
-  "financialYear": "Geschäftsjahr",
-  "financialYearDescription": "Jahresberichte und Saisonverwaltung",
+  "financialYear": "Jahresberichte",
+  "financialYearDescription": "Statistiken anzeigen und Jahresübersicht exportieren",
   "yearOverview": "Jahresübersicht",
-  "exportYearReport": "Jahresbericht exportieren",
-  "copySeasonsToYear": "Saisons in neues Jahr kopieren",
+  "exportYearReport": "Jahresbericht exportieren (CSV)",
+  "copySeasonsToYear": "Preissaison-Zeiträume kopieren",
+  "copySeasonsDescription": "Kopieren Sie Neben-/Mittel-/Hochsaison-Zeiträume in ein anderes Jahr",
   "outstandingPayments": "Offene Zahlungen",
   "selectSourceYear": "Von Jahr",
   "selectTargetYear": "Nach Jahr",

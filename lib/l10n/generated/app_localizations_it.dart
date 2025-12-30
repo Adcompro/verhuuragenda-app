@@ -2812,10 +2812,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get yearOverview => 'Panoramica dell\'Anno';
 
   @override
-  String get exportYearReport => 'Esporta Report Annuale';
+  String get exportYearReport => 'Esporta Report Annuale (CSV)';
 
   @override
-  String get copySeasonsToYear => 'Copia Stagioni nel Nuovo Anno';
+  String get copySeasonsToYear => 'Copia periodi stagionali';
+
+  @override
+  String get copySeasonsDescription => 'Copia i periodi di bassa/media/alta stagione in un altro anno';
 
   @override
   String get outstandingPayments => 'Pagamenti in Sospeso';

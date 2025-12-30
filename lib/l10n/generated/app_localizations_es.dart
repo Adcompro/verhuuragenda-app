@@ -1875,9 +1875,11 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get yearOverview => 'Resumen del Año';
   @override
-  String get exportYearReport => 'Exportar Informe Anual';
+  String get exportYearReport => 'Exportar Informe Anual (CSV)';
   @override
-  String get copySeasonsToYear => 'Copiar Temporadas al Nuevo Año';
+  String get copySeasonsToYear => 'Copiar períodos de temporada';
+  @override
+  String get copySeasonsDescription => 'Copiar períodos de temporada baja/media/alta a otro año';
   @override
   String get outstandingPayments => 'Pagos Pendientes';
   @override

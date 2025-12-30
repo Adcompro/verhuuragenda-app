@@ -323,6 +323,14 @@ class _FinancialYearScreenState extends State<FinancialYearScreen> {
 
                         // Copy Seasons section
                         _buildSectionHeader(l10n.copySeasonsToYear),
+                        const SizedBox(height: 4),
+                        Text(
+                          l10n.copySeasonsDescription,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                          ),
+                        ),
                         const SizedBox(height: 12),
                         _buildCopySeasonsCard(l10n),
                       ],
