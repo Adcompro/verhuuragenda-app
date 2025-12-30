@@ -9,7 +9,16 @@ import '../../models/accommodation.dart';
 import '../../models/guest.dart';
 
 class BookingFormScreen extends StatefulWidget {
-  const BookingFormScreen({super.key});
+  final int? initialAccommodationId;
+  final String? initialCheckIn;
+  final String? initialCheckOut;
+
+  const BookingFormScreen({
+    super.key,
+    this.initialAccommodationId,
+    this.initialCheckIn,
+    this.initialCheckOut,
+  });
 
   @override
   State<BookingFormScreen> createState() => _BookingFormScreenState();
@@ -50,6 +59,16 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
   @override
   void initState() {
     super.initState();
+    // Set initial values from query params
+    if (widget.initialAccommodationId != null) {
+      _selectedAccommodationId = widget.initialAccommodationId;
+    }
+    if (widget.initialCheckIn != null) {
+      _checkIn = DateTime.tryParse(widget.initialCheckIn!);
+    }
+    if (widget.initialCheckOut != null) {
+      _checkOut = DateTime.tryParse(widget.initialCheckOut!);
+    }
     _loadData();
   }
 
@@ -96,6 +115,21 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
         _guests = guestData.map((json) => Guest.fromJson(json)).toList();
         _isLoadingData = false;
       });
+
+      // Auto-fill cleaning fee if accommodation was pre-selected
+      if (_selectedAccommodationId != null) {
+        final acc = _accommodations.firstWhere(
+          (a) => a.id == _selectedAccommodationId,
+          orElse: () => _accommodations.first,
+        );
+        if (acc.cleaningFee != null) {
+          _cleaningFeeController.text = acc.cleaningFee!.toStringAsFixed(2);
+        }
+        // Check availability if dates are also set
+        if (_checkIn != null && _checkOut != null) {
+          _checkAvailability();
+        }
+      }
     } catch (e) {
       setState(() {
         _error = e.toString();

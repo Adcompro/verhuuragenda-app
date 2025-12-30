@@ -491,7 +491,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
             padding: EdgeInsets.fromLTRB(isWide ? 20 : 16, 0, isWide ? 20 : 16, isWide ? 20 : 16),
             child: SizedBox(
               height: timelineHeight,
-              child: _buildTimeline(accBookings, accBlocked, daysToShow),
+              child: _buildTimeline(
+                accBookings,
+                accBlocked,
+                daysToShow,
+                accommodationId: accId,
+                accommodationName: accommodation['name'] ?? '',
+              ),
             ),
           ),
         ],
@@ -575,7 +581,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildTimeline(List<dynamic> bookings, List<dynamic> blocked, int daysToShow) {
+  Widget _buildTimeline(List<dynamic> bookings, List<dynamic> blocked, int daysToShow, {required int accommodationId, required String accommodationName}) {
     final dates = List.generate(
       daysToShow,
       (i) => _startDate.add(Duration(days: i)),
@@ -612,21 +618,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
             Expanded(
               child: Stack(
                 children: [
-                  // Day backgrounds
+                  // Day backgrounds - tappable for creating new booking
                   Row(
                     children: dates.map((date) {
                       final isToday = _isToday(date);
                       final isWeekend = date.weekday >= 6;
                       return Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 1),
-                          decoration: BoxDecoration(
-                            color: isToday
-                                ? AppTheme.primaryColor.withOpacity(0.2)
-                                : isWeekend
-                                    ? Colors.grey[200]
-                                    : Colors.grey[100],
-                            borderRadius: BorderRadius.circular(4),
+                        child: GestureDetector(
+                          onTap: () => _showNewBookingDialog(date, accommodationId, accommodationName),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 1),
+                            decoration: BoxDecoration(
+                              color: isToday
+                                  ? AppTheme.primaryColor.withOpacity(0.2)
+                                  : isWeekend
+                                      ? Colors.grey[200]
+                                      : Colors.grey[100],
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                           ),
                         ),
                       );
@@ -640,6 +649,177 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _showNewBookingDialog(DateTime checkInDate, int accommodationId, String accommodationName) {
+    final l10n = AppLocalizations.of(context)!;
+    DateTime checkOutDate = checkInDate.add(const Duration(days: 7));
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final sheetL10n = AppLocalizations.of(context)!;
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Handle
+                  Center(
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+
+                  Text(
+                    sheetL10n.newBooking,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    accommodationName,
+                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Check-in date
+                  Text(sheetL10n.checkIn, style: const TextStyle(fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: checkInDate,
+                        firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                        lastDate: DateTime.now().add(const Duration(days: 730)),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          checkInDate = picked;
+                          if (checkOutDate.isBefore(checkInDate) || checkOutDate.isAtSameMomentAs(checkInDate)) {
+                            checkOutDate = checkInDate.add(const Duration(days: 1));
+                          }
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey[300]!),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.calendar_today, color: AppTheme.primaryColor),
+                          const SizedBox(width: 12),
+                          Text(
+                            _formatDisplayDate(_formatDate(checkInDate)),
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Check-out date
+                  Text(sheetL10n.checkOut, style: const TextStyle(fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: checkOutDate,
+                        firstDate: checkInDate.add(const Duration(days: 1)),
+                        lastDate: DateTime.now().add(const Duration(days: 730)),
+                      );
+                      if (picked != null) {
+                        setState(() => checkOutDate = picked);
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey[300]!),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.calendar_today, color: AppTheme.accentColor),
+                          const SizedBox(width: 12),
+                          Text(
+                            _formatDisplayDate(_formatDate(checkOutDate)),
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+                  Text(
+                    sheetL10n.nightsCount(checkOutDate.difference(checkInDate).inDays),
+                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(sheetL10n.cancel),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            // Navigate to booking form with pre-filled dates
+                            context.push(
+                              '/bookings/new?accommodation_id=$accommodationId&check_in=${_formatDate(checkInDate)}&check_out=${_formatDate(checkOutDate)}',
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryColor,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: Text(sheetL10n.continueText),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 16),
+                ],
+              ),
+            );
+          },
         );
       },
     );

@@ -97,7 +97,16 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: 'new',
-                builder: (context, state) => const BookingFormScreen(),
+                builder: (context, state) {
+                  final params = state.uri.queryParameters;
+                  return BookingFormScreen(
+                    initialAccommodationId: params['accommodation_id'] != null
+                        ? int.tryParse(params['accommodation_id']!)
+                        : null,
+                    initialCheckIn: params['check_in'],
+                    initialCheckOut: params['check_out'],
+                  );
+                },
               ),
               GoRoute(
                 path: ':id',
