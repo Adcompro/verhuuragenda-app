@@ -866,6 +866,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       top: 2,
       bottom: 2,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: isBlocked ? null : () => _showBookingDetails(event),
         child: Container(
           width: barWidth,
