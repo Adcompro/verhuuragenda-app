@@ -773,6 +773,8 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get english => 'Engels';
   @override
+  String get spanish => 'Spaans';
+  @override
   String get languageChanged => 'Taal gewijzigd';
   @override
   String get all => 'Alle';
