@@ -777,6 +777,8 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get german => 'Deutsch';
   @override
+  String get french => 'Französisch';
+  @override
   String get languageChanged => 'Sprache geändert';
   @override
   String get all => 'Alle';
