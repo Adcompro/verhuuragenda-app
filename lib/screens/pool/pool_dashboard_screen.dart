@@ -178,6 +178,15 @@ class _PoolDashboardScreenState extends State<PoolDashboardScreen> {
             Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(l10n.couldNotLoadData(l10n.poolMaintenance.toLowerCase())),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Text(
+                _error!,
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                textAlign: TextAlign.center,
+              ),
+            ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadDashboard,
