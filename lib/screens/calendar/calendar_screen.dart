@@ -616,18 +616,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
             const SizedBox(height: 4),
             // Timeline bars
             Expanded(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  // Day backgrounds - tappable for new booking
-                  Row(
-                    children: dates.map((date) {
-                      final isToday = _isToday(date);
-                      final isWeekend = date.weekday >= 6;
-                      return Expanded(
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () => _showNewBookingDialog(date, accommodationId, accommodationName),
+              child: GestureDetector(
+                // Single tap detector for the whole timeline - only triggers if no booking is tapped
+                onTap: () {
+                  // Default: create new booking for today
+                  _showNewBookingDialog(DateTime.now(), accommodationId, accommodationName);
+                },
+                child: Stack(
+                  children: [
+                    // Day backgrounds (visual only - no gesture detection here!)
+                    Row(
+                      children: dates.map((date) {
+                        final isToday = _isToday(date);
+                        final isWeekend = date.weekday >= 6;
+                        return Expanded(
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 1),
                             decoration: BoxDecoration(
@@ -639,15 +641,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  // Blocked dates
-                  ...blocked.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: true)),
-                  // Bookings - these are on top and will intercept taps
-                  ...bookings.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: false)),
-                ],
+                        );
+                      }).toList(),
+                    ),
+                    // Blocked dates
+                    ...blocked.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: true)),
+                    // Bookings - these are on top and will intercept taps
+                    ...bookings.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: false)),
+                  ],
+                ),
               ),
             ),
           ],
@@ -863,15 +865,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     final barWidth = visibleDuration * cellWidth - 2;
 
-    // Use fixed top position and explicit height (like the working version from build 27)
+    // Exact structure from original working version (b6df13a)
     return Positioned(
       left: visibleStart * cellWidth,
-      top: 4,
+      top: 16,
       child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
         onTap: isBlocked ? null : () => _showBookingDetails(event),
         child: Container(
-          width: barWidth,
+          width: visibleDuration * cellWidth - 2,
           height: 28,
           margin: const EdgeInsets.symmetric(horizontal: 1),
           decoration: BoxDecoration(
