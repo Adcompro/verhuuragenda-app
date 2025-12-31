@@ -116,11 +116,19 @@ class IdealRanges {
       phMax: _parseDouble(json['ph']?['max']) ?? 7.6,
       chlorineMin: _parseDouble(json['chlorine']?['min']) ?? 1.0,
       chlorineMax: _parseDouble(json['chlorine']?['max']) ?? 3.0,
-      alkalinityMin: json['alkalinity']?['min'] ?? 80,
-      alkalinityMax: json['alkalinity']?['max'] ?? 120,
+      alkalinityMin: _parseInt(json['alkalinity']?['min']) ?? 80,
+      alkalinityMax: _parseInt(json['alkalinity']?['max']) ?? 120,
       tempMin: _parseDouble(json['temperature']?['min']) ?? 26.0,
       tempMax: _parseDouble(json['temperature']?['max']) ?? 28.0,
     );
+  }
+
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   static double _parseDouble(dynamic value) {
