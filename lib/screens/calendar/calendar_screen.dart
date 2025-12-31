@@ -486,9 +486,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           ),
 
-          // Timeline (visual)
+          // Timeline with tappable booking bars
           Padding(
-            padding: EdgeInsets.fromLTRB(isWide ? 20 : 16, 0, isWide ? 20 : 16, 8),
+            padding: EdgeInsets.fromLTRB(isWide ? 20 : 16, 0, isWide ? 20 : 16, isWide ? 20 : 16),
             child: SizedBox(
               height: timelineHeight,
               child: _buildTimeline(
@@ -500,56 +500,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
             ),
           ),
-
-          // Tappable booking chips (guaranteed to work - not inside Stack)
-          if (accBookings.isNotEmpty)
-            Padding(
-              padding: EdgeInsets.fromLTRB(isWide ? 20 : 16, 0, isWide ? 20 : 16, isWide ? 20 : 16),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: accBookings.map((booking) {
-                  final color = _parseColor(booking['color']);
-                  final guestName = booking['guest_name'] ?? 'Onbekend';
-                  final checkIn = booking['check_in'] ?? '';
-                  final checkOut = booking['check_out'] ?? '';
-
-                  return GestureDetector(
-                    onTap: () => _showBookingDetails(booking),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.person, color: Colors.white, size: 16),
-                          const SizedBox(width: 6),
-                          Text(
-                            guestName,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            '${_formatShortDate(checkIn)}-${_formatShortDate(checkOut)}',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.9),
-                              fontSize: 10,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
         ],
       ),
     );
@@ -643,7 +593,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         final timelineHeight = constraints.maxHeight;
         final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
 
-        // Timeline dimensions calculated
+        debugPrint('Timeline: width=${constraints.maxWidth}, height=$timelineHeight, cellWidth=$cellWidth');
 
         // Simple structure: Column with day numbers, then Stack with backgrounds and booking bars
         return Column(
@@ -919,48 +869,67 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     final barWidth = visibleDuration * cellWidth - 2;
 
-    // Booking bar - visual representation (taps handled via chips below timeline)
+    // DEBUG: Log bar creation
+    debugPrint('Building bar: $label at left=${visibleStart * cellWidth}, width=${visibleDuration * cellWidth - 2}');
+
+    // Booking bar - centered vertically in the Stack (which is now just the background area)
     return Positioned(
       left: visibleStart * cellWidth + 1,
       top: 2,
       bottom: 2,
-      child: Container(
-        width: visibleDuration * cellWidth - 4,
-        decoration: BoxDecoration(
-          color: color,
+      child: Material(
+        color: color,
+        borderRadius: BorderRadius.circular(6),
+        child: InkWell(
           borderRadius: BorderRadius.circular(6),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 6),
-        alignment: Alignment.centerLeft,
-        child: Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
+          onTap: isBlocked ? null : () {
+            debugPrint('TAP DETECTED on booking: $label');
+            _showBookingDetails(event);
+          },
+          child: Container(
+            width: visibleDuration * cellWidth - 4,
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
   }
 
   void _showBookingDetails(dynamic booking) {
-    final l10n = AppLocalizations.of(context)!;
-    final color = _parseColor(booking['color']);
-    final adults = booking['adults'] ?? 0;
-    final children = booking['children'] ?? 0;
-    final babies = booking['babies'] ?? 0;
-    final hasPet = booking['has_pet'] == true;
-    final petDescription = booking['pet_description'];
-    final totalAmount = (booking['total_amount'] ?? 0).toDouble();
-    final paidAmount = (booking['paid_amount'] ?? 0).toDouble();
-    final remainingAmount = (booking['remaining_amount'] ?? 0).toDouble();
-    final notes = booking['internal_notes'];
-    final nights = booking['nights'] ?? 0;
-    final accommodationName = booking['accommodation_name'] ?? '';
+    // Debug: Show snackbar to confirm tap was processed
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Opening: ${booking['guest_name'] ?? 'booking'}'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
 
-    showModalBottomSheet(
+    try {
+      final l10n = AppLocalizations.of(context)!;
+      final color = _parseColor(booking['color']);
+      final adults = booking['adults'] ?? 0;
+      final children = booking['children'] ?? 0;
+      final babies = booking['babies'] ?? 0;
+      final hasPet = booking['has_pet'] == true;
+      final petDescription = booking['pet_description'];
+      final totalAmount = (booking['total_amount'] ?? 0).toDouble();
+      final paidAmount = (booking['paid_amount'] ?? 0).toDouble();
+      final remainingAmount = (booking['remaining_amount'] ?? 0).toDouble();
+      final notes = booking['internal_notes'];
+      final nights = booking['nights'] ?? 0;
+      final accommodationName = booking['accommodation_name'] ?? '';
+
+      showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -1219,6 +1188,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
         );
       },
     );
+    } catch (e) {
+      // Show error in snackbar if something goes wrong
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
   }
 
   Widget _buildStatusBadge(String? status, AppLocalizations l10n) {
