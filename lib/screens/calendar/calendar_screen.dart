@@ -906,30 +906,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   void _showBookingDetails(dynamic booking) {
-    // Debug: Show snackbar to confirm tap was processed
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Opening: ${booking['guest_name'] ?? 'booking'}'),
-        duration: const Duration(seconds: 1),
-      ),
-    );
+    final l10n = AppLocalizations.of(context)!;
+    final color = _parseColor(booking['color']);
+    final adults = booking['adults'] ?? 0;
+    final children = booking['children'] ?? 0;
+    final babies = booking['babies'] ?? 0;
+    final hasPet = booking['has_pet'] == true;
+    final petDescription = booking['pet_description'];
+    final totalAmount = _parseDouble(booking['total_amount']);
+    final paidAmount = _parseDouble(booking['paid_amount']);
+    final remainingAmount = _parseDouble(booking['remaining_amount']);
+    final notes = booking['internal_notes'];
+    final nights = booking['nights'] ?? 0;
+    final accommodationName = booking['accommodation_name'] ?? '';
 
-    try {
-      final l10n = AppLocalizations.of(context)!;
-      final color = _parseColor(booking['color']);
-      final adults = booking['adults'] ?? 0;
-      final children = booking['children'] ?? 0;
-      final babies = booking['babies'] ?? 0;
-      final hasPet = booking['has_pet'] == true;
-      final petDescription = booking['pet_description'];
-      final totalAmount = _parseDouble(booking['total_amount']);
-      final paidAmount = _parseDouble(booking['paid_amount']);
-      final remainingAmount = _parseDouble(booking['remaining_amount']);
-      final notes = booking['internal_notes'];
-      final nights = booking['nights'] ?? 0;
-      final accommodationName = booking['accommodation_name'] ?? '';
-
-      showModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -1188,16 +1179,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
         );
       },
     );
-    } catch (e) {
-      // Show error in snackbar if something goes wrong
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 5),
-        ),
-      );
-    }
   }
 
   Widget _buildStatusBadge(String? status, AppLocalizations l10n) {
