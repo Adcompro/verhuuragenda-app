@@ -970,6 +970,55 @@ abstract class AppLocalizations {
   String get reportExported;
   String get occupancyRateLabel;
   String copySeasonsConfirmation(int fromYear, int toYear);
+
+  // Pool Maintenance
+  String get poolMaintenance;
+  String get poolHistory;
+  String get measurements;
+  String get tasks;
+  String get chemicals;
+  String get newMeasurement;
+  String get editMeasurement;
+  String get addTask;
+  String get editTask;
+  String get addChemical;
+  String get editChemical;
+  String get viewHistory;
+  String get lastMeasurement;
+  String get noMeasurementsYet;
+  String get noTasksYet;
+  String get noChemicalsYet;
+  String get noRecentActivity;
+  String get recentActivity;
+  String get actions;
+  String get chlorine;
+  String get freeChlorine;
+  String get totalChlorine;
+  String get alkalinity;
+  String get cyanuricAcid;
+  String get calciumHardness;
+  String get mainMeasurements;
+  String get additionalMeasurements;
+  String get measuredAt;
+  String get performedAt;
+  String get addedAt;
+  String get taskType;
+  String get chemicalType;
+  String get amount;
+  String get unit;
+  String get required;
+  String get invalidNumber;
+  String get measurementSaved;
+  String get taskSaved;
+  String get chemicalSaved;
+  String get couldNotSave;
+  String get deleteMeasurementQuestion;
+  String get deleteTaskQuestion;
+  String get deleteChemicalQuestion;
+  String get measurementDeleted;
+  String get taskDeleted;
+  String get chemicalDeleted;
+  String get couldNotDelete;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

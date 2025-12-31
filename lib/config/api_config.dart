@@ -27,4 +27,11 @@ class ApiConfig {
   static const String subscription = '/subscription';
   static const String notifications = '/notifications';
   static const String users = '/users';
+
+  // Pool Maintenance
+  static const String poolMeasurements = '/pool-measurements';
+  static const String poolTasks = '/pool-tasks';
+  static const String poolChemicals = '/pool-chemicals';
+  static const String poolDashboard = '/pool/dashboard';
+  static const String poolHistory = '/pool/history';
 }

@@ -1906,4 +1906,146 @@ class AppLocalizationsEs extends AppLocalizations {
   String get occupancyRateLabel => 'Ocupación';
   @override
   String copySeasonsConfirmation(int fromYear, int toYear) => '¿Estás seguro de que deseas copiar las temporadas de $fromYear a $toYear?\n\nEsta acción no se puede deshacer.';
+
+  // Pool Maintenance
+  @override
+  String get poolMaintenance => 'Piscina';
+  @override
+  String get poolHistory => 'Historial de piscina';
+  @override
+  String get measurements => 'Mediciones';
+  @override
+  String get poolTasks => 'Tareas';
+  @override
+  String get poolChemicals => 'Químicos';
+  @override
+  String get newMeasurement => 'Nueva medición';
+  @override
+  String get editMeasurement => 'Editar medición';
+  @override
+  String get addPoolTask => 'Añadir tarea';
+  @override
+  String get editPoolTask => 'Editar tarea';
+  @override
+  String get addChemical => 'Añadir químico';
+  @override
+  String get editChemical => 'Editar químico';
+  @override
+  String get viewHistory => 'Ver historial';
+  @override
+  String get lastMeasurement => 'Última medición';
+  @override
+  String get noMeasurementsYet => 'Sin mediciones todavía';
+  @override
+  String get noPoolTasksYet => 'Sin tareas todavía';
+  @override
+  String get noChemicalsYet => 'Sin químicos todavía';
+  @override
+  String get noRecentActivity => 'Sin actividad reciente';
+  @override
+  String get recentActivity => 'Actividad reciente';
+  @override
+  String get quickActions => 'Acciones rápidas';
+  @override
+  String get phValue => 'Valor pH';
+  @override
+  String get waterTemperature => 'Temperatura del agua';
+  @override
+  String get chlorine => 'Cloro';
+  @override
+  String get freeChlorine => 'Cloro libre';
+  @override
+  String get totalChlorine => 'Cloro total';
+  @override
+  String get alkalinityValue => 'Alcalinidad';
+  @override
+  String get cyanuricAcid => 'Ácido cianúrico';
+  @override
+  String get calciumHardness => 'Dureza de calcio';
+  @override
+  String get tds => 'TDS';
+  @override
+  String get mainMeasurements => 'Mediciones principales';
+  @override
+  String get additionalMeasurements => 'Mediciones adicionales';
+  @override
+  String get measuredAt => 'Medido el';
+  @override
+  String get performedAt => 'Realizado el';
+  @override
+  String get addedAt => 'Añadido el';
+  @override
+  String get poolTaskType => 'Tipo de tarea';
+  @override
+  String get chemicalType => 'Tipo de químico';
+  @override
+  String get unitLabel => 'Unidad';
+  @override
+  String get invalidNumber => 'Número inválido';
+  @override
+  String get measurementSaved => 'Medición guardada';
+  @override
+  String get poolTaskSaved => 'Tarea guardada';
+  @override
+  String get chemicalSaved => 'Químico guardado';
+  @override
+  String get deleteMeasurementQuestion => '¿Eliminar medición?';
+  @override
+  String get deletePoolTaskQuestion => '¿Eliminar tarea?';
+  @override
+  String get deleteChemicalQuestion => '¿Eliminar químico?';
+  @override
+  String get measurementDeleted => 'Medición eliminada';
+  @override
+  String get poolTaskDeleted => 'Tarea eliminada';
+  @override
+  String get chemicalDeleted => 'Químico eliminado';
+  @override
+  String get filterClean => 'Limpiar filtro';
+  @override
+  String get skimmerEmpty => 'Vaciar skimmer';
+  @override
+  String get robotRun => 'Ejecutar robot';
+  @override
+  String get waterLevel => 'Verificar nivel de agua';
+  @override
+  String get pumpCheck => 'Verificar bomba';
+  @override
+  String get brushWalls => 'Cepillar paredes';
+  @override
+  String get winterize => 'Preparar para invierno';
+  @override
+  String get chlorineTablet => 'Pastilla de cloro';
+  @override
+  String get chlorineGranule => 'Gránulo de cloro';
+  @override
+  String get chlorineLiquid => 'Cloro líquido';
+  @override
+  String get phPlus => 'pH plus';
+  @override
+  String get phMinus => 'pH minus';
+  @override
+  String get antiAlgae => 'Anti-algas';
+  @override
+  String get flocculant => 'Floculante';
+  @override
+  String get shock => 'Tratamiento de choque';
+  @override
+  String get gram => 'gramo';
+  @override
+  String get ml => 'ml';
+  @override
+  String get tablet => 'pastilla';
+  @override
+  String get kg => 'kg';
+  @override
+  String get liter => 'litro';
+  @override
+  String get idealRange => 'Rango ideal';
+  @override
+  String get outOfRange => 'Fuera de rango';
+  @override
+  String get ok => 'OK';
+  @override
+  String get ppm => 'ppm';
 }

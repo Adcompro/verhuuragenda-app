@@ -21,6 +21,7 @@ import '../screens/settings/settings_screen.dart';
 import '../screens/settings/subscription_screen.dart';
 import '../screens/seasons/seasons_list_screen.dart';
 import '../screens/team/team_list_screen.dart';
+import '../screens/pool/pool_dashboard_screen.dart';
 import '../widgets/common/bottom_nav.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -133,6 +134,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/maintenance',
             builder: (context, state) => const MaintenanceListScreen(),
+          ),
+          GoRoute(
+            path: '/pool',
+            builder: (context, state) => const PoolDashboardScreen(),
           ),
           GoRoute(
             path: '/campaigns',

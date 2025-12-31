@@ -1906,4 +1906,100 @@ class AppLocalizationsNl extends AppLocalizations {
   String get occupancyRateLabel => 'Bezetting';
   @override
   String copySeasonsConfirmation(int fromYear, int toYear) => 'Weet je zeker dat je de seizoenen van $fromYear naar $toYear wilt kopiëren?\n\nDit kan niet ongedaan worden gemaakt.';
+
+  // Pool Maintenance
+  @override
+  String get poolMaintenance => 'Zwembad';
+  @override
+  String get poolHistory => 'Zwembad Geschiedenis';
+  @override
+  String get measurements => 'Metingen';
+  @override
+  String get tasks => 'Taken';
+  @override
+  String get chemicals => 'Chemicaliën';
+  @override
+  String get newMeasurement => 'Nieuwe Meting';
+  @override
+  String get editMeasurement => 'Meting Bewerken';
+  @override
+  String get addTask => 'Taak Toevoegen';
+  @override
+  String get editTask => 'Taak Bewerken';
+  @override
+  String get addChemical => 'Chemicaliën Toevoegen';
+  @override
+  String get editChemical => 'Chemicaliën Bewerken';
+  @override
+  String get viewHistory => 'Bekijk Geschiedenis';
+  @override
+  String get lastMeasurement => 'Laatste Meting';
+  @override
+  String get noMeasurementsYet => 'Nog geen metingen';
+  @override
+  String get noTasksYet => 'Nog geen taken';
+  @override
+  String get noChemicalsYet => 'Nog geen chemicaliën toegevoegd';
+  @override
+  String get noRecentActivity => 'Geen recente activiteit';
+  @override
+  String get recentActivity => 'Recente Activiteit';
+  @override
+  String get actions => 'Acties';
+  @override
+  String get chlorine => 'Chloor';
+  @override
+  String get freeChlorine => 'Vrij Chloor';
+  @override
+  String get totalChlorine => 'Totaal Chloor';
+  @override
+  String get alkalinity => 'Alkaliniteit';
+  @override
+  String get cyanuricAcid => 'Cyaanzuur';
+  @override
+  String get calciumHardness => 'Calcium Hardheid';
+  @override
+  String get mainMeasurements => 'Hoofdmetingen';
+  @override
+  String get additionalMeasurements => 'Extra Metingen';
+  @override
+  String get measuredAt => 'Gemeten op';
+  @override
+  String get performedAt => 'Uitgevoerd op';
+  @override
+  String get addedAt => 'Toegevoegd op';
+  @override
+  String get taskType => 'Type Taak';
+  @override
+  String get chemicalType => 'Type Chemicaliën';
+  @override
+  String get amount => 'Hoeveelheid';
+  @override
+  String get unit => 'Eenheid';
+  @override
+  String get required => 'Verplicht';
+  @override
+  String get invalidNumber => 'Ongeldig getal';
+  @override
+  String get measurementSaved => 'Meting opgeslagen';
+  @override
+  String get taskSaved => 'Taak opgeslagen';
+  @override
+  String get chemicalSaved => 'Chemicaliën opgeslagen';
+  @override
+  String get couldNotSave => 'Kon niet opslaan';
+  @override
+  String get deleteMeasurementQuestion => 'Weet je zeker dat je deze meting wilt verwijderen?';
+  @override
+  String get deleteTaskQuestion => 'Weet je zeker dat je deze taak wilt verwijderen?';
+  @override
+  String get deleteChemicalQuestion => 'Weet je zeker dat je deze toevoeging wilt verwijderen?';
+  @override
+  String get measurementDeleted => 'Meting verwijderd';
+  @override
+  String get taskDeleted => 'Taak verwijderd';
+  @override
+  String get chemicalDeleted => 'Chemicaliën verwijderd';
+  @override
+  String get couldNotDelete => 'Kon niet verwijderen';
 }
