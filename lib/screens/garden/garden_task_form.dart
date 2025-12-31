@@ -73,7 +73,14 @@ class _GardenTaskFormState extends State<GardenTaskForm> {
   Future<void> _loadAccommodations() async {
     try {
       final response = await ApiClient.instance.get(ApiConfig.accommodations);
-      final data = response.data['data'] as List;
+      List<dynamic> data;
+      if (response.data is Map && response.data['data'] != null) {
+        data = response.data['data'] as List;
+      } else if (response.data is List) {
+        data = response.data as List;
+      } else {
+        data = [];
+      }
       setState(() {
         _accommodations = data.map((a) => {'id': a['id'], 'name': a['name']}).toList();
         if (_selectedAccommodationId == null && _accommodations.isNotEmpty) {
