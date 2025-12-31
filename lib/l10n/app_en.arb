@@ -290,6 +290,7 @@
   "delete": "Delete",
   "edit": "Edit",
   "add": "Add",
+  "create": "Create",
   "close": "Close",
   "confirm": "Confirm",
   "yes": "Yes",
@@ -317,6 +318,7 @@
   "copied": "Copied",
 
   "noAccommodations": "No accommodations yet",
+  "noAccommodationsYet": "You haven't added any accommodations yet",
   "addFirstAccommodation": "Add your first accommodation",
   "noBookings": "No bookings yet",
   "noUpcomingBookings": "No upcoming bookings",
@@ -1310,6 +1312,7 @@
   "totalChlorine": "Total Chlorine",
   "alkalinity": "Alkalinity",
   "cyanuricAcid": "Cyanuric Acid",
+  "temperature": "Temperature",
   "calciumHardness": "Calcium Hardness",
   "mainMeasurements": "Main Measurements",
   "additionalMeasurements": "Additional Measurements",

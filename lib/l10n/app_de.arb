@@ -286,6 +286,7 @@
   "delete": "Löschen",
   "edit": "Bearbeiten",
   "add": "Hinzufügen",
+  "create": "Erstellen",
   "close": "Schließen",
   "confirm": "Bestätigen",
   "yes": "Ja",
@@ -312,6 +313,7 @@
   "copied": "Kopiert",
 
   "noAccommodations": "Noch keine Unterkünfte",
+  "noAccommodationsYet": "Sie haben noch keine Unterkünfte hinzugefügt",
   "addFirstAccommodation": "Fügen Sie Ihre erste Unterkunft hinzu",
   "noBookings": "Noch keine Buchungen",
   "noUpcomingBookings": "Keine anstehenden Buchungen",
@@ -1305,6 +1307,7 @@
   "totalChlorine": "Gesamtchlor",
   "alkalinity": "Alkalinität",
   "cyanuricAcid": "Cyanursäure",
+  "temperature": "Temperatur",
   "calciumHardness": "Kalziumhärte",
   "mainMeasurements": "Hauptmessungen",
   "additionalMeasurements": "Zusätzliche Messungen",

@@ -290,6 +290,7 @@
   "delete": "Eliminar",
   "edit": "Editar",
   "add": "Añadir",
+  "create": "Crear",
   "close": "Cerrar",
   "confirm": "Confirmar",
   "yes": "Sí",
@@ -317,6 +318,7 @@
   "copied": "Copiado",
 
   "noAccommodations": "Aún no hay alojamientos",
+  "noAccommodationsYet": "Aún no has añadido ningún alojamiento",
   "addFirstAccommodation": "Añade tu primer alojamiento",
   "noBookings": "Aún no hay reservas",
   "noUpcomingBookings": "No hay reservas próximas",
@@ -1309,6 +1311,7 @@
   "totalChlorine": "Cloro total",
   "alkalinity": "Alcalinidad",
   "cyanuricAcid": "Ácido cianúrico",
+  "temperature": "Temperatura",
   "calciumHardness": "Dureza de calcio",
   "mainMeasurements": "Mediciones principales",
   "additionalMeasurements": "Mediciones adicionales",

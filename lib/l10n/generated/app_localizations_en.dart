@@ -507,6 +507,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get add => 'Add';
   @override
+  String get create => 'Create';
+  @override
   String get close => 'Close';
   @override
   String get confirm => 'Confirm';
@@ -556,6 +558,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get copied => 'Copied';
   @override
   String get noAccommodations => 'No accommodations yet';
+  @override
+  String get noAccommodationsYet => 'You haven\\'t added any accommodations yet';
   @override
   String get addFirstAccommodation => 'Add your first accommodation';
   @override
@@ -1960,6 +1964,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alkalinityValue => 'Alkalinity';
   @override
   String get cyanuricAcid => 'Cyanuric Acid';
+  @override
+  String get temperature => 'Temperature';
   @override
   String get calciumHardness => 'Calcium Hardness';
   @override

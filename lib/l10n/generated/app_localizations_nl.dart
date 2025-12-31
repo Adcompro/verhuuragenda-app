@@ -507,6 +507,8 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get add => 'Toevoegen';
   @override
+  String get create => 'Aanmaken';
+  @override
   String get close => 'Sluiten';
   @override
   String get confirm => 'Bevestigen';
@@ -556,6 +558,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String get copied => 'Gekopieerd';
   @override
   String get noAccommodations => 'Nog geen accommodaties';
+  @override
+  String get noAccommodationsYet => 'Je hebt nog geen accommodaties toegevoegd';
   @override
   String get addFirstAccommodation => 'Voeg je eerste accommodatie toe';
   @override
@@ -1956,6 +1960,8 @@ class AppLocalizationsNl extends AppLocalizations {
   String get alkalinity => 'Alkaliniteit';
   @override
   String get cyanuricAcid => 'Cyaanzuur';
+  @override
+  String get temperature => 'Temperatuur';
   @override
   String get calciumHardness => 'Calcium Hardheid';
   @override

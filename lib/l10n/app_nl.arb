@@ -290,6 +290,7 @@
   "delete": "Verwijderen",
   "edit": "Bewerken",
   "add": "Toevoegen",
+  "create": "Aanmaken",
   "close": "Sluiten",
   "confirm": "Bevestigen",
   "yes": "Ja",
@@ -317,6 +318,7 @@
   "copied": "Gekopieerd",
 
   "noAccommodations": "Nog geen accommodaties",
+  "noAccommodationsYet": "Je hebt nog geen accommodaties toegevoegd",
   "addFirstAccommodation": "Voeg je eerste accommodatie toe",
   "noBookings": "Nog geen boekingen",
   "noUpcomingBookings": "Geen aankomende boekingen",
@@ -1310,6 +1312,7 @@
   "totalChlorine": "Totaal Chloor",
   "alkalinity": "Alkaliniteit",
   "cyanuricAcid": "Cyaanzuur",
+  "temperature": "Temperatuur",
   "calciumHardness": "Calcium Hardheid",
   "mainMeasurements": "Hoofdmetingen",
   "additionalMeasurements": "Extra Metingen",

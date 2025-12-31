@@ -760,6 +760,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get add => 'Aggiungi';
 
   @override
+  String get create => 'Crea';
+
+  @override
   String get close => 'Chiudi';
 
   @override
@@ -833,6 +836,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get noAccommodations => 'Ancora nessun alloggio';
+
+  @override
+  String get noAccommodationsYet => 'Non hai ancora aggiunto alloggi';
 
   @override
   String get addFirstAccommodation => 'Aggiungi il tuo primo alloggio';
@@ -2912,6 +2918,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get alkalinityValue => 'Alcalinità';
   @override
   String get cyanuricAcid => 'Acido cianurico';
+  @override
+  String get temperature => 'Temperatura';
   @override
   String get calciumHardness => 'Durezza calcica';
   @override

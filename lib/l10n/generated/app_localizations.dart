@@ -270,6 +270,8 @@ abstract class AppLocalizations {
   String get delete;
   String get edit;
   String get add;
+
+  String get create;
   String get close;
   String get confirm;
   String get yes;
@@ -295,6 +297,8 @@ abstract class AppLocalizations {
   String get copy;
   String get copied;
   String get noAccommodations;
+
+  String get noAccommodationsYet;
   String get addFirstAccommodation;
   String get noBookings;
   String get noUpcomingBookings;
@@ -996,6 +1000,8 @@ abstract class AppLocalizations {
   String get totalChlorine;
   String get alkalinity;
   String get cyanuricAcid;
+
+  String get temperature;
   String get calciumHardness;
   String get mainMeasurements;
   String get additionalMeasurements;
