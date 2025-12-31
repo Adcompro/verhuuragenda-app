@@ -19,16 +19,23 @@ class PoolTask {
 
   factory PoolTask.fromJson(Map<String, dynamic> json) {
     return PoolTask(
-      id: json['id'] ?? 0,
-      accommodationId: json['accommodation_id'] ?? 0,
+      id: _parseInt(json['id']) ?? 0,
+      accommodationId: _parseInt(json['accommodation_id']) ?? 0,
       accommodationName: json['accommodation_name'],
       taskType: json['task_type'] ?? '',
       taskTypeLabel: json['task_type_label'],
       performedAt: json['performed_at'] != null
-          ? DateTime.parse(json['performed_at'])
+          ? DateTime.tryParse(json['performed_at'].toString()) ?? DateTime.now()
           : DateTime.now(),
       notes: json['notes'],
     );
+  }
+
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   Map<String, dynamic> toJson() {

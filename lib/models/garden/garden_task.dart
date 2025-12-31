@@ -61,35 +61,42 @@ class GardenTask {
 
   factory GardenTask.fromJson(Map<String, dynamic> json) {
     return GardenTask(
-      id: json['id'],
-      accommodationId: json['accommodation_id'],
+      id: _parseInt(json['id']),
+      accommodationId: _parseInt(json['accommodation_id']) ?? 0,
       accommodationName: json['accommodation_name'],
-      title: json['title'],
+      title: json['title'] ?? '',
       description: json['description'],
-      category: json['category'],
+      category: json['category'] ?? 'other',
       categoryLabel: json['category_label'],
       priority: json['priority'] ?? 'medium',
       priorityLabel: json['priority_label'],
       status: json['status'] ?? 'todo',
       statusLabel: json['status_label'],
-      dueDate: json['due_date'] != null ? DateTime.parse(json['due_date']) : null,
+      dueDate: json['due_date'] != null ? DateTime.tryParse(json['due_date'].toString()) : null,
       dueDateFormatted: json['due_date_formatted'],
       isOverdue: json['is_overdue'] ?? false,
-      estimatedMinutes: json['estimated_minutes'],
-      actualMinutes: json['actual_minutes'],
+      estimatedMinutes: _parseInt(json['estimated_minutes']),
+      actualMinutes: _parseInt(json['actual_minutes']),
       notes: json['notes'],
       photos: json['photos'] != null ? List<String>.from(json['photos']) : null,
       photoUrls: json['photo_urls'] != null ? List<String>.from(json['photo_urls']) : null,
       isRecurring: json['is_recurring'] ?? false,
       recurringInterval: json['recurring_interval'],
       recurringIntervalLabel: json['recurring_interval_label'],
-      recurringDay: json['recurring_day'],
-      completedAt: json['completed_at'] != null ? DateTime.parse(json['completed_at']) : null,
+      recurringDay: _parseInt(json['recurring_day']),
+      completedAt: json['completed_at'] != null ? DateTime.tryParse(json['completed_at'].toString()) : null,
       completedAtFormatted: json['completed_at_formatted'],
-      completedBy: json['completed_by'],
+      completedBy: _parseInt(json['completed_by']),
       completedByName: json['completed_by_name'],
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+      createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at'].toString()) : null,
     );
+  }
+
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   Map<String, dynamic> toJson() {

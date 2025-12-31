@@ -27,8 +27,8 @@ class PoolChemical {
 
   factory PoolChemical.fromJson(Map<String, dynamic> json) {
     return PoolChemical(
-      id: json['id'] ?? 0,
-      accommodationId: json['accommodation_id'] ?? 0,
+      id: _parseInt(json['id']) ?? 0,
+      accommodationId: _parseInt(json['accommodation_id']) ?? 0,
       accommodationName: json['accommodation_name'],
       chemicalType: json['chemical_type'] ?? '',
       chemicalTypeLabel: json['chemical_type_label'],
@@ -37,10 +37,17 @@ class PoolChemical {
       unitLabel: json['unit_label'],
       formattedAmount: json['formatted_amount'],
       addedAt: json['added_at'] != null
-          ? DateTime.parse(json['added_at'])
+          ? DateTime.tryParse(json['added_at'].toString()) ?? DateTime.now()
           : DateTime.now(),
       notes: json['notes'],
     );
+  }
+
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   static double? _parseDouble(dynamic value) {

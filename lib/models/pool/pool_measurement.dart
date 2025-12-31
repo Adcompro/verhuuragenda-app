@@ -35,24 +35,31 @@ class PoolMeasurement {
 
   factory PoolMeasurement.fromJson(Map<String, dynamic> json) {
     return PoolMeasurement(
-      id: json['id'] ?? 0,
-      accommodationId: json['accommodation_id'] ?? 0,
+      id: _parseInt(json['id']) ?? 0,
+      accommodationId: _parseInt(json['accommodation_id']) ?? 0,
       accommodationName: json['accommodation_name'],
       measuredAt: json['measured_at'] != null
-          ? DateTime.parse(json['measured_at'])
+          ? DateTime.tryParse(json['measured_at'].toString()) ?? DateTime.now()
           : DateTime.now(),
       phValue: _parseDouble(json['ph_value']),
       phStatus: json['ph_status'],
       freeChlorine: _parseDouble(json['free_chlorine']),
       chlorineStatus: json['chlorine_status'],
       totalChlorine: _parseDouble(json['total_chlorine']),
-      alkalinity: json['alkalinity'] != null ? int.tryParse(json['alkalinity'].toString()) : null,
+      alkalinity: _parseInt(json['alkalinity']),
       waterTemperature: _parseDouble(json['water_temperature']),
-      cyanuricAcid: json['cyanuric_acid'] != null ? int.tryParse(json['cyanuric_acid'].toString()) : null,
-      calciumHardness: json['calcium_hardness'] != null ? int.tryParse(json['calcium_hardness'].toString()) : null,
-      tds: json['tds'] != null ? int.tryParse(json['tds'].toString()) : null,
+      cyanuricAcid: _parseInt(json['cyanuric_acid']),
+      calciumHardness: _parseInt(json['calcium_hardness']),
+      tds: _parseInt(json['tds']),
       notes: json['notes'],
     );
+  }
+
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   static double? _parseDouble(dynamic value) {
