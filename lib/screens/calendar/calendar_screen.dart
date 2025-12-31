@@ -635,13 +635,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
               }).toList(),
             ),
             const SizedBox(height: 4),
-            // Timeline bars with single GestureDetector
+            // Timeline bars - using Listener for raw pointer events (avoids gesture arena conflicts with ListView)
             Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTapUp: (details) {
-                  final tapX = details.localPosition.dx;
-
+              child: _TapDetector(
+                onTap: (tapX) {
                   // Check if tap is on a booking (check in reverse order - top bookings first)
                   for (final rect in bookingRects.reversed) {
                     if (tapX >= rect['left'] && tapX < rect['right']) {
@@ -1513,5 +1510,56 @@ class _CalendarScreenState extends State<CalendarScreen> {
       case 'belvilla': return 'Belvilla';
       default: return l10n.blocked;
     }
+  }
+}
+
+/// Custom tap detector that uses raw pointer events to avoid gesture arena conflicts.
+/// This is necessary because the calendar is inside a ListView, and GestureDetector
+/// conflicts with the scroll gesture recognition.
+class _TapDetector extends StatefulWidget {
+  final void Function(double tapX) onTap;
+  final Widget child;
+
+  const _TapDetector({required this.onTap, required this.child});
+
+  @override
+  State<_TapDetector> createState() => _TapDetectorState();
+}
+
+class _TapDetectorState extends State<_TapDetector> {
+  Offset? _downPosition;
+  DateTime? _downTime;
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      behavior: HitTestBehavior.opaque,
+      onPointerDown: (event) {
+        _downPosition = event.localPosition;
+        _downTime = DateTime.now();
+      },
+      onPointerUp: (event) {
+        if (_downPosition == null || _downTime == null) return;
+
+        final upPosition = event.localPosition;
+        final distance = (upPosition - _downPosition!).distance;
+        final duration = DateTime.now().difference(_downTime!);
+
+        // Only trigger tap if:
+        // 1. Finger didn't move more than 20 pixels (not a scroll/drag)
+        // 2. Duration was less than 500ms (not a long press)
+        if (distance < 20 && duration.inMilliseconds < 500) {
+          widget.onTap(upPosition.dx);
+        }
+
+        _downPosition = null;
+        _downTime = null;
+      },
+      onPointerCancel: (_) {
+        _downPosition = null;
+        _downTime = null;
+      },
+      child: widget.child,
+    );
   }
 }
