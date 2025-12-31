@@ -486,9 +486,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           ),
 
-          // Timeline with tappable booking bars
+          // Timeline (visual)
           Padding(
-            padding: EdgeInsets.fromLTRB(isWide ? 20 : 16, 0, isWide ? 20 : 16, isWide ? 20 : 16),
+            padding: EdgeInsets.fromLTRB(isWide ? 20 : 16, 0, isWide ? 20 : 16, 8),
             child: SizedBox(
               height: timelineHeight,
               child: _buildTimeline(
@@ -500,6 +500,56 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
             ),
           ),
+
+          // Tappable booking chips (guaranteed to work - not inside Stack)
+          if (accBookings.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.fromLTRB(isWide ? 20 : 16, 0, isWide ? 20 : 16, isWide ? 20 : 16),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: accBookings.map((booking) {
+                  final color = _parseColor(booking['color']);
+                  final guestName = booking['guest_name'] ?? 'Onbekend';
+                  final checkIn = booking['check_in'] ?? '';
+                  final checkOut = booking['check_out'] ?? '';
+
+                  return GestureDetector(
+                    onTap: () => _showBookingDetails(booking),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.person, color: Colors.white, size: 16),
+                          const SizedBox(width: 6),
+                          Text(
+                            guestName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${_formatShortDate(checkIn)}-${_formatShortDate(checkOut)}',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
         ],
       ),
     );
@@ -593,7 +643,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         final timelineHeight = constraints.maxHeight;
         final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
 
-        debugPrint('Timeline: width=${constraints.maxWidth}, height=$timelineHeight, cellWidth=$cellWidth');
+        // Timeline dimensions calculated
 
         // Simple structure: Column with day numbers, then Stack with backgrounds and booking bars
         return Column(
@@ -869,37 +919,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     final barWidth = visibleDuration * cellWidth - 2;
 
-    // DEBUG: Log bar creation
-    debugPrint('Building bar: $label at left=${visibleStart * cellWidth}, width=${visibleDuration * cellWidth - 2}');
-
-    // Booking bar - centered vertically in the Stack (which is now just the background area)
+    // Booking bar - visual representation (taps handled via chips below timeline)
     return Positioned(
       left: visibleStart * cellWidth + 1,
       top: 2,
       bottom: 2,
-      child: Material(
-        color: color,
-        borderRadius: BorderRadius.circular(6),
-        child: InkWell(
+      child: Container(
+        width: visibleDuration * cellWidth - 4,
+        decoration: BoxDecoration(
+          color: color,
           borderRadius: BorderRadius.circular(6),
-          onTap: isBlocked ? null : () {
-            debugPrint('TAP DETECTED on booking: $label');
-            _showBookingDetails(event);
-          },
-          child: Container(
-            width: visibleDuration * cellWidth - 4,
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        alignment: Alignment.centerLeft,
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
