@@ -590,32 +590,49 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final cellWidth = constraints.maxWidth / daysToShow;
+        final timelineHeight = constraints.maxHeight;
         final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
 
-        // Exact structure from original working version (b6df13a)
-        // Day numbers are INSIDE the Stack, no outer GestureDetector
-        return Stack(
-          children: [
-            // Day indicators (numbers + backgrounds in one Row)
-            Row(
-              children: dates.map((date) {
-                final isToday = _isToday(date);
-                final isWeekend = date.weekday >= 6;
+        debugPrint('Timeline: width=${constraints.maxWidth}, height=$timelineHeight, cellWidth=$cellWidth');
 
-                return SizedBox(
-                  width: cellWidth,
-                  child: Column(
-                    children: [
-                      Text(
-                        '${date.day}',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
-                          color: isToday ? AppTheme.primaryColor : Colors.grey[500],
-                        ),
+        // Simple structure: Column with day numbers, then Stack with backgrounds and booking bars
+        return Column(
+          children: [
+            // Day numbers row (separate, not in Stack)
+            SizedBox(
+              height: 14,
+              child: Row(
+                children: dates.map((date) {
+                  final isToday = _isToday(date);
+                  return SizedBox(
+                    width: cellWidth,
+                    child: Text(
+                      '${date.day}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
+                        color: isToday ? AppTheme.primaryColor : Colors.grey[500],
                       ),
-                      const SizedBox(height: 4),
-                      Expanded(
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: 2),
+            // Timeline area with booking bars
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Day backgrounds
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: dates.map((date) {
+                      final isToday = _isToday(date);
+                      final isWeekend = date.weekday >= 6;
+                      return SizedBox(
+                        width: cellWidth,
                         child: Container(
                           margin: const EdgeInsets.symmetric(horizontal: 1),
                           decoration: BoxDecoration(
@@ -627,18 +644,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
-                      ),
-                    ],
+                      );
+                    }).toList(),
                   ),
-                );
-              }).toList(),
+
+                  // Blocked dates
+                  ...blocked.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: true)),
+
+                  // Bookings - positioned on top
+                  ...bookings.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: false)),
+                ],
+              ),
             ),
-
-            // Blocked dates (positioned on top)
-            ...blocked.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: true)),
-
-            // Bookings (positioned on top) - these intercept taps
-            ...bookings.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: false)),
           ],
         );
       },
@@ -852,30 +869,36 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     final barWidth = visibleDuration * cellWidth - 2;
 
-    // Exact structure from original working version (b6df13a)
+    // DEBUG: Log bar creation
+    debugPrint('Building bar: $label at left=${visibleStart * cellWidth}, width=${visibleDuration * cellWidth - 2}');
+
+    // Booking bar - centered vertically in the Stack (which is now just the background area)
     return Positioned(
-      left: visibleStart * cellWidth,
-      top: 16,
-      child: GestureDetector(
-        onTap: isBlocked ? null : () => _showBookingDetails(event),
-        child: Container(
-          width: visibleDuration * cellWidth - 2,
-          height: 28,
-          margin: const EdgeInsets.symmetric(horizontal: 1),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
+      left: visibleStart * cellWidth + 1,
+      top: 2,
+      bottom: 2,
+      child: Material(
+        color: color,
+        borderRadius: BorderRadius.circular(6),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(6),
+          onTap: isBlocked ? null : () {
+            debugPrint('TAP DETECTED on booking: $label');
+            _showBookingDetails(event);
+          },
+          child: Container(
+            width: visibleDuration * cellWidth - 4,
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
-            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
