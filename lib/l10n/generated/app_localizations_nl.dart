@@ -2002,4 +2002,120 @@ class AppLocalizationsNl extends AppLocalizations {
   String get chemicalDeleted => 'Chemicaliën verwijderd';
   @override
   String get couldNotDelete => 'Kon niet verwijderen';
+
+  // Garden Maintenance
+  @override
+  String get gardenMaintenance => 'Tuin';
+  @override
+  String get gardenDashboard => 'Tuin Dashboard';
+  @override
+  String get gardenTasks => 'Tuintaken';
+  @override
+  String get gardenTask => 'Tuintaak';
+  @override
+  String get newGardenTask => 'Nieuwe Tuintaak';
+  @override
+  String get editGardenTask => 'Tuintaak Bewerken';
+  @override
+  String get todoTasks => 'Te Doen';
+  @override
+  String get completedTasks => 'Voltooid';
+  @override
+  String get recurringTasks => 'Terugkerend';
+  @override
+  String get overdueTasks => 'Achterstallig';
+  @override
+  String get upcomingTasks => 'Komende Taken';
+  @override
+  String get recentlyCompleted => 'Recent Voltooid';
+  @override
+  String get noUpcomingTasks => 'Geen komende taken';
+  @override
+  String get noCompletedTasks => 'Geen voltooide taken';
+  @override
+  String get noTodoTasks => 'Geen openstaande taken';
+  @override
+  String get noRecurringTasks => 'Geen terugkerende taken';
+  @override
+  String get viewAllTasks => 'Bekijk Alle Taken';
+  @override
+  String get mowing => 'Grasmaaien';
+  @override
+  String get pruning => 'Snoeien';
+  @override
+  String get weeding => 'Onkruid Wieden';
+  @override
+  String get fertilizing => 'Bemesten';
+  @override
+  String get watering => 'Water Geven';
+  @override
+  String get leafRemoval => 'Bladeren Ruimen';
+  @override
+  String get hedgeTrimming => 'Haag Knippen';
+  @override
+  String get planting => 'Planten';
+  @override
+  String get seeding => 'Zaaien';
+  @override
+  String get composting => 'Composteren';
+  @override
+  String get toolMaintenance => 'Gereedschap Onderhoud';
+  @override
+  String get other => 'Overig';
+  @override
+  String get priority => 'Prioriteit';
+  @override
+  String get low => 'Laag';
+  @override
+  String get medium => 'Midden';
+  @override
+  String get high => 'Hoog';
+  @override
+  String get urgent => 'Urgent';
+  @override
+  String get overdue => 'Achterstallig';
+  @override
+  String get dueDate => 'Deadline';
+  @override
+  String get estimatedTime => 'Geschatte Tijd';
+  @override
+  String get actualTime => 'Werkelijke Tijd';
+  @override
+  String get minutes => 'minuten';
+  @override
+  String get recurringTask => 'Terugkerende Taak';
+  @override
+  String get recurringTaskDescription => 'Deze taak herhaalt automatisch';
+  @override
+  String get recurringInterval => 'Herhaal Interval';
+  @override
+  String get daily => 'Dagelijks';
+  @override
+  String get weekly => 'Wekelijks';
+  @override
+  String get biweekly => 'Tweewekelijks';
+  @override
+  String get monthly => 'Maandelijks';
+  @override
+  String get quarterly => 'Per Kwartaal';
+  @override
+  String get yearly => 'Jaarlijks';
+  @override
+  String get taskTitle => 'Titel';
+  @override
+  String get taskDescription => 'Beschrijving taak';
+  @override
+  String get markComplete => 'Markeer als Voltooid';
+  @override
+  String get completeTask => 'Taak Voltooien';
+  @override
+  String get taskCompleted => 'Taak voltooid';
+  @override
+  String get deleteTask => 'Taak Verwijderen';
+  @override
+  String get deleteTaskConfirmation => 'Weet je zeker dat je deze taak wilt verwijderen?';
+  @override
+  String get notSet => 'Niet ingesteld';
+  @override
+  String get category => 'Categorie';
 }

@@ -1019,6 +1019,75 @@ abstract class AppLocalizations {
   String get taskDeleted;
   String get chemicalDeleted;
   String get couldNotDelete;
+
+  // Garden Maintenance
+  String get gardenMaintenance;
+  String get gardenDashboard;
+  String get gardenTasks;
+  String get gardenTask;
+  String get newGardenTask;
+  String get editGardenTask;
+  String get todoTasks;
+  String get completedTasks;
+  String get recurringTasks;
+  String get overdueTasks;
+  String get upcomingTasks;
+  String get recentlyCompleted;
+  String get noUpcomingTasks;
+  String get noCompletedTasks;
+  String get noTodoTasks;
+  String get noRecurringTasks;
+  String get viewAllTasks;
+
+  // Garden categories
+  String get mowing;
+  String get pruning;
+  String get weeding;
+  String get fertilizing;
+  String get watering;
+  String get leafRemoval;
+  String get hedgeTrimming;
+  String get planting;
+  String get seeding;
+  String get composting;
+  String get toolMaintenance;
+  String get other;
+
+  // Priority
+  String get priority;
+  String get low;
+  String get medium;
+  String get high;
+  String get urgent;
+
+  // Task fields
+  String get overdue;
+  String get dueDate;
+  String get estimatedTime;
+  String get actualTime;
+  String get minutes;
+
+  // Recurring
+  String get recurringTask;
+  String get recurringTaskDescription;
+  String get recurringInterval;
+  String get daily;
+  String get weekly;
+  String get biweekly;
+  String get monthly;
+  String get quarterly;
+  String get yearly;
+
+  // Task actions
+  String get taskTitle;
+  String get taskDescription;
+  String get markComplete;
+  String get completeTask;
+  String get taskCompleted;
+  String get deleteTask;
+  String get deleteTaskConfirmation;
+  String get notSet;
+  String get category;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

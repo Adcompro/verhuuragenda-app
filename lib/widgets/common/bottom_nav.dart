@@ -19,9 +19,10 @@ class BottomNavShell extends StatelessWidget {
     if (location.startsWith('/cleaning')) return 5;
     if (location.startsWith('/maintenance')) return 6;
     if (location.startsWith('/pool')) return 7;
-    if (location.startsWith('/campaigns')) return 8;
-    if (location.startsWith('/statistics')) return 9;
-    if (location.startsWith('/settings')) return 10;
+    if (location.startsWith('/garden')) return 8;
+    if (location.startsWith('/campaigns')) return 9;
+    if (location.startsWith('/statistics')) return 10;
+    if (location.startsWith('/settings')) return 11;
     return 0;
   }
 
@@ -52,12 +53,15 @@ class BottomNavShell extends StatelessWidget {
         context.go('/pool');
         break;
       case 8:
-        context.go('/campaigns');
+        context.go('/garden');
         break;
       case 9:
-        context.go('/statistics');
+        context.go('/campaigns');
         break;
       case 10:
+        context.go('/statistics');
+        break;
+      case 11:
         context.go('/settings');
         break;
     }
@@ -82,7 +86,7 @@ class BottomNavShell extends StatelessWidget {
         children: [
           // Side Navigation Rail
           NavigationRail(
-            selectedIndex: selectedIndex > 10 ? 0 : selectedIndex,
+            selectedIndex: selectedIndex > 11 ? 0 : selectedIndex,
             onDestinationSelected: (index) => _onDestinationSelected(context, index),
             extended: Responsive.isDesktop(context),
             minExtendedWidth: 200,
@@ -141,6 +145,11 @@ class BottomNavShell extends StatelessWidget {
                 icon: const Icon(Icons.pool_outlined),
                 selectedIcon: const Icon(Icons.pool),
                 label: Text(l10n.poolMaintenance),
+              ),
+              NavigationRailDestination(
+                icon: const Icon(Icons.yard_outlined),
+                selectedIcon: const Icon(Icons.yard),
+                label: Text(l10n.gardenMaintenance),
               ),
               NavigationRailDestination(
                 icon: const Icon(Icons.campaign_outlined),
@@ -288,6 +297,14 @@ class BottomNavShell extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 context.go('/pool');
+              },
+            ),
+            _MenuItem(
+              icon: Icons.yard_outlined,
+              label: l10n.gardenMaintenance,
+              onTap: () {
+                Navigator.pop(context);
+                context.go('/garden');
               },
             ),
             _MenuItem(

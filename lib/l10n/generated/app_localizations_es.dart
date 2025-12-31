@@ -2048,4 +2048,126 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ok => 'OK';
   @override
   String get ppm => 'ppm';
+
+  // Garden Maintenance
+  @override
+  String get gardenMaintenance => 'Mantenimiento del jardín';
+  @override
+  String get gardenDashboard => 'Panel del jardín';
+  @override
+  String get gardenTasks => 'Tareas de jardinería';
+  @override
+  String get gardenTask => 'Tarea de jardinería';
+  @override
+  String get newGardenTask => 'Nueva tarea';
+  @override
+  String get editGardenTask => 'Editar tarea';
+  @override
+  String get todoTasks => 'Por hacer';
+  @override
+  String get completedTasks => 'Completadas';
+  @override
+  String get recurringTasks => 'Recurrentes';
+  @override
+  String get overdueTasks => 'Atrasadas';
+  @override
+  String get upcomingTasks => 'Próximas tareas';
+  @override
+  String get recentlyCompleted => 'Completadas recientemente';
+  @override
+  String get viewAllTasks => 'Ver todas las tareas';
+
+  // Garden categories
+  @override
+  String get mowing => 'Cortar césped';
+  @override
+  String get pruning => 'Podar';
+  @override
+  String get weeding => 'Desherbar';
+  @override
+  String get fertilizing => 'Fertilizar';
+  @override
+  String get watering => 'Regar';
+  @override
+  String get leafRemoval => 'Recoger hojas';
+  @override
+  String get hedgeTrimming => 'Recortar seto';
+  @override
+  String get planting => 'Plantar';
+  @override
+  String get seeding => 'Sembrar';
+  @override
+  String get composting => 'Compostar';
+  @override
+  String get toolMaintenance => 'Mantenimiento de herramientas';
+
+  // Garden status
+  @override
+  String get todo => 'Por hacer';
+  @override
+  String get inProgressStatus => 'En progreso';
+  @override
+  String get completedStatus => 'Completado';
+  @override
+  String get cancelledStatus => 'Cancelado';
+
+  // Garden priority
+  @override
+  String get lowPriority => 'Baja';
+  @override
+  String get mediumPriority => 'Media';
+  @override
+  String get highPriority => 'Alta';
+  @override
+  String get urgentPriority => 'Urgente';
+
+  // Recurring
+  @override
+  String get daily => 'Diario';
+  @override
+  String get weekly => 'Semanal';
+  @override
+  String get biweekly => 'Quincenal';
+  @override
+  String get monthly => 'Mensual';
+  @override
+  String get quarterly => 'Trimestral';
+  @override
+  String get yearly => 'Anual';
+  @override
+  String get recurringTask => 'Tarea recurrente';
+  @override
+  String get recurringInterval => 'Intervalo de repetición';
+  @override
+  String get nextDueDate => 'Próxima fecha límite';
+
+  // Garden form
+  @override
+  String get taskTitle => 'Título de la tarea';
+  @override
+  String get taskDescription => 'Descripción';
+  @override
+  String get dueDate => 'Fecha límite';
+  @override
+  String get estimatedTime => 'Tiempo estimado';
+  @override
+  String get actualTime => 'Tiempo real';
+  @override
+  String get addPhotos => 'Añadir fotos';
+  @override
+  String get markComplete => 'Marcar como completado';
+  @override
+  String get completeTask => 'Completar tarea';
+  @override
+  String get taskSaved => 'Tarea guardada';
+  @override
+  String get taskDeleted => 'Tarea eliminada';
+  @override
+  String get taskCompleted => 'Tarea completada';
+  @override
+  String get confirmDeleteTask => '¿Está seguro de que desea eliminar esta tarea?';
+  @override
+  String get noTasksFound => 'No se encontraron tareas';
+  @override
+  String get addFirstTask => 'Añada su primera tarea de jardinería';
 }

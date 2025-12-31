@@ -34,4 +34,9 @@ class ApiConfig {
   static const String poolChemicals = '/pool-chemicals';
   static const String poolDashboard = '/pool/dashboard';
   static const String poolHistory = '/pool/history';
+
+  // Garden Maintenance
+  static const String gardenTasks = '/garden-tasks';
+  static const String gardenDashboard = '/garden/dashboard';
+  static const String gardenRecurring = '/garden/recurring';
 }

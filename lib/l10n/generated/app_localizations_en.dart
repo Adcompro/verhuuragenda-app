@@ -2048,4 +2048,120 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ok => 'OK';
   @override
   String get ppm => 'ppm';
+
+  // Garden Maintenance
+  @override
+  String get gardenMaintenance => 'Garden';
+  @override
+  String get gardenDashboard => 'Garden Dashboard';
+  @override
+  String get gardenTasks => 'Garden Tasks';
+  @override
+  String get gardenTask => 'Garden Task';
+  @override
+  String get newGardenTask => 'New Garden Task';
+  @override
+  String get editGardenTask => 'Edit Garden Task';
+  @override
+  String get todoTasks => 'To Do';
+  @override
+  String get completedTasks => 'Completed';
+  @override
+  String get recurringTasks => 'Recurring';
+  @override
+  String get overdueTasks => 'Overdue';
+  @override
+  String get upcomingTasks => 'Upcoming Tasks';
+  @override
+  String get recentlyCompleted => 'Recently Completed';
+  @override
+  String get noUpcomingTasks => 'No upcoming tasks';
+  @override
+  String get noCompletedTasks => 'No completed tasks';
+  @override
+  String get noTodoTasks => 'No open tasks';
+  @override
+  String get noRecurringTasks => 'No recurring tasks';
+  @override
+  String get viewAllTasks => 'View All Tasks';
+  @override
+  String get mowing => 'Mowing';
+  @override
+  String get pruning => 'Pruning';
+  @override
+  String get weeding => 'Weeding';
+  @override
+  String get fertilizing => 'Fertilizing';
+  @override
+  String get watering => 'Watering';
+  @override
+  String get leafRemoval => 'Leaf Removal';
+  @override
+  String get hedgeTrimming => 'Hedge Trimming';
+  @override
+  String get planting => 'Planting';
+  @override
+  String get seeding => 'Seeding';
+  @override
+  String get composting => 'Composting';
+  @override
+  String get toolMaintenance => 'Tool Maintenance';
+  @override
+  String get other => 'Other';
+  @override
+  String get priority => 'Priority';
+  @override
+  String get low => 'Low';
+  @override
+  String get medium => 'Medium';
+  @override
+  String get high => 'High';
+  @override
+  String get urgent => 'Urgent';
+  @override
+  String get overdue => 'Overdue';
+  @override
+  String get dueDate => 'Due Date';
+  @override
+  String get estimatedTime => 'Estimated Time';
+  @override
+  String get actualTime => 'Actual Time';
+  @override
+  String get minutes => 'minutes';
+  @override
+  String get recurringTask => 'Recurring Task';
+  @override
+  String get recurringTaskDescription => 'This task repeats automatically';
+  @override
+  String get recurringInterval => 'Repeat Interval';
+  @override
+  String get daily => 'Daily';
+  @override
+  String get weekly => 'Weekly';
+  @override
+  String get biweekly => 'Biweekly';
+  @override
+  String get monthly => 'Monthly';
+  @override
+  String get quarterly => 'Quarterly';
+  @override
+  String get yearly => 'Yearly';
+  @override
+  String get taskTitle => 'Title';
+  @override
+  String get taskDescription => 'Task description';
+  @override
+  String get markComplete => 'Mark as Complete';
+  @override
+  String get completeTask => 'Complete Task';
+  @override
+  String get taskCompleted => 'Task completed';
+  @override
+  String get deleteTask => 'Delete Task';
+  @override
+  String get deleteTaskConfirmation => 'Are you sure you want to delete this task?';
+  @override
+  String get notSet => 'Not set';
+  @override
+  String get category => 'Category';
 }
