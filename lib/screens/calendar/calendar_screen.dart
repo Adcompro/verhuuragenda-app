@@ -593,27 +593,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
         final cellWidth = constraints.maxWidth / daysToShow;
         final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
 
-        // Pre-calculate booking positions for hit testing
-        final bookingRects = <Map<String, dynamic>>[];
-        for (final booking in bookings) {
-          final eventStart = DateTime.parse(booking['check_in']);
-          final eventEnd = DateTime.parse(booking['check_out']);
-          final startOffset = eventStart.difference(startDay).inDays;
-          final duration = eventEnd.difference(eventStart).inDays;
-
-          if (startOffset + duration >= 0 && startOffset < daysToShow) {
-            final visibleStart = startOffset < 0 ? 0 : startOffset;
-            final visibleEnd = (startOffset + duration) > daysToShow ? daysToShow : (startOffset + duration);
-            if (visibleEnd > visibleStart) {
-              bookingRects.add({
-                'booking': booking,
-                'left': visibleStart * cellWidth,
-                'right': visibleEnd * cellWidth,
-              });
-            }
-          }
-        }
-
         return Column(
           children: [
             // Day numbers row
@@ -635,31 +614,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
               }).toList(),
             ),
             const SizedBox(height: 4),
-            // Timeline bars - using Listener for raw pointer events (avoids gesture arena conflicts with ListView)
+            // Timeline bars
             Expanded(
-              child: _TapDetector(
-                onTap: (tapX) {
-                  // Check if tap is on a booking (check in reverse order - top bookings first)
-                  for (final rect in bookingRects.reversed) {
-                    if (tapX >= rect['left'] && tapX < rect['right']) {
-                      _showBookingDetails(rect['booking']);
-                      return;
-                    }
-                  }
-
-                  // Not on a booking - create new booking for the tapped day
-                  final dayIndex = (tapX / cellWidth).floor().clamp(0, daysToShow - 1);
-                  final date = dates[dayIndex];
-                  _showNewBookingDialog(date, accommodationId, accommodationName);
-                },
-                child: Stack(
-                  children: [
-                    // Day backgrounds (visual only, no gesture detection)
-                    Row(
-                      children: dates.map((date) {
-                        final isToday = _isToday(date);
-                        final isWeekend = date.weekday >= 6;
-                        return Expanded(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  // Day backgrounds - tappable for new booking
+                  Row(
+                    children: dates.map((date) {
+                      final isToday = _isToday(date);
+                      final isWeekend = date.weekday >= 6;
+                      return Expanded(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => _showNewBookingDialog(date, accommodationId, accommodationName),
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 1),
                             decoration: BoxDecoration(
@@ -671,15 +639,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
-                        );
-                      }).toList(),
-                    ),
-                    // Blocked dates (visual only)
-                    ...blocked.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: true)),
-                    // Bookings (visual only)
-                    ...bookings.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: false)),
-                  ],
-                ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  // Blocked dates
+                  ...blocked.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: true)),
+                  // Bookings - these are on top and will intercept taps
+                  ...bookings.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: false)),
+                ],
               ),
             ),
           ],
@@ -895,30 +863,31 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     final barWidth = visibleDuration * cellWidth - 2;
 
-    // Visual only - tap handling is done in _buildTimeline
+    // Use fixed top position and explicit height (like the working version from build 27)
     return Positioned(
-      left: visibleStart * cellWidth + 1,
-      top: 2,
-      bottom: 2,
-      width: barWidth,
-      child: IgnorePointer(
+      left: visibleStart * cellWidth,
+      top: 4,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: isBlocked ? null : () => _showBookingDetails(event),
         child: Container(
+          width: barWidth,
+          height: 28,
+          margin: const EdgeInsets.symmetric(horizontal: 1),
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(6),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 9,
-                fontWeight: FontWeight.w600,
-              ),
-              overflow: TextOverflow.ellipsis,
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
             ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
@@ -1510,56 +1479,5 @@ class _CalendarScreenState extends State<CalendarScreen> {
       case 'belvilla': return 'Belvilla';
       default: return l10n.blocked;
     }
-  }
-}
-
-/// Custom tap detector that uses raw pointer events to avoid gesture arena conflicts.
-/// This is necessary because the calendar is inside a ListView, and GestureDetector
-/// conflicts with the scroll gesture recognition.
-class _TapDetector extends StatefulWidget {
-  final void Function(double tapX) onTap;
-  final Widget child;
-
-  const _TapDetector({required this.onTap, required this.child});
-
-  @override
-  State<_TapDetector> createState() => _TapDetectorState();
-}
-
-class _TapDetectorState extends State<_TapDetector> {
-  Offset? _downPosition;
-  DateTime? _downTime;
-
-  @override
-  Widget build(BuildContext context) {
-    return Listener(
-      behavior: HitTestBehavior.opaque,
-      onPointerDown: (event) {
-        _downPosition = event.localPosition;
-        _downTime = DateTime.now();
-      },
-      onPointerUp: (event) {
-        if (_downPosition == null || _downTime == null) return;
-
-        final upPosition = event.localPosition;
-        final distance = (upPosition - _downPosition!).distance;
-        final duration = DateTime.now().difference(_downTime!);
-
-        // Only trigger tap if:
-        // 1. Finger didn't move more than 20 pixels (not a scroll/drag)
-        // 2. Duration was less than 500ms (not a long press)
-        if (distance < 20 && duration.inMilliseconds < 500) {
-          widget.onTap(upPosition.dx);
-        }
-
-        _downPosition = null;
-        _downTime = null;
-      },
-      onPointerCancel: (_) {
-        _downPosition = null;
-        _downTime = null;
-      },
-      child: widget.child,
-    );
   }
 }
