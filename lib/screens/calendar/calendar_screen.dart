@@ -586,72 +586,59 @@ class _CalendarScreenState extends State<CalendarScreen> {
       daysToShow,
       (i) => _startDate.add(Duration(days: i)),
     );
-    final isWide = Responsive.useWideLayout(context);
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final cellWidth = constraints.maxWidth / daysToShow;
         final startDay = DateTime(dates.first.year, dates.first.month, dates.first.day);
 
-        return Column(
+        // Exact structure from original working version (b6df13a)
+        // Day numbers are INSIDE the Stack, no outer GestureDetector
+        return Stack(
           children: [
-            // Day numbers row
+            // Day indicators (numbers + backgrounds in one Row)
             Row(
               children: dates.map((date) {
                 final isToday = _isToday(date);
+                final isWeekend = date.weekday >= 6;
+
                 return SizedBox(
                   width: cellWidth,
-                  child: Text(
-                    '${date.day}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: isWide ? 11 : 10,
-                      fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
-                      color: isToday ? AppTheme.primaryColor : Colors.grey[500],
-                    ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '${date.day}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
+                          color: isToday ? AppTheme.primaryColor : Colors.grey[500],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 1),
+                          decoration: BoxDecoration(
+                            color: isToday
+                                ? AppTheme.primaryColor.withOpacity(0.2)
+                                : isWeekend
+                                    ? Colors.grey[200]
+                                    : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }).toList(),
             ),
-            const SizedBox(height: 4),
-            // Timeline bars
-            Expanded(
-              child: GestureDetector(
-                // Single tap detector for the whole timeline - only triggers if no booking is tapped
-                onTap: () {
-                  // Default: create new booking for today
-                  _showNewBookingDialog(DateTime.now(), accommodationId, accommodationName);
-                },
-                child: Stack(
-                  children: [
-                    // Day backgrounds (visual only - no gesture detection here!)
-                    Row(
-                      children: dates.map((date) {
-                        final isToday = _isToday(date);
-                        final isWeekend = date.weekday >= 6;
-                        return Expanded(
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 1),
-                            decoration: BoxDecoration(
-                              color: isToday
-                                  ? AppTheme.primaryColor.withOpacity(0.2)
-                                  : isWeekend
-                                      ? Colors.grey[200]
-                                      : Colors.grey[100],
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    // Blocked dates
-                    ...blocked.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: true)),
-                    // Bookings - these are on top and will intercept taps
-                    ...bookings.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: false)),
-                  ],
-                ),
-              ),
-            ),
+
+            // Blocked dates (positioned on top)
+            ...blocked.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: true)),
+
+            // Bookings (positioned on top) - these intercept taps
+            ...bookings.map((b) => _buildBar(b, startDay, cellWidth, daysToShow, isBlocked: false)),
           ],
         );
       },
