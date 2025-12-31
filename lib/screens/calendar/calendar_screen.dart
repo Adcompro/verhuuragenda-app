@@ -922,9 +922,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
       final babies = booking['babies'] ?? 0;
       final hasPet = booking['has_pet'] == true;
       final petDescription = booking['pet_description'];
-      final totalAmount = (booking['total_amount'] ?? 0).toDouble();
-      final paidAmount = (booking['paid_amount'] ?? 0).toDouble();
-      final remainingAmount = (booking['remaining_amount'] ?? 0).toDouble();
+      final totalAmount = _parseDouble(booking['total_amount']);
+      final paidAmount = _parseDouble(booking['paid_amount']);
+      final remainingAmount = _parseDouble(booking['remaining_amount']);
       final notes = booking['internal_notes'];
       final nights = booking['nights'] ?? 0;
       final accommodationName = booking['accommodation_name'] ?? '';
@@ -1476,6 +1476,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
       case 'cancelled': return l10n.cancelled;
       default: return status ?? l10n.unknown;
     }
+  }
+
+  // Helper to parse double from API (can be String or num)
+  double _parseDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
   }
 
   String _getPaymentLabel(String? status, AppLocalizations l10n) {
