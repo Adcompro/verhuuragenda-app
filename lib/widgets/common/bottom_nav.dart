@@ -70,9 +70,13 @@ class BottomNavShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedIndex = _calculateSelectedIndex(context);
-    final isWide = Responsive.useWideLayout(context);
 
-    if (isWide) {
+    // Use tablet layout only for actual tablets/desktops, not phones in landscape
+    // Check shortest side to determine if it's a phone (< 600) or tablet (>= 600)
+    final shortestSide = MediaQuery.of(context).size.shortestSide;
+    final isActualTablet = shortestSide >= 600;
+
+    if (isActualTablet) {
       return _buildTabletLayout(context, selectedIndex);
     }
     return _buildPhoneLayout(context, selectedIndex);
@@ -178,161 +182,126 @@ class BottomNavShell extends StatelessWidget {
 
   Widget _buildPhoneLayout(BuildContext context, int selectedIndex) {
     final l10n = AppLocalizations.of(context)!;
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
-    // Map full index to bottom nav index (0-3)
-    int bottomNavIndex;
-    if (selectedIndex <= 0) {
-      bottomNavIndex = 0;
-    } else if (selectedIndex == 1) {
-      bottomNavIndex = 1;
-    } else if (selectedIndex == 2) {
-      bottomNavIndex = 2;
-    } else {
-      bottomNavIndex = 3; // More menu
-    }
+    final navItems = [
+      _NavItem(0, Icons.home_outlined, Icons.home, l10n.home, '/dashboard'),
+      _NavItem(1, Icons.calendar_month_outlined, Icons.calendar_month, l10n.calendar, '/calendar'),
+      _NavItem(2, Icons.book_outlined, Icons.book, l10n.bookings, '/bookings'),
+      _NavItem(3, Icons.home_work_outlined, Icons.home_work, l10n.accommodations, '/accommodations'),
+      _NavItem(4, Icons.people_outline, Icons.people, l10n.guests, '/guests'),
+      _NavItem(5, Icons.cleaning_services_outlined, Icons.cleaning_services, l10n.cleaning, '/cleaning'),
+      _NavItem(6, Icons.build_outlined, Icons.build, l10n.maintenance, '/maintenance'),
+      _NavItem(7, Icons.pool_outlined, Icons.pool, l10n.poolMaintenance, '/pool'),
+      _NavItem(8, Icons.yard_outlined, Icons.yard, l10n.gardenMaintenance, '/garden'),
+      _NavItem(9, Icons.campaign_outlined, Icons.campaign, l10n.campaigns, '/campaigns'),
+      _NavItem(10, Icons.bar_chart_outlined, Icons.bar_chart, l10n.statistics, '/statistics'),
+      _NavItem(11, Icons.settings_outlined, Icons.settings, l10n.settings, '/settings'),
+    ];
 
     return Scaffold(
       body: child,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: bottomNavIndex,
-        onDestinationSelected: (index) {
-          switch (index) {
-            case 0:
-              context.go('/dashboard');
-              break;
-            case 1:
-              context.go('/calendar');
-              break;
-            case 2:
-              context.go('/bookings');
-              break;
-            case 3:
-              _showMoreMenu(context);
-              break;
-          }
-        },
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
-            label: l10n.home,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          top: false,
+          child: SizedBox(
+            height: isLandscape ? 56 : 72,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              itemCount: navItems.length,
+              itemBuilder: (context, index) {
+                final item = navItems[index];
+                final isSelected = selectedIndex == item.index;
+
+                return _ScrollableNavItem(
+                  icon: isSelected ? item.selectedIcon : item.icon,
+                  label: item.label,
+                  isSelected: isSelected,
+                  isCompact: isLandscape,
+                  onTap: () => context.go(item.route),
+                );
+              },
+            ),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.calendar_month_outlined),
-            selectedIcon: const Icon(Icons.calendar_month),
-            label: l10n.calendar,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.book_outlined),
-            selectedIcon: const Icon(Icons.book),
-            label: l10n.bookings,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.more_horiz),
-            selectedIcon: const Icon(Icons.more_horiz),
-            label: l10n.more,
-          ),
-        ],
+        ),
       ),
     );
   }
+}
 
-  void _showMoreMenu(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+class _NavItem {
+  final int index;
+  final IconData icon;
+  final IconData selectedIcon;
+  final String label;
+  final String route;
 
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) => SafeArea(
+  _NavItem(this.index, this.icon, this.selectedIcon, this.label, this.route);
+}
+
+class _ScrollableNavItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final bool isCompact;
+  final VoidCallback onTap;
+
+  const _ScrollableNavItem({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.isCompact,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = isSelected
+        ? theme.colorScheme.primary
+        : theme.colorScheme.onSurface.withOpacity(0.6);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: isCompact ? 12 : 16,
+          vertical: isCompact ? 8 : 12,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(top: 12),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
+            Icon(
+              icon,
+              color: color,
+              size: isCompact ? 22 : 24,
+            ),
+            if (!isCompact) ...[
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  color: color,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            const SizedBox(height: 16),
-            _MenuItem(
-              icon: Icons.home_work_outlined,
-              label: l10n.accommodations,
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/accommodations');
-              },
-            ),
-            _MenuItem(
-              icon: Icons.people_outline,
-              label: l10n.guests,
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/guests');
-              },
-            ),
-            _MenuItem(
-              icon: Icons.cleaning_services_outlined,
-              label: l10n.cleaning,
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/cleaning');
-              },
-            ),
-            _MenuItem(
-              icon: Icons.build_outlined,
-              label: l10n.maintenance,
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/maintenance');
-              },
-            ),
-            _MenuItem(
-              icon: Icons.pool_outlined,
-              label: l10n.poolMaintenance,
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/pool');
-              },
-            ),
-            _MenuItem(
-              icon: Icons.yard_outlined,
-              label: l10n.gardenMaintenance,
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/garden');
-              },
-            ),
-            _MenuItem(
-              icon: Icons.campaign_outlined,
-              label: l10n.campaigns,
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/campaigns');
-              },
-            ),
-            _MenuItem(
-              icon: Icons.bar_chart_outlined,
-              label: l10n.statistics,
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/statistics');
-              },
-            ),
-            const Divider(),
-            _MenuItem(
-              icon: Icons.settings_outlined,
-              label: l10n.settings,
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/settings');
-              },
-            ),
-            const SizedBox(height: 16),
+            ],
           ],
         ),
       ),
@@ -340,23 +309,3 @@ class BottomNavShell extends StatelessWidget {
   }
 }
 
-class _MenuItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _MenuItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(label),
-      onTap: onTap,
-    );
-  }
-}

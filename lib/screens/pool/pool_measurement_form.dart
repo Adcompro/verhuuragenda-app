@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -282,9 +283,21 @@ class _PoolMeasurementFormState extends State<PoolMeasurementForm> {
         border: const OutlineInputBorder(),
       ),
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [
+        // Allow digits, dot, and comma
+        FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')),
+        // Replace comma with dot for consistent decimal handling
+        TextInputFormatter.withFunction((oldValue, newValue) {
+          return newValue.copyWith(
+            text: newValue.text.replaceAll(',', '.'),
+          );
+        }),
+      ],
       validator: (value) {
         if (value == null || value.isEmpty) return null; // Optional
-        final num = double.tryParse(value);
+        // Replace comma with dot for parsing
+        final normalized = value.replaceAll(',', '.');
+        final num = double.tryParse(normalized);
         if (num == null) {
           return AppLocalizations.of(context)!.invalidNumber;
         }
@@ -327,6 +340,20 @@ class _PoolMeasurementFormState extends State<PoolMeasurementForm> {
     });
   }
 
+  // Helper to parse decimal with comma or dot support
+  double? _parseDecimal(String text) {
+    if (text.isEmpty) return null;
+    return double.tryParse(text.replaceAll(',', '.'));
+  }
+
+  int? _parseInt(String text) {
+    if (text.isEmpty) return null;
+    // Also handle comma for integers (e.g., "1,0" -> 1)
+    final normalized = text.replaceAll(',', '.');
+    final d = double.tryParse(normalized);
+    return d?.toInt();
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -336,30 +363,14 @@ class _PoolMeasurementFormState extends State<PoolMeasurementForm> {
       final data = {
         'accommodation_id': widget.accommodationId,
         'measured_at': _measuredAt.toIso8601String(),
-        'ph_value': _phController.text.isNotEmpty
-            ? double.parse(_phController.text)
-            : null,
-        'free_chlorine': _freeChlorineController.text.isNotEmpty
-            ? double.parse(_freeChlorineController.text)
-            : null,
-        'total_chlorine': _totalChlorineController.text.isNotEmpty
-            ? double.parse(_totalChlorineController.text)
-            : null,
-        'alkalinity': _alkalinityController.text.isNotEmpty
-            ? int.parse(_alkalinityController.text)
-            : null,
-        'water_temperature': _temperatureController.text.isNotEmpty
-            ? double.parse(_temperatureController.text)
-            : null,
-        'cyanuric_acid': _cyanuricController.text.isNotEmpty
-            ? int.parse(_cyanuricController.text)
-            : null,
-        'calcium_hardness': _calciumController.text.isNotEmpty
-            ? int.parse(_calciumController.text)
-            : null,
-        'tds': _tdsController.text.isNotEmpty
-            ? int.parse(_tdsController.text)
-            : null,
+        'ph_value': _parseDecimal(_phController.text),
+        'free_chlorine': _parseDecimal(_freeChlorineController.text),
+        'total_chlorine': _parseDecimal(_totalChlorineController.text),
+        'alkalinity': _parseInt(_alkalinityController.text),
+        'water_temperature': _parseDecimal(_temperatureController.text),
+        'cyanuric_acid': _parseInt(_cyanuricController.text),
+        'calcium_hardness': _parseInt(_calciumController.text),
+        'tds': _parseInt(_tdsController.text),
         'notes': _notesController.text.isNotEmpty ? _notesController.text : null,
       };
 

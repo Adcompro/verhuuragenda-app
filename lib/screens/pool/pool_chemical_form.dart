@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -134,11 +135,20 @@ class _PoolChemicalFormState extends State<PoolChemicalForm> {
                       border: const OutlineInputBorder(),
                     ),
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')),
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        return newValue.copyWith(
+                          text: newValue.text.replaceAll(',', '.'),
+                        );
+                      }),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return l10n.required;
                       }
-                      final num = double.tryParse(value);
+                      final normalized = value.replaceAll(',', '.');
+                      final num = double.tryParse(normalized);
                       if (num == null || num <= 0) {
                         return l10n.invalidNumber;
                       }
@@ -245,7 +255,7 @@ class _PoolChemicalFormState extends State<PoolChemicalForm> {
       final data = {
         'accommodation_id': widget.accommodationId,
         'chemical_type': _selectedChemicalType,
-        'amount': double.parse(_amountController.text),
+        'amount': double.parse(_amountController.text.replaceAll(',', '.')),
         'unit': _selectedUnit,
         'added_at': _addedAt.toIso8601String(),
         'notes': _notesController.text.isNotEmpty ? _notesController.text : null,

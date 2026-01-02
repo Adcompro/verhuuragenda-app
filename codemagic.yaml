@@ -236,9 +236,9 @@ workflows:
         auth: integration
         submit_to_testflight: true
 
-  # Android workflow
-  android-workflow:
-    name: Android Build
+  # Android workflow (Debug/Test only)
+  android-debug-workflow:
+    name: Android Debug Build
     max_build_duration: 60
     instance_type: mac_mini_m1
 
@@ -251,10 +251,13 @@ workflows:
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
+          cp -r assets assets_backup 2>/dev/null || true
           flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
+          rm -rf assets 2>/dev/null || true
+          mv assets_backup assets 2>/dev/null || true
 
       - name: Get Flutter packages
         script: |
@@ -264,11 +267,121 @@ workflows:
         script: |
           flutter gen-l10n
 
-      - name: Build APK & AAB
+      - name: Build Debug APK
         script: |
-          flutter build apk --release
-          flutter build appbundle --release
+          flutter build apk --debug
 
     artifacts:
       - build/**/outputs/**/*.apk
+
+  # Android Play Store workflow
+  android-workflow:
+    name: Android Play Store Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+
+    integrations:
+      google_play: verhuuragenda_google_play
+
+    environment:
+      flutter: stable
+      java: 17
+      groups:
+        - android_signing
+      vars:
+        PACKAGE_NAME: "nl.vakantiewoningverhuur.app"
+
+    scripts:
+      - name: Create Flutter project structure
+        script: |
+          cp -r lib lib_backup
+          cp pubspec.yaml pubspec_backup.yaml
+          cp -r assets assets_backup 2>/dev/null || true
+          flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
+          rm -rf lib
+          mv lib_backup lib
+          mv pubspec_backup.yaml pubspec.yaml
+          rm -rf assets 2>/dev/null || true
+          mv assets_backup assets 2>/dev/null || true
+
+      - name: Update Android package name
+        script: |
+          cd android
+          # Update build.gradle
+          sed -i.bak "s/applicationId.*/applicationId \"$PACKAGE_NAME\"/" app/build.gradle
+          # Update namespace if present
+          sed -i.bak "s/namespace.*/namespace \"$PACKAGE_NAME\"/" app/build.gradle || true
+
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+
+      - name: Generate localizations
+        script: |
+          flutter gen-l10n
+
+      - name: Generate app icons
+        script: |
+          dart run flutter_launcher_icons
+
+      - name: Set up Android signing
+        script: |
+          echo $CM_KEYSTORE | base64 --decode > $CM_KEYSTORE_PATH
+          cat > android/key.properties << EOF
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyPassword=$CM_KEY_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          storeFile=$CM_KEYSTORE_PATH
+          EOF
+
+      - name: Configure signing in build.gradle
+        script: |
+          cd android/app
+          # Add signing config to build.gradle
+          cat > signing_config.gradle << 'GRADLE'
+          def keystoreProperties = new Properties()
+          def keystorePropertiesFile = rootProject.file('key.properties')
+          if (keystorePropertiesFile.exists()) {
+              keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+          }
+
+          android {
+              signingConfigs {
+                  release {
+                      keyAlias keystoreProperties['keyAlias']
+                      keyPassword keystoreProperties['keyPassword']
+                      storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                      storePassword keystoreProperties['storePassword']
+                  }
+              }
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.release
+                  }
+              }
+          }
+          GRADLE
+
+          # Inject signing config into build.gradle
+          if ! grep -q "key.properties" build.gradle; then
+            sed -i.bak '/^android {/r signing_config.gradle' build.gradle
+          fi
+
+      - name: Build AAB for Play Store
+        script: |
+          FULL_VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          VERSION=$(echo $FULL_VERSION | cut -d'+' -f1)
+          BUILD_NUMBER=$(echo $FULL_VERSION | cut -d'+' -f2)
+          flutter build appbundle --release \
+            --build-name=$VERSION \
+            --build-number=$BUILD_NUMBER
+
+    artifacts:
       - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true
