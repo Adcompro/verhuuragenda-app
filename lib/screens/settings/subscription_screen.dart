@@ -611,7 +611,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             Text(
               'Store: ${_iapInitialized ? "✓ Beschikbaar" : "✗ Niet beschikbaar"}\n'
               'Producten: ${_iapProducts.length} geladen\n'
-              '${_iapProducts.map((p) => "• ${p.id}").join("\n")}',
+              '${_iapProducts.map((p) => "• ${p.id}\n  Prijs: ${p.price}\n  Valuta: ${p.currencyCode}\n  Raw: ${p.rawPrice}").join("\n")}',
               style: TextStyle(fontSize: 11, color: Colors.blue[800], fontFamily: 'monospace'),
             ),
           ],
