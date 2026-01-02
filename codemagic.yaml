@@ -101,11 +101,17 @@ workflows:
         script: |
           IPAD_UDID=$(xcrun simctl list devices booted | grep -i "iPad" | grep -oE '[A-F0-9-]{36}' | head -1)
           if [ -z "$IPAD_UDID" ]; then
-            IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad" | head -1 | grep -oE '[A-F0-9-]{36}')
+            IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad Pro" | head -1 | grep -oE '[A-F0-9-]{36}')
+            if [ -z "$IPAD_UDID" ]; then
+              IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad" | head -1 | grep -oE '[A-F0-9-]{36}')
+            fi
             xcrun simctl boot "$IPAD_UDID" || true
-            sleep 5
+            sleep 10
           fi
           echo "Using iPad UDID: $IPAD_UDID"
+
+          # Get device info
+          xcrun simctl list devices booted
 
           # Install app
           xcrun simctl install "$IPAD_UDID" build/ios/iphonesimulator/Runner.app
@@ -121,34 +127,51 @@ workflows:
 
           # Wait for app to fully load and auto-login
           echo "Waiting for app to load..."
-          sleep 15
+          sleep 20
 
-          # iPad Pro 12.9" resolution: 2048x2732 (logical: 1024x1366)
-          # NavigationRail is on the left side, menu items are vertically stacked
-          # Each menu item is approximately 72px apart, starting around y=120
-          # X position for nav rail is around 40px from left
+          # Take initial screenshot (dashboard after auto-login)
+          echo "Taking screenshot: 01_dashboard"
+          xcrun simctl io "$IPAD_UDID" screenshot "screenshots/01_dashboard.png" || true
 
-          NAV_X=40
+          # Function to click using cliclick (if available) or AppleScript
+          click_at() {
+            local x=$1
+            local y=$2
 
-          # Menu items and their approximate Y positions (12 items)
-          # Dashboard, Calendar, Bookings, Accommodations, Guests, Cleaning,
-          # Maintenance, Pool, Garden, Campaigns, Statistics, Settings
-          declare -a MENU_NAMES=("01_dashboard" "02_calendar" "03_bookings" "04_accommodations" "05_guests" "06_cleaning" "07_maintenance" "08_pool" "09_garden" "10_campaigns" "11_statistics" "12_settings")
-          declare -a MENU_Y=(140 210 280 350 420 490 560 630 700 770 840 910)
+            # Try using AppleScript to click in Simulator window
+            osascript -e "
+              tell application \"Simulator\" to activate
+              delay 0.5
+              tell application \"System Events\"
+                tell process \"Simulator\"
+                  click at {$x, $y}
+                end tell
+              end tell
+            " 2>/dev/null || true
+          }
 
-          # Take screenshot of each menu
+          # For iPad in Simulator, the NavigationRail items are on the left
+          # Window coordinates (not screen) - NavigationRail is about 72px wide
+          # Menu items start around y=150 with ~56px spacing
+
+          # Menu items and their Y positions in simulator window
+          declare -a MENU_NAMES=("02_calendar" "03_bookings" "04_accommodations" "05_guests" "06_cleaning" "07_maintenance" "08_pool" "09_garden" "10_campaigns" "11_statistics" "12_settings")
+          declare -a MENU_Y=(206 262 318 374 430 486 542 598 654 710 766)
+
+          NAV_X=36
+
+          # Take screenshot of each menu by clicking
           for i in "${!MENU_NAMES[@]}"; do
             NAME="${MENU_NAMES[$i]}"
             Y="${MENU_Y[$i]}"
 
-            echo "Tapping menu item: $NAME at position ($NAV_X, $Y)"
+            echo "Clicking menu item: $NAME at simulator position ($NAV_X, $Y)"
 
-            # Simulate tap using AppleScript via osascript
-            # This sends a touch event to the simulator
-            xcrun simctl io "$IPAD_UDID" tap $NAV_X $Y 2>/dev/null || true
+            # Click using AppleScript
+            click_at $NAV_X $Y
 
             # Wait for screen transition
-            sleep 2
+            sleep 3
 
             # Take screenshot
             echo "Taking screenshot: $NAME"
