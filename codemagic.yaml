@@ -97,7 +97,7 @@ workflows:
         script: |
           flutter build ios --debug --simulator
 
-      - name: Install and take multiple screenshots
+      - name: Install and take screenshots of all main menus
         script: |
           IPAD_UDID=$(xcrun simctl list devices booted | grep -i "iPad" | grep -oE '[A-F0-9-]{36}' | head -1)
           if [ -z "$IPAD_UDID" ]; then
@@ -115,37 +115,50 @@ workflows:
           BUNDLE_ID=$(defaults read "$(pwd)/build/ios/iphonesimulator/Runner.app/Info.plist" CFBundleIdentifier)
           echo "Detected Bundle ID: $BUNDLE_ID"
 
-          # Launch app in background (don't wait)
+          # Launch app
           echo "Launching app..."
-          xcrun simctl launch "$IPAD_UDID" "$BUNDLE_ID" &
-          LAUNCH_PID=$!
+          xcrun simctl launch "$IPAD_UDID" "$BUNDLE_ID"
 
-          # Give app time to start
-          sleep 5
+          # Wait for app to fully load and auto-login
+          echo "Waiting for app to load..."
+          sleep 15
 
-          # Screenshot 1: Initial screen
-          echo "Taking screenshot 1..."
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/01_screen.png || true
+          # iPad Pro 12.9" resolution: 2048x2732 (logical: 1024x1366)
+          # NavigationRail is on the left side, menu items are vertically stacked
+          # Each menu item is approximately 72px apart, starting around y=120
+          # X position for nav rail is around 40px from left
 
-          # Wait more for auto-login
-          sleep 10
+          NAV_X=40
 
-          # Screenshot 2
-          echo "Taking screenshot 2..."
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/02_screen.png || true
+          # Menu items and their approximate Y positions (12 items)
+          # Dashboard, Calendar, Bookings, Accommodations, Guests, Cleaning,
+          # Maintenance, Pool, Garden, Campaigns, Statistics, Settings
+          declare -a MENU_NAMES=("01_dashboard" "02_calendar" "03_bookings" "04_accommodations" "05_guests" "06_cleaning" "07_maintenance" "08_pool" "09_garden" "10_campaigns" "11_statistics" "12_settings")
+          declare -a MENU_Y=(140 210 280 350 420 490 560 630 700 770 840 910)
 
-          # Wait more
-          sleep 5
+          # Take screenshot of each menu
+          for i in "${!MENU_NAMES[@]}"; do
+            NAME="${MENU_NAMES[$i]}"
+            Y="${MENU_Y[$i]}"
 
-          # Screenshot 3
-          echo "Taking screenshot 3..."
-          xcrun simctl io "$IPAD_UDID" screenshot screenshots/03_screen.png || true
+            echo "Tapping menu item: $NAME at position ($NAV_X, $Y)"
 
-          # Kill any hanging process
-          kill $LAUNCH_PID 2>/dev/null || true
+            # Simulate tap using AppleScript via osascript
+            # This sends a touch event to the simulator
+            xcrun simctl io "$IPAD_UDID" tap $NAV_X $Y 2>/dev/null || true
+
+            # Wait for screen transition
+            sleep 2
+
+            # Take screenshot
+            echo "Taking screenshot: $NAME"
+            xcrun simctl io "$IPAD_UDID" screenshot "screenshots/${NAME}.png" || true
+
+            sleep 1
+          done
 
           echo "====================================="
-          echo "Screenshots saved!"
+          echo "Screenshots completed!"
           echo "====================================="
           ls -la screenshots/
 
