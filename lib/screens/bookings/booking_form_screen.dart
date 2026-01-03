@@ -156,36 +156,49 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     }
   }
 
+  double? _parseDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.tryParse(value);
+    return null;
+  }
+
+  int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
+
   void _populateFormWithBooking(Map<String, dynamic> data) {
     setState(() {
-      _selectedAccommodationId = data['accommodation_id'];
-      _selectedGuestId = data['guest_id'];
+      _selectedAccommodationId = _parseInt(data['accommodation_id']);
+      _selectedGuestId = _parseInt(data['guest_id']);
       _checkIn = data['check_in'] != null ? DateTime.parse(data['check_in']) : null;
       _checkOut = data['check_out'] != null ? DateTime.parse(data['check_out']) : null;
-      _adults = data['adults'] ?? 2;
-      _children = data['children'] ?? 0;
-      _babies = data['babies'] ?? 0;
+      _adults = _parseInt(data['adults']) ?? 2;
+      _children = _parseInt(data['children']) ?? 0;
+      _babies = _parseInt(data['babies']) ?? 0;
       _status = data['status'] ?? 'inquiry';
       _source = data['source'] ?? 'direct';
 
-      if (data['total_amount'] != null) {
-        final amount = (data['total_amount'] is int)
-            ? (data['total_amount'] as int).toDouble()
-            : data['total_amount'] as double;
-        _totalAmountController.text = amount.toStringAsFixed(2);
+      final totalAmount = _parseDouble(data['total_amount']);
+      if (totalAmount != null) {
+        _totalAmountController.text = totalAmount.toStringAsFixed(2);
       }
-      if (data['deposit_amount'] != null) {
-        final amount = (data['deposit_amount'] is int)
-            ? (data['deposit_amount'] as int).toDouble()
-            : data['deposit_amount'] as double;
-        _depositController.text = amount.toStringAsFixed(2);
+
+      final depositAmount = _parseDouble(data['deposit_amount']);
+      if (depositAmount != null) {
+        _depositController.text = depositAmount.toStringAsFixed(2);
       }
-      if (data['cleaning_fee'] != null) {
-        final amount = (data['cleaning_fee'] is int)
-            ? (data['cleaning_fee'] as int).toDouble()
-            : data['cleaning_fee'] as double;
-        _cleaningFeeController.text = amount.toStringAsFixed(2);
+
+      final cleaningFee = _parseDouble(data['cleaning_fee']);
+      if (cleaningFee != null) {
+        _cleaningFeeController.text = cleaningFee.toStringAsFixed(2);
       }
+
       if (data['internal_notes'] != null) {
         _notesController.text = data['internal_notes'];
       }
