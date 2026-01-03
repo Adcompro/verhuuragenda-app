@@ -180,7 +180,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
     final totalRevenue = toDouble(kpis['total_revenue']);
     final revenueChange = kpis['revenue_change'] != null ? toDouble(kpis['revenue_change']) : null;
-    final averageStay = toDouble(kpis['average_stay']);
+    final outstandingAmount = toDouble(kpis['outstanding_amount']);
     final occupancyRate = toDouble(kpis['occupancy_rate']);
 
     return GridView.count(
@@ -199,22 +199,22 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           change: revenueChange,
         ),
         _buildKPICard(
-          l10n.bookings,
-          '${kpis['total_bookings'] ?? 0}',
-          Icons.calendar_today,
-          Colors.blue,
-        ),
-        _buildKPICard(
-          l10n.statisticsAverageStayDuration,
-          '${averageStay.toStringAsFixed(1)} ${l10n.nights}',
-          Icons.nights_stay,
-          Colors.purple,
+          l10n.outstanding,
+          _formatCurrency(outstandingAmount),
+          Icons.pending_actions,
+          Colors.red,
         ),
         _buildKPICard(
           l10n.occupancy,
           '${occupancyRate.toStringAsFixed(1)}%',
           Icons.home,
           Colors.orange,
+        ),
+        _buildKPICard(
+          l10n.bookings,
+          '${kpis['total_bookings'] ?? 0}',
+          Icons.calendar_today,
+          Colors.blue,
         ),
       ],
     );

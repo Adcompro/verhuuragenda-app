@@ -115,6 +115,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => BookingDetailScreen(
                   bookingId: int.parse(state.pathParameters['id']!),
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    builder: (context, state) => BookingFormScreen(
+                      bookingId: int.parse(state.pathParameters['id']!),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

@@ -45,10 +45,10 @@ workflows:
     artifacts:
       - build/ios/iphonesimulator/*.app
 
-  # iPad Preview workflow met screenshots
+  # iPad Preview workflow met Flutter integration tests voor screenshots
   ios-ipad-preview:
-    name: iPad Preview Build
-    max_build_duration: 45
+    name: iPad Screenshot Build
+    max_build_duration: 60
     instance_type: mac_mini_m1
 
     environment:
@@ -61,10 +61,13 @@ workflows:
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
+          cp -r integration_test integration_test_backup 2>/dev/null || true
           flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
+          rm -rf integration_test 2>/dev/null || true
+          mv integration_test_backup integration_test 2>/dev/null || true
 
       - name: Get Flutter packages
         script: |
@@ -82,112 +85,72 @@ workflows:
           /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:0 integer 1" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:1 integer 2" Runner/Info.plist
 
-      - name: List available iPad simulators
+      - name: Boot iPad Pro Simulator
         script: |
-          xcrun simctl list devices available | grep -i ipad
-
-      - name: Boot iPad Simulator
-        script: |
-          IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad" | grep -v "unavailable" | head -1 | grep -oE '[A-F0-9-]{36}')
-          echo "Booting iPad with UDID: $IPAD_UDID"
-          xcrun simctl boot "$IPAD_UDID" || true
-          sleep 10
-
-      - name: Build for iPad Simulator
-        script: |
-          flutter build ios --debug --simulator
-
-      - name: Install and take screenshots of all main menus
-        script: |
-          IPAD_UDID=$(xcrun simctl list devices booted | grep -i "iPad" | grep -oE '[A-F0-9-]{36}' | head -1)
+          # Find iPad Pro 12.9 inch for best screenshots
+          IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad Pro (12.9-inch)" | head -1 | grep -oE '[A-F0-9-]{36}')
           if [ -z "$IPAD_UDID" ]; then
             IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad Pro" | head -1 | grep -oE '[A-F0-9-]{36}')
-            if [ -z "$IPAD_UDID" ]; then
-              IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad" | head -1 | grep -oE '[A-F0-9-]{36}')
-            fi
-            xcrun simctl boot "$IPAD_UDID" || true
-            sleep 10
           fi
+          if [ -z "$IPAD_UDID" ]; then
+            IPAD_UDID=$(xcrun simctl list devices available | grep -i "iPad" | head -1 | grep -oE '[A-F0-9-]{36}')
+          fi
+          echo "Booting iPad with UDID: $IPAD_UDID"
+          xcrun simctl boot "$IPAD_UDID" || true
+          echo "$IPAD_UDID" > /tmp/ipad_udid.txt
+          sleep 15
+
+      - name: Run Flutter Drive test for screenshots
+        script: |
+          IPAD_UDID=$(cat /tmp/ipad_udid.txt)
           echo "Using iPad UDID: $IPAD_UDID"
 
-          # Get device info
-          xcrun simctl list devices booted
-
-          # Install app
-          xcrun simctl install "$IPAD_UDID" build/ios/iphonesimulator/Runner.app
           mkdir -p screenshots
 
-          # Get the actual bundle ID from the built app
-          BUNDLE_ID=$(defaults read "$(pwd)/build/ios/iphonesimulator/Runner.app/Info.plist" CFBundleIdentifier)
-          echo "Detected Bundle ID: $BUNDLE_ID"
+          # Run flutter drive with integration test
+          flutter drive \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/screenshot_test.dart \
+            -d "$IPAD_UDID" \
+            --no-pub \
+            || echo "Flutter drive completed (may have warnings)"
 
-          # Launch app
-          echo "Launching app..."
-          xcrun simctl launch "$IPAD_UDID" "$BUNDLE_ID"
+          # Check for screenshots in various locations
+          find . -name "*.png" -type f 2>/dev/null | head -20
 
-          # Wait for app to fully load and auto-login
-          echo "Waiting for app to load..."
-          sleep 20
+          # Move any screenshots to the screenshots folder
+          mv *.png screenshots/ 2>/dev/null || true
 
-          # Take initial screenshot (dashboard after auto-login)
-          echo "Taking screenshot: 01_dashboard"
-          xcrun simctl io "$IPAD_UDID" screenshot "screenshots/01_dashboard.png" || true
+          # If no screenshots from integration test, build and take manual screenshots
+          if [ -z "$(ls -A screenshots 2>/dev/null)" ]; then
+            echo "No screenshots from integration test, using fallback..."
 
-          # Function to click using cliclick (if available) or AppleScript
-          click_at() {
-            local x=$1
-            local y=$2
+            # Build the app
+            flutter build ios --debug --simulator
 
-            # Try using AppleScript to click in Simulator window
-            osascript -e "
-              tell application \"Simulator\" to activate
-              delay 0.5
-              tell application \"System Events\"
-                tell process \"Simulator\"
-                  click at {$x, $y}
-                end tell
-              end tell
-            " 2>/dev/null || true
-          }
+            # Install and launch
+            xcrun simctl install "$IPAD_UDID" build/ios/iphonesimulator/Runner.app
+            BUNDLE_ID=$(defaults read "$(pwd)/build/ios/iphonesimulator/Runner.app/Info.plist" CFBundleIdentifier)
 
-          # For iPad in Simulator, the NavigationRail items are on the left
-          # Window coordinates (not screen) - NavigationRail is about 72px wide
-          # Menu items start around y=150 with ~56px spacing
+            echo "Launching app: $BUNDLE_ID"
+            xcrun simctl launch "$IPAD_UDID" "$BUNDLE_ID"
+            sleep 20
 
-          # Menu items and their Y positions in simulator window
-          declare -a MENU_NAMES=("02_calendar" "03_bookings" "04_accommodations" "05_guests" "06_cleaning" "07_maintenance" "08_pool" "09_garden" "10_campaigns" "11_statistics" "12_settings")
-          declare -a MENU_Y=(206 262 318 374 430 486 542 598 654 710 766)
+            # Take dashboard screenshot at minimum
+            echo "Taking fallback screenshot..."
+            xcrun simctl io "$IPAD_UDID" screenshot "screenshots/01_dashboard.png"
 
-          NAV_X=36
+            # Use UI automation via appium or XCUITest would be ideal here
+            # For now, just take the dashboard
+          fi
 
-          # Take screenshot of each menu by clicking
-          for i in "${!MENU_NAMES[@]}"; do
-            NAME="${MENU_NAMES[$i]}"
-            Y="${MENU_Y[$i]}"
-
-            echo "Clicking menu item: $NAME at simulator position ($NAV_X, $Y)"
-
-            # Click using AppleScript
-            click_at $NAV_X $Y
-
-            # Wait for screen transition
-            sleep 3
-
-            # Take screenshot
-            echo "Taking screenshot: $NAME"
-            xcrun simctl io "$IPAD_UDID" screenshot "screenshots/${NAME}.png" || true
-
-            sleep 1
-          done
-
-          echo "====================================="
-          echo "Screenshots completed!"
-          echo "====================================="
-          ls -la screenshots/
+          echo "===== SCREENSHOTS ====="
+          ls -la screenshots/ 2>/dev/null || echo "No screenshots directory"
 
     artifacts:
       - build/ios/iphonesimulator/*.app
       - screenshots/*.png
+      - "*.png"
 
   # iOS App Store workflow
   ios-workflow:

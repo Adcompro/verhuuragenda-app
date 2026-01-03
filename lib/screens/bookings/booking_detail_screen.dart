@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -59,6 +60,12 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
         title: Text(_booking?.bookingNumber ?? l10n.bookingWithId(widget.bookingId)),
         actions: [
           if (_booking != null)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () => context.push('/bookings/${widget.bookingId}/edit'),
+              tooltip: l10n.edit,
+            ),
+          if (_booking != null)
             PopupMenuButton<String>(
               onSelected: _handleMenuAction,
               itemBuilder: (context) => [
@@ -66,7 +73,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   value: 'status',
                   child: Row(
                     children: [
-                      const Icon(Icons.edit, size: 20),
+                      const Icon(Icons.swap_horiz, size: 20),
                       const SizedBox(width: 12),
                       Text(l10n.changeStatus),
                     ],
@@ -826,15 +833,18 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     try {
       await ApiClient.instance.delete('${ApiConfig.bookings}/${widget.bookingId}');
       if (mounted) {
-        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.bookingDeleted)),
         );
+        context.go('/bookings');
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.errorDeleting(e.toString()))),
+          SnackBar(
+            content: Text(l10n.errorDeleting(e.toString())),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }

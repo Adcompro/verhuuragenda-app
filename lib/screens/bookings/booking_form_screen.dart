@@ -9,16 +9,20 @@ import '../../models/accommodation.dart';
 import '../../models/guest.dart';
 
 class BookingFormScreen extends StatefulWidget {
+  final int? bookingId; // For edit mode
   final int? initialAccommodationId;
   final String? initialCheckIn;
   final String? initialCheckOut;
 
   const BookingFormScreen({
     super.key,
+    this.bookingId,
     this.initialAccommodationId,
     this.initialCheckIn,
     this.initialCheckOut,
   });
+
+  bool get isEditMode => bookingId != null;
 
   @override
   State<BookingFormScreen> createState() => _BookingFormScreenState();
@@ -85,10 +89,17 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     setState(() => _isLoadingData = true);
 
     try {
-      final responses = await Future.wait([
+      final futures = <Future>[
         ApiClient.instance.get(ApiConfig.accommodations),
         ApiClient.instance.get(ApiConfig.guests),
-      ]);
+      ];
+
+      // Also load booking data if in edit mode
+      if (widget.isEditMode) {
+        futures.add(ApiClient.instance.get('${ApiConfig.bookings}/${widget.bookingId}'));
+      }
+
+      final responses = await Future.wait(futures);
 
       // Parse accommodations
       List<dynamic> accData;
@@ -113,29 +124,72 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
       setState(() {
         _accommodations = accData.map((json) => Accommodation.fromJson(json)).toList();
         _guests = guestData.map((json) => Guest.fromJson(json)).toList();
-        _isLoadingData = false;
       });
 
-      // Auto-fill cleaning fee if accommodation was pre-selected
-      if (_selectedAccommodationId != null) {
-        final acc = _accommodations.firstWhere(
-          (a) => a.id == _selectedAccommodationId,
-          orElse: () => _accommodations.first,
-        );
-        if (acc.cleaningFee != null) {
-          _cleaningFeeController.text = acc.cleaningFee!.toStringAsFixed(2);
-        }
-        // Check availability if dates are also set
-        if (_checkIn != null && _checkOut != null) {
-          _checkAvailability();
+      // Load booking data in edit mode
+      if (widget.isEditMode && responses.length > 2) {
+        final bookingData = responses[2].data;
+        _populateFormWithBooking(bookingData);
+      } else {
+        // Auto-fill cleaning fee if accommodation was pre-selected (new booking mode)
+        if (_selectedAccommodationId != null) {
+          final acc = _accommodations.firstWhere(
+            (a) => a.id == _selectedAccommodationId,
+            orElse: () => _accommodations.first,
+          );
+          if (acc.cleaningFee != null) {
+            _cleaningFeeController.text = acc.cleaningFee!.toStringAsFixed(2);
+          }
+          // Check availability if dates are also set
+          if (_checkIn != null && _checkOut != null) {
+            _checkAvailability();
+          }
         }
       }
+
+      setState(() => _isLoadingData = false);
     } catch (e) {
       setState(() {
         _error = e.toString();
         _isLoadingData = false;
       });
     }
+  }
+
+  void _populateFormWithBooking(Map<String, dynamic> data) {
+    setState(() {
+      _selectedAccommodationId = data['accommodation_id'];
+      _selectedGuestId = data['guest_id'];
+      _checkIn = data['check_in'] != null ? DateTime.parse(data['check_in']) : null;
+      _checkOut = data['check_out'] != null ? DateTime.parse(data['check_out']) : null;
+      _adults = data['adults'] ?? 2;
+      _children = data['children'] ?? 0;
+      _babies = data['babies'] ?? 0;
+      _status = data['status'] ?? 'inquiry';
+      _source = data['source'] ?? 'direct';
+
+      if (data['total_amount'] != null) {
+        final amount = (data['total_amount'] is int)
+            ? (data['total_amount'] as int).toDouble()
+            : data['total_amount'] as double;
+        _totalAmountController.text = amount.toStringAsFixed(2);
+      }
+      if (data['deposit_amount'] != null) {
+        final amount = (data['deposit_amount'] is int)
+            ? (data['deposit_amount'] as int).toDouble()
+            : data['deposit_amount'] as double;
+        _depositController.text = amount.toStringAsFixed(2);
+      }
+      if (data['cleaning_fee'] != null) {
+        final amount = (data['cleaning_fee'] is int)
+            ? (data['cleaning_fee'] as int).toDouble()
+            : data['cleaning_fee'] as double;
+        _cleaningFeeController.text = amount.toStringAsFixed(2);
+      }
+      if (data['internal_notes'] != null) {
+        _notesController.text = data['internal_notes'];
+      }
+    });
   }
 
   Future<void> _checkAvailability() async {
@@ -197,7 +251,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.newBooking),
+        title: Text(widget.isEditMode ? l10n.editBooking : l10n.newBooking),
       ),
       body: _isLoadingData
           ? const Center(child: CircularProgressIndicator())
@@ -873,14 +927,25 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
         data['internal_notes'] = _notesController.text;
       }
 
-      final response = await ApiClient.instance.post(ApiConfig.bookings, data: data);
-      final bookingId = response.data['id'];
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.bookingCreated)),
-        );
-        context.go('/bookings/$bookingId');
+      if (widget.isEditMode) {
+        // Update existing booking
+        await ApiClient.instance.put('${ApiConfig.bookings}/${widget.bookingId}', data: data);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.bookingUpdated)),
+          );
+          context.go('/bookings/${widget.bookingId}');
+        }
+      } else {
+        // Create new booking
+        final response = await ApiClient.instance.post(ApiConfig.bookings, data: data);
+        final bookingId = response.data['id'];
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.bookingCreated)),
+          );
+          context.go('/bookings/$bookingId');
+        }
       }
     } catch (e) {
       if (mounted) {
