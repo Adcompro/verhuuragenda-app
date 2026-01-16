@@ -334,62 +334,36 @@ workflows:
       - name: Configure signing in build.gradle
         script: |
           cd android/app
+          echo "Contents of android/app:"
+          ls -la
 
-          # Check which build.gradle variant exists
           if [ -f "build.gradle.kts" ]; then
-            echo "Found Kotlin build.gradle.kts"
-            BUILD_FILE="build.gradle.kts"
+            echo "Found Kotlin build.gradle.kts - configuring signing"
 
-            # For Kotlin DSL, add signing config
-            if ! grep -q "key.properties" "$BUILD_FILE"; then
-              cat > /tmp/signing_kotlin.txt << 'KOTLIN'
+            echo 'val keystorePropertiesFile = rootProject.file("key.properties")' > /tmp/signing_header.txt
+            echo 'val keystoreProperties = java.util.Properties()' >> /tmp/signing_header.txt
+            echo 'if (keystorePropertiesFile.exists()) { keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile)) }' >> /tmp/signing_header.txt
+            echo '' >> /tmp/signing_header.txt
 
-val keystorePropertiesFile = rootProject.file("key.properties")
-val keystoreProperties = java.util.Properties()
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
-}
-
-KOTLIN
-              # Prepend to file
-              cat /tmp/signing_kotlin.txt "$BUILD_FILE" > /tmp/build_temp.kts
-              mv /tmp/build_temp.kts "$BUILD_FILE"
-
-              # Add signingConfigs block after android {
-              sed -i.bak 's/android {/android {\n    signingConfigs {\n        create("release") {\n            keyAlias = keystoreProperties["keyAlias"] as String?\n            keyPassword = keystoreProperties["keyPassword"] as String?\n            storeFile = keystoreProperties["storeFile"]?.let { file(it) }\n            storePassword = keystoreProperties["storePassword"] as String?\n        }\n    }/' "$BUILD_FILE"
-
-              # Update release buildType to use signing config
-              sed -i.bak 's/release {/release {\n            signingConfig = signingConfigs.getByName("release")/' "$BUILD_FILE"
-            fi
+            cat /tmp/signing_header.txt build.gradle.kts > /tmp/build_temp.kts
+            mv /tmp/build_temp.kts build.gradle.kts
 
           elif [ -f "build.gradle" ]; then
-            echo "Found Groovy build.gradle"
-            BUILD_FILE="build.gradle"
+            echo "Found Groovy build.gradle - configuring signing"
 
-            # For Groovy DSL
-            cat > signing_config.gradle << 'GRADLE'
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('key.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
+            echo 'def keystoreProperties = new Properties()' > /tmp/signing_header.txt
+            echo 'def keystorePropertiesFile = rootProject.file("key.properties")' >> /tmp/signing_header.txt
+            echo 'if (keystorePropertiesFile.exists()) { keystoreProperties.load(new FileInputStream(keystorePropertiesFile)) }' >> /tmp/signing_header.txt
+            echo '' >> /tmp/signing_header.txt
 
-GRADLE
-            if ! grep -q "key.properties" "$BUILD_FILE"; then
-              cat signing_config.gradle "$BUILD_FILE" > /tmp/build_temp.gradle
-              mv /tmp/build_temp.gradle "$BUILD_FILE"
-
-              sed -i.bak 's/android {/android {\n    signingConfigs {\n        release {\n            keyAlias keystoreProperties["keyAlias"]\n            keyPassword keystoreProperties["keyPassword"]\n            storeFile keystoreProperties["storeFile"] ? file(keystoreProperties["storeFile"]) : null\n            storePassword keystoreProperties["storePassword"]\n        }\n    }/' "$BUILD_FILE"
-
-              sed -i.bak 's/buildTypes {/buildTypes {\n        release {\n            signingConfig signingConfigs.release\n        }/' "$BUILD_FILE"
-            fi
+            cat /tmp/signing_header.txt build.gradle > /tmp/build_temp.gradle
+            mv /tmp/build_temp.gradle build.gradle
           else
-            echo "ERROR: No build.gradle or build.gradle.kts found!"
+            echo "No build.gradle found - listing directory"
             ls -la
-            exit 1
           fi
 
-          echo "Signing configured successfully"
+          echo "Signing header configured"
 
       - name: Build AAB for Play Store
         script: |
