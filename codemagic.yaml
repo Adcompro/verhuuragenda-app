@@ -340,9 +340,12 @@ workflows:
           if [ -f "build.gradle.kts" ]; then
             echo "Found Kotlin build.gradle.kts - configuring signing"
 
-            echo 'val keystorePropertiesFile = rootProject.file("key.properties")' > /tmp/signing_header.txt
-            echo 'val keystoreProperties = java.util.Properties()' >> /tmp/signing_header.txt
-            echo 'if (keystorePropertiesFile.exists()) { keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile)) }' >> /tmp/signing_header.txt
+            echo 'import java.util.Properties' > /tmp/signing_header.txt
+            echo 'import java.io.FileInputStream' >> /tmp/signing_header.txt
+            echo '' >> /tmp/signing_header.txt
+            echo 'val keystorePropertiesFile = rootProject.file("key.properties")' >> /tmp/signing_header.txt
+            echo 'val keystoreProperties = Properties()' >> /tmp/signing_header.txt
+            echo 'if (keystorePropertiesFile.exists()) { keystoreProperties.load(FileInputStream(keystorePropertiesFile)) }' >> /tmp/signing_header.txt
             echo '' >> /tmp/signing_header.txt
 
             cat /tmp/signing_header.txt build.gradle.kts > /tmp/build_temp.kts
