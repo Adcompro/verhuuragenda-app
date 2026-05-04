@@ -23,6 +23,7 @@ import '../screens/seasons/seasons_list_screen.dart';
 import '../screens/team/team_list_screen.dart';
 import '../screens/pool/pool_dashboard_screen.dart';
 import '../screens/garden/garden_dashboard_screen.dart';
+import '../screens/onboarding/onboarding_wizard_screen.dart';
 import '../widgets/common/bottom_nav.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -74,6 +75,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/forgot-password',
         builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+
+      // Onboarding wizard (no bottom nav)
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingWizardScreen(),
       ),
 
       // Main Shell with Bottom Navigation

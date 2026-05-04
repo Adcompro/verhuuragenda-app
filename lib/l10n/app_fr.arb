@@ -1406,5 +1406,27 @@
   "deleteTask": "Supprimer la Tâche",
   "deleteTaskConfirmation": "Êtes-vous sûr de vouloir supprimer cette tâche?",
   "notSet": "Non défini",
-  "category": "Catégorie"
+  "category": "Catégorie",
+
+  "modules": "Modules",
+  "modulesDescription": "Choisissez quels modules sont visibles",
+  "moduleSettingsTitle": "Paramètres des modules",
+  "moduleSettingsHint": "Activez ou désactivez les modules. Les modules désactivés n'apparaîtront plus dans la navigation.",
+  "moduleResetAll": "Tout réactiver",
+
+  "onboardingWelcomeTitle": "Bienvenue sur VerhuurAgenda !",
+  "onboardingWelcomeMessage": "Configurons votre première location de vacances. Cela prend moins d'une minute.",
+  "onboardingStart": "Commencer",
+  "onboardingMaybeLater": "Peut-être plus tard",
+  "onboardingBasicsTitle": "Informations de base",
+  "onboardingCapacityTitle": "Capacité",
+  "onboardingModulesTitle": "Quels modules voulez-vous utiliser ?",
+  "onboardingModulesHint": "Vous pourrez modifier cela plus tard dans les paramètres.",
+  "onboardingHasPool": "Ma propriété dispose d'une piscine",
+  "onboardingHasGarden": "Ma propriété dispose d'un jardin",
+  "onboardingTrackCleaning": "Suivre les nettoyages",
+  "onboardingTrackMaintenance": "Suivre l'entretien",
+  "onboardingFinish": "Créer la propriété",
+  "onboardingSkipMessage": "Vous pouvez ajouter une propriété plus tard depuis 'Hébergements'.",
+  "onboardingSuccessMessage": "Votre propriété a été créée !"
 }

@@ -2124,4 +2124,46 @@ class AppLocalizationsNl extends AppLocalizations {
   String get notSet => 'Niet ingesteld';
   @override
   String get category => 'Categorie';
+
+  @override
+  String get modules => 'Modules';
+  @override
+  String get modulesDescription => 'Bepaal welke modules zichtbaar zijn';
+  @override
+  String get moduleSettingsTitle => 'Module-instellingen';
+  @override
+  String get moduleSettingsHint => 'Schakel modules in of uit. Uitgeschakelde modules verschijnen niet meer in de navigatie.';
+  @override
+  String get moduleResetAll => 'Alles weer aanzetten';
+
+  @override
+  String get onboardingWelcomeTitle => 'Welkom bij VerhuurAgenda!';
+  @override
+  String get onboardingWelcomeMessage => 'Laten we je eerste vakantiehuis aanmaken. Dit duurt minder dan een minuut.';
+  @override
+  String get onboardingStart => 'Beginnen';
+  @override
+  String get onboardingMaybeLater => 'Misschien later';
+  @override
+  String get onboardingBasicsTitle => 'Basisgegevens';
+  @override
+  String get onboardingCapacityTitle => 'Capaciteit';
+  @override
+  String get onboardingModulesTitle => 'Welke modules wil je gebruiken?';
+  @override
+  String get onboardingModulesHint => 'Je kunt dit later altijd aanpassen via Instellingen.';
+  @override
+  String get onboardingHasPool => 'Mijn woning heeft een zwembad';
+  @override
+  String get onboardingHasGarden => 'Mijn woning heeft een tuin';
+  @override
+  String get onboardingTrackCleaning => 'Ik wil schoonmaakbeurten bijhouden';
+  @override
+  String get onboardingTrackMaintenance => 'Ik wil onderhoudstaken bijhouden';
+  @override
+  String get onboardingFinish => 'Woning aanmaken';
+  @override
+  String get onboardingSkipMessage => 'Je kunt later altijd een woning toevoegen via \'Accommodaties\'.';
+  @override
+  String get onboardingSuccessMessage => 'Je woning is aangemaakt!';
 }

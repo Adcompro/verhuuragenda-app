@@ -1,97 +1,139 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../providers/module_visibility_provider.dart';
 import '../../utils/responsive.dart';
 
-class BottomNavShell extends StatelessWidget {
+class BottomNavShell extends ConsumerWidget {
   final Widget child;
 
   const BottomNavShell({super.key, required this.child});
 
-  int _calculateSelectedIndex(BuildContext context) {
-    final location = GoRouterState.of(context).matchedLocation;
-
-    if (location.startsWith('/dashboard')) return 0;
-    if (location.startsWith('/calendar')) return 1;
-    if (location.startsWith('/bookings')) return 2;
-    if (location.startsWith('/accommodations')) return 3;
-    if (location.startsWith('/guests')) return 4;
-    if (location.startsWith('/cleaning')) return 5;
-    if (location.startsWith('/maintenance')) return 6;
-    if (location.startsWith('/pool')) return 7;
-    if (location.startsWith('/garden')) return 8;
-    if (location.startsWith('/campaigns')) return 9;
-    if (location.startsWith('/statistics')) return 10;
-    if (location.startsWith('/settings')) return 11;
-    return 0;
+  List<_NavItem> _buildItems(
+    AppLocalizations l10n,
+    ModuleVisibility visibility,
+  ) {
+    final items = <_NavItem>[
+      _NavItem(
+        icon: Icons.home_outlined,
+        selectedIcon: Icons.home,
+        label: l10n.home,
+        railIcon: Icons.dashboard_outlined,
+        railSelectedIcon: Icons.dashboard,
+        railLabel: l10n.dashboard,
+        route: '/dashboard',
+      ),
+      _NavItem(
+        icon: Icons.calendar_month_outlined,
+        selectedIcon: Icons.calendar_month,
+        label: l10n.calendar,
+        route: '/calendar',
+      ),
+      _NavItem(
+        icon: Icons.book_outlined,
+        selectedIcon: Icons.book,
+        label: l10n.bookings,
+        route: '/bookings',
+      ),
+      _NavItem(
+        icon: Icons.home_work_outlined,
+        selectedIcon: Icons.home_work,
+        label: l10n.accommodations,
+        route: '/accommodations',
+      ),
+      _NavItem(
+        icon: Icons.people_outline,
+        selectedIcon: Icons.people,
+        label: l10n.guests,
+        route: '/guests',
+      ),
+      if (visibility.isEnabled(AppModule.cleaning))
+        _NavItem(
+          icon: Icons.cleaning_services_outlined,
+          selectedIcon: Icons.cleaning_services,
+          label: l10n.cleaning,
+          route: '/cleaning',
+        ),
+      if (visibility.isEnabled(AppModule.maintenance))
+        _NavItem(
+          icon: Icons.build_outlined,
+          selectedIcon: Icons.build,
+          label: l10n.maintenance,
+          route: '/maintenance',
+        ),
+      if (visibility.isEnabled(AppModule.pool))
+        _NavItem(
+          icon: Icons.pool_outlined,
+          selectedIcon: Icons.pool,
+          label: l10n.poolMaintenance,
+          route: '/pool',
+        ),
+      if (visibility.isEnabled(AppModule.garden))
+        _NavItem(
+          icon: Icons.yard_outlined,
+          selectedIcon: Icons.yard,
+          label: l10n.gardenMaintenance,
+          route: '/garden',
+        ),
+      if (visibility.isEnabled(AppModule.campaigns))
+        _NavItem(
+          icon: Icons.campaign_outlined,
+          selectedIcon: Icons.campaign,
+          label: l10n.campaigns,
+          route: '/campaigns',
+        ),
+      if (visibility.isEnabled(AppModule.statistics))
+        _NavItem(
+          icon: Icons.bar_chart_outlined,
+          selectedIcon: Icons.bar_chart,
+          label: l10n.statistics,
+          route: '/statistics',
+        ),
+      _NavItem(
+        icon: Icons.settings_outlined,
+        selectedIcon: Icons.settings,
+        label: l10n.settings,
+        route: '/settings',
+      ),
+    ];
+    return items;
   }
 
-  void _onDestinationSelected(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        context.go('/dashboard');
-        break;
-      case 1:
-        context.go('/calendar');
-        break;
-      case 2:
-        context.go('/bookings');
-        break;
-      case 3:
-        context.go('/accommodations');
-        break;
-      case 4:
-        context.go('/guests');
-        break;
-      case 5:
-        context.go('/cleaning');
-        break;
-      case 6:
-        context.go('/maintenance');
-        break;
-      case 7:
-        context.go('/pool');
-        break;
-      case 8:
-        context.go('/garden');
-        break;
-      case 9:
-        context.go('/campaigns');
-        break;
-      case 10:
-        context.go('/statistics');
-        break;
-      case 11:
-        context.go('/settings');
-        break;
-    }
+  int _selectedIndex(BuildContext context, List<_NavItem> items) {
+    final location = GoRouterState.of(context).matchedLocation;
+    final idx = items.indexWhere((it) => location.startsWith(it.route));
+    return idx >= 0 ? idx : 0;
   }
 
   @override
-  Widget build(BuildContext context) {
-    final selectedIndex = _calculateSelectedIndex(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final visibility = ref.watch(moduleVisibilityProvider);
+    final items = _buildItems(l10n, visibility);
+    final selectedIndex = _selectedIndex(context, items);
 
-    // Use tablet layout only for actual tablets/desktops, not phones in landscape
-    // Check shortest side to determine if it's a phone (< 600) or tablet (>= 600)
     final shortestSide = MediaQuery.of(context).size.shortestSide;
     final isActualTablet = shortestSide >= 600;
 
     if (isActualTablet) {
-      return _buildTabletLayout(context, selectedIndex);
+      return _buildTabletLayout(context, selectedIndex, items, l10n);
     }
-    return _buildPhoneLayout(context, selectedIndex);
+    return _buildPhoneLayout(context, selectedIndex, items);
   }
 
-  Widget _buildTabletLayout(BuildContext context, int selectedIndex) {
-    final l10n = AppLocalizations.of(context)!;
-
+  Widget _buildTabletLayout(
+    BuildContext context,
+    int selectedIndex,
+    List<_NavItem> items,
+    AppLocalizations l10n,
+  ) {
     return Scaffold(
       body: Row(
         children: [
-          // Side Navigation Rail
           NavigationRail(
-            selectedIndex: selectedIndex > 11 ? 0 : selectedIndex,
-            onDestinationSelected: (index) => _onDestinationSelected(context, index),
+            selectedIndex: selectedIndex,
+            onDestinationSelected: (index) => context.go(items[index].route),
             extended: Responsive.isDesktop(context),
             minExtendedWidth: 200,
             labelType: Responsive.isTablet(context)
@@ -109,95 +151,28 @@ class BottomNavShell extends StatelessWidget {
                     )
                   : const Icon(Icons.home_work, size: 32),
             ),
-            destinations: [
-              NavigationRailDestination(
-                icon: const Icon(Icons.dashboard_outlined),
-                selectedIcon: const Icon(Icons.dashboard),
-                label: Text(l10n.dashboard),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.calendar_month_outlined),
-                selectedIcon: const Icon(Icons.calendar_month),
-                label: Text(l10n.calendar),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.book_outlined),
-                selectedIcon: const Icon(Icons.book),
-                label: Text(l10n.bookings),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.home_work_outlined),
-                selectedIcon: const Icon(Icons.home_work),
-                label: Text(l10n.accommodations),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.people_outline),
-                selectedIcon: const Icon(Icons.people),
-                label: Text(l10n.guests),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.cleaning_services_outlined),
-                selectedIcon: const Icon(Icons.cleaning_services),
-                label: Text(l10n.cleaning),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.build_outlined),
-                selectedIcon: const Icon(Icons.build),
-                label: Text(l10n.maintenance),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.pool_outlined),
-                selectedIcon: const Icon(Icons.pool),
-                label: Text(l10n.poolMaintenance),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.yard_outlined),
-                selectedIcon: const Icon(Icons.yard),
-                label: Text(l10n.gardenMaintenance),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.campaign_outlined),
-                selectedIcon: const Icon(Icons.campaign),
-                label: Text(l10n.campaigns),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.bar_chart_outlined),
-                selectedIcon: const Icon(Icons.bar_chart),
-                label: Text(l10n.statistics),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.settings_outlined),
-                selectedIcon: const Icon(Icons.settings),
-                label: Text(l10n.settings),
-              ),
-            ],
+            destinations: items
+                .map((it) => NavigationRailDestination(
+                      icon: Icon(it.railIcon ?? it.icon),
+                      selectedIcon: Icon(it.railSelectedIcon ?? it.selectedIcon),
+                      label: Text(it.railLabel ?? it.label),
+                    ))
+                .toList(),
           ),
           const VerticalDivider(thickness: 1, width: 1),
-          // Main content
           Expanded(child: child),
         ],
       ),
     );
   }
 
-  Widget _buildPhoneLayout(BuildContext context, int selectedIndex) {
-    final l10n = AppLocalizations.of(context)!;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-
-    final navItems = [
-      _NavItem(0, Icons.home_outlined, Icons.home, l10n.home, '/dashboard'),
-      _NavItem(1, Icons.calendar_month_outlined, Icons.calendar_month, l10n.calendar, '/calendar'),
-      _NavItem(2, Icons.book_outlined, Icons.book, l10n.bookings, '/bookings'),
-      _NavItem(3, Icons.home_work_outlined, Icons.home_work, l10n.accommodations, '/accommodations'),
-      _NavItem(4, Icons.people_outline, Icons.people, l10n.guests, '/guests'),
-      _NavItem(5, Icons.cleaning_services_outlined, Icons.cleaning_services, l10n.cleaning, '/cleaning'),
-      _NavItem(6, Icons.build_outlined, Icons.build, l10n.maintenance, '/maintenance'),
-      _NavItem(7, Icons.pool_outlined, Icons.pool, l10n.poolMaintenance, '/pool'),
-      _NavItem(8, Icons.yard_outlined, Icons.yard, l10n.gardenMaintenance, '/garden'),
-      _NavItem(9, Icons.campaign_outlined, Icons.campaign, l10n.campaigns, '/campaigns'),
-      _NavItem(10, Icons.bar_chart_outlined, Icons.bar_chart, l10n.statistics, '/statistics'),
-      _NavItem(11, Icons.settings_outlined, Icons.settings, l10n.settings, '/settings'),
-    ];
+  Widget _buildPhoneLayout(
+    BuildContext context,
+    int selectedIndex,
+    List<_NavItem> items,
+  ) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
       body: child,
@@ -219,10 +194,10 @@ class BottomNavShell extends StatelessWidget {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              itemCount: navItems.length,
+              itemCount: items.length,
               itemBuilder: (context, index) {
-                final item = navItems[index];
-                final isSelected = selectedIndex == item.index;
+                final item = items[index];
+                final isSelected = selectedIndex == index;
 
                 return _ScrollableNavItem(
                   icon: isSelected ? item.selectedIcon : item.icon,
@@ -241,13 +216,23 @@ class BottomNavShell extends StatelessWidget {
 }
 
 class _NavItem {
-  final int index;
   final IconData icon;
   final IconData selectedIcon;
   final String label;
+  final IconData? railIcon;
+  final IconData? railSelectedIcon;
+  final String? railLabel;
   final String route;
 
-  _NavItem(this.index, this.icon, this.selectedIcon, this.label, this.route);
+  const _NavItem({
+    required this.icon,
+    required this.selectedIcon,
+    required this.label,
+    required this.route,
+    this.railIcon,
+    this.railSelectedIcon,
+    this.railLabel,
+  });
 }
 
 class _ScrollableNavItem extends StatelessWidget {
@@ -308,4 +293,3 @@ class _ScrollableNavItem extends StatelessWidget {
     );
   }
 }
-

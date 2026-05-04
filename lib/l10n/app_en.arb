@@ -1398,5 +1398,27 @@
   "deleteTask": "Delete Task",
   "deleteTaskConfirmation": "Are you sure you want to delete this task?",
   "notSet": "Not set",
-  "category": "Category"
+  "category": "Category",
+
+  "modules": "Modules",
+  "modulesDescription": "Choose which modules are visible",
+  "moduleSettingsTitle": "Module settings",
+  "moduleSettingsHint": "Enable or disable modules. Disabled modules will no longer appear in the navigation.",
+  "moduleResetAll": "Enable all again",
+
+  "onboardingWelcomeTitle": "Welcome to VerhuurAgenda!",
+  "onboardingWelcomeMessage": "Let's set up your first holiday home. This takes less than a minute.",
+  "onboardingStart": "Get started",
+  "onboardingMaybeLater": "Maybe later",
+  "onboardingBasicsTitle": "Basics",
+  "onboardingCapacityTitle": "Capacity",
+  "onboardingModulesTitle": "Which modules do you want to use?",
+  "onboardingModulesHint": "You can change these later in Settings.",
+  "onboardingHasPool": "My property has a pool",
+  "onboardingHasGarden": "My property has a garden",
+  "onboardingTrackCleaning": "I want to track cleaning",
+  "onboardingTrackMaintenance": "I want to track maintenance",
+  "onboardingFinish": "Create property",
+  "onboardingSkipMessage": "You can always add a property later from 'Accommodations'.",
+  "onboardingSuccessMessage": "Your property has been created!"
 }

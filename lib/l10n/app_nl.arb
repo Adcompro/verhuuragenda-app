@@ -1398,5 +1398,27 @@
   "deleteTask": "Taak Verwijderen",
   "deleteTaskConfirmation": "Weet je zeker dat je deze taak wilt verwijderen?",
   "notSet": "Niet ingesteld",
-  "category": "Categorie"
+  "category": "Categorie",
+
+  "modules": "Modules",
+  "modulesDescription": "Bepaal welke modules zichtbaar zijn",
+  "moduleSettingsTitle": "Module-instellingen",
+  "moduleSettingsHint": "Schakel modules in of uit. Uitgeschakelde modules verschijnen niet meer in de navigatie.",
+  "moduleResetAll": "Alles weer aanzetten",
+
+  "onboardingWelcomeTitle": "Welkom bij VerhuurAgenda!",
+  "onboardingWelcomeMessage": "Laten we je eerste vakantiehuis aanmaken. Dit duurt minder dan een minuut.",
+  "onboardingStart": "Beginnen",
+  "onboardingMaybeLater": "Misschien later",
+  "onboardingBasicsTitle": "Basisgegevens",
+  "onboardingCapacityTitle": "Capaciteit",
+  "onboardingModulesTitle": "Welke modules wil je gebruiken?",
+  "onboardingModulesHint": "Je kunt dit later altijd aanpassen via Instellingen.",
+  "onboardingHasPool": "Mijn woning heeft een zwembad",
+  "onboardingHasGarden": "Mijn woning heeft een tuin",
+  "onboardingTrackCleaning": "Ik wil schoonmaakbeurten bijhouden",
+  "onboardingTrackMaintenance": "Ik wil onderhoudstaken bijhouden",
+  "onboardingFinish": "Woning aanmaken",
+  "onboardingSkipMessage": "Je kunt later altijd een woning toevoegen via 'Accommodaties'.",
+  "onboardingSuccessMessage": "Je woning is aangemaakt!"
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/onboarding_provider.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
 import '../../utils/responsive.dart';
@@ -24,6 +26,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void initState() {
     super.initState();
     _loadDashboard();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowOnboarding());
   }
 
   Future<void> _loadDashboard() async {
@@ -43,6 +46,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         _error = null; // Will be set with l10n in build
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _maybeShowOnboarding() async {
+    if (ref.read(onboardingDismissedProvider)) return;
+    try {
+      final response =
+          await ApiClient.instance.get(ApiConfig.accommodations);
+      final data = response.data;
+      final count = data is List ? data.length : 0;
+      if (count == 0 && mounted && !ref.read(onboardingDismissedProvider)) {
+        context.go('/onboarding');
+      }
+    } catch (_) {
+      // Silently ignore; user can still navigate manually
     }
   }
 

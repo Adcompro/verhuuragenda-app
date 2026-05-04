@@ -2176,4 +2176,46 @@ class AppLocalizationsDe extends AppLocalizations {
   String get noTasksFound => 'Keine Aufgaben gefunden';
   @override
   String get addFirstTask => 'Fügen Sie Ihre erste Gartenaufgabe hinzu';
+
+  @override
+  String get modules => 'Module';
+  @override
+  String get modulesDescription => 'Wählen Sie, welche Module sichtbar sind';
+  @override
+  String get moduleSettingsTitle => 'Modul-Einstellungen';
+  @override
+  String get moduleSettingsHint => 'Aktivieren oder deaktivieren Sie Module. Deaktivierte Module werden in der Navigation nicht mehr angezeigt.';
+  @override
+  String get moduleResetAll => 'Alle wieder aktivieren';
+
+  @override
+  String get onboardingWelcomeTitle => 'Willkommen bei VerhuurAgenda!';
+  @override
+  String get onboardingWelcomeMessage => 'Lassen Sie uns Ihr erstes Ferienhaus einrichten. Das dauert weniger als eine Minute.';
+  @override
+  String get onboardingStart => 'Loslegen';
+  @override
+  String get onboardingMaybeLater => 'Vielleicht später';
+  @override
+  String get onboardingBasicsTitle => 'Grunddaten';
+  @override
+  String get onboardingCapacityTitle => 'Kapazität';
+  @override
+  String get onboardingModulesTitle => 'Welche Module möchten Sie nutzen?';
+  @override
+  String get onboardingModulesHint => 'Sie können dies später in den Einstellungen ändern.';
+  @override
+  String get onboardingHasPool => 'Meine Unterkunft hat einen Pool';
+  @override
+  String get onboardingHasGarden => 'Meine Unterkunft hat einen Garten';
+  @override
+  String get onboardingTrackCleaning => 'Reinigungstermine verfolgen';
+  @override
+  String get onboardingTrackMaintenance => 'Wartungsaufgaben verfolgen';
+  @override
+  String get onboardingFinish => 'Unterkunft anlegen';
+  @override
+  String get onboardingSkipMessage => 'Sie können später jederzeit eine Unterkunft unter \'Unterkünfte\' hinzufügen.';
+  @override
+  String get onboardingSuccessMessage => 'Ihre Unterkunft wurde angelegt!';
 }

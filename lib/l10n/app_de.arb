@@ -1393,5 +1393,27 @@
   "deleteTask": "Aufgabe Löschen",
   "deleteTaskConfirmation": "Sind Sie sicher, dass Sie diese Aufgabe löschen möchten?",
   "notSet": "Nicht festgelegt",
-  "category": "Kategorie"
+  "category": "Kategorie",
+
+  "modules": "Module",
+  "modulesDescription": "Wählen Sie, welche Module sichtbar sind",
+  "moduleSettingsTitle": "Modul-Einstellungen",
+  "moduleSettingsHint": "Aktivieren oder deaktivieren Sie Module. Deaktivierte Module werden in der Navigation nicht mehr angezeigt.",
+  "moduleResetAll": "Alle wieder aktivieren",
+
+  "onboardingWelcomeTitle": "Willkommen bei VerhuurAgenda!",
+  "onboardingWelcomeMessage": "Lassen Sie uns Ihr erstes Ferienhaus einrichten. Das dauert weniger als eine Minute.",
+  "onboardingStart": "Loslegen",
+  "onboardingMaybeLater": "Vielleicht später",
+  "onboardingBasicsTitle": "Grunddaten",
+  "onboardingCapacityTitle": "Kapazität",
+  "onboardingModulesTitle": "Welche Module möchten Sie nutzen?",
+  "onboardingModulesHint": "Sie können dies später in den Einstellungen ändern.",
+  "onboardingHasPool": "Meine Unterkunft hat einen Pool",
+  "onboardingHasGarden": "Meine Unterkunft hat einen Garten",
+  "onboardingTrackCleaning": "Reinigungstermine verfolgen",
+  "onboardingTrackMaintenance": "Wartungsaufgaben verfolgen",
+  "onboardingFinish": "Unterkunft anlegen",
+  "onboardingSkipMessage": "Sie können später jederzeit eine Unterkunft unter 'Unterkünfte' hinzufügen.",
+  "onboardingSuccessMessage": "Ihre Unterkunft wurde angelegt!"
 }

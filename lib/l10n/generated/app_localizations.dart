@@ -1094,6 +1094,30 @@ abstract class AppLocalizations {
   String get deleteTaskConfirmation;
   String get notSet;
   String get category;
+
+  // Module visibility settings
+  String get modules;
+  String get modulesDescription;
+  String get moduleSettingsTitle;
+  String get moduleSettingsHint;
+  String get moduleResetAll;
+
+  // Onboarding wizard
+  String get onboardingWelcomeTitle;
+  String get onboardingWelcomeMessage;
+  String get onboardingStart;
+  String get onboardingMaybeLater;
+  String get onboardingBasicsTitle;
+  String get onboardingCapacityTitle;
+  String get onboardingModulesTitle;
+  String get onboardingModulesHint;
+  String get onboardingHasPool;
+  String get onboardingHasGarden;
+  String get onboardingTrackCleaning;
+  String get onboardingTrackMaintenance;
+  String get onboardingFinish;
+  String get onboardingSkipMessage;
+  String get onboardingSuccessMessage;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

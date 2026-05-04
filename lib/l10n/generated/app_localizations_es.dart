@@ -2176,4 +2176,46 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noTasksFound => 'No se encontraron tareas';
   @override
   String get addFirstTask => 'Añada su primera tarea de jardinería';
+
+  @override
+  String get modules => 'Módulos';
+  @override
+  String get modulesDescription => 'Elija qué módulos están visibles';
+  @override
+  String get moduleSettingsTitle => 'Ajustes de módulos';
+  @override
+  String get moduleSettingsHint => 'Active o desactive módulos. Los módulos desactivados ya no aparecerán en la navegación.';
+  @override
+  String get moduleResetAll => 'Reactivar todo';
+
+  @override
+  String get onboardingWelcomeTitle => '¡Bienvenido a VerhuurAgenda!';
+  @override
+  String get onboardingWelcomeMessage => 'Vamos a configurar tu primera casa de vacaciones. Te llevará menos de un minuto.';
+  @override
+  String get onboardingStart => 'Empezar';
+  @override
+  String get onboardingMaybeLater => 'Quizás más tarde';
+  @override
+  String get onboardingBasicsTitle => 'Datos básicos';
+  @override
+  String get onboardingCapacityTitle => 'Capacidad';
+  @override
+  String get onboardingModulesTitle => '¿Qué módulos quieres usar?';
+  @override
+  String get onboardingModulesHint => 'Puedes cambiar esto más tarde en Ajustes.';
+  @override
+  String get onboardingHasPool => 'Mi propiedad tiene piscina';
+  @override
+  String get onboardingHasGarden => 'Mi propiedad tiene jardín';
+  @override
+  String get onboardingTrackCleaning => 'Quiero registrar la limpieza';
+  @override
+  String get onboardingTrackMaintenance => 'Quiero registrar el mantenimiento';
+  @override
+  String get onboardingFinish => 'Crear propiedad';
+  @override
+  String get onboardingSkipMessage => 'Puedes añadir una propiedad más tarde desde \'Alojamientos\'.';
+  @override
+  String get onboardingSuccessMessage => '¡Tu propiedad ha sido creada!';
 }

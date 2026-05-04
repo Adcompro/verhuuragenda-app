@@ -2170,4 +2170,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notSet => 'Not set';
   @override
   String get category => 'Category';
+
+  @override
+  String get modules => 'Modules';
+  @override
+  String get modulesDescription => 'Choose which modules are visible';
+  @override
+  String get moduleSettingsTitle => 'Module settings';
+  @override
+  String get moduleSettingsHint => 'Enable or disable modules. Disabled modules will no longer appear in the navigation.';
+  @override
+  String get moduleResetAll => 'Enable all again';
+
+  @override
+  String get onboardingWelcomeTitle => 'Welcome to VerhuurAgenda!';
+  @override
+  String get onboardingWelcomeMessage => 'Let\'s set up your first holiday home. This takes less than a minute.';
+  @override
+  String get onboardingStart => 'Get started';
+  @override
+  String get onboardingMaybeLater => 'Maybe later';
+  @override
+  String get onboardingBasicsTitle => 'Basics';
+  @override
+  String get onboardingCapacityTitle => 'Capacity';
+  @override
+  String get onboardingModulesTitle => 'Which modules do you want to use?';
+  @override
+  String get onboardingModulesHint => 'You can change these later in Settings.';
+  @override
+  String get onboardingHasPool => 'My property has a pool';
+  @override
+  String get onboardingHasGarden => 'My property has a garden';
+  @override
+  String get onboardingTrackCleaning => 'I want to track cleaning';
+  @override
+  String get onboardingTrackMaintenance => 'I want to track maintenance';
+  @override
+  String get onboardingFinish => 'Create property';
+  @override
+  String get onboardingSkipMessage => 'You can always add a property later from \'Accommodations\'.';
+  @override
+  String get onboardingSuccessMessage => 'Your property has been created!';
 }

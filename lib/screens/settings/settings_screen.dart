@@ -16,6 +16,7 @@ import 'profile_edit_screen.dart';
 import '../seasons/seasons_list_screen.dart';
 import '../team/team_list_screen.dart';
 import 'financial_year_screen.dart';
+import 'module_settings_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -192,6 +193,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const TeamListScreen()),
+              );
+            },
+          ),
+          _SettingsItem(
+            icon: Icons.tune_outlined,
+            title: l10n.modules,
+            subtitle: l10n.modulesDescription,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ModuleSettingsScreen()),
               );
             },
           ),
