@@ -168,6 +168,7 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: nl.vakantiewoningverhuur.app
+        team_id: CL42GVQFDF
 
     scripts:
       - name: Create Flutter project structure
