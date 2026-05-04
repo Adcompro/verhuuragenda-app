@@ -211,12 +211,22 @@ workflows:
 
       - name: Set up code signing
         script: |
+          # Codemagic handles signing automatically via the
+          # ios_signing config in environment + the
+          # app_store_connect integration. We just need to
+          # initialize a keychain and let it do its thing.
           keychain initialize
+          # Verbose listing so we can debug if it still fails:
+          echo "==== Listing existing App Store Connect resources ===="
+          app-store-connect list-bundle-ids --bundle-id-identifier nl.vakantiewoningverhuur.app || true
+          app-store-connect list-certificates --certificate-type DISTRIBUTION || true
+          app-store-connect list-profiles --bundle-id-identifier nl.vakantiewoningverhuur.app || true
+          echo "==== Now fetching/creating signing files ===="
           app-store-connect fetch-signing-files "nl.vakantiewoningverhuur.app" \
             --platform IOS \
             --type IOS_APP_STORE \
-            --team-id 9W4XU3TL7X \
-            --create
+            --create \
+            --verbose
           keychain add-certificates
           xcode-project use-profiles
 
