@@ -15,7 +15,7 @@ workflows:
         script: |
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
-          flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
+          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
@@ -62,7 +62,7 @@ workflows:
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
           cp -r integration_test integration_test_backup 2>/dev/null || true
-          flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
+          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
@@ -167,7 +167,7 @@ workflows:
       cocoapods: default
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: nl.vakantiewoningverhuur.app
+        bundle_identifier: nl.verhuurvakantiewoning.app
 
     scripts:
       - name: Create Flutter project structure
@@ -175,7 +175,7 @@ workflows:
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
           cp -r assets assets_backup 2>/dev/null || true
-          flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
+          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
@@ -188,8 +188,8 @@ workflows:
           FULL_VERSION=$(grep '^version:' ../pubspec.yaml | awk '{print $2}')
           VERSION=$(echo $FULL_VERSION | cut -d'+' -f1)
           BUILD_NUMBER=$(echo $FULL_VERSION | cut -d'+' -f2)
-          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier nl.vakantiewoningverhuur.app" Runner/Info.plist
-          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.vakantiewoningverhuur.app;/g' Runner.xcodeproj/project.pbxproj
+          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier nl.verhuurvakantiewoning.app" Runner/Info.plist
+          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.verhuurvakantiewoning.app;/g' Runner.xcodeproj/project.pbxproj
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string VerhuurVakantiewoning heeft toegang nodig tot je camera om fotos te maken." Runner/Info.plist || true
@@ -249,7 +249,7 @@ workflows:
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
           cp -r assets assets_backup 2>/dev/null || true
-          flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
+          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
@@ -284,7 +284,7 @@ workflows:
         - android_signing
         - google_play_credentials
       vars:
-        PACKAGE_NAME: "nl.vakantiewoningverhuur.app"
+        PACKAGE_NAME: "nl.verhuurvakantiewoning.app"
 
     scripts:
       - name: Create Flutter project structure
@@ -292,7 +292,7 @@ workflows:
           cp -r lib lib_backup
           cp pubspec.yaml pubspec_backup.yaml
           cp -r assets assets_backup 2>/dev/null || true
-          flutter create --org nl.vakantiewoningverhuur --project-name verhuurvakantiewoning_app .
+          flutter create --org nl.verhuurvakantiewoning --project-name verhuurvakantiewoning_app .
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
