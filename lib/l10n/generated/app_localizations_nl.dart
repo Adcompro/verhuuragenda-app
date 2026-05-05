@@ -2166,4 +2166,55 @@ class AppLocalizationsNl extends AppLocalizations {
   String get onboardingSkipMessage => 'Je kunt later altijd een woning toevoegen via \'Accommodaties\'.';
   @override
   String get onboardingSuccessMessage => 'Je woning is aangemaakt!';
+
+  @override
+  String get onboardingWelcomeBullet1 => 'Naam, type en locatie van je woning';
+  @override
+  String get onboardingWelcomeBullet2 => 'Hoeveel gasten je woning aankan';
+  @override
+  String get onboardingWelcomeBullet3 => 'Of er een tuin of zwembad is';
+  @override
+  String get onboardingWelcomeBullet4 => 'Je tarieven en seizoenen';
+  @override
+  String get onboardingFeaturesTitle => 'Wat heeft je woning?';
+  @override
+  String get onboardingPricingTitle => 'Tarieven';
+  @override
+  String get onboardingPricingFlat => 'Eén vast tarief';
+  @override
+  String get onboardingPricingFlatDesc => 'Hetzelfde bedrag per week, het hele jaar door';
+  @override
+  String get onboardingPricingSeasonal => 'Per seizoen';
+  @override
+  String get onboardingPricingSeasonalDesc => 'Aparte tarieven voor laag, midden en hoog seizoen';
+  @override
+  String get onboardingPricePerWeek => 'Prijs per week';
+  @override
+  String get onboardingPriceLow => 'Laagseizoen prijs (per week)';
+  @override
+  String get onboardingPriceMid => 'Middenseizoen prijs (per week)';
+  @override
+  String get onboardingPriceHigh => 'Hoogseizoen prijs (per week)';
+  @override
+  String get onboardingCleaningTitle => 'Schoonmaakkosten';
+  @override
+  String get onboardingCleaningIncluded => 'Inbegrepen in de prijs';
+  @override
+  String get onboardingCleaningSeparate => 'Apart bedrag per boeking';
+  @override
+  String get onboardingCleaningFee => 'Schoonmaakkosten';
+  @override
+  String get onboardingSeasonsTitle => 'Seizoenen instellen';
+  @override
+  String get onboardingSeasonsHint => 'Wanneer geldt welk tarief? Je kunt dit later altijd aanpassen.';
+  @override
+  String get onboardingSeasonLow => 'Laag seizoen';
+  @override
+  String get onboardingSeasonMid => 'Midden seizoen';
+  @override
+  String get onboardingSeasonHigh => 'Hoog seizoen';
+  @override
+  String get onboardingFrom => 'Van';
+  @override
+  String get onboardingTo => 'Tot';
 }

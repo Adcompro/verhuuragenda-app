@@ -1118,6 +1118,33 @@ abstract class AppLocalizations {
   String get onboardingFinish;
   String get onboardingSkipMessage;
   String get onboardingSuccessMessage;
+
+  // Extended onboarding wizard
+  String get onboardingWelcomeBullet1;
+  String get onboardingWelcomeBullet2;
+  String get onboardingWelcomeBullet3;
+  String get onboardingWelcomeBullet4;
+  String get onboardingFeaturesTitle;
+  String get onboardingPricingTitle;
+  String get onboardingPricingFlat;
+  String get onboardingPricingFlatDesc;
+  String get onboardingPricingSeasonal;
+  String get onboardingPricingSeasonalDesc;
+  String get onboardingPricePerWeek;
+  String get onboardingPriceLow;
+  String get onboardingPriceMid;
+  String get onboardingPriceHigh;
+  String get onboardingCleaningTitle;
+  String get onboardingCleaningIncluded;
+  String get onboardingCleaningSeparate;
+  String get onboardingCleaningFee;
+  String get onboardingSeasonsTitle;
+  String get onboardingSeasonsHint;
+  String get onboardingSeasonLow;
+  String get onboardingSeasonMid;
+  String get onboardingSeasonHigh;
+  String get onboardingFrom;
+  String get onboardingTo;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

@@ -2218,4 +2218,55 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onboardingSkipMessage => 'Puedes añadir una propiedad más tarde desde \'Alojamientos\'.';
   @override
   String get onboardingSuccessMessage => '¡Tu propiedad ha sido creada!';
+
+  @override
+  String get onboardingWelcomeBullet1 => 'Nombre, tipo y ubicación de tu propiedad';
+  @override
+  String get onboardingWelcomeBullet2 => 'Cuántos huéspedes puede alojar';
+  @override
+  String get onboardingWelcomeBullet3 => 'Si tiene piscina o jardín';
+  @override
+  String get onboardingWelcomeBullet4 => 'Tus tarifas y temporadas';
+  @override
+  String get onboardingFeaturesTitle => '¿Qué tiene tu propiedad?';
+  @override
+  String get onboardingPricingTitle => 'Tarifas';
+  @override
+  String get onboardingPricingFlat => 'Tarifa única';
+  @override
+  String get onboardingPricingFlatDesc => 'Mismo precio por semana, todo el año';
+  @override
+  String get onboardingPricingSeasonal => 'Por temporada';
+  @override
+  String get onboardingPricingSeasonalDesc => 'Tarifas distintas para temporada baja, media y alta';
+  @override
+  String get onboardingPricePerWeek => 'Precio por semana';
+  @override
+  String get onboardingPriceLow => 'Precio temporada baja (por semana)';
+  @override
+  String get onboardingPriceMid => 'Precio temporada media (por semana)';
+  @override
+  String get onboardingPriceHigh => 'Precio temporada alta (por semana)';
+  @override
+  String get onboardingCleaningTitle => 'Tarifa de limpieza';
+  @override
+  String get onboardingCleaningIncluded => 'Incluida en el precio';
+  @override
+  String get onboardingCleaningSeparate => 'Tarifa aparte por reserva';
+  @override
+  String get onboardingCleaningFee => 'Tarifa de limpieza';
+  @override
+  String get onboardingSeasonsTitle => 'Configurar temporadas';
+  @override
+  String get onboardingSeasonsHint => '¿Cuándo se aplica cada tarifa? Puedes modificarlo más tarde.';
+  @override
+  String get onboardingSeasonLow => 'Temporada baja';
+  @override
+  String get onboardingSeasonMid => 'Temporada media';
+  @override
+  String get onboardingSeasonHigh => 'Temporada alta';
+  @override
+  String get onboardingFrom => 'Desde';
+  @override
+  String get onboardingTo => 'Hasta';
 }
