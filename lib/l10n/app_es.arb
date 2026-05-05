@@ -1445,5 +1445,21 @@
   "onboardingSeasonMid": "Temporada media",
   "onboardingSeasonHigh": "Temporada alta",
   "onboardingFrom": "Desde",
-  "onboardingTo": "Hasta"
+  "onboardingTo": "Hasta",
+  "onboardingBasicsHint": "Algunos datos para que reconozcamos tu propiedad en la app y la situemos correctamente.",
+  "onboardingCapacityHint": "Usamos estos valores para comprobar automáticamente la disponibilidad de las reservas.",
+  "onboardingPricingHint": "Estos precios se aplican automáticamente a las nuevas reservas — puedes modificarlos más tarde.",
+  "onboardingAddPeriod": "Añadir periodo",
+
+  "whatsNewTitle": "Novedades",
+  "whatsNewVersion": "Versión",
+  "whatsNewGotIt": "Entendido",
+  "whatsNewItem1Title": "Asistente de bienvenida",
+  "whatsNewItem1Body": "Los nuevos usuarios ya pueden configurar su primera casa de vacaciones en pocos pasos — nombre, tipo, capacidad, módulos y tarifas en un único flujo.",
+  "whatsNewItem2Title": "Activar y desactivar módulos",
+  "whatsNewItem2Body": "Oculta los módulos que no usas (piscina, jardín, limpieza, mantenimiento, campañas, estadísticas). En Ajustes → Módulos.",
+  "whatsNewItem3Title": "Tarifas y temporadas",
+  "whatsNewItem3Body": "Elige una tarifa única o tarifas distintas para temporada baja, media y alta. La limpieza puede estar incluida o cobrarse aparte.",
+  "whatsNewItem4Title": "Varios periodos por temporada",
+  "whatsNewItem4Body": "Añade p. ej. dos periodos de temporada baja (ene–abr y oct–dic). Selecciona las fechas con el calendario."
 }

@@ -52,9 +52,12 @@ class _OnboardingWizardScreenState
   final _highPriceController = TextEditingController();
   final _cleaningFeeController = TextEditingController();
 
-  // Seasons (defaults to common Dutch holiday-rental ranges of current year)
+  // Seasons - lists of date ranges per season type (lets user
+  // add e.g. two low-season periods: jan-apr and oct-dec).
   late int _seasonYear;
-  late DateTime _lowStart, _lowEnd, _midStart, _midEnd, _highStart, _highEnd;
+  late List<_DateRange> _lowRanges;
+  late List<_DateRange> _midRanges;
+  late List<_DateRange> _highRanges;
 
   bool _submitting = false;
 
@@ -62,12 +65,15 @@ class _OnboardingWizardScreenState
   void initState() {
     super.initState();
     _seasonYear = DateTime.now().year;
-    _lowStart = DateTime(_seasonYear, 1, 1);
-    _lowEnd = DateTime(_seasonYear, 4, 30);
-    _midStart = DateTime(_seasonYear, 5, 1);
-    _midEnd = DateTime(_seasonYear, 6, 30);
-    _highStart = DateTime(_seasonYear, 7, 1);
-    _highEnd = DateTime(_seasonYear, 8, 31);
+    _lowRanges = [
+      _DateRange(DateTime(_seasonYear, 1, 1), DateTime(_seasonYear, 4, 30)),
+    ];
+    _midRanges = [
+      _DateRange(DateTime(_seasonYear, 5, 1), DateTime(_seasonYear, 6, 30)),
+    ];
+    _highRanges = [
+      _DateRange(DateTime(_seasonYear, 7, 1), DateTime(_seasonYear, 8, 31)),
+    ];
   }
 
   @override
@@ -212,11 +218,11 @@ class _OnboardingWizardScreenState
 
       await ApiClient.instance.post(ApiConfig.accommodations, data: data);
 
-      // 2. If seasonal pricing, create the 3 seasons
+      // 2. If seasonal pricing, create one season per range.
       if (_pricingStrategy == 'seasonal') {
-        await _createSeasonSafe('low', _lowStart, _lowEnd);
-        await _createSeasonSafe('mid', _midStart, _midEnd);
-        await _createSeasonSafe('high', _highStart, _highEnd);
+        await _createSeasonsForType('low', _lowRanges);
+        await _createSeasonsForType('mid', _midRanges);
+        await _createSeasonsForType('high', _highRanges);
       }
 
       // 3. Apply module visibility
@@ -251,29 +257,34 @@ class _OnboardingWizardScreenState
     }
   }
 
-  Future<void> _createSeasonSafe(
+  Future<void> _createSeasonsForType(
     String type,
-    DateTime start,
-    DateTime end,
+    List<_DateRange> ranges,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    final name = switch (type) {
-      'low' => '${l10n.onboardingSeasonLow} $_seasonYear',
-      'mid' => '${l10n.onboardingSeasonMid} $_seasonYear',
-      'high' => '${l10n.onboardingSeasonHigh} $_seasonYear',
-      _ => '$type $_seasonYear',
+    final baseName = switch (type) {
+      'low' => l10n.onboardingSeasonLow,
+      'mid' => l10n.onboardingSeasonMid,
+      'high' => l10n.onboardingSeasonHigh,
+      _ => type,
     };
-    try {
-      await ApiClient.instance.post(ApiConfig.seasons, data: {
-        'name': name,
-        'type': type,
-        'year': _seasonYear,
-        'start_date':
-            '${start.year}-${_pad(start.month)}-${_pad(start.day)}',
-        'end_date': '${end.year}-${_pad(end.month)}-${_pad(end.day)}',
-      });
-    } catch (_) {
-      // Silently ignore season conflicts; user can fix in Seasons screen later.
+    for (var i = 0; i < ranges.length; i++) {
+      final r = ranges[i];
+      final suffix = ranges.length > 1 ? ' (${i + 1})' : '';
+      final name = '$baseName $_seasonYear$suffix';
+      try {
+        await ApiClient.instance.post(ApiConfig.seasons, data: {
+          'name': name,
+          'type': type,
+          'year': _seasonYear,
+          'start_date':
+              '${r.start.year}-${_pad(r.start.month)}-${_pad(r.start.day)}',
+          'end_date':
+              '${r.end.year}-${_pad(r.end.month)}-${_pad(r.end.day)}',
+        });
+      } catch (_) {
+        // Silently ignore individual conflicts; user can fix later.
+      }
     }
   }
 
@@ -473,7 +484,9 @@ class _OnboardingWizardScreenState
         padding: const EdgeInsets.all(24),
         children: [
           _SectionTitle(title: l10n.onboardingBasicsTitle),
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
+          _SectionHint(text: l10n.onboardingBasicsHint),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _nameController,
             decoration: InputDecoration(
@@ -525,7 +538,9 @@ class _OnboardingWizardScreenState
         padding: const EdgeInsets.all(24),
         children: [
           _SectionTitle(title: l10n.onboardingCapacityTitle),
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
+          _SectionHint(text: l10n.onboardingCapacityHint),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _maxGuestsController,
             keyboardType: TextInputType.number,
@@ -620,7 +635,9 @@ class _OnboardingWizardScreenState
         padding: const EdgeInsets.all(24),
         children: [
           _SectionTitle(title: l10n.onboardingPricingTitle),
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
+          _SectionHint(text: l10n.onboardingPricingHint),
+          const SizedBox(height: 20),
           // Strategy choice
           _StrategyCard(
             icon: Icons.tag_outlined,
@@ -745,60 +762,48 @@ class _OnboardingWizardScreenState
           l10n.onboardingSeasonsHint,
           style: TextStyle(fontSize: 13, color: Colors.grey[600]),
         ),
-        const SizedBox(height: 24),
-        _SeasonRangePicker(
+        const SizedBox(height: 16),
+        _SeasonGroup(
           icon: Icons.cloud_outlined,
           label: l10n.onboardingSeasonLow,
-          start: _lowStart,
-          end: _lowEnd,
-          onStartTap: () async {
-            final p = await _pickDate(_lowStart);
-            if (p != null) setState(() => _lowStart = p);
-          },
-          onEndTap: () async {
-            final p = await _pickDate(_lowEnd);
-            if (p != null) setState(() => _lowEnd = p);
-          },
+          ranges: _lowRanges,
+          onChanged: () => setState(() {}),
+          pickDate: _pickDate,
           fromLabel: l10n.onboardingFrom,
           toLabel: l10n.onboardingTo,
+          addLabel: l10n.onboardingAddPeriod,
         ),
         const SizedBox(height: 12),
-        _SeasonRangePicker(
+        _SeasonGroup(
           icon: Icons.cloud_queue_outlined,
           label: l10n.onboardingSeasonMid,
-          start: _midStart,
-          end: _midEnd,
-          onStartTap: () async {
-            final p = await _pickDate(_midStart);
-            if (p != null) setState(() => _midStart = p);
-          },
-          onEndTap: () async {
-            final p = await _pickDate(_midEnd);
-            if (p != null) setState(() => _midEnd = p);
-          },
+          ranges: _midRanges,
+          onChanged: () => setState(() {}),
+          pickDate: _pickDate,
           fromLabel: l10n.onboardingFrom,
           toLabel: l10n.onboardingTo,
+          addLabel: l10n.onboardingAddPeriod,
         ),
         const SizedBox(height: 12),
-        _SeasonRangePicker(
+        _SeasonGroup(
           icon: Icons.wb_sunny_outlined,
           label: l10n.onboardingSeasonHigh,
-          start: _highStart,
-          end: _highEnd,
-          onStartTap: () async {
-            final p = await _pickDate(_highStart);
-            if (p != null) setState(() => _highStart = p);
-          },
-          onEndTap: () async {
-            final p = await _pickDate(_highEnd);
-            if (p != null) setState(() => _highEnd = p);
-          },
+          ranges: _highRanges,
+          onChanged: () => setState(() {}),
+          pickDate: _pickDate,
           fromLabel: l10n.onboardingFrom,
           toLabel: l10n.onboardingTo,
+          addLabel: l10n.onboardingAddPeriod,
         ),
       ],
     );
   }
+}
+
+class _DateRange {
+  DateTime start;
+  DateTime end;
+  _DateRange(this.start, this.end);
 }
 
 class _SectionTitle extends StatelessWidget {
@@ -810,6 +815,19 @@ class _SectionTitle extends StatelessWidget {
     return Text(
       title,
       style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+    );
+  }
+}
+
+class _SectionHint extends StatelessWidget {
+  final String text;
+  const _SectionHint({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: 14, color: Colors.grey[700], height: 1.4),
     );
   }
 }
@@ -925,25 +943,25 @@ class _StrategyCard extends StatelessWidget {
   }
 }
 
-class _SeasonRangePicker extends StatelessWidget {
+class _SeasonGroup extends StatelessWidget {
   final IconData icon;
   final String label;
-  final DateTime start;
-  final DateTime end;
-  final VoidCallback onStartTap;
-  final VoidCallback onEndTap;
+  final List<_DateRange> ranges;
+  final VoidCallback onChanged;
+  final Future<DateTime?> Function(DateTime) pickDate;
   final String fromLabel;
   final String toLabel;
+  final String addLabel;
 
-  const _SeasonRangePicker({
+  const _SeasonGroup({
     required this.icon,
     required this.label,
-    required this.start,
-    required this.end,
-    required this.onStartTap,
-    required this.onEndTap,
+    required this.ranges,
+    required this.onChanged,
+    required this.pickDate,
     required this.fromLabel,
     required this.toLabel,
+    required this.addLabel,
   });
 
   String _fmt(DateTime d) =>
@@ -964,31 +982,79 @@ class _SeasonRangePicker extends StatelessWidget {
             children: [
               Icon(icon, color: AppTheme.primaryColor, size: 22),
               const SizedBox(width: 8),
-              Text(
-                label,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
+              Text(label,
+                  style: const TextStyle(fontWeight: FontWeight.w600)),
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _DateButton(
-                  label: fromLabel,
-                  date: _fmt(start),
-                  onTap: onStartTap,
-                ),
+          ...ranges.asMap().entries.map((entry) {
+            final i = entry.key;
+            final r = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _DateButton(
+                      label: fromLabel,
+                      date: _fmt(r.start),
+                      onTap: () async {
+                        final p = await pickDate(r.start);
+                        if (p != null) {
+                          r.start = p;
+                          onChanged();
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _DateButton(
+                      label: toLabel,
+                      date: _fmt(r.end),
+                      onTap: () async {
+                        final p = await pickDate(r.end);
+                        if (p != null) {
+                          r.end = p;
+                          onChanged();
+                        }
+                      },
+                    ),
+                  ),
+                  if (ranges.length > 1)
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 20),
+                      color: Colors.red.shade400,
+                      tooltip: 'Verwijderen',
+                      onPressed: () {
+                        ranges.removeAt(i);
+                        onChanged();
+                      },
+                    ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _DateButton(
-                  label: toLabel,
-                  date: _fmt(end),
-                  onTap: onEndTap,
-                ),
-              ),
-            ],
+            );
+          }),
+          TextButton.icon(
+            onPressed: () {
+              // Default: 1 day after the last range's end
+              final last = ranges.last.end;
+              final start = last.add(const Duration(days: 1));
+              final end = DateTime(
+                start.year,
+                start.month,
+                start.day + 30,
+              );
+              ranges.add(_DateRange(start, end));
+              onChanged();
+            },
+            icon: const Icon(Icons.add, size: 18),
+            label: Text(addLabel),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              minimumSize: const Size(0, 32),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
           ),
         ],
       ),

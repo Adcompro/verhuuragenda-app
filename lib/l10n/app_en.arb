@@ -1446,5 +1446,21 @@
   "onboardingSeasonMid": "Mid season",
   "onboardingSeasonHigh": "High season",
   "onboardingFrom": "From",
-  "onboardingTo": "To"
+  "onboardingTo": "To",
+  "onboardingBasicsHint": "A few details so we can recognise your property in the app and place it on the right spot.",
+  "onboardingCapacityHint": "We use these values to automatically check availability for bookings.",
+  "onboardingPricingHint": "These prices are applied automatically to new bookings — you can adjust them later.",
+  "onboardingAddPeriod": "Add period",
+
+  "whatsNewTitle": "What's new",
+  "whatsNewVersion": "Version",
+  "whatsNewGotIt": "Got it",
+  "whatsNewItem1Title": "Welcome wizard",
+  "whatsNewItem1Body": "New users can now set up their first holiday home in a few simple steps — name, type, capacity, modules and pricing all in one flow.",
+  "whatsNewItem2Title": "Toggle modules on and off",
+  "whatsNewItem2Body": "Hide modules you don't use (pool, garden, cleaning, maintenance, campaigns, statistics). Find them in Settings → Modules.",
+  "whatsNewItem3Title": "Pricing and seasons",
+  "whatsNewItem3Body": "Choose one flat rate or different rates for low, mid and high season. Cleaning fees can be included or charged separately.",
+  "whatsNewItem4Title": "Multiple periods per season",
+  "whatsNewItem4Body": "Add e.g. two low-season periods (jan–apr and oct–dec). Dates are picked via the calendar popup."
 }

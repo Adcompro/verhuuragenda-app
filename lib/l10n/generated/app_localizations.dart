@@ -1145,6 +1145,23 @@ abstract class AppLocalizations {
   String get onboardingSeasonHigh;
   String get onboardingFrom;
   String get onboardingTo;
+  String get onboardingBasicsHint;
+  String get onboardingCapacityHint;
+  String get onboardingPricingHint;
+  String get onboardingAddPeriod;
+
+  // What's new sheet
+  String get whatsNewTitle;
+  String get whatsNewVersion;
+  String get whatsNewGotIt;
+  String get whatsNewItem1Title;
+  String get whatsNewItem1Body;
+  String get whatsNewItem2Title;
+  String get whatsNewItem2Body;
+  String get whatsNewItem3Title;
+  String get whatsNewItem3Body;
+  String get whatsNewItem4Title;
+  String get whatsNewItem4Body;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

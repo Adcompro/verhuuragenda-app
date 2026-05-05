@@ -6,6 +6,8 @@ import '../../l10n/generated/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/onboarding_provider.dart';
+import '../../providers/whats_new_provider.dart';
+import '../onboarding/whats_new_screen.dart';
 import '../../core/api/api_client.dart';
 import '../../config/api_config.dart';
 import '../../utils/responsive.dart';
@@ -50,17 +52,28 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Future<void> _maybeShowOnboarding() async {
-    if (ref.read(onboardingDismissedProvider)) return;
-    try {
-      final response =
-          await ApiClient.instance.get(ApiConfig.accommodations);
-      final data = response.data;
-      final count = data is List ? data.length : 0;
-      if (count == 0 && mounted && !ref.read(onboardingDismissedProvider)) {
-        context.go('/onboarding');
+    // Onboarding wins over what's-new: a brand-new host shouldn't
+    // see release notes before they've even set up their first home.
+    if (!ref.read(onboardingDismissedProvider)) {
+      try {
+        final response =
+            await ApiClient.instance.get(ApiConfig.accommodations);
+        final data = response.data;
+        final count = data is List ? data.length : 0;
+        if (count == 0 && mounted && !ref.read(onboardingDismissedProvider)) {
+          context.go('/onboarding');
+          return;
+        }
+      } catch (_) {
+        // Silently ignore; user can still navigate manually
       }
-    } catch (_) {
-      // Silently ignore; user can still navigate manually
+    }
+
+    // What's-new sheet on first launch of an updated build.
+    if (mounted) {
+      // Give the version-load future a moment to resolve.
+      await Future.delayed(const Duration(milliseconds: 200));
+      if (mounted) await WhatsNewSheet.showIfNeeded(context, ref);
     }
   }
 

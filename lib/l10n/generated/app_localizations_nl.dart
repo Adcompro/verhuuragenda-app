@@ -2217,4 +2217,35 @@ class AppLocalizationsNl extends AppLocalizations {
   String get onboardingFrom => 'Van';
   @override
   String get onboardingTo => 'Tot';
+  @override
+  String get onboardingBasicsHint => 'Korte info zodat je woning herkenbaar is in de app en op de juiste locatie staat.';
+  @override
+  String get onboardingCapacityHint => 'Op deze waarden filtert de app automatisch beschikbare boekingen.';
+  @override
+  String get onboardingPricingHint => 'Deze prijzen worden automatisch toegepast bij nieuwe boekingen — je kunt ze later altijd aanpassen.';
+  @override
+  String get onboardingAddPeriod => 'Periode toevoegen';
+
+  @override
+  String get whatsNewTitle => 'Wat is er nieuw';
+  @override
+  String get whatsNewVersion => 'Versie';
+  @override
+  String get whatsNewGotIt => 'Begrepen';
+  @override
+  String get whatsNewItem1Title => 'Welkomstwizard';
+  @override
+  String get whatsNewItem1Body => 'Nieuwe gebruikers kunnen nu in een paar simpele stappen hun eerste vakantiehuis aanmaken — naam, type, capaciteit, modules en tarieven in één flow.';
+  @override
+  String get whatsNewItem2Title => 'Modules in- en uitschakelen';
+  @override
+  String get whatsNewItem2Body => 'Verberg modules die je niet gebruikt (zwembad, tuin, schoonmaak, onderhoud, mailings, statistieken). Vind je terug in Instellingen → Modules.';
+  @override
+  String get whatsNewItem3Title => 'Tarieven en seizoenen';
+  @override
+  String get whatsNewItem3Body => 'Kies één vast tarief of verschillende tarieven voor laag, midden en hoog seizoen. Schoonmaakkosten kun je inbegrepen of apart instellen.';
+  @override
+  String get whatsNewItem4Title => 'Meerdere periodes per seizoen';
+  @override
+  String get whatsNewItem4Body => 'Voeg bv. twee perioden voor laag seizoen toe (jan–apr en okt–dec). Datums kies je via de kalender-popup.';
 }

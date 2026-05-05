@@ -2263,4 +2263,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingFrom => 'From';
   @override
   String get onboardingTo => 'To';
+  @override
+  String get onboardingBasicsHint => 'A few details so we can recognise your property in the app and place it on the right spot.';
+  @override
+  String get onboardingCapacityHint => 'We use these values to automatically check availability for bookings.';
+  @override
+  String get onboardingPricingHint => 'These prices are applied automatically to new bookings — you can adjust them later.';
+  @override
+  String get onboardingAddPeriod => 'Add period';
+
+  @override
+  String get whatsNewTitle => 'What\'s new';
+  @override
+  String get whatsNewVersion => 'Version';
+  @override
+  String get whatsNewGotIt => 'Got it';
+  @override
+  String get whatsNewItem1Title => 'Welcome wizard';
+  @override
+  String get whatsNewItem1Body => 'New users can now set up their first holiday home in a few simple steps — name, type, capacity, modules and pricing all in one flow.';
+  @override
+  String get whatsNewItem2Title => 'Toggle modules on and off';
+  @override
+  String get whatsNewItem2Body => 'Hide modules you don\'t use (pool, garden, cleaning, maintenance, campaigns, statistics). Find them in Settings → Modules.';
+  @override
+  String get whatsNewItem3Title => 'Pricing and seasons';
+  @override
+  String get whatsNewItem3Body => 'Choose one flat rate or different rates for low, mid and high season. Cleaning fees can be included or charged separately.';
+  @override
+  String get whatsNewItem4Title => 'Multiple periods per season';
+  @override
+  String get whatsNewItem4Body => 'Add e.g. two low-season periods (jan–apr and oct–dec). Dates are picked via the calendar popup.';
 }

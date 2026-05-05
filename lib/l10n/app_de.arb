@@ -1441,5 +1441,21 @@
   "onboardingSeasonMid": "Zwischensaison",
   "onboardingSeasonHigh": "Hauptsaison",
   "onboardingFrom": "Von",
-  "onboardingTo": "Bis"
+  "onboardingTo": "Bis",
+  "onboardingBasicsHint": "Ein paar Angaben, damit Ihre Unterkunft in der App erkannt und richtig zugeordnet wird.",
+  "onboardingCapacityHint": "Mit diesen Werten prüft die App automatisch die Verfügbarkeit für Buchungen.",
+  "onboardingPricingHint": "Diese Preise werden automatisch auf neue Buchungen angewendet — Sie können sie jederzeit anpassen.",
+  "onboardingAddPeriod": "Zeitraum hinzufügen",
+
+  "whatsNewTitle": "Was ist neu",
+  "whatsNewVersion": "Version",
+  "whatsNewGotIt": "Verstanden",
+  "whatsNewItem1Title": "Willkommens-Assistent",
+  "whatsNewItem1Body": "Neue Nutzer können jetzt in wenigen Schritten ihre erste Ferienunterkunft anlegen — Name, Typ, Kapazität, Module und Preise in einem Ablauf.",
+  "whatsNewItem2Title": "Module ein- und ausschalten",
+  "whatsNewItem2Body": "Blenden Sie nicht genutzte Module aus (Pool, Garten, Reinigung, Wartung, Kampagnen, Statistik). Finden Sie unter Einstellungen → Module.",
+  "whatsNewItem3Title": "Preise und Saisons",
+  "whatsNewItem3Body": "Wählen Sie einen festen Preis oder unterschiedliche Preise für Neben-, Zwischen- und Hauptsaison. Reinigungskosten können enthalten oder separat berechnet werden.",
+  "whatsNewItem4Title": "Mehrere Zeiträume pro Saison",
+  "whatsNewItem4Body": "Fügen Sie z. B. zwei Nebensaison-Zeiträume hinzu (Jan–Apr und Okt–Dez). Datumsauswahl per Kalender-Popup."
 }

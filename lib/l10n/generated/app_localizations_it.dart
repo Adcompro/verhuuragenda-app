@@ -3223,4 +3223,35 @@ class AppLocalizationsIt extends AppLocalizations {
   String get onboardingFrom => 'Da';
   @override
   String get onboardingTo => 'A';
+  @override
+  String get onboardingBasicsHint => 'Pochi dettagli per riconoscere la tua proprietà nell\'app e posizionarla nel posto giusto.';
+  @override
+  String get onboardingCapacityHint => 'Usiamo questi valori per controllare automaticamente la disponibilità delle prenotazioni.';
+  @override
+  String get onboardingPricingHint => 'Queste tariffe vengono applicate automaticamente alle nuove prenotazioni — puoi modificarle in seguito.';
+  @override
+  String get onboardingAddPeriod => 'Aggiungi periodo';
+
+  @override
+  String get whatsNewTitle => 'Novità';
+  @override
+  String get whatsNewVersion => 'Versione';
+  @override
+  String get whatsNewGotIt => 'Capito';
+  @override
+  String get whatsNewItem1Title => 'Procedura guidata di benvenuto';
+  @override
+  String get whatsNewItem1Body => 'I nuovi utenti ora possono configurare la prima casa vacanze in pochi passaggi — nome, tipo, capacità, moduli e tariffe in un unico flusso.';
+  @override
+  String get whatsNewItem2Title => 'Attiva e disattiva moduli';
+  @override
+  String get whatsNewItem2Body => 'Nascondi i moduli che non usi (piscina, giardino, pulizie, manutenzione, campagne, statistiche). In Impostazioni → Moduli.';
+  @override
+  String get whatsNewItem3Title => 'Tariffe e stagioni';
+  @override
+  String get whatsNewItem3Body => 'Scegli una tariffa unica o tariffe diverse per bassa, media e alta stagione. Le pulizie possono essere incluse o addebitate a parte.';
+  @override
+  String get whatsNewItem4Title => 'Più periodi per stagione';
+  @override
+  String get whatsNewItem4Body => 'Aggiungi ad esempio due periodi di bassa stagione (gen–apr e ott–dic). Scegli le date dal popup del calendario.';
 }

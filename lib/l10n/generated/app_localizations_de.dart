@@ -2269,4 +2269,35 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingFrom => 'Von';
   @override
   String get onboardingTo => 'Bis';
+  @override
+  String get onboardingBasicsHint => 'Ein paar Angaben, damit Ihre Unterkunft in der App erkannt und richtig zugeordnet wird.';
+  @override
+  String get onboardingCapacityHint => 'Mit diesen Werten prüft die App automatisch die Verfügbarkeit für Buchungen.';
+  @override
+  String get onboardingPricingHint => 'Diese Preise werden automatisch auf neue Buchungen angewendet — Sie können sie jederzeit anpassen.';
+  @override
+  String get onboardingAddPeriod => 'Zeitraum hinzufügen';
+
+  @override
+  String get whatsNewTitle => 'Was ist neu';
+  @override
+  String get whatsNewVersion => 'Version';
+  @override
+  String get whatsNewGotIt => 'Verstanden';
+  @override
+  String get whatsNewItem1Title => 'Willkommens-Assistent';
+  @override
+  String get whatsNewItem1Body => 'Neue Nutzer können jetzt in wenigen Schritten ihre erste Ferienunterkunft anlegen — Name, Typ, Kapazität, Module und Preise in einem Ablauf.';
+  @override
+  String get whatsNewItem2Title => 'Module ein- und ausschalten';
+  @override
+  String get whatsNewItem2Body => 'Blenden Sie nicht genutzte Module aus (Pool, Garten, Reinigung, Wartung, Kampagnen, Statistik). Finden Sie unter Einstellungen → Module.';
+  @override
+  String get whatsNewItem3Title => 'Preise und Saisons';
+  @override
+  String get whatsNewItem3Body => 'Wählen Sie einen festen Preis oder unterschiedliche Preise für Neben-, Zwischen- und Hauptsaison. Reinigungskosten können enthalten oder separat berechnet werden.';
+  @override
+  String get whatsNewItem4Title => 'Mehrere Zeiträume pro Saison';
+  @override
+  String get whatsNewItem4Body => 'Fügen Sie z. B. zwei Nebensaison-Zeiträume hinzu (Jan–Apr und Okt–Dez). Datumsauswahl per Kalender-Popup.';
 }

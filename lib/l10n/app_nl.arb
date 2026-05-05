@@ -1446,5 +1446,21 @@
   "onboardingSeasonMid": "Midden seizoen",
   "onboardingSeasonHigh": "Hoog seizoen",
   "onboardingFrom": "Van",
-  "onboardingTo": "Tot"
+  "onboardingTo": "Tot",
+  "onboardingBasicsHint": "Korte info zodat je woning herkenbaar is in de app en op de juiste locatie staat.",
+  "onboardingCapacityHint": "Op deze waarden filtert de app automatisch beschikbare boekingen.",
+  "onboardingPricingHint": "Deze prijzen worden automatisch toegepast bij nieuwe boekingen — je kunt ze later altijd aanpassen.",
+  "onboardingAddPeriod": "Periode toevoegen",
+
+  "whatsNewTitle": "Wat is er nieuw",
+  "whatsNewVersion": "Versie",
+  "whatsNewGotIt": "Begrepen",
+  "whatsNewItem1Title": "Welkomstwizard",
+  "whatsNewItem1Body": "Nieuwe gebruikers kunnen nu in een paar simpele stappen hun eerste vakantiehuis aanmaken — naam, type, capaciteit, modules en tarieven in één flow.",
+  "whatsNewItem2Title": "Modules in- en uitschakelen",
+  "whatsNewItem2Body": "Verberg modules die je niet gebruikt (zwembad, tuin, schoonmaak, onderhoud, mailings, statistieken). Vind je terug in Instellingen → Modules.",
+  "whatsNewItem3Title": "Tarieven en seizoenen",
+  "whatsNewItem3Body": "Kies één vast tarief of verschillende tarieven voor laag, midden en hoog seizoen. Schoonmaakkosten kun je inbegrepen of apart instellen.",
+  "whatsNewItem4Title": "Meerdere periodes per seizoen",
+  "whatsNewItem4Body": "Voeg bv. twee perioden voor laag seizoen toe (jan–apr en okt–dec). Datums kies je via de kalender-popup."
 }
