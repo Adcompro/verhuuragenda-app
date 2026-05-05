@@ -166,8 +166,6 @@ workflows:
       xcode: latest
       cocoapods: default
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: nl.verhuurvakantiewoning.app
         provisioning_profiles:
           - verhuuragenda_appstore
         certificates:
