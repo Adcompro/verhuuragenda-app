@@ -1477,5 +1477,9 @@
   "bookingDiscount": "Korting",
   "bookingTotalAutoCalculated": "Automatisch berekend - aanpasbaar",
   "bookingPriceBreakdown": "Prijsoverzicht",
-  "bookingSubtotal": "Subtotaal"
+  "bookingSubtotal": "Subtotaal",
+
+  "manualTitle": "Handleiding",
+  "manualSubtitle": "Stap-voor-stap uitleg",
+  "manualIntro": "Lees hoe je je verhuuragenda inricht en boekingen invoert."
 }

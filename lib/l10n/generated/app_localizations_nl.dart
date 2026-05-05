@@ -2272,4 +2272,11 @@ class AppLocalizationsNl extends AppLocalizations {
   String get bookingPriceBreakdown => 'Prijsoverzicht';
   @override
   String get bookingSubtotal => 'Subtotaal';
+
+  @override
+  String get manualTitle => 'Handleiding';
+  @override
+  String get manualSubtitle => 'Stap-voor-stap uitleg';
+  @override
+  String get manualIntro => 'Lees hoe je je verhuuragenda inricht en boekingen invoert.';
 }

@@ -17,6 +17,7 @@ import '../seasons/seasons_list_screen.dart';
 import '../team/team_list_screen.dart';
 import 'financial_year_screen.dart';
 import 'module_settings_screen.dart';
+import 'manual_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -209,6 +210,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
 
           _SectionHeader(title: l10n.support),
+          _SettingsItem(
+            icon: Icons.menu_book_outlined,
+            title: l10n.manualTitle,
+            subtitle: l10n.manualSubtitle,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ManualScreen()),
+              );
+            },
+          ),
           _SettingsItem(
             icon: Icons.help_outline,
             title: l10n.helpAndSupport,

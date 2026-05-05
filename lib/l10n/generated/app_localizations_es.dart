@@ -2324,4 +2324,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get bookingPriceBreakdown => 'Desglose de precio';
   @override
   String get bookingSubtotal => 'Subtotal';
+
+  @override
+  String get manualTitle => 'Manual';
+  @override
+  String get manualSubtitle => 'Guía paso a paso';
+  @override
+  String get manualIntro => 'Aprende cómo configurar tu alquiler y crear reservas.';
 }

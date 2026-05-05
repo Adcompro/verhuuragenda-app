@@ -1485,5 +1485,9 @@
   "bookingDiscount": "Remise",
   "bookingTotalAutoCalculated": "Calculé automatiquement - modifiable",
   "bookingPriceBreakdown": "Détail du prix",
-  "bookingSubtotal": "Sous-total"
+  "bookingSubtotal": "Sous-total",
+
+  "manualTitle": "Manuel",
+  "manualSubtitle": "Guide pas à pas",
+  "manualIntro": "Apprenez à configurer votre location et à créer des réservations."
 }

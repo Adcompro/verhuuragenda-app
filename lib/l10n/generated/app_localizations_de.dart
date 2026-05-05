@@ -2324,4 +2324,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get bookingPriceBreakdown => 'Preisübersicht';
   @override
   String get bookingSubtotal => 'Zwischensumme';
+
+  @override
+  String get manualTitle => 'Handbuch';
+  @override
+  String get manualSubtitle => 'Schritt-für-Schritt-Anleitung';
+  @override
+  String get manualIntro => 'Erfahren Sie, wie Sie Ihre Vermietung einrichten und Buchungen erfassen.';
 }

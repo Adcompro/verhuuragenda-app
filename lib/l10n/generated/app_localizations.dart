@@ -1177,6 +1177,11 @@ abstract class AppLocalizations {
   String get bookingTotalAutoCalculated;
   String get bookingPriceBreakdown;
   String get bookingSubtotal;
+
+  // In-app manual
+  String get manualTitle;
+  String get manualSubtitle;
+  String get manualIntro;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

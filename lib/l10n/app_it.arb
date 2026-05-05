@@ -1485,5 +1485,9 @@
   "bookingDiscount": "Sconto",
   "bookingTotalAutoCalculated": "Calcolato automaticamente - modificabile",
   "bookingPriceBreakdown": "Dettaglio prezzo",
-  "bookingSubtotal": "Subtotale"
+  "bookingSubtotal": "Subtotale",
+
+  "manualTitle": "Manuale",
+  "manualSubtitle": "Guida passo passo",
+  "manualIntro": "Scopri come configurare il tuo affitto e creare prenotazioni."
 }

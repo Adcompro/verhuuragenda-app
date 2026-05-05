@@ -1477,5 +1477,9 @@
   "bookingDiscount": "Discount",
   "bookingTotalAutoCalculated": "Auto-calculated - can be adjusted",
   "bookingPriceBreakdown": "Price breakdown",
-  "bookingSubtotal": "Subtotal"
+  "bookingSubtotal": "Subtotal",
+
+  "manualTitle": "User manual",
+  "manualSubtitle": "Step-by-step guide",
+  "manualIntro": "Learn how to set up your rental and create bookings."
 }

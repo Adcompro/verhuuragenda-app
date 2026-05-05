@@ -3278,4 +3278,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String get bookingPriceBreakdown => 'Dettaglio prezzo';
   @override
   String get bookingSubtotal => 'Subtotale';
+
+  @override
+  String get manualTitle => 'Manuale';
+  @override
+  String get manualSubtitle => 'Guida passo passo';
+  @override
+  String get manualIntro => 'Scopri come configurare il tuo affitto e creare prenotazioni.';
 }

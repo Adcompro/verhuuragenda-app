@@ -1472,5 +1472,9 @@
   "bookingDiscount": "Rabatt",
   "bookingTotalAutoCalculated": "Automatisch berechnet - anpassbar",
   "bookingPriceBreakdown": "Preisübersicht",
-  "bookingSubtotal": "Zwischensumme"
+  "bookingSubtotal": "Zwischensumme",
+
+  "manualTitle": "Handbuch",
+  "manualSubtitle": "Schritt-für-Schritt-Anleitung",
+  "manualIntro": "Erfahren Sie, wie Sie Ihre Vermietung einrichten und Buchungen erfassen."
 }
