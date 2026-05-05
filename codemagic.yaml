@@ -169,7 +169,7 @@ workflows:
         provisioning_profiles:
           - verhuuragenda_appstore
         certificates:
-          - verhuuragenda_dist
+          - vakantiewoningverhuur_nieuw
 
     scripts:
       - name: Create Flutter project structure
