@@ -159,7 +159,7 @@ workflows:
     instance_type: mac_mini_m1
 
     integrations:
-      app_store_connect: codemagic2025
+      app_store_connect: codemagic-new
 
     environment:
       flutter: stable
