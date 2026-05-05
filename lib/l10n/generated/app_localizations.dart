@@ -1171,6 +1171,12 @@ abstract class AppLocalizations {
   String get onboardingCoverageGapLabel;
   String get onboardingCoverageOverlapLabel;
   String get onboardingFillGaps;
+
+  // Booking form pricing
+  String get bookingDiscount;
+  String get bookingTotalAutoCalculated;
+  String get bookingPriceBreakdown;
+  String get bookingSubtotal;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

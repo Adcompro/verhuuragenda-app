@@ -3269,4 +3269,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get onboardingCoverageOverlapLabel => 'Sovrapposizione';
   @override
   String get onboardingFillGaps => 'Riempi i giorni mancanti con bassa stagione';
+
+  @override
+  String get bookingDiscount => 'Sconto';
+  @override
+  String get bookingTotalAutoCalculated => 'Calcolato automaticamente - modificabile';
+  @override
+  String get bookingPriceBreakdown => 'Dettaglio prezzo';
+  @override
+  String get bookingSubtotal => 'Subtotale';
 }

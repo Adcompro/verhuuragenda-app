@@ -1480,5 +1480,10 @@
   "@onboardingCoverageOverlap": { "placeholders": { "count": { "type": "int" } } },
   "onboardingCoverageGapLabel": "Non couvert",
   "onboardingCoverageOverlapLabel": "Chevauchement",
-  "onboardingFillGaps": "Remplir les jours manquants en basse saison"
+  "onboardingFillGaps": "Remplir les jours manquants en basse saison",
+
+  "bookingDiscount": "Remise",
+  "bookingTotalAutoCalculated": "Calculé automatiquement - modifiable",
+  "bookingPriceBreakdown": "Détail du prix",
+  "bookingSubtotal": "Sous-total"
 }

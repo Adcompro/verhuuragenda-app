@@ -2263,4 +2263,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get onboardingCoverageOverlapLabel => 'Overlap';
   @override
   String get onboardingFillGaps => 'Vul ontbrekende dagen op met laag seizoen';
+
+  @override
+  String get bookingDiscount => 'Korting';
+  @override
+  String get bookingTotalAutoCalculated => 'Automatisch berekend - aanpasbaar';
+  @override
+  String get bookingPriceBreakdown => 'Prijsoverzicht';
+  @override
+  String get bookingSubtotal => 'Subtotaal';
 }

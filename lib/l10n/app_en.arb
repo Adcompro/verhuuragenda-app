@@ -1472,5 +1472,10 @@
   "@onboardingCoverageOverlap": { "placeholders": { "count": { "type": "int" } } },
   "onboardingCoverageGapLabel": "Not covered",
   "onboardingCoverageOverlapLabel": "Overlap",
-  "onboardingFillGaps": "Fill missing days with low season"
+  "onboardingFillGaps": "Fill missing days with low season",
+
+  "bookingDiscount": "Discount",
+  "bookingTotalAutoCalculated": "Auto-calculated - can be adjusted",
+  "bookingPriceBreakdown": "Price breakdown",
+  "bookingSubtotal": "Subtotal"
 }

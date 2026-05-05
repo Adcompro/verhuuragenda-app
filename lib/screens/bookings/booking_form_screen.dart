@@ -48,6 +48,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
   final _depositController = TextEditingController();
   final _cleaningFeeController = TextEditingController();
   final _notesController = TextEditingController();
+  final _discountController = TextEditingController(text: '0');
 
   // Availability check
   bool _isCheckingAvailability = false;
@@ -55,6 +56,11 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
   List<Map<String, dynamic>> _conflicts = [];
   List<Map<String, dynamic>> _blockedDates = [];
   List<Map<String, dynamic>> _alternatives = [];
+
+  // Auto price calculation
+  bool _isCalculatingPrice = false;
+  double? _calculatedSubtotal;
+  Map<String, dynamic>? _priceBreakdown;
 
   // Data
   List<Accommodation> _accommodations = [];
@@ -82,7 +88,161 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     _depositController.dispose();
     _cleaningFeeController.dispose();
     _notesController.dispose();
+    _discountController.dispose();
     super.dispose();
+  }
+
+  /// Calls the calculate-price API and stores the result.
+  /// Triggered whenever accommodation or check-in / check-out dates change.
+  Future<void> _recalculatePrice() async {
+    if (_selectedAccommodationId == null ||
+        _checkIn == null ||
+        _checkOut == null) {
+      setState(() {
+        _calculatedSubtotal = null;
+        _priceBreakdown = null;
+      });
+      return;
+    }
+    if (!_checkOut!.isAfter(_checkIn!)) return;
+
+    setState(() => _isCalculatingPrice = true);
+    try {
+      final response = await ApiClient.instance.post(
+        '${ApiConfig.accommodations}/$_selectedAccommodationId/calculate-price',
+        data: {
+          'check_in': _formatDateForApi(_checkIn!),
+          'check_out': _formatDateForApi(_checkOut!),
+        },
+      );
+      final data = response.data as Map<String, dynamic>;
+      final subtotal = (data['total'] as num).toDouble();
+      setState(() {
+        _calculatedSubtotal = subtotal;
+        _priceBreakdown = data;
+        _isCalculatingPrice = false;
+        _applyDiscountToTotal();
+      });
+    } catch (_) {
+      setState(() => _isCalculatingPrice = false);
+    }
+  }
+
+  /// Recompute total = subtotal - discount and write to the total field.
+  void _applyDiscountToTotal() {
+    if (_calculatedSubtotal == null) return;
+    final discount = double.tryParse(
+          _discountController.text.replaceAll(',', '.'),
+        ) ??
+        0;
+    final total = (_calculatedSubtotal! - discount).clamp(0.0, double.infinity);
+    _totalAmountController.text = total.toStringAsFixed(2);
+  }
+
+  Widget _buildPriceBreakdown(AppLocalizations l10n) {
+    final breakdown = _priceBreakdown!;
+    final nights = breakdown['nights'] ?? 0;
+    final cleaningFee = (breakdown['cleaning_fee'] as num?)?.toDouble() ?? 0;
+    final accommodationTotal =
+        (breakdown['accommodation_total'] as num?)?.toDouble() ?? 0;
+    final total = (breakdown['total'] as num?)?.toDouble() ?? 0;
+    final seasons =
+        (breakdown['season_breakdown'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+
+    String labelForSeason(String s) {
+      switch (s) {
+        case 'low':
+          return l10n.onboardingSeasonLow;
+        case 'mid':
+          return l10n.onboardingSeasonMid;
+        case 'high':
+          return l10n.onboardingSeasonHigh;
+        default:
+          return s;
+      }
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryColor.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.primaryColor.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.calculate_outlined,
+                  size: 18, color: AppTheme.primaryColor),
+              const SizedBox(width: 6),
+              Text(
+                l10n.bookingPriceBreakdown,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
+              const Spacer(),
+              Text(l10n.nightsCount(nights),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ...seasons.map((s) {
+            final seasonNights = s['nights'] ?? 0;
+            final rate = (s['rate_per_night'] as num?)?.toDouble() ?? 0;
+            final subtotal = (s['subtotal'] as num?)?.toDouble() ?? 0;
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '$seasonNights × ${labelForSeason(s['season'] as String)} '
+                      '(€ ${rate.toStringAsFixed(2)})',
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                  ),
+                  Text('€ ${subtotal.toStringAsFixed(2)}',
+                      style: const TextStyle(fontSize: 13)),
+                ],
+              ),
+            );
+          }),
+          if (cleaningFee > 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.cleaning,
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                  ),
+                  Text('€ ${cleaningFee.toStringAsFixed(2)}',
+                      style: const TextStyle(fontSize: 13)),
+                ],
+              ),
+            ),
+          const Divider(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.bookingSubtotal,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+              Text('€ ${total.toStringAsFixed(2)}',
+                  style: const TextStyle(fontWeight: FontWeight.w600)),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _loadData() async {
@@ -148,6 +308,15 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
       }
 
       setState(() => _isLoadingData = false);
+
+      // After data loads, run an initial price calculation if we
+      // have everything we need (covers both new-from-deeplink and
+      // edit-mode flows).
+      if (_selectedAccommodationId != null &&
+          _checkIn != null &&
+          _checkOut != null) {
+        _recalculatePrice();
+      }
     } catch (e) {
       setState(() {
         _error = e.toString();
@@ -255,8 +424,9 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     if (acc.cleaningFee != null) {
       _cleaningFeeController.text = acc.cleaningFee!.toStringAsFixed(2);
     }
-    // Check availability for the new selection
+    // Check availability + recalculate price
     _checkAvailability();
+    _recalculatePrice();
   }
 
   @override
@@ -310,11 +480,13 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
               Expanded(child: _buildDateField(l10n.checkIn, _checkIn, (date) {
                 setState(() => _checkIn = date);
                 _checkAvailability();
+                _recalculatePrice();
               }, l10n)),
               const SizedBox(width: 16),
               Expanded(child: _buildDateField(l10n.checkOut, _checkOut, (date) {
                 setState(() => _checkOut = date);
                 _checkAvailability();
+                _recalculatePrice();
               }, l10n)),
             ],
           ),
@@ -477,6 +649,29 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
 
           // Financial
           _buildSectionTitle(l10n.financial),
+          if (_isCalculatingPrice) ...[
+            const LinearProgressIndicator(minHeight: 2),
+            const SizedBox(height: 8),
+          ],
+          if (_priceBreakdown != null) _buildPriceBreakdown(l10n),
+          if (_priceBreakdown != null) const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _discountController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(
+                    labelText: l10n.bookingDiscount,
+                    prefixText: '€ ',
+                    border: const OutlineInputBorder(),
+                  ),
+                  onChanged: (_) => _applyDiscountToTotal(),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
           TextFormField(
             controller: _totalAmountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -484,6 +679,9 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
               labelText: '${l10n.totalAmount} *',
               prefixText: '€ ',
               border: const OutlineInputBorder(),
+              helperText: _calculatedSubtotal != null
+                  ? l10n.bookingTotalAutoCalculated
+                  : null,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -605,8 +803,9 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
         if (acc.cleaningFee != null) {
           _cleaningFeeController.text = acc.cleaningFee!.toStringAsFixed(2);
         }
-        // Check availability
+        // Check availability + recalc total
         _checkAvailability();
+        _recalculatePrice();
       },
       validator: (value) => value == null ? l10n.selectAnAccommodation : null,
     );

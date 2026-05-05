@@ -2309,4 +2309,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingCoverageOverlapLabel => 'Overlap';
   @override
   String get onboardingFillGaps => 'Fill missing days with low season';
+
+  @override
+  String get bookingDiscount => 'Discount';
+  @override
+  String get bookingTotalAutoCalculated => 'Auto-calculated - can be adjusted';
+  @override
+  String get bookingPriceBreakdown => 'Price breakdown';
+  @override
+  String get bookingSubtotal => 'Subtotal';
 }

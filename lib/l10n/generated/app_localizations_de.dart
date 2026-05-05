@@ -2315,4 +2315,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingCoverageOverlapLabel => 'Überlappung';
   @override
   String get onboardingFillGaps => 'Fehlende Tage mit Nebensaison auffüllen';
+
+  @override
+  String get bookingDiscount => 'Rabatt';
+  @override
+  String get bookingTotalAutoCalculated => 'Automatisch berechnet - anpassbar';
+  @override
+  String get bookingPriceBreakdown => 'Preisübersicht';
+  @override
+  String get bookingSubtotal => 'Zwischensumme';
 }
