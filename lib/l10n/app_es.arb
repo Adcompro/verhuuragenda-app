@@ -1461,5 +1461,15 @@
   "whatsNewItem3Title": "Tarifas y temporadas",
   "whatsNewItem3Body": "Elige una tarifa única o tarifas distintas para temporada baja, media y alta. La limpieza puede estar incluida o cobrarse aparte.",
   "whatsNewItem4Title": "Varios periodos por temporada",
-  "whatsNewItem4Body": "Añade p. ej. dos periodos de temporada baja (ene–abr y oct–dic). Selecciona las fechas con el calendario."
+  "whatsNewItem4Body": "Añade p. ej. dos periodos de temporada baja (ene–abr y oct–dic). Selecciona las fechas con el calendario.",
+
+  "onboardingCoverageTitle": "Cobertura",
+  "onboardingCoverageOk": "Todo el año está cubierto",
+  "onboardingCoverageMissing": "Faltan {count} días",
+  "@onboardingCoverageMissing": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageOverlap": "{count} días entran en varias temporadas",
+  "@onboardingCoverageOverlap": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageGapLabel": "Sin cubrir",
+  "onboardingCoverageOverlapLabel": "Solapamiento",
+  "onboardingFillGaps": "Rellenar días faltantes con temporada baja"
 }

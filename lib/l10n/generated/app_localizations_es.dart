@@ -2300,4 +2300,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get whatsNewItem4Title => 'Varios periodos por temporada';
   @override
   String get whatsNewItem4Body => 'Añade p. ej. dos periodos de temporada baja (ene–abr y oct–dic). Selecciona las fechas con el calendario.';
+
+  @override
+  String get onboardingCoverageTitle => 'Cobertura';
+  @override
+  String get onboardingCoverageOk => 'Todo el año está cubierto';
+  @override
+  String onboardingCoverageMissing(int count) => 'Faltan $count días';
+  @override
+  String onboardingCoverageOverlap(int count) => '$count días entran en varias temporadas';
+  @override
+  String get onboardingCoverageGapLabel => 'Sin cubrir';
+  @override
+  String get onboardingCoverageOverlapLabel => 'Solapamiento';
+  @override
+  String get onboardingFillGaps => 'Rellenar días faltantes con temporada baja';
 }

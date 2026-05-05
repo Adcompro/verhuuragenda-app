@@ -1462,5 +1462,15 @@
   "whatsNewItem3Title": "Pricing and seasons",
   "whatsNewItem3Body": "Choose one flat rate or different rates for low, mid and high season. Cleaning fees can be included or charged separately.",
   "whatsNewItem4Title": "Multiple periods per season",
-  "whatsNewItem4Body": "Add e.g. two low-season periods (jan–apr and oct–dec). Dates are picked via the calendar popup."
+  "whatsNewItem4Body": "Add e.g. two low-season periods (jan–apr and oct–dec). Dates are picked via the calendar popup.",
+
+  "onboardingCoverageTitle": "Coverage",
+  "onboardingCoverageOk": "The whole year is covered",
+  "onboardingCoverageMissing": "{count} days missing",
+  "@onboardingCoverageMissing": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageOverlap": "{count} days fall under multiple seasons",
+  "@onboardingCoverageOverlap": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageGapLabel": "Not covered",
+  "onboardingCoverageOverlapLabel": "Overlap",
+  "onboardingFillGaps": "Fill missing days with low season"
 }

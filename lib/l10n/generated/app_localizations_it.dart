@@ -3254,4 +3254,19 @@ class AppLocalizationsIt extends AppLocalizations {
   String get whatsNewItem4Title => 'Più periodi per stagione';
   @override
   String get whatsNewItem4Body => 'Aggiungi ad esempio due periodi di bassa stagione (gen–apr e ott–dic). Scegli le date dal popup del calendario.';
+
+  @override
+  String get onboardingCoverageTitle => 'Copertura';
+  @override
+  String get onboardingCoverageOk => 'Tutto l\'anno è coperto';
+  @override
+  String onboardingCoverageMissing(int count) => 'Mancano $count giorni';
+  @override
+  String onboardingCoverageOverlap(int count) => '$count giorni rientrano in più stagioni';
+  @override
+  String get onboardingCoverageGapLabel => 'Non coperto';
+  @override
+  String get onboardingCoverageOverlapLabel => 'Sovrapposizione';
+  @override
+  String get onboardingFillGaps => 'Riempi i giorni mancanti con bassa stagione';
 }

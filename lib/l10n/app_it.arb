@@ -1470,5 +1470,15 @@
   "whatsNewItem3Title": "Tariffe e stagioni",
   "whatsNewItem3Body": "Scegli una tariffa unica o tariffe diverse per bassa, media e alta stagione. Le pulizie possono essere incluse o addebitate a parte.",
   "whatsNewItem4Title": "Più periodi per stagione",
-  "whatsNewItem4Body": "Aggiungi ad esempio due periodi di bassa stagione (gen–apr e ott–dic). Scegli le date dal popup del calendario."
+  "whatsNewItem4Body": "Aggiungi ad esempio due periodi di bassa stagione (gen–apr e ott–dic). Scegli le date dal popup del calendario.",
+
+  "onboardingCoverageTitle": "Copertura",
+  "onboardingCoverageOk": "Tutto l'anno è coperto",
+  "onboardingCoverageMissing": "Mancano {count} giorni",
+  "@onboardingCoverageMissing": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageOverlap": "{count} giorni rientrano in più stagioni",
+  "@onboardingCoverageOverlap": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageGapLabel": "Non coperto",
+  "onboardingCoverageOverlapLabel": "Sovrapposizione",
+  "onboardingFillGaps": "Riempi i giorni mancanti con bassa stagione"
 }

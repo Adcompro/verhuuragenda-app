@@ -795,8 +795,36 @@ class _OnboardingWizardScreenState
           toLabel: l10n.onboardingTo,
           addLabel: l10n.onboardingAddPeriod,
         ),
+        const SizedBox(height: 24),
+        _CoveragePanel(
+          year: _seasonYear,
+          lowRanges: _lowRanges,
+          midRanges: _midRanges,
+          highRanges: _highRanges,
+          onFillGaps: _fillGapsWithLow,
+          l10n: l10n,
+        ),
       ],
     );
+  }
+
+  /// For each gap day not covered by any season, append a low-season
+  /// range that fills that gap. Adjacent gap days are merged into a
+  /// single new range.
+  void _fillGapsWithLow() {
+    final coverage = _YearCoverage.compute(
+      year: _seasonYear,
+      lowRanges: _lowRanges,
+      midRanges: _midRanges,
+      highRanges: _highRanges,
+    );
+    final gaps = coverage.gapRanges();
+    if (gaps.isEmpty) return;
+    setState(() {
+      for (final gap in gaps) {
+        _lowRanges.add(gap);
+      }
+    });
   }
 }
 
@@ -804,6 +832,326 @@ class _DateRange {
   DateTime start;
   DateTime end;
   _DateRange(this.start, this.end);
+}
+
+enum _SeasonKind { low, mid, high }
+
+/// Per-day coverage for a single year. Each day gets a list of
+/// season-kinds that overlap it; gaps are days with an empty list.
+class _YearCoverage {
+  final int year;
+  final int totalDays;
+  final List<List<_SeasonKind>> daySeasons;
+
+  _YearCoverage._(this.year, this.totalDays, this.daySeasons);
+
+  static _YearCoverage compute({
+    required int year,
+    required List<_DateRange> lowRanges,
+    required List<_DateRange> midRanges,
+    required List<_DateRange> highRanges,
+  }) {
+    final isLeap = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+    final total = isLeap ? 366 : 365;
+    final days = List<List<_SeasonKind>>.generate(total, (_) => []);
+
+    void mark(_SeasonKind kind, List<_DateRange> ranges) {
+      for (final r in ranges) {
+        if (r.start.year != year || r.end.year != year) continue;
+        final si = _dayOfYear(r.start) - 1;
+        final ei = _dayOfYear(r.end) - 1;
+        if (si < 0 || ei < 0) continue;
+        for (var i = si; i <= ei && i < total; i++) {
+          days[i].add(kind);
+        }
+      }
+    }
+
+    mark(_SeasonKind.low, lowRanges);
+    mark(_SeasonKind.mid, midRanges);
+    mark(_SeasonKind.high, highRanges);
+
+    return _YearCoverage._(year, total, days);
+  }
+
+  static int _dayOfYear(DateTime d) {
+    return d.difference(DateTime(d.year, 1, 1)).inDays + 1;
+  }
+
+  int get coveredDays =>
+      daySeasons.where((s) => s.isNotEmpty).length;
+  int get gapDays => totalDays - coveredDays;
+  int get overlapDays =>
+      daySeasons.where((s) => s.length > 1).length;
+  bool get isFullyCovered => gapDays == 0;
+  bool get hasOverlap => overlapDays > 0;
+
+  /// Build contiguous DateRanges for all days that have no season.
+  List<_DateRange> gapRanges() {
+    final result = <_DateRange>[];
+    int? gapStart;
+    for (var i = 0; i < daySeasons.length; i++) {
+      final isGap = daySeasons[i].isEmpty;
+      if (isGap && gapStart == null) gapStart = i;
+      if (!isGap && gapStart != null) {
+        result.add(_DateRange(
+          DateTime(year, 1, 1).add(Duration(days: gapStart)),
+          DateTime(year, 1, 1).add(Duration(days: i - 1)),
+        ));
+        gapStart = null;
+      }
+    }
+    if (gapStart != null) {
+      result.add(_DateRange(
+        DateTime(year, 1, 1).add(Duration(days: gapStart)),
+        DateTime(year, 1, 1).add(Duration(days: daySeasons.length - 1)),
+      ));
+    }
+    return result;
+  }
+}
+
+class _CoveragePanel extends StatelessWidget {
+  final int year;
+  final List<_DateRange> lowRanges;
+  final List<_DateRange> midRanges;
+  final List<_DateRange> highRanges;
+  final VoidCallback onFillGaps;
+  final AppLocalizations l10n;
+
+  const _CoveragePanel({
+    required this.year,
+    required this.lowRanges,
+    required this.midRanges,
+    required this.highRanges,
+    required this.onFillGaps,
+    required this.l10n,
+  });
+
+  static const _lowColor = Color(0xFF60A5FA);
+  static const _midColor = Color(0xFFFBBF24);
+  static const _highColor = Color(0xFFEF4444);
+  static const _gapColor = Color(0xFFE5E7EB);
+  static const _overlapColor = Color(0xFF7C3AED);
+
+  Color _colorForDay(List<_SeasonKind> kinds) {
+    if (kinds.isEmpty) return _gapColor;
+    if (kinds.length > 1) return _overlapColor;
+    switch (kinds.first) {
+      case _SeasonKind.low:
+        return _lowColor;
+      case _SeasonKind.mid:
+        return _midColor;
+      case _SeasonKind.high:
+        return _highColor;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cov = _YearCoverage.compute(
+      year: year,
+      lowRanges: lowRanges,
+      midRanges: midRanges,
+      highRanges: highRanges,
+    );
+    final dayColors =
+        cov.daySeasons.map(_colorForDay).toList(growable: false);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.calendar_today,
+                  size: 18, color: Colors.grey[700]),
+              const SizedBox(width: 8),
+              Text(
+                '${l10n.onboardingCoverageTitle} $year',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: SizedBox(
+              height: 22,
+              child: CustomPaint(
+                painter: _CoveragePainter(dayColors),
+                size: Size.infinite,
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          // Month markers
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
+                .map((m) => Text(m,
+                    style: TextStyle(
+                      fontSize: 9,
+                      color: Colors.grey[500],
+                    )))
+                .toList(),
+          ),
+          const SizedBox(height: 12),
+          // Legend
+          Wrap(
+            spacing: 12,
+            runSpacing: 4,
+            children: [
+              _LegendDot(color: _lowColor, label: l10n.onboardingSeasonLow),
+              _LegendDot(color: _midColor, label: l10n.onboardingSeasonMid),
+              _LegendDot(color: _highColor, label: l10n.onboardingSeasonHigh),
+              if (cov.hasOverlap)
+                _LegendDot(
+                    color: _overlapColor,
+                    label: l10n.onboardingCoverageOverlapLabel),
+              if (cov.gapDays > 0)
+                _LegendDot(
+                    color: _gapColor,
+                    label: l10n.onboardingCoverageGapLabel),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Stats
+          if (cov.isFullyCovered && !cov.hasOverlap)
+            Row(
+              children: [
+                Icon(Icons.check_circle,
+                    color: Colors.green.shade600, size: 18),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    l10n.onboardingCoverageOk,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.green.shade700,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          else ...[
+            if (cov.gapDays > 0)
+              Row(
+                children: [
+                  Icon(Icons.error_outline,
+                      color: Colors.orange.shade700, size: 18),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      l10n.onboardingCoverageMissing(cov.gapDays),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.orange.shade800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            if (cov.hasOverlap) ...[
+              if (cov.gapDays > 0) const SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(Icons.warning_amber_outlined,
+                      color: Colors.orange.shade700, size: 18),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      l10n.onboardingCoverageOverlap(cov.overlapDays),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.orange.shade800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (cov.gapDays > 0) ...[
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: onFillGaps,
+                  icon: const Icon(Icons.auto_fix_high, size: 18),
+                  label: Text(l10n.onboardingFillGaps),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _CoveragePainter extends CustomPainter {
+  final List<Color> dayColors;
+  _CoveragePainter(this.dayColors);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (dayColors.isEmpty) return;
+    final dayWidth = size.width / dayColors.length;
+    final paint = Paint();
+    for (var i = 0; i < dayColors.length; i++) {
+      paint.color = dayColors[i];
+      canvas.drawRect(
+        Rect.fromLTWH(i * dayWidth, 0, dayWidth + 0.5, size.height),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _CoveragePainter old) {
+    if (old.dayColors.length != dayColors.length) return true;
+    for (var i = 0; i < dayColors.length; i++) {
+      if (old.dayColors[i].value != dayColors[i].value) return true;
+    }
+    return false;
+  }
+}
+
+class _LegendDot extends StatelessWidget {
+  final Color color;
+  final String label;
+  const _LegendDot({required this.color, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(label,
+            style: TextStyle(fontSize: 11, color: Colors.grey[700])),
+      ],
+    );
+  }
 }
 
 class _SectionTitle extends StatelessWidget {

@@ -3254,4 +3254,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get whatsNewItem4Title => 'Plusieurs périodes par saison';
   @override
   String get whatsNewItem4Body => 'Ajoutez par ex. deux périodes de basse saison (jan–avr et oct–déc). Choisissez les dates via le calendrier.';
+
+  @override
+  String get onboardingCoverageTitle => 'Couverture';
+  @override
+  String get onboardingCoverageOk => 'Toute l\'année est couverte';
+  @override
+  String onboardingCoverageMissing(int count) => '$count jours manquants';
+  @override
+  String onboardingCoverageOverlap(int count) => '$count jours se chevauchent entre plusieurs saisons';
+  @override
+  String get onboardingCoverageGapLabel => 'Non couvert';
+  @override
+  String get onboardingCoverageOverlapLabel => 'Chevauchement';
+  @override
+  String get onboardingFillGaps => 'Remplir les jours manquants en basse saison';
 }

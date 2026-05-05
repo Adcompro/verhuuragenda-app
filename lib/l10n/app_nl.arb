@@ -1462,5 +1462,15 @@
   "whatsNewItem3Title": "Tarieven en seizoenen",
   "whatsNewItem3Body": "Kies één vast tarief of verschillende tarieven voor laag, midden en hoog seizoen. Schoonmaakkosten kun je inbegrepen of apart instellen.",
   "whatsNewItem4Title": "Meerdere periodes per seizoen",
-  "whatsNewItem4Body": "Voeg bv. twee perioden voor laag seizoen toe (jan–apr en okt–dec). Datums kies je via de kalender-popup."
+  "whatsNewItem4Body": "Voeg bv. twee perioden voor laag seizoen toe (jan–apr en okt–dec). Datums kies je via de kalender-popup.",
+
+  "onboardingCoverageTitle": "Dekking",
+  "onboardingCoverageOk": "Het hele jaar is ingedeeld",
+  "onboardingCoverageMissing": "{count} dagen ontbreken",
+  "@onboardingCoverageMissing": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageOverlap": "{count} dagen vallen onder meerdere seizoenen",
+  "@onboardingCoverageOverlap": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageGapLabel": "Niet gedekt",
+  "onboardingCoverageOverlapLabel": "Overlap",
+  "onboardingFillGaps": "Vul ontbrekende dagen op met laag seizoen"
 }

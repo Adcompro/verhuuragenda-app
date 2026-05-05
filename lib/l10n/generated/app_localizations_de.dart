@@ -2300,4 +2300,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get whatsNewItem4Title => 'Mehrere Zeiträume pro Saison';
   @override
   String get whatsNewItem4Body => 'Fügen Sie z. B. zwei Nebensaison-Zeiträume hinzu (Jan–Apr und Okt–Dez). Datumsauswahl per Kalender-Popup.';
+
+  @override
+  String get onboardingCoverageTitle => 'Abdeckung';
+  @override
+  String get onboardingCoverageOk => 'Das ganze Jahr ist abgedeckt';
+  @override
+  String onboardingCoverageMissing(int count) => '$count Tage fehlen';
+  @override
+  String onboardingCoverageOverlap(int count) => '$count Tage fallen in mehrere Saisons';
+  @override
+  String get onboardingCoverageGapLabel => 'Nicht abgedeckt';
+  @override
+  String get onboardingCoverageOverlapLabel => 'Überlappung';
+  @override
+  String get onboardingFillGaps => 'Fehlende Tage mit Nebensaison auffüllen';
 }

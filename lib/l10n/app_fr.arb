@@ -1470,5 +1470,15 @@
   "whatsNewItem3Title": "Tarifs et saisons",
   "whatsNewItem3Body": "Choisissez un tarif unique ou des tarifs différents pour basse, moyenne et haute saison. Les frais de ménage peuvent être inclus ou facturés séparément.",
   "whatsNewItem4Title": "Plusieurs périodes par saison",
-  "whatsNewItem4Body": "Ajoutez par ex. deux périodes de basse saison (jan–avr et oct–déc). Choisissez les dates via le calendrier."
+  "whatsNewItem4Body": "Ajoutez par ex. deux périodes de basse saison (jan–avr et oct–déc). Choisissez les dates via le calendrier.",
+
+  "onboardingCoverageTitle": "Couverture",
+  "onboardingCoverageOk": "Toute l'année est couverte",
+  "onboardingCoverageMissing": "{count} jours manquants",
+  "@onboardingCoverageMissing": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageOverlap": "{count} jours se chevauchent entre plusieurs saisons",
+  "@onboardingCoverageOverlap": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageGapLabel": "Non couvert",
+  "onboardingCoverageOverlapLabel": "Chevauchement",
+  "onboardingFillGaps": "Remplir les jours manquants en basse saison"
 }

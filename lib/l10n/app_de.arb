@@ -1457,5 +1457,15 @@
   "whatsNewItem3Title": "Preise und Saisons",
   "whatsNewItem3Body": "Wählen Sie einen festen Preis oder unterschiedliche Preise für Neben-, Zwischen- und Hauptsaison. Reinigungskosten können enthalten oder separat berechnet werden.",
   "whatsNewItem4Title": "Mehrere Zeiträume pro Saison",
-  "whatsNewItem4Body": "Fügen Sie z. B. zwei Nebensaison-Zeiträume hinzu (Jan–Apr und Okt–Dez). Datumsauswahl per Kalender-Popup."
+  "whatsNewItem4Body": "Fügen Sie z. B. zwei Nebensaison-Zeiträume hinzu (Jan–Apr und Okt–Dez). Datumsauswahl per Kalender-Popup.",
+
+  "onboardingCoverageTitle": "Abdeckung",
+  "onboardingCoverageOk": "Das ganze Jahr ist abgedeckt",
+  "onboardingCoverageMissing": "{count} Tage fehlen",
+  "@onboardingCoverageMissing": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageOverlap": "{count} Tage fallen in mehrere Saisons",
+  "@onboardingCoverageOverlap": { "placeholders": { "count": { "type": "int" } } },
+  "onboardingCoverageGapLabel": "Nicht abgedeckt",
+  "onboardingCoverageOverlapLabel": "Überlappung",
+  "onboardingFillGaps": "Fehlende Tage mit Nebensaison auffüllen"
 }

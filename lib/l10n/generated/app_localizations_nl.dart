@@ -2248,4 +2248,19 @@ class AppLocalizationsNl extends AppLocalizations {
   String get whatsNewItem4Title => 'Meerdere periodes per seizoen';
   @override
   String get whatsNewItem4Body => 'Voeg bv. twee perioden voor laag seizoen toe (jan–apr en okt–dec). Datums kies je via de kalender-popup.';
+
+  @override
+  String get onboardingCoverageTitle => 'Dekking';
+  @override
+  String get onboardingCoverageOk => 'Het hele jaar is ingedeeld';
+  @override
+  String onboardingCoverageMissing(int count) => '$count dagen ontbreken';
+  @override
+  String onboardingCoverageOverlap(int count) => '$count dagen vallen onder meerdere seizoenen';
+  @override
+  String get onboardingCoverageGapLabel => 'Niet gedekt';
+  @override
+  String get onboardingCoverageOverlapLabel => 'Overlap';
+  @override
+  String get onboardingFillGaps => 'Vul ontbrekende dagen op met laag seizoen';
 }

@@ -1162,6 +1162,15 @@ abstract class AppLocalizations {
   String get whatsNewItem3Body;
   String get whatsNewItem4Title;
   String get whatsNewItem4Body;
+
+  // Year-coverage panel
+  String get onboardingCoverageTitle;
+  String get onboardingCoverageOk;
+  String onboardingCoverageMissing(int count);
+  String onboardingCoverageOverlap(int count);
+  String get onboardingCoverageGapLabel;
+  String get onboardingCoverageOverlapLabel;
+  String get onboardingFillGaps;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
