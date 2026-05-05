@@ -211,10 +211,14 @@ workflows:
         script: |
           dart run flutter_launcher_icons
 
-      # Code signing is handled fully by Codemagic via the
-      # ios_signing config in environment and the
-      # app_store_connect integration above. No explicit
-      # script needed.
+      - name: Generate export_options.plist
+        script: |
+          # Manual signing via ios_signing installs the cert and
+          # profile, but does not generate export_options.plist.
+          # xcode-project use-profiles reads the installed
+          # profiles and writes ~/export_options.plist that the
+          # next "flutter build ipa" step needs.
+          xcode-project use-profiles
 
       - name: Build iOS App
         script: |
