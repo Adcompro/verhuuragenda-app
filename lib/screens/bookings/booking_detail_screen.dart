@@ -719,36 +719,63 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
   void _showStatusDialog() {
     final l10n = AppLocalizations.of(context)!;
+    String selected = _booking!.status;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.changeStatus),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildStatusOption('confirmed', l10n.confirmed),
-            _buildStatusOption('option', l10n.option),
-            _buildStatusOption('inquiry', l10n.inquiry),
-            _buildStatusOption('cancelled', l10n.cancelled),
-            _buildStatusOption('completed', l10n.completed),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(l10n.changeStatus),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildStatusRadio('confirmed', l10n.confirmed,
+                  selected, (v) => setDialogState(() => selected = v)),
+              _buildStatusRadio('option', l10n.option,
+                  selected, (v) => setDialogState(() => selected = v)),
+              _buildStatusRadio('inquiry', l10n.inquiry,
+                  selected, (v) => setDialogState(() => selected = v)),
+              _buildStatusRadio('cancelled', l10n.cancelled,
+                  selected, (v) => setDialogState(() => selected = v)),
+              _buildStatusRadio('completed', l10n.completed,
+                  selected, (v) => setDialogState(() => selected = v)),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel),
+            ),
+            ElevatedButton(
+              onPressed: selected == _booking!.status
+                  ? null
+                  : () {
+                      Navigator.pop(context);
+                      _updateStatus(selected);
+                    },
+              child: Text(l10n.confirm),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatusOption(String status, String label) {
-    final isSelected = _booking!.status == status;
-    return ListTile(
-      leading: Icon(
-        isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-        color: _getStatusColor(status),
-      ),
-      title: Text(label),
-      onTap: () async {
-        Navigator.pop(context);
-        await _updateStatus(status);
+  Widget _buildStatusRadio(
+    String status,
+    String label,
+    String groupValue,
+    ValueChanged<String> onChanged,
+  ) {
+    return RadioListTile<String>(
+      value: status,
+      groupValue: groupValue,
+      onChanged: (v) {
+        if (v != null) onChanged(v);
       },
+      title: Text(label),
+      activeColor: _getStatusColor(status),
+      contentPadding: EdgeInsets.zero,
     );
   }
 
