@@ -89,9 +89,10 @@ class ManualScreen extends StatelessWidget {
                 'villa, cabin, studio), stad',
             'Capaciteit — maximaal aantal gasten, aantal slaapkamers '
                 'en badkamers',
-            'Wat heeft je woning? — vink zwembad of tuin aan zodat '
-                'die modules verschijnen, idem voor schoonmaak en '
-                'onderhoud bijhouden',
+            'Wat heeft je woning? — vink zwembad of tuin aan als '
+                'deze specifieke woning er een heeft, plus schoonmaak '
+                'en onderhoud bijhouden (laatste twee gelden voor je '
+                'hele account)',
             'Tarieven — kies tussen één vast tarief of per seizoen, '
                 'schoonmaakkosten inbegrepen of apart',
             'Seizoenen (alleen bij seizoenstarieven) — stel voor laag, '
@@ -201,26 +202,58 @@ class ManualScreen extends StatelessWidget {
         ],
       ),
       _ManualSection(
+        icon: Icons.pool_outlined,
+        title: 'Zwembad en tuin per woning',
+        children: [
+          _ManualParagraph(
+            'Niet elke woning heeft een zwembad of tuin. De app houdt '
+            'dit per woning bij — niet als één globale instelling. De '
+            'zwembad-tab en tuin-tab in de onderbalk verschijnen '
+            'automatisch zodra ten minste één van je woningen het '
+            'aanvinkt heeft.',
+          ),
+          _ManualHeader('Bij een nieuwe woning'),
+          _ManualParagraph(
+            'In de welkomstwizard (stap 4) of bij Accommodaties → + '
+            'kun je per woning aangeven of er een zwembad en/of tuin '
+            'is. Tik gewoon de schakelaar aan.',
+          ),
+          _ManualHeader('Bij een bestaande woning'),
+          _ManualNumberedList([
+            'Tik op Accommodaties in de onderbalk',
+            'Open de woning waaraan je iets wilt veranderen',
+            'Bewerken',
+            'Schakel "Mijn woning heeft een zwembad" of "...een tuin" '
+                'aan of uit',
+            'Bewaar',
+          ]),
+          _ManualParagraph(
+            'Zodra je het opslaat verschijnt of verdwijnt de tab in '
+            'de onderbalk automatisch. De data van die woning blijft '
+            'altijd bewaard, ook als je tijdelijk uitzet.',
+          ),
+        ],
+      ),
+      _ManualSection(
         icon: Icons.tune_outlined,
         title: 'Modules in- en uitschakelen',
         children: [
           _ManualParagraph(
-            'Niet elke verhuurder gebruikt elke module. Verberg de '
-            'modules die je niet nodig hebt zodat je onderbalk '
-            'overzichtelijk blijft.',
+            'Voor de overige modules — schoonmaak, onderhoud, '
+            'mailings en statistieken — kun je centraal instellen of '
+            'je ze wilt zien. Dat geldt voor je hele account, niet '
+            'per woning.',
           ),
           _ManualNumberedList([
             'Ga naar Instellingen',
             'Tik op Modules',
-            'Schakel modules uit die je niet gebruikt: schoonmaak, '
-                'onderhoud, zwembad, tuin, mailings, statistieken',
+            'Schakel modules uit die je niet gebruikt',
             'Uitgeschakelde modules verdwijnen direct uit de '
                 'navigatie. Je data blijft bewaard',
           ]),
           _ManualParagraph(
-            'Heeft je woning later wél een zwembad of tuin? Schakel '
-            'de module weer aan met dezelfde knop. De tabs verschijnen '
-            'meteen weer.',
+            'Zwembad en tuin staan hier niet meer bij — die regel je '
+            'per woning (zie hoofdstuk hierboven).',
           ),
         ],
       ),

@@ -13,6 +13,10 @@ class ModuleSettingsScreen extends ConsumerWidget {
     final visibility = ref.watch(moduleVisibilityProvider);
     final notifier = ref.read(moduleVisibilityProvider.notifier);
 
+    // Pool and garden visibility is derived per-accommodation
+    // (has_pool / has_garden columns) and not user-toggleable here
+    // anymore — see Accommodatie → bewerken to enable a pool or
+    // garden on a specific property.
     final tiles = <_ModuleTile>[
       _ModuleTile(
         module: AppModule.cleaning,
@@ -23,16 +27,6 @@ class ModuleSettingsScreen extends ConsumerWidget {
         module: AppModule.maintenance,
         icon: Icons.build_outlined,
         label: l10n.maintenance,
-      ),
-      _ModuleTile(
-        module: AppModule.pool,
-        icon: Icons.pool_outlined,
-        label: l10n.poolMaintenance,
-      ),
-      _ModuleTile(
-        module: AppModule.garden,
-        icon: Icons.yard_outlined,
-        label: l10n.gardenMaintenance,
       ),
       _ModuleTile(
         module: AppModule.campaigns,

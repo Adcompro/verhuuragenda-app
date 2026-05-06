@@ -53,6 +53,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
   String _propertyType = 'house';
   String _selectedColor = '#3B82F6';
   bool _isActive = true;
+  bool _hasPool = false;
+  bool _hasGarden = false;
 
   bool get isEditing => widget.accommodationId != null;
 
@@ -137,6 +139,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
         _icalBelvillaController.text = acc.icalBelvillaUrl ?? '';
         _icalOtherController.text = acc.icalOtherUrl ?? '';
         _propertyType = acc.propertyType ?? 'house';
+        _hasPool = acc.hasPool;
+        _hasGarden = acc.hasGarden;
         _selectedColor = acc.color ?? '#3B82F6';
         _isActive = acc.isActive;
         _isLoadingData = false;
@@ -286,6 +290,22 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
             subtitle: Text(l10n.accommodationAvailableForBookings),
             value: _isActive,
             onChanged: (v) => setState(() => _isActive = v),
+            contentPadding: EdgeInsets.zero,
+          ),
+
+          // Pool / Garden toggles - per-accommodation
+          SwitchListTile(
+            secondary: const Icon(Icons.pool_outlined),
+            title: Text(l10n.onboardingHasPool),
+            value: _hasPool,
+            onChanged: (v) => setState(() => _hasPool = v),
+            contentPadding: EdgeInsets.zero,
+          ),
+          SwitchListTile(
+            secondary: const Icon(Icons.yard_outlined),
+            title: Text(l10n.onboardingHasGarden),
+            value: _hasGarden,
+            onChanged: (v) => setState(() => _hasGarden = v),
             contentPadding: EdgeInsets.zero,
           ),
 
@@ -753,6 +773,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
         'base_price_mid': double.tryParse(_priceMidController.text),
         'base_price_high': double.tryParse(_priceHighController.text),
         'cleaning_fee': double.tryParse(_cleaningFeeController.text),
+        'has_pool': _hasPool,
+        'has_garden': _hasGarden,
         'address': _addressController.text.trim().isNotEmpty ? _addressController.text.trim() : null,
         'city': _cityController.text.trim().isNotEmpty ? _cityController.text.trim() : null,
         'wifi_network': _wifiNetworkController.text.trim().isNotEmpty ? _wifiNetworkController.text.trim() : null,

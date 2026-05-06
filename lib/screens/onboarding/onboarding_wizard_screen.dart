@@ -180,6 +180,8 @@ class _OnboardingWizardScreenState
         'bathrooms': int.parse(_bathroomsController.text),
         if (_cityController.text.trim().isNotEmpty)
           'city': _cityController.text.trim(),
+        'has_pool': _hasPool,
+        'has_garden': _hasGarden,
         'is_active': true,
       };
 
@@ -227,8 +229,12 @@ class _OnboardingWizardScreenState
 
       // 3. Apply module visibility
       final modules = ref.read(moduleVisibilityProvider.notifier);
-      await modules.setEnabled(AppModule.pool, _hasPool);
-      await modules.setEnabled(AppModule.garden, _hasGarden);
+      // Pool/garden visibility is derived from per-accommodation
+      // has_pool / has_garden flags. After creating the wizard's
+      // accommodation we still need to turn the tab on locally so
+      // it shows up immediately without waiting for a refresh.
+      if (_hasPool) await modules.setEnabled(AppModule.pool, true);
+      if (_hasGarden) await modules.setEnabled(AppModule.garden, true);
       await modules.setEnabled(AppModule.cleaning, _trackCleaning);
       await modules.setEnabled(AppModule.maintenance, _trackMaintenance);
 

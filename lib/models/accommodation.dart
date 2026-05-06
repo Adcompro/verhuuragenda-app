@@ -22,6 +22,8 @@ class Accommodation {
   final double? basePriceMid;
   final double? basePriceHigh;
   final double? cleaningFee;
+  final bool hasPool;
+  final bool hasGarden;
   final bool isActive;
   final bool isPublished;
   final String? address;
@@ -62,6 +64,8 @@ class Accommodation {
     this.basePriceMid,
     this.basePriceHigh,
     this.cleaningFee,
+    this.hasPool = false,
+    this.hasGarden = false,
     this.isActive = true,
     this.isPublished = false,
     this.address,
@@ -104,6 +108,8 @@ class Accommodation {
       basePriceMid: _parseDoubleNullable(json['base_price_mid']),
       basePriceHigh: _parseDoubleNullable(json['base_price_high']),
       cleaningFee: _parseDoubleNullable(json['cleaning_fee']),
+      hasPool: json['has_pool'] == true || json['has_pool'] == 1,
+      hasGarden: json['has_garden'] == true || json['has_garden'] == 1,
       isActive: json['is_active'] ?? true,
       isPublished: json['is_published'] ?? false,
       address: json['address'],

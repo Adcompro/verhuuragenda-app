@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/module_visibility_provider.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../providers/whats_new_provider.dart';
 import '../onboarding/whats_new_screen.dart';
@@ -64,9 +65,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           context.go('/onboarding');
           return;
         }
+        // Derive pool / garden visibility from per-accommodation flags
+        await _syncPoolGardenVisibility(data);
       } catch (_) {
         // Silently ignore; user can still navigate manually
       }
+    } else {
+      // Already-onboarded users: still keep nav in sync with the
+      // current pool / garden situation.
+      try {
+        final response =
+            await ApiClient.instance.get(ApiConfig.accommodations);
+        await _syncPoolGardenVisibility(response.data);
+      } catch (_) {}
     }
 
     // What's-new sheet on first launch of an updated build.
@@ -75,6 +86,26 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       await Future.delayed(const Duration(milliseconds: 200));
       if (mounted) await WhatsNewSheet.showIfNeeded(context, ref);
     }
+  }
+
+  /// Turn the pool / garden tab on or off based on whether any
+  /// accommodation has has_pool / has_garden = true. Called every
+  /// dashboard load.
+  Future<void> _syncPoolGardenVisibility(dynamic data) async {
+    if (data is! List) return;
+    bool anyPool = false;
+    bool anyGarden = false;
+    for (final raw in data) {
+      if (raw is Map<String, dynamic>) {
+        if (raw['has_pool'] == true || raw['has_pool'] == 1) anyPool = true;
+        if (raw['has_garden'] == true || raw['has_garden'] == 1) {
+          anyGarden = true;
+        }
+      }
+    }
+    final modules = ref.read(moduleVisibilityProvider.notifier);
+    await modules.setEnabled(AppModule.pool, anyPool);
+    await modules.setEnabled(AppModule.garden, anyGarden);
   }
 
   @override
