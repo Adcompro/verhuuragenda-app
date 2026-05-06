@@ -3285,4 +3285,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get manualSubtitle => 'Guide pas à pas';
   @override
   String get manualIntro => 'Apprenez à configurer votre location et à créer des réservations.';
+
+  @override
+  String get onboardingSharedPool => 'La piscine est-elle partagée ?';
+  @override
+  String get onboardingSharedGarden => 'Le jardin est-il partagé ?';
+  @override
+  String get onboardingSharedOwn => 'Propre, non partagé';
+  @override
+  String get accommodationAddViaWizard => 'Avec l\'assistant';
+  @override
+  String get accommodationAddViaWizardDesc => 'Étape par étape, avec tarifs et saisons';
+  @override
+  String get accommodationAddManually => 'Saisir manuellement';
+  @override
+  String get accommodationAddManuallyDesc => 'Remplir directement le formulaire complet';
 }

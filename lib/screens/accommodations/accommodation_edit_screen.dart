@@ -55,6 +55,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
   bool _isActive = true;
   bool _hasPool = false;
   bool _hasGarden = false;
+  int? _sharedPoolWithId;
+  int? _sharedGardenWithId;
+  List<Accommodation> _otherPoolOwners = [];
+  List<Accommodation> _otherGardenOwners = [];
 
   bool get isEditing => widget.accommodationId != null;
 
@@ -72,6 +76,38 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
       _checkinUntilController.text = '20:00';
       _checkoutController.text = '10:00';
     }
+    _loadShareCandidates();
+  }
+
+  /// Fetch other accommodations whose pool / garden can be shared.
+  Future<void> _loadShareCandidates() async {
+    try {
+      final response =
+          await ApiClient.instance.get(ApiConfig.accommodations);
+      final list = (response.data as List)
+          .map((e) => Accommodation.fromJson(e as Map<String, dynamic>))
+          .toList();
+      // Exclude self when editing, exclude accommodations that
+      // themselves share (avoid 2-hop chains).
+      final pools = list
+          .where((a) =>
+              a.id != widget.accommodationId &&
+              a.hasPool &&
+              a.sharedPoolWithId == null)
+          .toList();
+      final gardens = list
+          .where((a) =>
+              a.id != widget.accommodationId &&
+              a.hasGarden &&
+              a.sharedGardenWithId == null)
+          .toList();
+      if (mounted) {
+        setState(() {
+          _otherPoolOwners = pools;
+          _otherGardenOwners = gardens;
+        });
+      }
+    } catch (_) {}
   }
 
   @override
@@ -141,6 +177,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
         _propertyType = acc.propertyType ?? 'house';
         _hasPool = acc.hasPool;
         _hasGarden = acc.hasGarden;
+        _sharedPoolWithId = acc.sharedPoolWithId;
+        _sharedGardenWithId = acc.sharedGardenWithId;
         _selectedColor = acc.color ?? '#3B82F6';
         _isActive = acc.isActive;
         _isLoadingData = false;
@@ -298,16 +336,70 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
             secondary: const Icon(Icons.pool_outlined),
             title: Text(l10n.onboardingHasPool),
             value: _hasPool,
-            onChanged: (v) => setState(() => _hasPool = v),
+            onChanged: (v) => setState(() {
+              _hasPool = v;
+              if (!v) _sharedPoolWithId = null;
+            }),
             contentPadding: EdgeInsets.zero,
           ),
+          if (_hasPool && _otherPoolOwners.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(left: 56, bottom: 8),
+              child: DropdownButtonFormField<int?>(
+                value: _sharedPoolWithId,
+                decoration: InputDecoration(
+                  labelText: l10n.onboardingSharedPool,
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                ),
+                items: [
+                  DropdownMenuItem<int?>(
+                    value: null,
+                    child: Text(l10n.onboardingSharedOwn),
+                  ),
+                  ..._otherPoolOwners.map((a) => DropdownMenuItem<int?>(
+                        value: a.id,
+                        child: Text(a.name, overflow: TextOverflow.ellipsis),
+                      )),
+                ],
+                onChanged: (v) =>
+                    setState(() => _sharedPoolWithId = v),
+              ),
+            ),
           SwitchListTile(
             secondary: const Icon(Icons.yard_outlined),
             title: Text(l10n.onboardingHasGarden),
             value: _hasGarden,
-            onChanged: (v) => setState(() => _hasGarden = v),
+            onChanged: (v) => setState(() {
+              _hasGarden = v;
+              if (!v) _sharedGardenWithId = null;
+            }),
             contentPadding: EdgeInsets.zero,
           ),
+          if (_hasGarden && _otherGardenOwners.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(left: 56, bottom: 8),
+              child: DropdownButtonFormField<int?>(
+                value: _sharedGardenWithId,
+                decoration: InputDecoration(
+                  labelText: l10n.onboardingSharedGarden,
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                ),
+                items: [
+                  DropdownMenuItem<int?>(
+                    value: null,
+                    child: Text(l10n.onboardingSharedOwn),
+                  ),
+                  ..._otherGardenOwners.map((a) => DropdownMenuItem<int?>(
+                        value: a.id,
+                        child: Text(a.name, overflow: TextOverflow.ellipsis),
+                      )),
+                ],
+                onChanged: (v) =>
+                    setState(() => _sharedGardenWithId = v),
+              ),
+            ),
 
           const SizedBox(height: 24),
 
@@ -775,6 +867,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
         'cleaning_fee': double.tryParse(_cleaningFeeController.text),
         'has_pool': _hasPool,
         'has_garden': _hasGarden,
+        'shared_pool_with_id': _hasPool ? _sharedPoolWithId : null,
+        'shared_garden_with_id': _hasGarden ? _sharedGardenWithId : null,
         'address': _addressController.text.trim().isNotEmpty ? _addressController.text.trim() : null,
         'city': _cityController.text.trim().isNotEmpty ? _cityController.text.trim() : null,
         'wifi_network': _wifiNetworkController.text.trim().isNotEmpty ? _wifiNetworkController.text.trim() : null,

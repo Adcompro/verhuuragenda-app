@@ -24,6 +24,8 @@ class Accommodation {
   final double? cleaningFee;
   final bool hasPool;
   final bool hasGarden;
+  final int? sharedPoolWithId;
+  final int? sharedGardenWithId;
   final bool isActive;
   final bool isPublished;
   final String? address;
@@ -66,6 +68,8 @@ class Accommodation {
     this.cleaningFee,
     this.hasPool = false,
     this.hasGarden = false,
+    this.sharedPoolWithId,
+    this.sharedGardenWithId,
     this.isActive = true,
     this.isPublished = false,
     this.address,
@@ -110,6 +114,12 @@ class Accommodation {
       cleaningFee: _parseDoubleNullable(json['cleaning_fee']),
       hasPool: json['has_pool'] == true || json['has_pool'] == 1,
       hasGarden: json['has_garden'] == true || json['has_garden'] == 1,
+      sharedPoolWithId: json['shared_pool_with_id'] is int
+          ? json['shared_pool_with_id'] as int
+          : null,
+      sharedGardenWithId: json['shared_garden_with_id'] is int
+          ? json['shared_garden_with_id'] as int
+          : null,
       isActive: json['is_active'] ?? true,
       isPublished: json['is_published'] ?? false,
       address: json['address'],

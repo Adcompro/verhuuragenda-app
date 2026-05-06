@@ -2331,4 +2331,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get manualSubtitle => 'Schritt-für-Schritt-Anleitung';
   @override
   String get manualIntro => 'Erfahren Sie, wie Sie Ihre Vermietung einrichten und Buchungen erfassen.';
+
+  @override
+  String get onboardingSharedPool => 'Wird der Pool geteilt?';
+  @override
+  String get onboardingSharedGarden => 'Wird der Garten geteilt?';
+  @override
+  String get onboardingSharedOwn => 'Eigen, nicht geteilt';
+  @override
+  String get accommodationAddViaWizard => 'Mit dem Assistenten';
+  @override
+  String get accommodationAddViaWizardDesc => 'Schritt für Schritt, inkl. Preise und Saisons';
+  @override
+  String get accommodationAddManually => 'Manuell ausfüllen';
+  @override
+  String get accommodationAddManuallyDesc => 'Direkt das vollständige Formular';
 }

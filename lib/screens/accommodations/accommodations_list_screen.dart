@@ -79,9 +79,56 @@ class _AccommodationsListScreenState extends State<AccommodationsListScreen> {
       ),
       body: _buildBody(),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _navigateToEdit(null),
+        onPressed: _showAddOptions,
         icon: const Icon(Icons.add),
         label: Text(l10n.newItem),
+      ),
+    );
+  }
+
+  Future<void> _showAddOptions() async {
+    final l10n = AppLocalizations.of(context)!;
+    await showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.auto_awesome,
+                  color: Colors.deepPurple),
+              title: Text(l10n.accommodationAddViaWizard),
+              subtitle: Text(l10n.accommodationAddViaWizardDesc),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                context.go('/onboarding');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: Text(l10n.accommodationAddManually),
+              subtitle: Text(l10n.accommodationAddManuallyDesc),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _navigateToEdit(null);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }

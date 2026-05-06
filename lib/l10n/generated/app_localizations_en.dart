@@ -2325,4 +2325,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get manualSubtitle => 'Step-by-step guide';
   @override
   String get manualIntro => 'Learn how to set up your rental and create bookings.';
+
+  @override
+  String get onboardingSharedPool => 'Is the pool shared?';
+  @override
+  String get onboardingSharedGarden => 'Is the garden shared?';
+  @override
+  String get onboardingSharedOwn => 'Own, not shared';
+  @override
+  String get accommodationAddViaWizard => 'Via the wizard';
+  @override
+  String get accommodationAddViaWizardDesc => 'Step by step, including pricing and seasons';
+  @override
+  String get accommodationAddManually => 'Enter manually';
+  @override
+  String get accommodationAddManuallyDesc => 'Directly fill out the full form';
 }

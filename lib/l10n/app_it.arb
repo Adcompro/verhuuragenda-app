@@ -1489,5 +1489,13 @@
 
   "manualTitle": "Manuale",
   "manualSubtitle": "Guida passo passo",
-  "manualIntro": "Scopri come configurare il tuo affitto e creare prenotazioni."
+  "manualIntro": "Scopri come configurare il tuo affitto e creare prenotazioni.",
+
+  "onboardingSharedPool": "La piscina è condivisa?",
+  "onboardingSharedGarden": "Il giardino è condiviso?",
+  "onboardingSharedOwn": "Proprio, non condiviso",
+  "accommodationAddViaWizard": "Con la procedura guidata",
+  "accommodationAddViaWizardDesc": "Passo dopo passo, inclusi tariffe e stagioni",
+  "accommodationAddManually": "Compila manualmente",
+  "accommodationAddManuallyDesc": "Compila direttamente il modulo completo"
 }

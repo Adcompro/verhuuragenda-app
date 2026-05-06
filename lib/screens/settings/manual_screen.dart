@@ -103,19 +103,29 @@ class ManualScreen extends StatelessWidget {
             'maakt automatisch je accommodatie aan en (bij seizoenen) '
             'de bijbehorende seizoens-records.',
           ),
-          _ManualHeader('Handmatig zonder wizard'),
+          _ManualHeader('Een extra woning toevoegen'),
           _ManualParagraph(
-            'Een extra woning toevoegen of de wizard overgeslagen?',
+            'Voor een tweede of volgende woning kun je dezelfde wizard gebruiken — '
+            'of het volledige formulier handmatig openen.',
           ),
           _ManualNumberedList([
             'Tik op Accommodaties in de onderbalk',
             'Tik op +',
-            'Vul de basisvelden in: naam, type, capaciteit',
-            'Vul de prijzen in (mag ook later)',
+            'Kies "Met de wizard" voor stap-voor-stap, of "Handmatig invullen" '
+                'voor het volledige formulier',
             'Bewaar',
           ]),
           _ManualParagraph(
             'Seizoenen kun je later toevoegen via Instellingen → Seizoenen.',
+          ),
+          _ManualHeader('Gedeeld zwembad of tuin'),
+          _ManualParagraph(
+            'Heb je meerdere woningen die hetzelfde zwembad of dezelfde tuin '
+            'delen? Bij het aanmaken (in de wizard of het formulier) verschijnt '
+            'een dropdown "Wordt het zwembad gedeeld?" zodra ten minste één '
+            'andere woning al een zwembad heeft. Kies dan met welke woning de '
+            'pool of tuin wordt gedeeld — schoonmaak en metingen worden '
+            'eenmalig bijgehouden.',
           ),
         ],
       ),

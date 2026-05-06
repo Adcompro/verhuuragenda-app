@@ -43,6 +43,15 @@ class _OnboardingWizardScreenState
   bool _trackCleaning = true;
   bool _trackMaintenance = true;
 
+  // Sharing with another accommodation (only relevant for 2nd+ home)
+  int? _sharedPoolWithId;
+  int? _sharedGardenWithId;
+  // List of pre-existing accommodations that already have a pool
+  // or garden (with shared_*_with_id == null themselves, so they are
+  // the actual owners).
+  List<Map<String, dynamic>> _existingPoolOwners = [];
+  List<Map<String, dynamic>> _existingGardenOwners = [];
+
   // Pricing
   String _pricingStrategy = 'seasonal'; // 'flat' | 'seasonal'
   bool _cleaningIncluded = true;
@@ -74,6 +83,44 @@ class _OnboardingWizardScreenState
     _highRanges = [
       _DateRange(DateTime(_seasonYear, 7, 1), DateTime(_seasonYear, 8, 31)),
     ];
+    // For "add another" flow, fetch the existing accommodations so
+    // we can offer to share their pool / garden.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadExistingAccommodations();
+    });
+  }
+
+  Future<void> _loadExistingAccommodations() async {
+    try {
+      final response =
+          await ApiClient.instance.get(ApiConfig.accommodations);
+      final data = response.data;
+      if (data is! List) return;
+      final pools = <Map<String, dynamic>>[];
+      final gardens = <Map<String, dynamic>>[];
+      for (final raw in data) {
+        if (raw is! Map<String, dynamic>) continue;
+        // Only "owner" accommodations (not themselves shared) are
+        // candidates to share with — chains of two would be
+        // confusing.
+        final isPoolOwner = (raw['has_pool'] == true ||
+                raw['has_pool'] == 1) &&
+            raw['shared_pool_with_id'] == null;
+        final isGardenOwner = (raw['has_garden'] == true ||
+                raw['has_garden'] == 1) &&
+            raw['shared_garden_with_id'] == null;
+        if (isPoolOwner) pools.add(raw);
+        if (isGardenOwner) gardens.add(raw);
+      }
+      if (mounted) {
+        setState(() {
+          _existingPoolOwners = pools;
+          _existingGardenOwners = gardens;
+        });
+      }
+    } catch (_) {
+      // Silently ignore; sharing dropdown just stays empty.
+    }
   }
 
   @override
@@ -130,6 +177,11 @@ class _OnboardingWizardScreenState
     }
   }
 
+  /// True when the wizard is being used to add an additional
+  /// accommodation, not as first-time onboarding. We detect this by
+  /// looking at whether onboarding has already been dismissed before.
+  bool get _isAddAnother => ref.read(onboardingDismissedProvider);
+
   Future<void> _maybeLater() async {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
@@ -149,7 +201,13 @@ class _OnboardingWizardScreenState
         ],
       ),
     );
-    if (confirmed == true) {
+    if (confirmed != true) return;
+
+    if (_isAddAnother) {
+      // Adding another house: just close the wizard and go back.
+      if (mounted) context.go('/accommodations');
+    } else {
+      // First-time onboarding: remember that the user skipped.
       await ref.read(onboardingDismissedProvider.notifier).dismiss();
       if (mounted) context.go('/dashboard');
     }
@@ -182,6 +240,10 @@ class _OnboardingWizardScreenState
           'city': _cityController.text.trim(),
         'has_pool': _hasPool,
         'has_garden': _hasGarden,
+        if (_hasPool && _sharedPoolWithId != null)
+          'shared_pool_with_id': _sharedPoolWithId,
+        if (_hasGarden && _sharedGardenWithId != null)
+          'shared_garden_with_id': _sharedGardenWithId,
         'is_active': true,
       };
 
@@ -238,8 +300,12 @@ class _OnboardingWizardScreenState
       await modules.setEnabled(AppModule.cleaning, _trackCleaning);
       await modules.setEnabled(AppModule.maintenance, _trackMaintenance);
 
-      // 4. Dismiss wizard
-      await ref.read(onboardingDismissedProvider.notifier).dismiss();
+      // 4. Dismiss wizard (only on first-time onboarding; for
+      //    add-another flows we don't want to touch that flag).
+      final addAnother = _isAddAnother;
+      if (!addAnother) {
+        await ref.read(onboardingDismissedProvider.notifier).dismiss();
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -248,7 +314,7 @@ class _OnboardingWizardScreenState
             backgroundColor: Colors.green,
           ),
         );
-        context.go('/dashboard');
+        context.go(addAnother ? '/accommodations' : '/dashboard');
       }
     } catch (e) {
       if (mounted) {
@@ -609,14 +675,36 @@ class _OnboardingWizardScreenState
           icon: Icons.pool_outlined,
           label: l10n.onboardingHasPool,
           value: _hasPool,
-          onChanged: (v) => setState(() => _hasPool = v),
+          onChanged: (v) => setState(() {
+            _hasPool = v;
+            if (!v) _sharedPoolWithId = null;
+          }),
         ),
+        if (_hasPool && _existingPoolOwners.isNotEmpty)
+          _SharedDropdown(
+            label: l10n.onboardingSharedPool,
+            value: _sharedPoolWithId,
+            options: _existingPoolOwners,
+            ownLabel: l10n.onboardingSharedOwn,
+            onChanged: (v) => setState(() => _sharedPoolWithId = v),
+          ),
         _ModuleSwitch(
           icon: Icons.yard_outlined,
           label: l10n.onboardingHasGarden,
           value: _hasGarden,
-          onChanged: (v) => setState(() => _hasGarden = v),
+          onChanged: (v) => setState(() {
+            _hasGarden = v;
+            if (!v) _sharedGardenWithId = null;
+          }),
         ),
+        if (_hasGarden && _existingGardenOwners.isNotEmpty)
+          _SharedDropdown(
+            label: l10n.onboardingSharedGarden,
+            value: _sharedGardenWithId,
+            options: _existingGardenOwners,
+            ownLabel: l10n.onboardingSharedOwn,
+            onChanged: (v) => setState(() => _sharedGardenWithId = v),
+          ),
         const Divider(height: 32),
         _ModuleSwitch(
           icon: Icons.cleaning_services_outlined,
@@ -1182,6 +1270,48 @@ class _SectionHint extends StatelessWidget {
     return Text(
       text,
       style: TextStyle(fontSize: 14, color: Colors.grey[700], height: 1.4),
+    );
+  }
+}
+
+class _SharedDropdown extends StatelessWidget {
+  final String label;
+  final int? value;
+  final List<Map<String, dynamic>> options;
+  final String ownLabel;
+  final ValueChanged<int?> onChanged;
+
+  const _SharedDropdown({
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.ownLabel,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 56, right: 0, bottom: 12),
+      child: DropdownButtonFormField<int?>(
+        value: value,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+          isDense: true,
+        ),
+        items: [
+          DropdownMenuItem<int?>(value: null, child: Text(ownLabel)),
+          ...options.map((acc) => DropdownMenuItem<int?>(
+                value: acc['id'] as int?,
+                child: Text(
+                  (acc['name'] ?? '?').toString(),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              )),
+        ],
+        onChanged: onChanged,
+      ),
     );
   }
 }

@@ -1476,5 +1476,13 @@
 
   "manualTitle": "Handbuch",
   "manualSubtitle": "Schritt-für-Schritt-Anleitung",
-  "manualIntro": "Erfahren Sie, wie Sie Ihre Vermietung einrichten und Buchungen erfassen."
+  "manualIntro": "Erfahren Sie, wie Sie Ihre Vermietung einrichten und Buchungen erfassen.",
+
+  "onboardingSharedPool": "Wird der Pool geteilt?",
+  "onboardingSharedGarden": "Wird der Garten geteilt?",
+  "onboardingSharedOwn": "Eigen, nicht geteilt",
+  "accommodationAddViaWizard": "Mit dem Assistenten",
+  "accommodationAddViaWizardDesc": "Schritt für Schritt, inkl. Preise und Saisons",
+  "accommodationAddManually": "Manuell ausfüllen",
+  "accommodationAddManuallyDesc": "Direkt das vollständige Formular"
 }

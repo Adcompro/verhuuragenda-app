@@ -1481,5 +1481,13 @@
 
   "manualTitle": "User manual",
   "manualSubtitle": "Step-by-step guide",
-  "manualIntro": "Learn how to set up your rental and create bookings."
+  "manualIntro": "Learn how to set up your rental and create bookings.",
+
+  "onboardingSharedPool": "Is the pool shared?",
+  "onboardingSharedGarden": "Is the garden shared?",
+  "onboardingSharedOwn": "Own, not shared",
+  "accommodationAddViaWizard": "Via the wizard",
+  "accommodationAddViaWizardDesc": "Step by step, including pricing and seasons",
+  "accommodationAddManually": "Enter manually",
+  "accommodationAddManuallyDesc": "Directly fill out the full form"
 }

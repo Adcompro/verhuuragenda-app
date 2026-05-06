@@ -1182,6 +1182,15 @@ abstract class AppLocalizations {
   String get manualTitle;
   String get manualSubtitle;
   String get manualIntro;
+
+  // Shared pool / garden + add accommodation options
+  String get onboardingSharedPool;
+  String get onboardingSharedGarden;
+  String get onboardingSharedOwn;
+  String get accommodationAddViaWizard;
+  String get accommodationAddViaWizardDesc;
+  String get accommodationAddManually;
+  String get accommodationAddManuallyDesc;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

@@ -1489,5 +1489,13 @@
 
   "manualTitle": "Manuel",
   "manualSubtitle": "Guide pas à pas",
-  "manualIntro": "Apprenez à configurer votre location et à créer des réservations."
+  "manualIntro": "Apprenez à configurer votre location et à créer des réservations.",
+
+  "onboardingSharedPool": "La piscine est-elle partagée ?",
+  "onboardingSharedGarden": "Le jardin est-il partagé ?",
+  "onboardingSharedOwn": "Propre, non partagé",
+  "accommodationAddViaWizard": "Avec l'assistant",
+  "accommodationAddViaWizardDesc": "Étape par étape, avec tarifs et saisons",
+  "accommodationAddManually": "Saisir manuellement",
+  "accommodationAddManuallyDesc": "Remplir directement le formulaire complet"
 }

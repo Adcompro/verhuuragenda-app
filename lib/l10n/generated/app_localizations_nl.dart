@@ -2279,4 +2279,19 @@ class AppLocalizationsNl extends AppLocalizations {
   String get manualSubtitle => 'Stap-voor-stap uitleg';
   @override
   String get manualIntro => 'Lees hoe je je verhuuragenda inricht en boekingen invoert.';
+
+  @override
+  String get onboardingSharedPool => 'Wordt het zwembad gedeeld?';
+  @override
+  String get onboardingSharedGarden => 'Wordt de tuin gedeeld?';
+  @override
+  String get onboardingSharedOwn => 'Eigen, niet gedeeld';
+  @override
+  String get accommodationAddViaWizard => 'Met de wizard';
+  @override
+  String get accommodationAddViaWizardDesc => 'Stap-voor-stap, inclusief tarieven en seizoenen';
+  @override
+  String get accommodationAddManually => 'Handmatig invullen';
+  @override
+  String get accommodationAddManuallyDesc => 'Direct het volledige formulier';
 }
