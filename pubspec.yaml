@@ -3,7 +3,7 @@ description: VerhuurAgenda - Vakantieverhuur Beheer App
 
 publish_to: 'none'
 
-version: 1.9.0+125
+version: 1.9.1+126
 
 environment:
   sdk: '>=3.2.0 <4.0.0'

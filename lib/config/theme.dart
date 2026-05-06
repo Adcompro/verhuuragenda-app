@@ -26,10 +26,15 @@ class AppTheme {
   static const Color sourceDirect = Color(0xFF4F46E5);
   static const Color sourceOther = Color(0xFF6B7280);
 
-  // Surface neutrals used across forms / panels
-  static const Color _surface = Color(0xFFF9FAFB); // very light grey
-  static const Color _border = Color(0xFFE5E7EB); // grey-200
-  static const Color _borderStrong = Color(0xFFD1D5DB); // grey-300
+  // ── Neutrals (iOS-inspired clean palette) ──────────
+  // Page background — barely-grey, lets cards float on white
+  static const Color _bg = Color(0xFFF7F7FA);
+  // Hairline divider — almost invisible, 8% black
+  static const Color _hairline = Color(0xFFE6E6EB);
+  // Subtle text colors
+  static const Color _textPrimary = Color(0xFF111827);
+  static const Color _textSecondary = Color(0xFF6B7280);
+  static const Color _textTertiary = Color(0xFF9CA3AF);
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -37,72 +42,81 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
         brightness: Brightness.light,
+        surface: Colors.white,
       ),
-      // Tighter overall density for a cleaner phone feel
-      visualDensity: VisualDensity.compact,
-      textTheme: GoogleFonts.interTextTheme(),
+      scaffoldBackgroundColor: _bg,
+      textTheme: GoogleFonts.interTextTheme().apply(
+        bodyColor: _textPrimary,
+        displayColor: _textPrimary,
+      ),
+      // ── App bar ────────────────────────────────────────
       appBarTheme: const AppBarTheme(
         centerTitle: false,
         elevation: 0,
-        scrolledUnderElevation: 1,
-        backgroundColor: Colors.white,
-        foregroundColor: Color(0xFF1F2937),
+        scrolledUnderElevation: 0,
+        backgroundColor: _bg, // matches page, no harsh divider
+        surfaceTintColor: Colors.transparent,
+        foregroundColor: _textPrimary,
         titleTextStyle: TextStyle(
-          color: Color(0xFF1F2937),
-          fontSize: 18,
+          color: _textPrimary,
+          fontSize: 17,
           fontWeight: FontWeight.w600,
         ),
       ),
+      // ── Cards ──────────────────────────────────────────
+      // Flat white card on the soft grey page — no border, no
+      // shadow. Stands out purely by contrast.
       cardTheme: const CardThemeData(
         elevation: 0,
         color: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-          side: BorderSide(color: _border),
+          borderRadius: BorderRadius.all(Radius.circular(14)),
         ),
       ),
       // ── Inputs ─────────────────────────────────────────
-      // Consistent across screens AND dialogs because of the
-      // theme-level setup (no need to set OutlineInputBorder
-      // manually on each TextFormField).
+      // No fill, no thick borders — clean hairline that lifts
+      // to primary color on focus.
       inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: _surface,
+        filled: false,
         isDense: true,
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: _borderStrong),
+            const EdgeInsets.symmetric(horizontal: 0, vertical: 14),
+        border: const UnderlineInputBorder(
+          borderSide: BorderSide(color: _hairline, width: 1),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: _border),
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: _hairline, width: 1),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: primaryColor, width: 1.5),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: primaryColor, width: 1.5),
         ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: errorColor),
+        errorBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: errorColor, width: 1),
         ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: errorColor, width: 1.5),
+        focusedErrorBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: errorColor, width: 1.5),
         ),
         labelStyle: const TextStyle(
           fontSize: 13,
-          color: Color(0xFF6B7280),
+          color: _textSecondary,
+        ),
+        floatingLabelStyle: const TextStyle(
+          fontSize: 13,
+          color: primaryColor,
+          fontWeight: FontWeight.w500,
         ),
         hintStyle: const TextStyle(
-          fontSize: 14,
-          color: Color(0xFF9CA3AF),
+          fontSize: 15,
+          color: _textTertiary,
         ),
         helperStyle: const TextStyle(
-          fontSize: 11,
-          color: Color(0xFF9CA3AF),
+          fontSize: 12,
+          color: _textTertiary,
         ),
+        prefixIconColor: _textTertiary,
+        suffixIconColor: _textTertiary,
       ),
       // ── Buttons ────────────────────────────────────────
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -111,28 +125,30 @@ class AppTheme {
           foregroundColor: Colors.white,
           elevation: 0,
           padding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
           textStyle: const TextStyle(
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: FontWeight.w600,
+            letterSpacing: -0.1,
           ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: primaryColor,
+          foregroundColor: _textPrimary,
+          backgroundColor: Colors.white,
           padding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          side: const BorderSide(color: primaryColor),
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          side: const BorderSide(color: _hairline),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
           textStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
@@ -140,64 +156,79 @@ class AppTheme {
         style: TextButton.styleFrom(
           foregroundColor: primaryColor,
           padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           textStyle: const TextStyle(
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: FontWeight.w500,
           ),
         ),
       ),
       // ── Dialogs ────────────────────────────────────────
-      dialogTheme: const DialogThemeData(
+      dialogTheme: DialogThemeData(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: BorderRadius.circular(20),
         ),
-        titleTextStyle: TextStyle(
-          fontSize: 18,
+        titleTextStyle: const TextStyle(
+          fontSize: 17,
           fontWeight: FontWeight.w600,
-          color: Color(0xFF1F2937),
+          color: _textPrimary,
         ),
-        contentTextStyle: TextStyle(
+        contentTextStyle: const TextStyle(
           fontSize: 14,
-          color: Color(0xFF374151),
-          height: 1.4,
+          color: _textSecondary,
+          height: 1.45,
         ),
-        actionsPadding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+        actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
       ),
       // ── Bottom sheets ──────────────────────────────────
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: Colors.white,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
         showDragHandle: true,
         shape: RoundedRectangleBorder(
           borderRadius:
-              BorderRadius.vertical(top: Radius.circular(20)),
+              BorderRadius.vertical(top: Radius.circular(24)),
         ),
       ),
       // ── List tiles ─────────────────────────────────────
+      // Roomy enough to tap, but hairline-only separation.
       listTileTheme: const ListTileThemeData(
         contentPadding:
             EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        minVerticalPadding: 8,
+        minVerticalPadding: 10,
+        iconColor: _textSecondary,
+        titleTextStyle: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+          color: _textPrimary,
+        ),
+        subtitleTextStyle: TextStyle(
+          fontSize: 13,
+          color: _textSecondary,
+        ),
       ),
       // ── Dividers ───────────────────────────────────────
       dividerTheme: const DividerThemeData(
-        color: _border,
-        thickness: 1,
-        space: 1,
+        color: _hairline,
+        thickness: 0.5,
+        space: 0.5,
       ),
-      // ── Switches ───────────────────────────────────────
+      // ── Switches / Checkboxes / Radios ─────────────────
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return primaryColor;
-          return null;
+          if (states.contains(WidgetState.selected)) return Colors.white;
+          return Colors.white;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return primaryColor.withOpacity(0.5);
-          }
-          return null;
+          if (states.contains(WidgetState.selected)) return primaryColor;
+          return _hairline;
         }),
+        trackOutlineColor:
+            const WidgetStatePropertyAll(Colors.transparent),
       ),
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
@@ -207,25 +238,40 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4),
         ),
+        side: const BorderSide(color: _textTertiary),
       ),
       radioTheme: RadioThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) return primaryColor;
-          return null;
+          return _textTertiary;
         }),
       ),
       // ── Bottom navigation ──────────────────────────────
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
         selectedItemColor: primaryColor,
-        unselectedItemColor: Color(0xFF9CA3AF),
+        unselectedItemColor: _textTertiary,
         showUnselectedLabels: true,
       ),
       // ── Snackbars ──────────────────────────────────────
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
+        backgroundColor: _textPrimary,
+        contentTextStyle: const TextStyle(color: Colors.white),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      // ── Chips ──────────────────────────────────────────
+      chipTheme: const ChipThemeData(
+        backgroundColor: Colors.white,
+        side: BorderSide(color: _hairline),
+        shape: StadiumBorder(),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        labelStyle: TextStyle(
+          fontSize: 13,
+          color: _textPrimary,
         ),
       ),
     );
