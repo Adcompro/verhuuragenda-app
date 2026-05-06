@@ -1018,79 +1018,156 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     final lastNameController = TextEditingController();
     final emailController = TextEditingController();
     final phoneController = TextEditingController();
+    bool busy = false;
 
-    showDialog(
+    showModalBottomSheet<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.newGuest),
-        content: SingleChildScrollView(
-          child: Column(
+      isScrollControlled: true, // grow with keyboard
+      builder: (sheetCtx) => Padding(
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 16,
+          bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 16,
+        ),
+        child: StatefulBuilder(
+          builder: (ctx, setSheetState) => Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextField(
-                controller: firstNameController,
-                decoration: InputDecoration(labelText: '${l10n.firstName} *'),
+              Text(
+                l10n.newGuest,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              TextField(
-                controller: lastNameController,
-                decoration: InputDecoration(labelText: l10n.lastName),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: firstNameController,
+                      autofocus: true,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: InputDecoration(
+                        labelText: '${l10n.firstName} *',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextField(
+                      controller: lastNameController,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: InputDecoration(
+                        labelText: l10n.lastName,
+                      ),
+                    ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 12),
               TextField(
                 controller: emailController,
-                decoration: InputDecoration(labelText: '${l10n.email} *'),
                 keyboardType: TextInputType.emailAddress,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  labelText: '${l10n.email} *',
+                  prefixIcon: const Icon(Icons.email_outlined, size: 20),
+                ),
               ),
+              const SizedBox(height: 12),
               TextField(
                 controller: phoneController,
-                decoration: InputDecoration(labelText: l10n.phone),
                 keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: l10n.phone,
+                  prefixIcon: const Icon(Icons.phone_outlined, size: 20),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: busy
+                          ? null
+                          : () => Navigator.pop(sheetCtx),
+                      child: Text(l10n.cancel),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: busy
+                          ? null
+                          : () async {
+                              if (firstNameController.text.trim().isEmpty ||
+                                  emailController.text.trim().isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      l10n.firstNameAndEmailRequired,
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+                              setSheetState(() => busy = true);
+                              try {
+                                final response =
+                                    await ApiClient.instance.post(
+                                  ApiConfig.guests,
+                                  data: {
+                                    'first_name':
+                                        firstNameController.text.trim(),
+                                    'last_name':
+                                        lastNameController.text.trim(),
+                                    'email': emailController.text.trim(),
+                                    'phone': phoneController.text.trim(),
+                                  },
+                                );
+                                final newGuest =
+                                    Guest.fromJson(response.data);
+                                setState(() {
+                                  _guests.add(newGuest);
+                                  _selectedGuestId = newGuest.id;
+                                });
+                                if (sheetCtx.mounted) {
+                                  Navigator.pop(sheetCtx);
+                                }
+                              } catch (e) {
+                                setSheetState(() => busy = false);
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        l10n.errorWithMessage(e.toString()),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                      icon: busy
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.check, size: 18),
+                      label: Text(l10n.add),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              if (firstNameController.text.isEmpty || emailController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.firstNameAndEmailRequired)),
-                );
-                return;
-              }
-
-              try {
-                final response = await ApiClient.instance.post(
-                  ApiConfig.guests,
-                  data: {
-                    'first_name': firstNameController.text,
-                    'last_name': lastNameController.text,
-                    'email': emailController.text,
-                    'phone': phoneController.text,
-                  },
-                );
-
-                final newGuest = Guest.fromJson(response.data);
-                setState(() {
-                  _guests.add(newGuest);
-                  _selectedGuestId = newGuest.id;
-                });
-
-                if (mounted) Navigator.pop(context);
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.errorWithMessage(e.toString()))),
-                  );
-                }
-              }
-            },
-            child: Text(l10n.add),
-          ),
-        ],
       ),
     );
   }
