@@ -26,6 +26,8 @@ import '../screens/garden/garden_dashboard_screen.dart';
 import '../screens/onboarding/onboarding_wizard_screen.dart';
 import '../screens/settings/manual_screen.dart';
 import '../screens/guest/guest_home_screen.dart';
+import '../screens/conversations/conversations_list_screen.dart';
+import '../screens/conversations/conversation_detail_screen.dart';
 import '../widgets/common/bottom_nav.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -169,6 +171,18 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/guests',
             builder: (context, state) => const GuestsListScreen(),
+          ),
+          GoRoute(
+            path: '/conversations',
+            builder: (context, state) => const ConversationsListScreen(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (context, state) => ConversationDetailScreen(
+                  bookingId: int.parse(state.pathParameters['id']!),
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: '/cleaning',

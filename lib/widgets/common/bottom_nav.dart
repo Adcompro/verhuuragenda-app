@@ -48,6 +48,12 @@ class BottomNavShell extends ConsumerWidget {
         label: l10n.guests,
         route: '/guests',
       ),
+      _NavItem(
+        icon: Icons.chat_bubble_outline,
+        selectedIcon: Icons.chat_bubble,
+        label: 'Berichten',
+        route: '/conversations',
+      ),
       if (visibility.isEnabled(AppModule.cleaning))
         _NavItem(
           icon: Icons.cleaning_services_outlined,
