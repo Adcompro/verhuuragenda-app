@@ -2370,9 +2370,9 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get addCleaning => 'Añadir limpieza';
   @override
-  String get cleaningDescriptionOptional => 'Descripción (opcional)';
+  String get cleaningDescriptionOptional => 'Tareas (una por línea)';
   @override
-  String get cleaningDescriptionHint => 'Ej. intermedia, antes de llegada, limpieza profunda';
+  String get cleaningDescriptionHint => 'Ej.:\n• Limpieza cocina\n• Limpiar ventanas\n• Cambio de sábanas';
   @override
   String get manualDoneButton => "Listo, ir al panel";
   @override

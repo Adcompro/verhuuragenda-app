@@ -1503,8 +1503,8 @@
   "revenueExportShareSubject": "Rental revenue",
 
   "addCleaning": "Add cleaning",
-  "cleaningDescriptionOptional": "Description (optional)",
-  "cleaningDescriptionHint": "E.g. interim, pre-arrival, deep clean",
+  "cleaningDescriptionOptional": "Tasks (one per line)",
+  "cleaningDescriptionHint": "E.g.:\n• Kitchen deep clean\n• Wash windows\n• Change linens",
 
   "manualDoneButton": "Done, go to dashboard",
   "manualFindHereLater": "You can always find this manual again via Settings → User manual."

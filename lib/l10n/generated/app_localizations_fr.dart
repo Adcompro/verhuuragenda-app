@@ -3324,9 +3324,9 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get addCleaning => 'Ajouter un ménage';
   @override
-  String get cleaningDescriptionOptional => 'Description (facultative)';
+  String get cleaningDescriptionOptional => 'Tâches (une par ligne)';
   @override
-  String get cleaningDescriptionHint => 'Ex. intermédiaire, avant arrivée, grand nettoyage';
+  String get cleaningDescriptionHint => 'Ex. :\n• Nettoyage cuisine\n• Lavage des vitres\n• Changement de literie';
   @override
   String get manualDoneButton => "Terminé, aller au tableau de bord";
   @override

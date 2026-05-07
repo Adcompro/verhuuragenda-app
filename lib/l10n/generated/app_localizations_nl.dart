@@ -2318,9 +2318,9 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get addCleaning => 'Schoonmaak toevoegen';
   @override
-  String get cleaningDescriptionOptional => 'Beschrijving (optioneel)';
+  String get cleaningDescriptionOptional => 'Taken (één per regel)';
   @override
-  String get cleaningDescriptionHint => 'Bv. tussentijds, voor aankomst, hoofdschoonmaak';
+  String get cleaningDescriptionHint => 'Bijv:\n• Keuken grondig\n• Ramen lappen\n• Beddengoed verschonen';
   @override
   String get manualDoneButton => "Klaar, ga naar dashboard";
   @override

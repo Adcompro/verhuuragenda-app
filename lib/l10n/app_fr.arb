@@ -1511,8 +1511,8 @@
   "revenueExportShareSubject": "Revenus locatifs",
 
   "addCleaning": "Ajouter un ménage",
-  "cleaningDescriptionOptional": "Description (facultative)",
-  "cleaningDescriptionHint": "Ex. intermédiaire, avant arrivée, grand nettoyage",
+  "cleaningDescriptionOptional": "Tâches (une par ligne)",
+  "cleaningDescriptionHint": "Ex. :\n• Nettoyage cuisine\n• Lavage des vitres\n• Changement de literie",
 
   "manualDoneButton": "Terminé, aller au tableau de bord",
   "manualFindHereLater": "Vous retrouverez toujours ce manuel via Paramètres → Manuel."

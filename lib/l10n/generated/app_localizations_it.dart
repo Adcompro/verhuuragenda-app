@@ -3324,9 +3324,9 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get addCleaning => 'Aggiungi pulizia';
   @override
-  String get cleaningDescriptionOptional => 'Descrizione (facoltativa)';
+  String get cleaningDescriptionOptional => 'Attività (una per riga)';
   @override
-  String get cleaningDescriptionHint => 'Es. intermedia, prima dell\'arrivo, pulizia approfondita';
+  String get cleaningDescriptionHint => 'Es.:\n• Pulizia cucina\n• Lavare i vetri\n• Cambio biancheria';
   @override
   String get manualDoneButton => "Fatto, vai alla dashboard";
   @override

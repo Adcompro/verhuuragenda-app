@@ -207,9 +207,13 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
               TextField(
                 controller: descriptionController,
                 textCapitalization: TextCapitalization.sentences,
+                minLines: 4,
+                maxLines: 8,
+                keyboardType: TextInputType.multiline,
                 decoration: InputDecoration(
                   labelText: l10n.cleaningDescriptionOptional,
                   hintText: l10n.cleaningDescriptionHint,
+                  alignLabelWithHint: true,
                 ),
               ),
               const SizedBox(height: 20),
@@ -688,13 +692,17 @@ class _CleaningTaskCard extends StatelessWidget {
     final isUrgent = task.hasSameDayCheckin;
     final isToday = task.isToday;
 
+    final isManual = task.isManual;
+    final amber = Colors.amber[700]!;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: isUrgent && !isCompleted
             ? const BorderSide(color: Colors.red, width: 2)
-            : BorderSide.none,
+            : (isManual && !isCompleted
+                ? BorderSide(color: amber.withOpacity(0.6), width: 1.5)
+                : BorderSide.none),
       ),
       child: Column(
         children: [
@@ -702,22 +710,36 @@ class _CleaningTaskCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: task.accommodationColor?.withOpacity(0.1) ?? Colors.grey[100],
+              color: isManual
+                  ? amber.withOpacity(0.08)
+                  : (task.accommodationColor?.withOpacity(0.1) ?? Colors.grey[100]),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             ),
             child: Row(
               children: [
-                // Color dot
-                Container(
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: task.accommodationColor ?? AppTheme.primaryColor,
-                    shape: BoxShape.circle,
+                // Icon: brush for manual, color dot for changeover
+                if (isManual)
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: amber,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.cleaning_services,
+                        color: Colors.white, size: 18),
+                  )
+                else
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: task.accommodationColor ?? AppTheme.primaryColor,
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),
                 const SizedBox(width: 12),
-                // Accommodation name
+                // Accommodation name + subtitle
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -729,10 +751,44 @@ class _CleaningTaskCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
-                        l10n.guestLabel(task.guestName),
-                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                      ),
+                      if (isManual)
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: amber,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                'EXTRA',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                task.descriptionLines.isNotEmpty
+                                    ? task.descriptionLines.first
+                                    : l10n.addCleaning,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    color: Colors.grey[700], fontSize: 13),
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        Text(
+                          l10n.guestLabel(task.guestName),
+                          style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                        ),
                     ],
                   ),
                 ),
@@ -809,6 +865,72 @@ class _CleaningTaskCard extends StatelessWidget {
               children: [
                 // Time window visualization
                 _buildTimeWindow(context),
+                // Task checklist for manual cleanings
+                if (isManual && task.descriptionLines.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: amber.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: amber.withOpacity(0.3)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.checklist, size: 16, color: amber),
+                            const SizedBox(width: 6),
+                            Text(
+                              l10n.tasks,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: amber,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        ...task.descriptionLines.map((line) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 2),
+                                    child: Icon(
+                                      isCompleted
+                                          ? Icons.check_box
+                                          : Icons.check_box_outline_blank,
+                                      size: 18,
+                                      color: isCompleted
+                                          ? Colors.green
+                                          : Colors.grey[600],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      line,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[800],
+                                        decoration: isCompleted
+                                            ? TextDecoration.lineThrough
+                                            : null,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 16),
                 // Completed summary for completed tasks
                 if (isCompleted) ...[
@@ -1377,6 +1499,8 @@ class CleaningTask {
   final String accommodationName;
   final Color? accommodationColor;
   final bool hasSameDayCheckin;
+  final String kind;
+  final String? description;
 
   CleaningTask({
     required this.id,
@@ -1391,7 +1515,21 @@ class CleaningTask {
     required this.accommodationName,
     this.accommodationColor,
     required this.hasSameDayCheckin,
+    this.kind = 'booking',
+    this.description,
   });
+
+  bool get isManual => kind == 'manual';
+
+  List<String> get descriptionLines {
+    final desc = description;
+    if (desc == null || desc.trim().isEmpty) return const [];
+    return desc
+        .split('\n')
+        .map((l) => l.trim())
+        .where((l) => l.isNotEmpty)
+        .toList();
+  }
 
   factory CleaningTask.fromJson(Map<String, dynamic> json) {
     Color? color;
@@ -1415,6 +1553,8 @@ class CleaningTask {
       accommodationName: json['accommodation']?['name'] ?? 'Onbekend',
       accommodationColor: color,
       hasSameDayCheckin: json['has_same_day_checkin'] ?? false,
+      kind: json['kind'] as String? ?? 'booking',
+      description: json['description'] as String?,
     );
   }
 }

@@ -1502,8 +1502,8 @@
   "revenueExportShareSubject": "Ingresos de alquiler",
 
   "addCleaning": "Añadir limpieza",
-  "cleaningDescriptionOptional": "Descripción (opcional)",
-  "cleaningDescriptionHint": "Ej. intermedia, antes de llegada, limpieza profunda",
+  "cleaningDescriptionOptional": "Tareas (una por línea)",
+  "cleaningDescriptionHint": "Ej.:\n• Limpieza cocina\n• Limpiar ventanas\n• Cambio de sábanas",
 
   "manualDoneButton": "Listo, ir al panel",
   "manualFindHereLater": "Siempre puedes encontrar este manual en Ajustes → Manual."

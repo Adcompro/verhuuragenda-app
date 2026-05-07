@@ -1498,8 +1498,8 @@
   "revenueExportShareSubject": "Mieteinnahmen",
 
   "addCleaning": "Reinigung hinzufügen",
-  "cleaningDescriptionOptional": "Beschreibung (optional)",
-  "cleaningDescriptionHint": "z. B. Zwischenreinigung, vor Anreise, Grundreinigung",
+  "cleaningDescriptionOptional": "Aufgaben (eine pro Zeile)",
+  "cleaningDescriptionHint": "z. B.:\n• Küche gründlich reinigen\n• Fenster putzen\n• Bettwäsche wechseln",
 
   "manualDoneButton": "Fertig, zum Dashboard",
   "manualFindHereLater": "Sie finden dieses Handbuch jederzeit unter Einstellungen → Handbuch."

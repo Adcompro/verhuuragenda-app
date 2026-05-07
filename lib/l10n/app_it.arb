@@ -1511,8 +1511,8 @@
   "revenueExportShareSubject": "Entrate da affitto",
 
   "addCleaning": "Aggiungi pulizia",
-  "cleaningDescriptionOptional": "Descrizione (facoltativa)",
-  "cleaningDescriptionHint": "Es. intermedia, prima dell'arrivo, pulizia approfondita",
+  "cleaningDescriptionOptional": "Attività (una per riga)",
+  "cleaningDescriptionHint": "Es.:\n• Pulizia cucina\n• Lavare i vetri\n• Cambio biancheria",
 
   "manualDoneButton": "Fatto, vai alla dashboard",
   "manualFindHereLater": "Puoi sempre ritrovare questo manuale in Impostazioni → Manuale."
