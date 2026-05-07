@@ -535,16 +535,48 @@ class _BookingCard extends StatelessWidget {
               ),
               const Divider(height: 24),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '€${booking.totalAmount.toStringAsFixed(2)}',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                  Expanded(
+                    child: _AmountColumn(
+                      label: l10n.total,
+                      amount: booking.totalAmount,
+                      color: Theme.of(context).textTheme.titleMedium?.color,
+                    ),
                   ),
-                  _PaymentBadge(status: booking.paymentStatus),
+                  Container(
+                    width: 1,
+                    height: 32,
+                    color: Colors.grey[300],
+                  ),
+                  Expanded(
+                    child: _AmountColumn(
+                      label: l10n.paid,
+                      amount: booking.paidAmount,
+                      color: booking.paidAmount > 0
+                          ? Colors.green[700]
+                          : Colors.grey[500],
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 32,
+                    color: Colors.grey[300],
+                  ),
+                  Expanded(
+                    child: _AmountColumn(
+                      label: l10n.outstanding,
+                      amount: booking.remainingAmount,
+                      color: booking.remainingAmount > 0
+                          ? Colors.orange[800]
+                          : Colors.grey[500],
+                    ),
+                  ),
                 ],
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: _PaymentBadge(status: booking.paymentStatus),
               ),
             ],
           ),
@@ -566,6 +598,45 @@ class _BookingCard extends StatelessWidget {
     } catch (e) {
       return AppTheme.primaryColor;
     }
+  }
+}
+
+class _AmountColumn extends StatelessWidget {
+  final String label;
+  final double amount;
+  final Color? color;
+
+  const _AmountColumn({
+    required this.label,
+    required this.amount,
+    this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 2),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            '€${amount.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
