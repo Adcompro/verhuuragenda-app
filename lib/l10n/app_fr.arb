@@ -1508,5 +1508,9 @@
   "revenueExportSubtitle": "Excel avec date, locataire, payé et impayé",
   "revenueExportPreparing": "Préparation du fichier...",
   "revenueExportFailed": "Échec de l'export. Réessayez.",
-  "revenueExportShareSubject": "Revenus locatifs"
+  "revenueExportShareSubject": "Revenus locatifs",
+
+  "addCleaning": "Ajouter un ménage",
+  "cleaningDescriptionOptional": "Description (facultative)",
+  "cleaningDescriptionHint": "Ex. intermédiaire, avant arrivée, grand nettoyage"
 }

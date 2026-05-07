@@ -1508,5 +1508,9 @@
   "revenueExportSubtitle": "Excel con data, ospite, pagato e in sospeso",
   "revenueExportPreparing": "Preparazione del file...",
   "revenueExportFailed": "Esportazione non riuscita. Riprova.",
-  "revenueExportShareSubject": "Entrate da affitto"
+  "revenueExportShareSubject": "Entrate da affitto",
+
+  "addCleaning": "Aggiungi pulizia",
+  "cleaningDescriptionOptional": "Descrizione (facoltativa)",
+  "cleaningDescriptionHint": "Es. intermedia, prima dell'arrivo, pulizia approfondita"
 }

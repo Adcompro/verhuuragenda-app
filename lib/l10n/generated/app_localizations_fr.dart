@@ -3320,4 +3320,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get revenueExportFailed => 'Échec de l\'export. Réessayez.';
   @override
   String get revenueExportShareSubject => 'Revenus locatifs';
+
+  @override
+  String get addCleaning => 'Ajouter un ménage';
+  @override
+  String get cleaningDescriptionOptional => 'Description (facultative)';
+  @override
+  String get cleaningDescriptionHint => 'Ex. intermédiaire, avant arrivée, grand nettoyage';
 }

@@ -2366,4 +2366,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get revenueExportFailed => 'Export fehlgeschlagen. Bitte erneut versuchen.';
   @override
   String get revenueExportShareSubject => 'Mieteinnahmen';
+
+  @override
+  String get addCleaning => 'Reinigung hinzufügen';
+  @override
+  String get cleaningDescriptionOptional => 'Beschreibung (optional)';
+  @override
+  String get cleaningDescriptionHint => 'z. B. Zwischenreinigung, vor Anreise, Grundreinigung';
 }

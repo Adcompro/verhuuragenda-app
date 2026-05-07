@@ -2314,4 +2314,11 @@ class AppLocalizationsNl extends AppLocalizations {
   String get revenueExportFailed => 'Exporteren is mislukt. Probeer het opnieuw.';
   @override
   String get revenueExportShareSubject => 'Verhuuropbrengsten';
+
+  @override
+  String get addCleaning => 'Schoonmaak toevoegen';
+  @override
+  String get cleaningDescriptionOptional => 'Beschrijving (optioneel)';
+  @override
+  String get cleaningDescriptionHint => 'Bv. tussentijds, voor aankomst, hoofdschoonmaak';
 }

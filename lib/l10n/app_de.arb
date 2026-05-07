@@ -1495,5 +1495,9 @@
   "revenueExportSubtitle": "Excel mit Datum, Gast, bezahlt und offen",
   "revenueExportPreparing": "Datei wird vorbereitet...",
   "revenueExportFailed": "Export fehlgeschlagen. Bitte erneut versuchen.",
-  "revenueExportShareSubject": "Mieteinnahmen"
+  "revenueExportShareSubject": "Mieteinnahmen",
+
+  "addCleaning": "Reinigung hinzufügen",
+  "cleaningDescriptionOptional": "Beschreibung (optional)",
+  "cleaningDescriptionHint": "z. B. Zwischenreinigung, vor Anreise, Grundreinigung"
 }

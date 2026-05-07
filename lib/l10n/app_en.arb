@@ -1500,5 +1500,9 @@
   "revenueExportSubtitle": "Excel with date, guest, paid and outstanding",
   "revenueExportPreparing": "Preparing file...",
   "revenueExportFailed": "Export failed. Please try again.",
-  "revenueExportShareSubject": "Rental revenue"
+  "revenueExportShareSubject": "Rental revenue",
+
+  "addCleaning": "Add cleaning",
+  "cleaningDescriptionOptional": "Description (optional)",
+  "cleaningDescriptionHint": "E.g. interim, pre-arrival, deep clean"
 }

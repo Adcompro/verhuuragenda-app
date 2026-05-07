@@ -1204,6 +1204,11 @@ abstract class AppLocalizations {
   String get revenueExportPreparing;
   String get revenueExportFailed;
   String get revenueExportShareSubject;
+
+  // Manual cleaning task
+  String get addCleaning;
+  String get cleaningDescriptionOptional;
+  String get cleaningDescriptionHint;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

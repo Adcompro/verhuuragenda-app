@@ -2360,4 +2360,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get revenueExportFailed => 'Export failed. Please try again.';
   @override
   String get revenueExportShareSubject => 'Rental revenue';
+
+  @override
+  String get addCleaning => 'Add cleaning';
+  @override
+  String get cleaningDescriptionOptional => 'Description (optional)';
+  @override
+  String get cleaningDescriptionHint => 'E.g. interim, pre-arrival, deep clean';
 }

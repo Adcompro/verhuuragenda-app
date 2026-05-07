@@ -105,6 +105,195 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddCleaningSheet,
+        tooltip: l10n.addCleaning,
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Future<void> _showAddCleaningSheet() async {
+    final l10n = AppLocalizations.of(context)!;
+    final descriptionController = TextEditingController();
+    DateTime selectedDate = DateTime.now();
+    int? selectedAccommodationId;
+    bool busy = false;
+
+    // Fetch accommodations for the dropdown
+    List<Map<String, dynamic>> accommodations = [];
+    try {
+      final response = await ApiClient.instance.get(ApiConfig.accommodations);
+      final raw = response.data is List
+          ? response.data as List
+          : (response.data['data'] as List? ?? []);
+      accommodations = raw
+          .whereType<Map<String, dynamic>>()
+          .map((a) => {'id': a['id'], 'name': a['name'] ?? ''})
+          .toList();
+      if (accommodations.isNotEmpty) {
+        selectedAccommodationId = accommodations.first['id'] as int?;
+      }
+    } catch (_) {}
+
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetCtx) => Padding(
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 16,
+          bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 16,
+        ),
+        child: StatefulBuilder(
+          builder: (ctx, setSheetState) => Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.addCleaning,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<int>(
+                value: selectedAccommodationId,
+                decoration: InputDecoration(
+                  labelText: '${l10n.accommodations} *',
+                ),
+                items: accommodations.map((a) {
+                  return DropdownMenuItem<int>(
+                    value: a['id'] as int?,
+                    child: Text(a['name'] as String,
+                        overflow: TextOverflow.ellipsis),
+                  );
+                }).toList(),
+                onChanged: (v) =>
+                    setSheetState(() => selectedAccommodationId = v),
+              ),
+              const SizedBox(height: 12),
+              InkWell(
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: ctx,
+                    initialDate: selectedDate,
+                    firstDate: DateTime.now()
+                        .subtract(const Duration(days: 30)),
+                    lastDate: DateTime.now()
+                        .add(const Duration(days: 365 * 2)),
+                  );
+                  if (picked != null) {
+                    setSheetState(() => selectedDate = picked);
+                  }
+                },
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: '${l10n.date} *',
+                    suffixIcon: const Icon(Icons.calendar_today, size: 20),
+                  ),
+                  child: Text(
+                    '${selectedDate.day.toString().padLeft(2, '0')}-'
+                    '${selectedDate.month.toString().padLeft(2, '0')}-'
+                    '${selectedDate.year}',
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: descriptionController,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
+                  labelText: l10n.cleaningDescriptionOptional,
+                  hintText: l10n.cleaningDescriptionHint,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: busy
+                          ? null
+                          : () => Navigator.pop(sheetCtx),
+                      child: Text(l10n.cancel),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: busy
+                          ? null
+                          : () async {
+                              if (selectedAccommodationId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(l10n.selectAnAccommodation),
+                                  ),
+                                );
+                                return;
+                              }
+                              setSheetState(() => busy = true);
+                              try {
+                                await ApiClient.instance.post(
+                                  '/cleaning-tasks',
+                                  data: {
+                                    'accommodation_id':
+                                        selectedAccommodationId,
+                                    'scheduled_date':
+                                        '${selectedDate.year}-'
+                                        '${selectedDate.month.toString().padLeft(2, '0')}-'
+                                        '${selectedDate.day.toString().padLeft(2, '0')}',
+                                    if (descriptionController.text.trim().isNotEmpty)
+                                      'description':
+                                          descriptionController.text.trim(),
+                                  },
+                                );
+                                if (sheetCtx.mounted) {
+                                  Navigator.pop(sheetCtx);
+                                }
+                                final period = _tabController.index == 0
+                                    ? 'today'
+                                    : _tabController.index == 1
+                                        ? 'week'
+                                        : 'all';
+                                _loadTasks(period);
+                              } catch (e) {
+                                setSheetState(() => busy = false);
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(l10n.errorWithMessage(
+                                          e.toString())),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                      icon: busy
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.check, size: 18),
+                      label: Text(l10n.add),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

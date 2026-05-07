@@ -1499,5 +1499,9 @@
   "revenueExportSubtitle": "Excel con fecha, huésped, pagado y pendiente",
   "revenueExportPreparing": "Preparando archivo...",
   "revenueExportFailed": "Exportación fallida. Inténtalo de nuevo.",
-  "revenueExportShareSubject": "Ingresos de alquiler"
+  "revenueExportShareSubject": "Ingresos de alquiler",
+
+  "addCleaning": "Añadir limpieza",
+  "cleaningDescriptionOptional": "Descripción (opcional)",
+  "cleaningDescriptionHint": "Ej. intermedia, antes de llegada, limpieza profunda"
 }

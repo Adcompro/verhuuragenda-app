@@ -1500,5 +1500,9 @@
   "revenueExportSubtitle": "Excel met datum, gast, betaald en openstaand",
   "revenueExportPreparing": "Bestand wordt voorbereid...",
   "revenueExportFailed": "Exporteren is mislukt. Probeer het opnieuw.",
-  "revenueExportShareSubject": "Verhuuropbrengsten"
+  "revenueExportShareSubject": "Verhuuropbrengsten",
+
+  "addCleaning": "Schoonmaak toevoegen",
+  "cleaningDescriptionOptional": "Beschrijving (optioneel)",
+  "cleaningDescriptionHint": "Bv. tussentijds, voor aankomst, hoofdschoonmaak"
 }
