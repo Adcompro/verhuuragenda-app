@@ -192,7 +192,7 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
                 },
                 child: InputDecorator(
                   decoration: InputDecoration(
-                    labelText: '${l10n.date} *',
+                    labelText: '${l10n.selectDate} *',
                     suffixIcon: const Icon(Icons.calendar_today, size: 20),
                   ),
                   child: Text(
