@@ -6,31 +6,45 @@ import '../core/storage/secure_storage.dart';
 import '../config/api_config.dart';
 import '../models/user.dart';
 
+// Auth mode
+enum AuthMode { host, guest }
+
 // Auth State
 class AuthState {
   final User? user;
   final bool isLoggedIn;
   final bool isLoading;
   final String? error;
+  final AuthMode mode;
+  final int? guestBookingId;
 
   const AuthState({
     this.user,
     this.isLoggedIn = false,
     this.isLoading = true,
     this.error,
+    this.mode = AuthMode.host,
+    this.guestBookingId,
   });
+
+  bool get isGuest => mode == AuthMode.guest && isLoggedIn;
+  bool get isHost => mode == AuthMode.host && isLoggedIn;
 
   AuthState copyWith({
     User? user,
     bool? isLoggedIn,
     bool? isLoading,
     String? error,
+    AuthMode? mode,
+    int? guestBookingId,
   }) {
     return AuthState(
       user: user ?? this.user,
       isLoggedIn: isLoggedIn ?? this.isLoggedIn,
       isLoading: isLoading ?? this.isLoading,
       error: error,
+      mode: mode ?? this.mode,
+      guestBookingId: guestBookingId ?? this.guestBookingId,
     );
   }
 }
@@ -43,24 +57,43 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> _checkAuthStatus() async {
     final token = await SecureStorage.getToken();
+    final mode = await SecureStorage.getMode();
 
-    if (token != null && token.isNotEmpty) {
+    if (token == null || token.isEmpty) {
+      state = const AuthState(isLoading: false);
+      return;
+    }
+
+    // Guest session: token belongs to a Booking, not a User.
+    if (mode == 'guest') {
+      final bookingId = await SecureStorage.getGuestBookingId();
       try {
-        // Verify token with server
-        final response = await ApiClient.instance.get(ApiConfig.user);
-        final user = User.fromJson(response.data);
-
+        await ApiClient.instance.get(ApiConfig.guestBooking);
         state = AuthState(
-          user: user,
           isLoggedIn: true,
           isLoading: false,
+          mode: AuthMode.guest,
+          guestBookingId: bookingId,
         );
       } catch (e) {
-        // Token invalid or expired
-        await SecureStorage.deleteToken();
+        await SecureStorage.clearAll();
         state = const AuthState(isLoading: false);
       }
-    } else {
+      return;
+    }
+
+    // Host session
+    try {
+      final response = await ApiClient.instance.get(ApiConfig.user);
+      final user = User.fromJson(response.data);
+      state = AuthState(
+        user: user,
+        isLoggedIn: true,
+        isLoading: false,
+        mode: AuthMode.host,
+      );
+    } catch (e) {
+      await SecureStorage.deleteToken();
       state = const AuthState(isLoading: false);
     }
   }
@@ -89,6 +122,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
 
       await SecureStorage.saveToken(token);
+      await SecureStorage.setMode('host');
 
       // Reset client to pick up new token
       ApiClient.reset();
@@ -103,6 +137,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         user: user,
         isLoggedIn: true,
         isLoading: false,
+        mode: AuthMode.host,
       );
 
       return true;
@@ -137,11 +172,70 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<bool> loginGuest(String token, String pin) async {
+    state = const AuthState(isLoading: true);
+
+    try {
+      await SecureStorage.deleteToken();
+      ApiClient.reset();
+
+      final response = await ApiClient.instance.post(
+        ApiConfig.guestLogin,
+        data: {
+          'token': token.trim(),
+          'pin': pin.trim(),
+          'device_name': 'guest_app',
+        },
+      );
+
+      final apiToken = response.data['token'] as String?;
+      final bookingId = response.data['booking_id'] as int?;
+      if (apiToken == null || apiToken.isEmpty) {
+        throw Exception('Geen token ontvangen van server');
+      }
+
+      await SecureStorage.saveToken(apiToken);
+      await SecureStorage.setMode('guest');
+      if (bookingId != null) {
+        await SecureStorage.setGuestBookingId(bookingId);
+      }
+
+      ApiClient.reset();
+
+      state = AuthState(
+        isLoggedIn: true,
+        isLoading: false,
+        mode: AuthMode.guest,
+        guestBookingId: bookingId,
+      );
+      return true;
+    } on DioException catch (e) {
+      String msg = 'Ongeldige token of pincode.';
+      final data = e.response?.data;
+      if (data is Map && data['errors'] != null) {
+        final errors = data['errors'] as Map;
+        final first = errors.values.first;
+        if (first is List && first.isNotEmpty) msg = first.first.toString();
+      } else if (data is Map && data['message'] != null) {
+        msg = data['message'].toString();
+      }
+      state = AuthState(isLoading: false, error: msg);
+      return false;
+    } catch (e) {
+      state = AuthState(
+        isLoading: false,
+        error: 'Er is een fout opgetreden: ${e.toString()}',
+      );
+      return false;
+    }
+  }
+
   Future<void> logout() async {
+    final isGuest = state.mode == AuthMode.guest;
     // Try to notify server first (while we still have the token)
     try {
       await ApiClient.instance.post(
-        ApiConfig.logout,
+        isGuest ? ApiConfig.guestLogout : ApiConfig.logout,
         options: Options(
           sendTimeout: const Duration(seconds: 5),
           receiveTimeout: const Duration(seconds: 5),
@@ -186,4 +280,12 @@ final currentUserProvider = Provider<User?>((ref) {
 
 final isLoggedInProvider = Provider<bool>((ref) {
   return ref.watch(authStateProvider).isLoggedIn;
+});
+
+final isGuestModeProvider = Provider<bool>((ref) {
+  return ref.watch(authStateProvider).isGuest;
+});
+
+final guestBookingIdProvider = Provider<int?>((ref) {
+  return ref.watch(authStateProvider).guestBookingId;
 });

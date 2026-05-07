@@ -39,4 +39,14 @@ class ApiConfig {
   static const String gardenTasks = '/garden-tasks';
   static const String gardenDashboard = '/garden/dashboard';
   static const String gardenRecurring = '/garden/recurring';
+
+  // Guest mode
+  static const String guestLogin = '/guest/login';
+  static const String guestLogout = '/guest/logout';
+  static const String guestBooking = '/guest/booking';
+  static const String guestPayments = '/guest/payments';
+  static const String guestMessages = '/guest/messages';
+
+  // Host conversations
+  static const String conversations = '/conversations';
 }

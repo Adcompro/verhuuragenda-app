@@ -17,8 +17,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _guestTokenController = TextEditingController();
+  final _guestPinController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = true;
+  bool _guestMode = false;
 
   @override
   void initState() {
@@ -61,11 +64,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _guestTokenController.dispose();
+    _guestPinController.dispose();
     super.dispose();
   }
 
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (_guestMode) {
+      final ok = await ref.read(authStateProvider.notifier).loginGuest(
+            _guestTokenController.text,
+            _guestPinController.text,
+          );
+      if (ok && mounted) context.go('/guest');
+      return;
+    }
 
     final success = await ref.read(authStateProvider.notifier).login(
           _emailController.text.trim(),
@@ -151,79 +165,164 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
 
-                // Email field
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    labelText: l10n.email,
-                    prefixIcon: const Icon(Icons.email_outlined),
+                // Mode toggle: Host / Guest
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return l10n.enterEmail;
-                    }
-                    if (!value.contains('@')) {
-                      return l10n.enterValidEmail;
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 16),
-
-                // Password field
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (_) => _handleLogin(),
-                  decoration: InputDecoration(
-                    labelText: l10n.password,
-                    prefixIcon: const Icon(Icons.lock_outlined),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                  padding: const EdgeInsets.all(4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _modeButton(
+                          label: 'Verhuurder',
+                          icon: Icons.home_work_outlined,
+                          active: !_guestMode,
+                          onTap: () => setState(() => _guestMode = false),
+                        ),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
+                      Expanded(
+                        child: _modeButton(
+                          label: 'Gast',
+                          icon: Icons.person_outline,
+                          active: _guestMode,
+                          onTap: () => setState(() => _guestMode = true),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Host fields
+                if (!_guestMode) ...[
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      labelText: l10n.email,
+                      prefixIcon: const Icon(Icons.email_outlined),
+                    ),
+                    validator: (value) {
+                      if (_guestMode) return null;
+                      if (value == null || value.isEmpty) {
+                        return l10n.enterEmail;
+                      }
+                      if (!value.contains('@')) {
+                        return l10n.enterValidEmail;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _handleLogin(),
+                    decoration: InputDecoration(
+                      labelText: l10n.password,
+                      prefixIcon: const Icon(Icons.lock_outlined),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
+                    ),
+                    validator: (value) {
+                      if (_guestMode) return null;
+                      if (value == null || value.isEmpty) {
+                        return l10n.enterPassword;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _rememberMe,
+                        onChanged: (value) {
+                          setState(() {
+                            _rememberMe = value ?? true;
+                          });
+                        },
+                      ),
+                      Text(l10n.rememberMe),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () => context.go('/forgot-password'),
+                        child: Text(l10n.forgotPassword),
+                      ),
+                    ],
+                  ),
+                ] else ...[
+                  // Guest fields
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[50],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Gebruik de toegangscode en pincode uit de uitnodigingsmail van je verhuurder.',
+                            style: TextStyle(color: Colors.blue[800], fontSize: 13),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return l10n.enterPassword;
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 16),
-
-                // Remember me
-                Row(
-                  children: [
-                    Checkbox(
-                      value: _rememberMe,
-                      onChanged: (value) {
-                        setState(() {
-                          _rememberMe = value ?? true;
-                        });
-                      },
+                  TextFormField(
+                    controller: _guestTokenController,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                      labelText: 'Toegangscode',
+                      hintText: '64-tekens code uit je email',
+                      prefixIcon: Icon(Icons.vpn_key_outlined),
                     ),
-                    Text(l10n.rememberMe),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () => context.go('/forgot-password'),
-                      child: Text(l10n.forgotPassword),
+                    validator: (value) {
+                      if (!_guestMode) return null;
+                      if (value == null || value.trim().length < 10) {
+                        return 'Vul je toegangscode in';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _guestPinController,
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _handleLogin(),
+                    decoration: const InputDecoration(
+                      labelText: 'Pincode',
+                      hintText: '6 cijfers',
+                      prefixIcon: Icon(Icons.password_outlined),
                     ),
-                  ],
-                ),
+                    validator: (value) {
+                      if (!_guestMode) return null;
+                      if (value == null || value.trim().length != 6) {
+                        return 'Pincode is 6 cijfers';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
 
                 const SizedBox(height: 24),
 
@@ -250,23 +349,70 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                 const SizedBox(height: 24),
 
-                // Register link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${l10n.noAccount} ',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    TextButton(
-                      onPressed: () => context.go('/register'),
-                      child: Text(l10n.freeRegister),
-                    ),
-                  ],
-                ),
+                // Register link (host mode only)
+                if (!_guestMode)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${l10n.noAccount} ',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                      TextButton(
+                        onPressed: () => context.go('/register'),
+                        child: Text(l10n.freeRegister),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _modeButton({
+    required String label,
+    required IconData icon,
+    required bool active,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        decoration: BoxDecoration(
+          color: active ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: active
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  )
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon,
+                size: 18,
+                color: active ? AppTheme.primaryColor : Colors.grey[600]),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: active ? FontWeight.bold : FontWeight.normal,
+                color: active ? AppTheme.primaryColor : Colors.grey[700],
+              ),
+            ),
+          ],
         ),
       ),
     );

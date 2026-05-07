@@ -6,6 +6,8 @@ class SecureStorage {
   static const String _tokenKey = 'auth_token';
   static const String _userKey = 'user_data';
   static const String _biometricKey = 'biometric_enabled';
+  static const String _modeKey = 'auth_mode'; // 'host' or 'guest'
+  static const String _guestBookingKey = 'guest_booking_id';
 
   static Future<void> init() async {
     _storage = const FlutterSecureStorage(
@@ -52,6 +54,24 @@ class SecureStorage {
   static Future<bool> isBiometricEnabled() async {
     final value = await _storage.read(key: _biometricKey);
     return value == 'true';
+  }
+
+  // Auth mode (host vs guest)
+  static Future<void> setMode(String mode) async {
+    await _storage.write(key: _modeKey, value: mode);
+  }
+
+  static Future<String?> getMode() async {
+    return await _storage.read(key: _modeKey);
+  }
+
+  static Future<void> setGuestBookingId(int id) async {
+    await _storage.write(key: _guestBookingKey, value: id.toString());
+  }
+
+  static Future<int?> getGuestBookingId() async {
+    final v = await _storage.read(key: _guestBookingKey);
+    return v == null ? null : int.tryParse(v);
   }
 
   // Clear all data (logout)

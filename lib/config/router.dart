@@ -25,6 +25,7 @@ import '../screens/pool/pool_dashboard_screen.dart';
 import '../screens/garden/garden_dashboard_screen.dart';
 import '../screens/onboarding/onboarding_wizard_screen.dart';
 import '../screens/settings/manual_screen.dart';
+import '../screens/guest/guest_home_screen.dart';
 import '../widgets/common/bottom_nav.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -48,10 +49,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (!isLoggedIn) {
         // Not logged in: go to login (unless already on auth route)
         return isAuthRoute ? null : '/login';
-      } else {
-        // Logged in: go to dashboard (unless already in app)
-        return (isSplash || isAuthRoute) ? '/dashboard' : null;
       }
+
+      // Guest: stay on /guest, never reach host area
+      final isGuest = authState.isGuest;
+      final isGuestRoute = path.startsWith('/guest');
+      if (isGuest) {
+        return isGuestRoute ? null : '/guest';
+      }
+
+      // Host: away from /guest and the splash/auth routes
+      if (isGuestRoute || isSplash || isAuthRoute) return '/dashboard';
+      return null;
     },
     routes: [
       // Splash Screen
@@ -82,6 +91,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingWizardScreen(),
+      ),
+
+      // Guest home (no bottom nav, has its own tab bar)
+      GoRoute(
+        path: '/guest',
+        builder: (context, state) => const GuestHomeScreen(),
       ),
 
       // Standalone manual route used right after onboarding (so the
