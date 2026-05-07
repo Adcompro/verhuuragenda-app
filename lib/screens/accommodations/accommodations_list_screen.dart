@@ -292,6 +292,81 @@ class _AccommodationCard extends StatelessWidget {
                       ),
                   ],
                 ),
+                // Check-in / check-out times
+                if (accommodation.checkinTimeFrom != null ||
+                    accommodation.checkoutTime != null) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        if (accommodation.checkinTimeFrom != null)
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Icon(Icons.login,
+                                    size: 16, color: Colors.green[700]),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    accommodation.checkinTimeUntil != null
+                                        ? '${accommodation.checkinTimeFrom!.substring(0, 5)} – ${accommodation.checkinTimeUntil!.substring(0, 5)}'
+                                        : 'vanaf ${accommodation.checkinTimeFrom!.substring(0, 5)}',
+                                    style: const TextStyle(fontSize: 13),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (accommodation.checkoutTime != null)
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Icon(Icons.logout,
+                                    size: 16, color: Colors.red[700]),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'tot ${accommodation.checkoutTime!.substring(0, 5)}',
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+                // WiFi info
+                if (accommodation.wifiNetwork != null &&
+                    accommodation.wifiNetwork!.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(Icons.wifi, size: 16, color: Colors.blue[700]),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          accommodation.wifiPassword != null &&
+                                  accommodation.wifiPassword!.isNotEmpty
+                              ? '${accommodation.wifiNetwork} · ${accommodation.wifiPassword}'
+                              : accommodation.wifiNetwork!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[700],
+                            fontFamily: 'monospace',
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
                 // iCal sync indicators
                 if (_hasAnySyncUrl(accommodation)) ...[
                   const SizedBox(height: 12),
