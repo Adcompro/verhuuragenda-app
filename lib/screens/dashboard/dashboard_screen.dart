@@ -6,6 +6,7 @@ import '../../l10n/generated/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/module_visibility_provider.dart';
+import '../../widgets/common/messages_action_button.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../providers/whats_new_provider.dart';
 import '../onboarding/whats_new_screen.dart';
@@ -127,6 +128,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ],
         ),
         actions: [
+          const MessagesActionButton(),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadDashboard,
