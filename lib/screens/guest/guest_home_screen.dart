@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../config/api_config.dart';
 import '../../config/theme.dart';
@@ -597,61 +601,137 @@ class _PaymentTab extends StatelessWidget {
 
 // ============= Chat-tab =============
 
-class _ChatTab extends StatefulWidget {
+class _ChatTab extends StatelessWidget {
   const _ChatTab();
 
   @override
-  State<_ChatTab> createState() => _ChatTabState();
+  Widget build(BuildContext context) {
+    return const ChatThreadView(
+      whoami: 'guest',
+      messagesEndpoint: ApiConfig.guestMessages,
+      typingEndpoint: '/guest/typing',
+      otherIcon: Icons.support_agent,
+      emptyStateText: 'Stuur een bericht naar je verhuurder',
+    );
+  }
 }
 
-class _ChatTabState extends State<_ChatTab> {
+/// Reusable chat thread used by both the guest tab and the host
+/// conversation detail screen. Polls every 8s, supports image
+/// attachments, typing indicator, and read receipts.
+class ChatThreadView extends StatefulWidget {
+  final String whoami; // 'guest' or 'host'
+  final String messagesEndpoint; // GET endpoint for the thread
+  final String? sendEndpoint;    // POST endpoint (defaults to messagesEndpoint)
+  final String typingEndpoint;
+  final IconData otherIcon;
+  final String emptyStateText;
+
+  const ChatThreadView({
+    super.key,
+    required this.whoami,
+    required this.messagesEndpoint,
+    this.sendEndpoint,
+    required this.typingEndpoint,
+    required this.otherIcon,
+    required this.emptyStateText,
+  });
+
+  @override
+  State<ChatThreadView> createState() => _ChatThreadViewState();
+}
+
+class _ChatThreadViewState extends State<ChatThreadView> {
   final _controller = TextEditingController();
   final _scrollCtrl = ScrollController();
+  final _picker = ImagePicker();
   List<Map<String, dynamic>> _messages = [];
   bool _loading = true;
   bool _sending = false;
+  bool _otherTyping = false;
   Timer? _poll;
+  Timer? _typingDebounce;
+  DateTime? _lastTypingPing;
 
   @override
   void initState() {
     super.initState();
     _fetch(initial: true);
     _poll = Timer.periodic(const Duration(seconds: 8), (_) => _fetch());
+    _controller.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
     _poll?.cancel();
+    _typingDebounce?.cancel();
+    _controller.removeListener(_onTextChanged);
     _controller.dispose();
     _scrollCtrl.dispose();
     super.dispose();
   }
 
+  void _onTextChanged() {
+    if (_controller.text.isEmpty) return;
+    // Debounce: send a typing ping at most once every 3s
+    final now = DateTime.now();
+    if (_lastTypingPing != null &&
+        now.difference(_lastTypingPing!) < const Duration(seconds: 3)) {
+      return;
+    }
+    _lastTypingPing = now;
+    _typingDebounce?.cancel();
+    _typingDebounce = Timer(const Duration(milliseconds: 200), () async {
+      try {
+        await ApiClient.instance.post(widget.typingEndpoint);
+      } catch (_) {/* silent */}
+    });
+  }
+
   Future<void> _fetch({bool initial = false}) async {
     try {
-      final r = await ApiClient.instance.get(ApiConfig.guestMessages);
+      final r = await ApiClient.instance.get(widget.messagesEndpoint);
       final data = (r.data['data'] as List?)?.cast<dynamic>() ?? [];
+      final otherTyping = (r.data['other_typing'] as bool?) ?? false;
       if (!mounted) return;
+      final scrollAfter = _shouldAutoScroll(data.length);
       setState(() {
-        _messages = data.map((m) => Map<String, dynamic>.from(m as Map)).toList();
+        _messages =
+            data.map((m) => Map<String, dynamic>.from(m as Map)).toList();
+        _otherTyping = otherTyping;
         _loading = false;
       });
-      _scrollToBottom();
+      if (scrollAfter) _scrollToBottom();
     } catch (_) {
       if (mounted && initial) setState(() => _loading = false);
     }
   }
 
-  Future<void> _send() async {
+  bool _shouldAutoScroll(int newCount) {
+    // Always auto-scroll on first load or when count grew
+    if (_messages.isEmpty) return true;
+    return newCount > _messages.length;
+  }
+
+  Future<void> _send({File? image}) async {
     final text = _controller.text.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty && image == null) return;
     setState(() => _sending = true);
     try {
+      final formData = FormData.fromMap({
+        if (text.isNotEmpty) 'body': text,
+        if (image != null)
+          'attachment': await MultipartFile.fromFile(
+            image.path,
+            filename: image.path.split('/').last,
+          ),
+      });
       final r = await ApiClient.instance.post(
-        ApiConfig.guestMessages,
-        data: {'body': text},
+        widget.sendEndpoint ?? widget.messagesEndpoint,
+        data: formData,
       );
       _controller.clear();
+      _lastTypingPing = null;
       setState(() {
         _messages.add(Map<String, dynamic>.from(r.data as Map));
         _sending = false;
@@ -664,6 +744,37 @@ class _ChatTabState extends State<_ChatTab> {
         const SnackBar(content: Text('Bericht kon niet verzonden worden')),
       );
     }
+  }
+
+  Future<void> _pickAndSendImage() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: const Text('Camera'),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Bibliotheek'),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (source == null) return;
+    final picked = await _picker.pickImage(
+      source: source,
+      maxWidth: 2000,
+      imageQuality: 85,
+    );
+    if (picked == null) return;
+    await _send(image: File(picked.path));
   }
 
   void _scrollToBottom() {
@@ -681,39 +792,30 @@ class _ChatTabState extends State<_ChatTab> {
   @override
   Widget build(BuildContext context) {
     if (_loading) return const Center(child: CircularProgressIndicator());
+    final showEmpty = _messages.isEmpty && !_otherTyping;
     return Column(
       children: [
         Expanded(
-          child: _messages.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.chat_bubble_outline,
-                            size: 64, color: Colors.grey[400]),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Stuur een bericht naar je verhuurder',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
+          child: showEmpty
+              ? _emptyState()
               : ListView.builder(
                   controller: _scrollCtrl,
                   padding: const EdgeInsets.all(12),
-                  itemCount: _messages.length,
+                  itemCount: _messages.length + (_otherTyping ? 1 : 0),
                   itemBuilder: (_, i) {
+                    if (i == _messages.length) {
+                      // typing indicator at the bottom
+                      return _TypingBubble(otherIcon: widget.otherIcon);
+                    }
                     final m = _messages[i];
-                    final isMe = m['sender_type'] == 'guest';
-                    return _ChatBubble(
+                    final isMe = m['sender_type'] == widget.whoami;
+                    return ChatBubble(
                       body: m['body']?.toString() ?? '',
+                      attachmentUrl: m['attachment_url']?.toString(),
                       timestamp: m['created_at']?.toString(),
                       isMe: isMe,
+                      read: (m['read'] as bool?) ?? false,
+                      otherIcon: widget.otherIcon,
                     );
                   },
                 ),
@@ -721,13 +823,18 @@ class _ChatTabState extends State<_ChatTab> {
         SafeArea(
           top: false,
           child: Container(
-            padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+            padding: const EdgeInsets.fromLTRB(4, 6, 8, 6),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border(top: BorderSide(color: Colors.grey[300]!)),
             ),
             child: Row(
               children: [
+                IconButton(
+                  icon: const Icon(Icons.add_photo_alternate_outlined),
+                  tooltip: 'Foto bijvoegen',
+                  onPressed: _sending ? null : _pickAndSendImage,
+                ),
                 Expanded(
                   child: TextField(
                     controller: _controller,
@@ -745,7 +852,7 @@ class _ChatTabState extends State<_ChatTab> {
                 ),
                 const SizedBox(width: 8),
                 IconButton.filled(
-                  onPressed: _sending ? null : _send,
+                  onPressed: _sending ? null : () => _send(),
                   icon: _sending
                       ? const SizedBox(
                           width: 18,
@@ -762,17 +869,45 @@ class _ChatTabState extends State<_ChatTab> {
       ],
     );
   }
+
+  Widget _emptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.chat_bubble_outline,
+                size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              widget.emptyStateText,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _ChatBubble extends StatelessWidget {
+class ChatBubble extends StatelessWidget {
   final String body;
+  final String? attachmentUrl;
   final String? timestamp;
   final bool isMe;
+  final bool read;
+  final IconData otherIcon;
 
-  const _ChatBubble({
+  const ChatBubble({
+    super.key,
     required this.body,
+    required this.attachmentUrl,
     required this.timestamp,
     required this.isMe,
+    required this.read,
+    required this.otherIcon,
   });
 
   @override
@@ -783,6 +918,9 @@ class _ChatBubble extends StatelessWidget {
     final timeStr = time != null
         ? '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}'
         : '';
+    final hasImage = attachmentUrl != null && attachmentUrl!.isNotEmpty;
+    final hasText = body.isNotEmpty;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
       child: Row(
@@ -794,13 +932,14 @@ class _ChatBubble extends StatelessWidget {
             CircleAvatar(
               radius: 14,
               backgroundColor: Colors.grey[300],
-              child: Icon(Icons.support_agent,
-                  size: 16, color: Colors.grey[700]),
+              child: Icon(otherIcon, size: 16, color: Colors.grey[700]),
             ),
           if (!isMe) const SizedBox(width: 6),
           Flexible(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: hasImage && !hasText
+                  ? const EdgeInsets.all(4)
+                  : const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.72,
               ),
@@ -817,25 +956,173 @@ class _ChatBubble extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    body,
-                    style: TextStyle(
-                      color: isMe ? Colors.white : Colors.black87,
-                      fontSize: 14,
+                  if (hasImage)
+                    GestureDetector(
+                      onTap: () => _showFullScreen(context, attachmentUrl!),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: CachedNetworkImage(
+                          imageUrl: attachmentUrl!,
+                          fit: BoxFit.cover,
+                          placeholder: (_, __) => Container(
+                            height: 160,
+                            width: 220,
+                            color: Colors.grey[300],
+                            child: const Center(
+                                child: CircularProgressIndicator()),
+                          ),
+                          errorWidget: (_, __, ___) => Container(
+                            height: 160,
+                            width: 220,
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.broken_image),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    timeStr,
-                    style: TextStyle(
-                      color: isMe
-                          ? Colors.white.withOpacity(0.7)
-                          : Colors.grey[600],
-                      fontSize: 10,
+                  if (hasImage && hasText) const SizedBox(height: 6),
+                  if (hasText)
+                    Padding(
+                      padding: hasImage
+                          ? const EdgeInsets.fromLTRB(8, 0, 8, 4)
+                          : EdgeInsets.zero,
+                      child: Text(
+                        body,
+                        style: TextStyle(
+                          color: isMe ? Colors.white : Colors.black87,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  Padding(
+                    padding: hasImage && !hasText
+                        ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4)
+                        : EdgeInsets.zero,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          timeStr,
+                          style: TextStyle(
+                            color: isMe
+                                ? Colors.white.withOpacity(0.7)
+                                : Colors.grey[600],
+                            fontSize: 10,
+                          ),
+                        ),
+                        if (isMe) ...[
+                          const SizedBox(width: 4),
+                          Icon(
+                            read ? Icons.done_all : Icons.done,
+                            size: 14,
+                            color: read
+                                ? Colors.lightBlueAccent[100]
+                                : Colors.white.withOpacity(0.7),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFullScreen(BuildContext context, String url) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        body: Center(
+          child: InteractiveViewer(
+            child: CachedNetworkImage(imageUrl: url),
+          ),
+        ),
+      ),
+    ));
+  }
+}
+
+class _TypingBubble extends StatefulWidget {
+  final IconData otherIcon;
+  const _TypingBubble({required this.otherIcon});
+
+  @override
+  State<_TypingBubble> createState() => _TypingBubbleState();
+}
+
+class _TypingBubbleState extends State<_TypingBubble>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 14,
+            backgroundColor: Colors.grey[300],
+            child: Icon(widget.otherIcon, size: 16, color: Colors.grey[700]),
+          ),
+          const SizedBox(width: 6),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(14),
+                topRight: Radius.circular(14),
+                bottomLeft: Radius.circular(2),
+                bottomRight: Radius.circular(14),
+              ),
+            ),
+            child: AnimatedBuilder(
+              animation: _ctrl,
+              builder: (context, _) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(3, (i) {
+                    final t = (_ctrl.value + i / 3) % 1;
+                    final scale = 0.6 + 0.4 * (1 - (2 * t - 1).abs());
+                    return Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 2, vertical: 4 + 4 * (1 - scale)),
+                      child: Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[600],
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    );
+                  }),
+                );
+              },
             ),
           ),
         ],
