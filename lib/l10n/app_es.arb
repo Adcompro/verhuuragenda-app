@@ -1503,5 +1503,8 @@
 
   "addCleaning": "Añadir limpieza",
   "cleaningDescriptionOptional": "Descripción (opcional)",
-  "cleaningDescriptionHint": "Ej. intermedia, antes de llegada, limpieza profunda"
+  "cleaningDescriptionHint": "Ej. intermedia, antes de llegada, limpieza profunda",
+
+  "manualDoneButton": "Listo, ir al panel",
+  "manualFindHereLater": "Siempre puedes encontrar este manual en Ajustes → Manual."
 }

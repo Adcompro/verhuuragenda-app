@@ -3327,4 +3327,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cleaningDescriptionOptional => 'Description (facultative)';
   @override
   String get cleaningDescriptionHint => 'Ex. intermédiaire, avant arrivée, grand nettoyage';
+  @override
+  String get manualDoneButton => "Terminé, aller au tableau de bord";
+  @override
+  String get manualFindHereLater => "Vous retrouverez toujours ce manuel via Paramètres → Manuel.";
+
 }

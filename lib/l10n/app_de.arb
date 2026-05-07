@@ -1499,5 +1499,8 @@
 
   "addCleaning": "Reinigung hinzufügen",
   "cleaningDescriptionOptional": "Beschreibung (optional)",
-  "cleaningDescriptionHint": "z. B. Zwischenreinigung, vor Anreise, Grundreinigung"
+  "cleaningDescriptionHint": "z. B. Zwischenreinigung, vor Anreise, Grundreinigung",
+
+  "manualDoneButton": "Fertig, zum Dashboard",
+  "manualFindHereLater": "Sie finden dieses Handbuch jederzeit unter Einstellungen → Handbuch."
 }

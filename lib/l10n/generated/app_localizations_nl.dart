@@ -2321,4 +2321,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get cleaningDescriptionOptional => 'Beschrijving (optioneel)';
   @override
   String get cleaningDescriptionHint => 'Bv. tussentijds, voor aankomst, hoofdschoonmaak';
+  @override
+  String get manualDoneButton => "Klaar, ga naar dashboard";
+  @override
+  String get manualFindHereLater => "Je vindt deze handleiding altijd terug via Instellingen → Handleiding.";
+
 }

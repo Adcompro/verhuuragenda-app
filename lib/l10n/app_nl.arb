@@ -1504,5 +1504,8 @@
 
   "addCleaning": "Schoonmaak toevoegen",
   "cleaningDescriptionOptional": "Beschrijving (optioneel)",
-  "cleaningDescriptionHint": "Bv. tussentijds, voor aankomst, hoofdschoonmaak"
+  "cleaningDescriptionHint": "Bv. tussentijds, voor aankomst, hoofdschoonmaak",
+
+  "manualDoneButton": "Klaar, ga naar dashboard",
+  "manualFindHereLater": "Je vindt deze handleiding altijd terug via Instellingen → Handleiding."
 }

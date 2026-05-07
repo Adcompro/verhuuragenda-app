@@ -2373,4 +2373,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get cleaningDescriptionOptional => 'Descripción (opcional)';
   @override
   String get cleaningDescriptionHint => 'Ej. intermedia, antes de llegada, limpieza profunda';
+  @override
+  String get manualDoneButton => "Listo, ir al panel";
+  @override
+  String get manualFindHereLater => "Siempre puedes encontrar este manual en Ajustes → Manual.";
+
 }

@@ -2367,4 +2367,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cleaningDescriptionOptional => 'Description (optional)';
   @override
   String get cleaningDescriptionHint => 'E.g. interim, pre-arrival, deep clean';
+  @override
+  String get manualDoneButton => "Done, go to dashboard";
+  @override
+  String get manualFindHereLater => "You can always find this manual again via Settings → User manual.";
+
 }

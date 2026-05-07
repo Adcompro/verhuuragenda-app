@@ -1512,5 +1512,8 @@
 
   "addCleaning": "Ajouter un ménage",
   "cleaningDescriptionOptional": "Description (facultative)",
-  "cleaningDescriptionHint": "Ex. intermédiaire, avant arrivée, grand nettoyage"
+  "cleaningDescriptionHint": "Ex. intermédiaire, avant arrivée, grand nettoyage",
+
+  "manualDoneButton": "Terminé, aller au tableau de bord",
+  "manualFindHereLater": "Vous retrouverez toujours ce manuel via Paramètres → Manuel."
 }

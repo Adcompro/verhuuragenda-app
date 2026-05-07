@@ -1504,5 +1504,8 @@
 
   "addCleaning": "Add cleaning",
   "cleaningDescriptionOptional": "Description (optional)",
-  "cleaningDescriptionHint": "E.g. interim, pre-arrival, deep clean"
+  "cleaningDescriptionHint": "E.g. interim, pre-arrival, deep clean",
+
+  "manualDoneButton": "Done, go to dashboard",
+  "manualFindHereLater": "You can always find this manual again via Settings → User manual."
 }

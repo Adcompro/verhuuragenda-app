@@ -1512,5 +1512,8 @@
 
   "addCleaning": "Aggiungi pulizia",
   "cleaningDescriptionOptional": "Descrizione (facoltativa)",
-  "cleaningDescriptionHint": "Es. intermedia, prima dell'arrivo, pulizia approfondita"
+  "cleaningDescriptionHint": "Es. intermedia, prima dell'arrivo, pulizia approfondita",
+
+  "manualDoneButton": "Fatto, vai alla dashboard",
+  "manualFindHereLater": "Puoi sempre ritrovare questo manuale in Impostazioni → Manuale."
 }
