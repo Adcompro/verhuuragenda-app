@@ -5,8 +5,8 @@ import 'config/theme.dart';
 import 'config/router.dart';
 import 'providers/language_provider.dart';
 
-class VerhuurAgendaApp extends ConsumerWidget {
-  const VerhuurAgendaApp({super.key});
+class CasaMioApp extends ConsumerWidget {
+  const CasaMioApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -14,7 +14,7 @@ class VerhuurAgendaApp extends ConsumerWidget {
     final preferredLocale = ref.watch(languageProvider);
 
     return MaterialApp.router(
-      title: 'VerhuurAgenda',
+      title: 'CasaMio',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

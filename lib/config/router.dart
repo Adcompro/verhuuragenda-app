@@ -24,6 +24,7 @@ import '../screens/team/team_list_screen.dart';
 import '../screens/pool/pool_dashboard_screen.dart';
 import '../screens/garden/garden_dashboard_screen.dart';
 import '../screens/onboarding/onboarding_wizard_screen.dart';
+import '../screens/settings/manual_screen.dart';
 import '../widgets/common/bottom_nav.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -81,6 +82,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingWizardScreen(),
+      ),
+
+      // Standalone manual route used right after onboarding (so the
+      // user gets a "Klaar, ga naar dashboard" CTA at the bottom).
+      // Pass ?first=1 in the URL to enable that mode.
+      GoRoute(
+        path: '/manual',
+        builder: (context, state) {
+          final first = state.uri.queryParameters['first'] == '1';
+          return ManualScreen(firstLaunch: first);
+        },
       ),
 
       // Main Shell with Bottom Navigation

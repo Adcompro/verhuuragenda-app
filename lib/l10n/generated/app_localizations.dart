@@ -1209,6 +1209,10 @@ abstract class AppLocalizations {
   String get addCleaning;
   String get cleaningDescriptionOptional;
   String get cleaningDescriptionHint;
+
+  // Manual first-launch CTA
+  String get manualDoneButton;
+  String get manualFindHereLater;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

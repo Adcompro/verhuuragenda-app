@@ -79,7 +79,7 @@ class _FinancialYearScreenState extends State<FinancialYearScreen> {
       final buffer = StringBuffer();
 
       // Header
-      buffer.writeln('VerhuurAgenda ${l10n.yearOverview} $_selectedYear');
+      buffer.writeln('CasaMio ${l10n.yearOverview} $_selectedYear');
       buffer.writeln('');
 
       // Summary section
@@ -141,7 +141,7 @@ class _FinancialYearScreenState extends State<FinancialYearScreen> {
       final box = context.findRenderObject() as RenderBox?;
       await Share.shareXFiles(
         [XFile(file.path)],
-        subject: 'VerhuurAgenda ${l10n.yearOverview} $_selectedYear',
+        subject: 'CasaMio ${l10n.yearOverview} $_selectedYear',
         sharePositionOrigin: box != null
             ? box.localToGlobal(Offset.zero) & box.size
             : const Rect.fromLTWH(0, 0, 100, 100),

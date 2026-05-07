@@ -15,7 +15,7 @@ void main() async {
 
   runApp(
     const ProviderScope(
-      child: VerhuurAgendaApp(),
+      child: CasaMioApp(),
     ),
   );
 }

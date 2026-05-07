@@ -59,12 +59,12 @@ class _PrivacyScreenState extends State<PrivacyScreen> with SingleTickerProvider
           const SizedBox(height: 24),
           _buildIntro(
             'Uw privacy is belangrijk',
-            'Dit privacybeleid beschrijft hoe VerhuurAgenda uw persoonsgegevens verzamelt, gebruikt en beschermt. Wij verwerken uw gegevens in overeenstemming met de Algemene Verordening Gegevensbescherming (AVG).',
+            'Dit privacybeleid beschrijft hoe CasaMio uw persoonsgegevens verzamelt, gebruikt en beschermt. Wij verwerken uw gegevens in overeenstemming met de Algemene Verordening Gegevensbescherming (AVG).',
           ),
           const SizedBox(height: 24),
           _buildSection(
             '1. Wie zijn wij?',
-            'VerhuurAgenda is een dienst voor het beheren van vakantieverhuur, aangeboden via de website verhuuragenda.nl en de VerhuurAgenda mobiele applicatie.\n\n'
+            'CasaMio is een dienst voor het beheren van vakantieverhuur, aangeboden via de website verhuuragenda.nl en de CasaMio mobiele applicatie.\n\n'
             'Wij zijn verantwoordelijk voor de verwerking van uw persoonsgegevens zoals beschreven in dit privacybeleid.',
           ),
           _buildSection(
@@ -228,12 +228,12 @@ class _PrivacyScreenState extends State<PrivacyScreen> with SingleTickerProvider
           const SizedBox(height: 24),
           _buildIntro(
             'Your privacy is important',
-            'This privacy policy describes how VerhuurAgenda collects, uses, and protects your personal data. We process your data in accordance with the General Data Protection Regulation (GDPR).',
+            'This privacy policy describes how CasaMio collects, uses, and protects your personal data. We process your data in accordance with the General Data Protection Regulation (GDPR).',
           ),
           const SizedBox(height: 24),
           _buildSection(
             '1. Who are we?',
-            'VerhuurAgenda is a vacation rental management service offered through the website verhuuragenda.nl and the VerhuurAgenda mobile application.\n\n'
+            'CasaMio is a vacation rental management service offered through the website verhuuragenda.nl and the CasaMio mobile application.\n\n'
             'We are responsible for processing your personal data as described in this privacy policy.',
           ),
           _buildSection(
@@ -501,7 +501,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> with SingleTickerProvider
       child: Column(
         children: [
           Text(
-            'VerhuurAgenda',
+            'CasaMio',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: AppTheme.primaryColor,

@@ -1,7 +1,7 @@
 {
   "@@locale": "it",
 
-  "appName": "VerhuurAgenda",
+  "appName": "CasaMio",
 
   "login": "Accedi",
   "logout": "Esci",
@@ -52,7 +52,7 @@
   "freeAccountFeature3": "Sincronizzazione iCal",
   "freeAccountFeature4": "Passa a Premium quando vuoi",
 
-  "welcomeTitle": "Benvenuto su VerhuurAgenda!",
+  "welcomeTitle": "Benvenuto su CasaMio!",
   "accountCreated": "Il tuo account è stato creato con successo.",
   "emailSentTo": "Abbiamo inviato un'e-mail di conferma a:",
   "canLoginNow": "Ora puoi accedere e iniziare!",
@@ -260,8 +260,8 @@
   "support": "Supporto",
   "helpAndSupport": "Aiuto e supporto",
   "helpDescription": "FAQ, contatti e tutorial",
-  "aboutApp": "Informazioni su VerhuurAgenda",
-  "aboutDescription": "VerhuurAgenda è l'app intelligente per la gestione degli affitti vacanze. Gestisci le tue prenotazioni, ospiti e alloggi facilmente dal tuo telefono.",
+  "aboutApp": "Informazioni su CasaMio",
+  "aboutDescription": "CasaMio è l'app intelligente per la gestione degli affitti vacanze. Gestisci le tue prenotazioni, ospiti e alloggi facilmente dal tuo telefono.",
 
   "data": "Dati",
   "exportData": "Esporta dati",
@@ -833,7 +833,7 @@
   "maintenanceUpdatesNotification": "Aggiornamenti manutenzione",
   "maintenanceUpdatesNotificationSubtitle": "Notifiche sulle attività di manutenzione",
   "newsletterAndTipsNotification": "Newsletter e consigli",
-  "newsletterAndTipsNotificationSubtitle": "Ricevi consigli e aggiornamenti da VerhuurAgenda",
+  "newsletterAndTipsNotificationSubtitle": "Ricevi consigli e aggiornamenti da CasaMio",
   "pushNotificationsInfo": "Le notifiche push vengono inviate a questo dispositivo. Assicurati che le notifiche siano abilitate nelle impostazioni del telefono.",
 
   "teamTitle": "Team",
@@ -872,7 +872,7 @@
   "passwordMinChars": "La password deve contenere almeno 8 caratteri",
   "roleLabel": "Ruolo",
   "aboutTeamRoles": "Informazioni sui ruoli",
-  "teamRolesInfo": "I membri del team accedono al tuo VerhuurAgenda in base al loro ruolo. Accedono con la propria e-mail e password.",
+  "teamRolesInfo": "I membri del team accedono al tuo CasaMio in base al loro ruolo. Accedono con la propria e-mail e password.",
   "activeToggle": "Attivo",
   "inactiveMembersCannotLogin": "I membri inattivi non possono accedere",
 
@@ -1046,20 +1046,20 @@
   "callUsButton": "Chiamaci",
   "officeHours": "Disponibile nei giorni feriali dalle 9:00 alle 17:00",
 
-  "aboutTitle": "Informazioni su VerhuurAgenda",
+  "aboutTitle": "Informazioni su CasaMio",
   "versionLabel": "Versione",
   "developerLabel": "Sviluppatore",
-  "developerName": "VerhuurAgenda B.V.",
+  "developerName": "CasaMio B.V.",
   "contactLabel": "Contatto",
   "followUs": "Seguici",
   "rateApp": "Valuta l'app",
-  "rateAppDescription": "Trovi VerhuurAgenda utile? Lascia una recensione!",
+  "rateAppDescription": "Trovi CasaMio utile? Lascia una recensione!",
   "shareApp": "Condividi l'app",
-  "shareAppMessage": "Scopri VerhuurAgenda - l'app intelligente per la gestione degli affitti vacanze!",
+  "shareAppMessage": "Scopri CasaMio - l'app intelligente per la gestione degli affitti vacanze!",
   "legalSection": "Note legali",
   "acknowledgements": "Ringraziamenti",
   "acknowledgementsDescription": "Questa app è realizzata con Flutter e utilizza vari pacchetti open source.",
-  "allRightsReservedFull": "© {year} VerhuurAgenda. Tutti i diritti riservati.",
+  "allRightsReservedFull": "© {year} CasaMio. Tutti i diritti riservati.",
   "@allRightsReservedFull": {
     "placeholders": {
       "year": {"type": "int"}
@@ -1073,7 +1073,7 @@
       "date": {"type": "String"}
     }
   },
-  "privacyIntro": "In VerhuurAgenda prendiamo sul serio la tua privacy. Questa politica descrive come raccogliamo, utilizziamo e proteggiamo i tuoi dati.",
+  "privacyIntro": "In CasaMio prendiamo sul serio la tua privacy. Questa politica descrive come raccogliamo, utilizziamo e proteggiamo i tuoi dati.",
   "privacySection1Title": "Quali dati raccogliamo?",
   "privacySection1Content": "Raccogliamo i dati che inserisci, come nome, indirizzo e-mail, informazioni sugli alloggi e sulle prenotazioni. Raccogliamo anche automaticamente alcuni dati tecnici come il tipo di dispositivo e l'utilizzo dell'app.",
   "privacySection2Title": "Come utilizziamo i tuoi dati?",
@@ -1091,15 +1091,15 @@
       "date": {"type": "String"}
     }
   },
-  "termsIntro": "Utilizzando VerhuurAgenda accetti questi termini.",
+  "termsIntro": "Utilizzando CasaMio accetti questi termini.",
   "termsSection1Title": "Utilizzo del servizio",
-  "termsSection1Content": "VerhuurAgenda è destinato alla gestione degli affitti vacanze. Sei responsabile dell'accuratezza dei dati che inserisci.",
+  "termsSection1Content": "CasaMio è destinato alla gestione degli affitti vacanze. Sei responsabile dell'accuratezza dei dati che inserisci.",
   "termsSection2Title": "Account e sicurezza",
   "termsSection2Content": "Sei responsabile di mantenere segrete le tue credenziali. Segnala immediatamente qualsiasi attività sospetta.",
   "termsSection3Title": "Abbonamenti e pagamenti",
   "termsSection3Content": "Le funzionalità Premium sono disponibili tramite abbonamento a pagamento. Gli abbonamenti si rinnovano automaticamente a meno che non vengano cancellati.",
   "termsSection4Title": "Responsabilità",
-  "termsSection4Content": "VerhuurAgenda non è responsabile per danni derivanti dall'utilizzo dell'app. Facciamo del nostro meglio per mantenere il servizio disponibile e affidabile.",
+  "termsSection4Content": "CasaMio non è responsabile per danni derivanti dall'utilizzo dell'app. Facciamo del nostro meglio per mantenere il servizio disponibile e affidabile.",
   "termsSection5Title": "Modifiche",
   "termsSection5Content": "Possiamo modificare questi termini di tanto in tanto. Ti informeremo di modifiche importanti via e-mail o nell'app.",
   "termsContactUs": "Domande? Contattaci a info@verhuuragenda.nl",
@@ -1137,7 +1137,7 @@
   "helpFaq1Question": "Come aggiungo un nuovo alloggio?",
   "helpFaq1Answer": "Vai ad Alloggi nel menu e tocca il pulsante +. Compila i dettagli e aggiungi le foto. Puoi sempre apportare modifiche in seguito.",
   "helpFaq2Question": "Come sincronizzo con Airbnb o Booking.com?",
-  "helpFaq2Answer": "Vai alle impostazioni del tuo alloggio e aggiungi l'URL iCal della tua piattaforma esterna. VerhuurAgenda recupera automaticamente le prenotazioni.",
+  "helpFaq2Answer": "Vai alle impostazioni del tuo alloggio e aggiungi l'URL iCal della tua piattaforma esterna. CasaMio recupera automaticamente le prenotazioni.",
   "helpFaq3Question": "Come funziona il portale ospiti?",
   "helpFaq3Answer": "Viene generato automaticamente un link unico per ogni prenotazione. Condividilo con i tuoi ospiti per permettere loro di fare il check-in e vedere tutte le informazioni.",
   "helpFaq4Question": "Posso aggiungere più utenti?",
@@ -1414,7 +1414,7 @@
   "moduleSettingsHint": "Attiva o disattiva i moduli. I moduli disattivati non appariranno più nella navigazione.",
   "moduleResetAll": "Riattiva tutto",
 
-  "onboardingWelcomeTitle": "Benvenuto su VerhuurAgenda!",
+  "onboardingWelcomeTitle": "Benvenuto su CasaMio!",
   "onboardingWelcomeMessage": "Configuriamo la tua prima casa vacanza. Ci vuole meno di un minuto.",
   "onboardingStart": "Inizia",
   "onboardingMaybeLater": "Forse più tardi",

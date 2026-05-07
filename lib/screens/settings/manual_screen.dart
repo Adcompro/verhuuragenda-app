@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../l10n/generated/app_localizations.dart';
 
-/// In-app handleiding (Dutch-only for v1). Walks the user through
-/// the main flows: first-time setup, manual property creation,
-/// making bookings, seasonal pricing, modules and settings.
+/// In-app handleiding (Dutch-only voor v1). Voor beginners: legt
+/// stap-voor-stap uit hoe CasaMio werkt — van eerste woning tot
+/// boeking en exporteren.
 ///
-/// Reachable via Settings → Help → Handleiding.
+/// Bereikbaar via Instellingen → Handleiding. Bij een eerste
+/// installatie wordt de handleiding ook automatisch getoond direct
+/// na de welkomstwizard.
 class ManualScreen extends StatelessWidget {
-  const ManualScreen({super.key});
+  /// Of de handleiding wordt getoond als onderdeel van de
+  /// onboarding-flow. In die modus krijgt de gebruiker een grote
+  /// "Klaar, ga naar dashboard"-knop onderaan.
+  final bool firstLaunch;
+
+  const ManualScreen({super.key, this.firstLaunch = false});
 
   @override
   Widget build(BuildContext context) {
@@ -17,115 +25,85 @@ class ManualScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.manualTitle),
+        // In first-launch mode there's no back arrow — the user
+        // exits via the "Klaar" button at the bottom.
+        automaticallyImplyLeading: !firstLaunch,
       ),
       body: ListView(
         children: [
-          // Hero
-          Container(
-            color: AppTheme.primaryColor.withOpacity(0.08),
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(Icons.menu_book,
-                          size: 32, color: AppTheme.primaryColor),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.manualTitle,
-                              style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 4),
-                          Text(
-                            l10n.manualIntro,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          ..._sections(),
+          _Hero(firstLaunch: firstLaunch),
+          ..._sections(context, l10n),
+          if (firstLaunch) _DoneCta(),
+          const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  List<Widget> _sections() {
+  List<Widget> _sections(BuildContext context, AppLocalizations l10n) {
     return [
       _ManualSection(
-        icon: Icons.celebration_outlined,
-        title: 'Eerste vakantiehuis aanmaken',
+        icon: Icons.flag_outlined,
+        title: 'Welkom bij CasaMio',
+        initiallyExpanded: true,
         children: [
           _ManualParagraph(
-            'Bij je eerste login start de welkomstwizard automatisch. '
-            'Hij leidt je in 6 stappen door alle basisinstellingen voor '
-            'je eerste woning. Heb je de wizard overgeslagen, dan kun je '
-            'altijd handmatig een woning toevoegen via Accommodaties → +.',
+            'CasaMio helpt je om je vakantieverhuur vanuit één app te '
+            'beheren — boekingen, kalender, gasten, schoonmaak, '
+            'tarieven en meer. Hieronder leggen we kort uit hoe je '
+            'aan de slag gaat.',
           ),
-          _ManualHeader('Met de wizard (aanbevolen)'),
+          _ManualParagraph(
+            'Tip: deze handleiding vind je later altijd terug via '
+            'Instellingen → Handleiding. Geen zorgen dus — je hoeft '
+            'het niet allemaal in één keer te onthouden.',
+          ),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.checklist_outlined,
+        title: 'Eerste keer? Doe dit eerst',
+        initiallyExpanded: true,
+        children: [
           _ManualNumberedList([
-            'Welkom — overzicht van wat je gaat instellen',
-            'Basisgegevens — naam, type woning (huis, appartement, '
-                'villa, cabin, studio), stad',
-            'Capaciteit — maximaal aantal gasten, aantal slaapkamers '
-                'en badkamers',
-            'Wat heeft je woning? — vink zwembad of tuin aan als '
-                'deze specifieke woning er een heeft, plus schoonmaak '
-                'en onderhoud bijhouden (laatste twee gelden voor je '
-                'hele account)',
-            'Tarieven — kies tussen één vast tarief of per seizoen, '
-                'schoonmaakkosten inbegrepen of apart',
-            'Seizoenen (alleen bij seizoenstarieven) — stel voor laag, '
-                'midden en hoog seizoen de datums in',
+            'Doorloop de welkomstwizard die automatisch start. Hij '
+                'helpt je in 6 korte stappen je eerste vakantiehuis '
+                'aan te maken.',
+            'Vink in stap 4 aan welke modules je gebruikt — bv. '
+                '"Mijn woning heeft een zwembad" of "Ik wil schoonmaak '
+                'bijhouden". Modules die je niet aanvinkt blijven '
+                'verborgen.',
+            'Stel in stap 5 je tarieven in: één vast tarief per week, '
+                'óf verschillende prijzen voor laag, midden en hoog '
+                'seizoen. Schoonmaak kan inbegrepen zijn of apart '
+                'berekend worden.',
+            'Bij seizoenstarieven kies je in stap 6 wanneer welk '
+                'seizoen geldt. Met de gekleurde jaarbalk zie je in '
+                'één oogopslag of het hele jaar gedekt is.',
+            'Klik "Woning aanmaken" — de app maakt alles voor je aan.',
           ]),
           _ManualParagraph(
-            'Klik op "Woning aanmaken" om alles op te slaan. De app '
-            'maakt automatisch je accommodatie aan en (bij seizoenen) '
-            'de bijbehorende seizoens-records.',
+            'Was je niet klaar tijdens de wizard? Tik op "Misschien '
+            'later". Je kan altijd later starten via Accommodaties → +.',
           ),
-          _ManualHeader('Een extra woning toevoegen'),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.home_work_outlined,
+        title: 'Een vakantiehuis aanmaken',
+        children: [
+          _ManualHeader('Met de wizard (aanbevolen voor beginners)'),
           _ManualParagraph(
-            'Voor een tweede of volgende woning kun je dezelfde wizard gebruiken — '
-            'of het volledige formulier handmatig openen.',
+            'Accommodaties → tik op + → kies "Met de wizard". Dezelfde '
+            '6 stappen als bij eerste install, ook voor een 2e of 3e '
+            'woning.',
           ),
-          _ManualNumberedList([
-            'Tik op Accommodaties in de onderbalk',
-            'Tik op +',
-            'Kies "Met de wizard" voor stap-voor-stap, of "Handmatig invullen" '
-                'voor het volledige formulier',
-            'Bewaar',
-          ]),
+          _ManualHeader('Handmatig (sneller voor ervaren gebruikers)'),
           _ManualParagraph(
-            'Seizoenen kun je later toevoegen via Instellingen → Seizoenen.',
-          ),
-          _ManualHeader('Gedeeld zwembad of tuin'),
-          _ManualParagraph(
-            'Heb je meerdere woningen die hetzelfde zwembad of dezelfde tuin '
-            'delen? Bij het aanmaken (in de wizard of het formulier) verschijnt '
-            'een dropdown "Wordt het zwembad gedeeld?" zodra ten minste één '
-            'andere woning al een zwembad heeft. Kies dan met welke woning de '
-            'pool of tuin wordt gedeeld — schoonmaak en metingen worden '
-            'eenmalig bijgehouden.',
+            'Accommodaties → + → kies "Handmatig invullen". Je krijgt '
+            'het volledige formulier met alle velden ineens. Prijzen '
+            'mag je leeg laten en later aanvullen — de boekings-'
+            'totaalberekening werkt pas zodra je tarieven hebt.',
           ),
         ],
       ),
@@ -134,31 +112,34 @@ class ManualScreen extends StatelessWidget {
         title: 'Een boeking maken',
         children: [
           _ManualParagraph(
-            'Boekingen worden automatisch berekend op basis van de '
-            'seizoens-tarieven en schoonmaakkosten van de woning. Je '
-            'kunt altijd handmatig bijsturen.',
+            'CasaMio rekent het totaalbedrag automatisch voor je uit '
+            'op basis van je tarieven en de schoonmaakkosten. Je hoeft '
+            'alleen de hoofdgegevens in te vullen.',
           ),
           _ManualNumberedList([
-            'Tik op Boekingen in de onderbalk, daarna op +',
-            'Kies de woning uit de dropdown',
-            'Kies een bestaande gast, of maak met + een nieuwe aan '
+            'Tik op Boekingen → +',
+            'Kies de woning',
+            'Kies een bestaande gast — of maak met + een nieuwe aan '
                 '(alleen voornaam en e-mail zijn verplicht)',
-            'Vul check-in en check-out datum in',
-            'Het Prijsoverzicht verschijnt: aantal nachten per seizoen '
-                'met tarief, plus schoonmaakkosten en subtotaal',
-            'Geef eventueel een korting in — het totaalbedrag past '
-                'zich automatisch aan',
-            'Pas het totaalbedrag handmatig aan als je iets afwijkends '
-                'wil',
+            'Kies check-in en check-out datum. Het Prijsoverzicht '
+                'verschijnt automatisch met aantal nachten per seizoen, '
+                'tarief per nacht, schoonmaak en subtotaal',
+            'Vul eventueel een Korting in — het Totaalbedrag past '
+                'zich live aan',
             'Kies status (aanvraag, optie, bevestigd) en bron (direct, '
                 'Airbnb, Booking, …)',
-            'Bewaar',
+            'Bewaar — je nieuwe boeking staat nu in de kalender',
           ]),
           _ManualHeader('Beschikbaarheid'),
           _ManualParagraph(
-            'Tijdens het invoeren van datums controleert de app of de '
-            'woning beschikbaar is. Bij een conflict zie je de '
-            'overlappende boeking en eventueel alternatieve woningen.',
+            'Tijdens het invoeren controleert de app of de woning vrij '
+            'is. Bij een conflict zie je de overlappende boeking en '
+            'eventueel alternatieve woningen voor diezelfde periode.',
+          ),
+          _ManualParagraph(
+            'Tip: dezelfde dag check-out + check-in is toegestaan. '
+            'Vakantieganger A vertrekt 10:00, B komt 15:00 — gewoon '
+            'doorboeken op dezelfde datum.',
           ),
         ],
       ),
@@ -166,48 +147,38 @@ class ManualScreen extends StatelessWidget {
         icon: Icons.euro_outlined,
         title: 'Tarieven en seizoenen',
         children: [
-          _ManualHeader('Eén vast tarief vs. per seizoen'),
+          _ManualHeader('Vast tarief vs. seizoenstarief'),
           _ManualParagraph(
-            'Eén vast tarief = hetzelfde bedrag per week het hele jaar '
-            'door. Per seizoen = verschillende tarieven voor laag, '
-            'midden en hoog seizoen.',
+            '• Vast tarief: hetzelfde bedrag per week, het hele jaar\n'
+            '• Per seizoen: verschillende tarieven voor laag, midden '
+            'en hoog seizoen',
           ),
           _ManualHeader('Schoonmaak inbegrepen of apart'),
           _ManualParagraph(
-            'Inbegrepen = de schoonmaak zit al in de weekprijs. '
-            'Apart = je rekent een vast bedrag per boeking bovenop de '
-            'weekprijs. De app slaat dat bedrag op als cleaning_fee en '
-            'telt het automatisch op bij elke nieuwe boeking.',
+            '• Inbegrepen = de schoonmaak zit in de weekprijs\n'
+            '• Apart = vast bedrag per boeking bovenop de weekprijs '
+            '(de app telt het automatisch op)',
           ),
           _ManualHeader('Meerdere periodes per seizoen'),
           _ManualParagraph(
             'Per seizoenstype (laag/midden/hoog) kun je meerdere '
-            'periodes toevoegen via "+ Periode toevoegen". Voorbeeld: '
-            'laag seizoen kan zowel jan-apr als okt-dec zijn.',
+            'periodes toevoegen — bv. laag = jan-apr én okt-dec. Tik '
+            'op "+ Periode toevoegen" in de seizoenen-stap.',
           ),
           _ManualHeader('Jaardekking'),
           _ManualParagraph(
-            'Onder de seizoens-stap zie je een gekleurde balk die per '
-            'dag laat zien welk seizoen er geldt:',
+            'Onder de seizoenen-stap toont een gekleurde balk per dag '
+            'welk seizoen er geldt. Blauw = laag, geel = midden, rood '
+            '= hoog, grijs = niet gedekt, paars = overlap.',
           ),
-          _ManualBulletList([
-            'Blauw = laag seizoen',
-            'Geel = midden seizoen',
-            'Rood = hoog seizoen',
-            'Grijs = nog niet ingedeeld',
-            'Paars = overlap (dag valt onder twee seizoenen)',
-          ]),
           _ManualParagraph(
             'Bij gaten verschijnt een knop "Vul ontbrekende dagen op '
-            'met laag seizoen" die alles in één klik dekkend maakt. '
-            'Bij overlap zie je een waarschuwing — je kunt dan een van '
-            'de periodes aanpassen.',
+            'met laag seizoen" — dat dekt het hele jaar in één klik.',
           ),
-          _ManualHeader('Seizoenen aanpassen na onboarding'),
+          _ManualHeader('Seizoenen later aanpassen'),
           _ManualParagraph(
-            'Ga naar Instellingen → Seizoenen om bestaande periodes '
-            'te wijzigen of nieuwe toe te voegen voor het volgende '
-            'jaar.',
+            'Ga naar Instellingen → Seizoenen voor wijzigingen of om '
+            'volgend jaar te plannen.',
           ),
         ],
       ),
@@ -216,31 +187,108 @@ class ManualScreen extends StatelessWidget {
         title: 'Zwembad en tuin per woning',
         children: [
           _ManualParagraph(
-            'Niet elke woning heeft een zwembad of tuin. De app houdt '
-            'dit per woning bij — niet als één globale instelling. De '
-            'zwembad-tab en tuin-tab in de onderbalk verschijnen '
-            'automatisch zodra ten minste één van je woningen het '
-            'aanvinkt heeft.',
+            'Niet elke woning heeft een zwembad of tuin. CasaMio houdt '
+            'dit per woning bij. De zwembad- en tuin-tab in de '
+            'onderbalk verschijnen automatisch zodra ten minste één '
+            'van je woningen het aanvinkt heeft.',
           ),
           _ManualHeader('Bij een nieuwe woning'),
           _ManualParagraph(
-            'In de welkomstwizard (stap 4) of bij Accommodaties → + '
-            'kun je per woning aangeven of er een zwembad en/of tuin '
-            'is. Tik gewoon de schakelaar aan.',
+            'In de wizard (stap 4) of in het edit-formulier vink je '
+            '"Mijn woning heeft een zwembad/tuin" aan.',
           ),
           _ManualHeader('Bij een bestaande woning'),
+          _ManualParagraph(
+            'Accommodaties → woning → Bewerken → schakelaars '
+            'aan- of uitzetten → Bewaar. Je data blijft altijd '
+            'bewaard, ook als je tijdelijk uitzet.',
+          ),
+          _ManualHeader('Gedeeld zwembad of tuin'),
+          _ManualParagraph(
+            'Hebben twee of meer woningen hetzelfde zwembad of '
+            'dezelfde tuin? Schakel "heeft zwembad" aan op de eerste '
+            'woning ("eigenaar"), bewaar. Bij volgende woningen '
+            'verschijnt automatisch een "Wordt het zwembad gedeeld?"-'
+            'dropdown — kies de eigenaar. Schoonmaak en metingen '
+            'worden eenmalig op de eigenaar bijgehouden, niet dubbel.',
+          ),
+          _ManualParagraph(
+            'Tip: geef de eigenaar een herkenbare naam in het veld '
+            '"Naam van het zwembad" (bv. "Hoofdpool Resort"). Die '
+            'naam zie je terug in de Zwembad-tab in plaats van de '
+            'losse woningnamen.',
+          ),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.cleaning_services_outlined,
+        title: 'Schoonmaak en onderhoud',
+        children: [
+          _ManualHeader('Automatische schoonmaak na check-out'),
+          _ManualParagraph(
+            'Bij elke check-out genereert CasaMio automatisch een '
+            'schoonmaaktaak. Tik om af te vinken zodra de woning '
+            'klaar is. Externe boekingen via iCal genereren ook '
+            'taken.',
+          ),
+          _ManualHeader('Handmatige schoonmaak toevoegen'),
+          _ManualParagraph(
+            'Voor tussentijds schoonmaken of een grote voorjaarsbeurt: '
+            'Schoonmaak → tik op de + knop → kies woning, datum en '
+            'optionele beschrijving. Verschijnt op de juiste dag tussen '
+            'de booking-gegenereerde taken.',
+          ),
+          _ManualHeader('Onderhoudstaken'),
+          _ManualParagraph(
+            'Voor een lekkende kraan, kapotte tv of jaarlijkse keuring: '
+            'Onderhoud → +. Geef een titel, prioriteit en optionele '
+            'foto. Status (open / bezig / klaar) houdt je werk-flow '
+            'overzichtelijk.',
+          ),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.calendar_month_outlined,
+        title: 'Kalender en iCal-koppeling',
+        children: [
+          _ManualParagraph(
+            'De Kalender toont al je boekingen visueel per woning. '
+            'Boekingen verschijnen als gekleurde balken: groen = '
+            'volledig betaald, oranje = aanbetaald, rood = openstaand, '
+            'roze = Airbnb, blauw = Booking.com.',
+          ),
+          _ManualHeader('iCal koppelen'),
+          _ManualParagraph(
+            'Verhuur je ook via Airbnb, Booking.com of een andere '
+            'site? Per accommodatie kun je iCal-URLs invoeren. '
+            'CasaMio synchroniseert automatisch externe boekingen — '
+            'zo voorkom je dubbele boekingen.',
+          ),
+          _ManualParagraph(
+            'iCal instellen: Accommodaties → woning → Bewerken → '
+            'scroll naar "iCal-koppelingen" → plak de URL.',
+          ),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.table_chart_outlined,
+        title: 'Verhuuropbrengsten exporteren',
+        children: [
+          _ManualParagraph(
+            'Voor de boekhouder of een eigen jaaroverzicht kun je een '
+            'Excel-bestand downloaden met alle boekingen van het '
+            'lopende jaar.',
+          ),
           _ManualNumberedList([
-            'Tik op Accommodaties in de onderbalk',
-            'Open de woning waaraan je iets wilt veranderen',
-            'Bewerken',
-            'Schakel "Mijn woning heeft een zwembad" of "...een tuin" '
-                'aan of uit',
-            'Bewaar',
+            'Ga naar Instellingen → Verhuuropbrengsten exporteren',
+            'CasaMio bouwt het bestand en opent het iOS share-sheet',
+            'Kies waar het bestand heen moet: Files, Mail, AirDrop, '
+                'Numbers',
           ]),
           _ManualParagraph(
-            'Zodra je het opslaat verschijnt of verdwijnt de tab in '
-            'de onderbalk automatisch. De data van die woning blijft '
-            'altijd bewaard, ook als je tijdelijk uitzet.',
+            'Het bestand bevat: Datum, Naam huurder, Accommodatie, '
+            'Status, Opbrengst, Betaald, Openstaand — plus een '
+            'TOTAAL-rij onderaan.',
           ),
         ],
       ),
@@ -249,65 +297,20 @@ class ManualScreen extends StatelessWidget {
         title: 'Modules in- en uitschakelen',
         children: [
           _ManualParagraph(
-            'Voor de overige modules — schoonmaak, onderhoud, '
-            'mailings en statistieken — kun je centraal instellen of '
-            'je ze wilt zien. Dat geldt voor je hele account, niet '
-            'per woning.',
+            'Voor de overige modules (schoonmaak, onderhoud, mailings, '
+            'statistieken) bepaal je centraal of je ze wilt zien. '
+            'Verberg wat je niet gebruikt — de onderbalk wordt '
+            'meteen overzichtelijker.',
           ),
           _ManualNumberedList([
-            'Ga naar Instellingen',
-            'Tik op Modules',
-            'Schakel modules uit die je niet gebruikt',
+            'Instellingen → Modules',
+            'Schakelaars aan of uit',
             'Uitgeschakelde modules verdwijnen direct uit de '
-                'navigatie. Je data blijft bewaard',
+                'navigatie. Je data blijft bewaard.',
           ]),
           _ManualParagraph(
             'Zwembad en tuin staan hier niet meer bij — die regel je '
-            'per woning (zie hoofdstuk hierboven).',
-          ),
-        ],
-      ),
-      _ManualSection(
-        icon: Icons.calendar_month_outlined,
-        title: 'Kalender en synchronisatie',
-        children: [
-          _ManualParagraph(
-            'De kalender toont al je boekingen visueel per woning. '
-            'Boekingen verschijnen als gekleurde balken: groen = '
-            'volledig betaald, oranje = aanbetaald, rood = openstaand.',
-          ),
-          _ManualHeader('iCal koppeling'),
-          _ManualParagraph(
-            'Verhuur je ook via Airbnb, Booking.com, VRBO of een '
-            'andere site? Per accommodatie kun je iCal-URLs invoeren. '
-            'De app synchroniseert automatisch externe boekingen zodat '
-            'je nooit dubbele boekingen krijgt.',
-          ),
-          _ManualParagraph(
-            'iCal instellen: Accommodaties → kies woning → bewerken '
-            '→ scroll naar "iCal-koppelingen".',
-          ),
-        ],
-      ),
-      _ManualSection(
-        icon: Icons.cleaning_services_outlined,
-        title: 'Schoonmaak en onderhoud',
-        children: [
-          _ManualParagraph(
-            'Bij elke check-out genereert de app automatisch een '
-            'schoonmaaktaak. Je vinkt hem af zodra de woning klaar is.',
-          ),
-          _ManualNumberedList([
-            'Schoonmaak (onderbalk) toont de planning per dag',
-            'Tik op een woning om de status te wijzigen: gepland, '
-                'bezig, klaar',
-            'Externe boekingen via iCal genereren ook automatisch '
-                'schoonmaaktaken',
-          ]),
-          _ManualParagraph(
-            'Onderhoudstaken (bv. lekkende kraan, kapotte tv) maak '
-            'je handmatig aan via Onderhoud → +. Ze hebben prioriteit '
-            'en status zodat je niets vergeet.',
+            'per woning (zie eerder hoofdstuk).',
           ),
         ],
       ),
@@ -315,30 +318,121 @@ class ManualScreen extends StatelessWidget {
         icon: Icons.help_outline,
         title: 'Hulp nodig?',
         children: [
-          _ManualParagraph(
-            'Loop je vast of zit je met een vraag die hier niet '
-            'beantwoord wordt? Wij helpen graag.',
-          ),
           _ManualBulletList([
-            'E-mail: support@verhuuragenda.nl (binnen 24 uur reactie)',
-            'Telefoon: +31 6 83710971',
+            'E-mail: support@casamio.app — binnen 24 uur reactie',
             'Of via Instellingen → Hulp & Support',
           ]),
+          _ManualParagraph(
+            'Geef bij een bugmelding zo veel mogelijk informatie: '
+            'welk scherm, welke knop, welke foutmelding. Een '
+            'screenshot helpt enorm.',
+          ),
         ],
       ),
-      const SizedBox(height: 32),
     ];
+  }
+}
+
+class _Hero extends StatelessWidget {
+  final bool firstLaunch;
+  const _Hero({required this.firstLaunch});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryColor.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.menu_book,
+                size: 28, color: AppTheme.primaryColor),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  firstLaunch
+                      ? 'Welkom bij ${l10n.appName}'
+                      : l10n.manualTitle,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  firstLaunch
+                      ? 'Lees deze korte handleiding even door — je weet daarna precies hoe alles werkt.'
+                      : l10n.manualIntro,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[700],
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DoneCta extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      child: Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => context.go('/dashboard'),
+              icon: const Icon(Icons.check, size: 18),
+              label: Text(l10n.manualDoneButton),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.manualFindHereLater,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          ),
+        ],
+      ),
+    );
   }
 }
 
 class _ManualSection extends StatelessWidget {
   final IconData icon;
   final String title;
+  final bool initiallyExpanded;
   final List<Widget> children;
 
   const _ManualSection({
     required this.icon,
     required this.title,
+    this.initiallyExpanded = false,
     required this.children,
   });
 
@@ -349,13 +443,14 @@ class _ManualSection extends StatelessWidget {
         dividerColor: Colors.transparent,
       ),
       child: ExpansionTile(
+        initiallyExpanded: initiallyExpanded,
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: AppTheme.primaryColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: AppTheme.primaryColor, size: 22),
+          child: Icon(icon, color: AppTheme.primaryColor, size: 20),
         ),
         title: Text(
           title,

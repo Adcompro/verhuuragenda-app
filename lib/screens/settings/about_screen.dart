@@ -85,7 +85,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'VerhuurAgenda',
+                    'CasaMio',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -147,7 +147,7 @@ class _AboutScreenState extends State<AboutScreen> {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          '© ${DateTime.now().year} VerhuurAgenda.nl',
+                          '© ${DateTime.now().year} CasaMio.nl',
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey[500],

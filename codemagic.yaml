@@ -194,6 +194,11 @@ workflows:
           sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = nl.verhuurvakantiewoning.app;/g' Runner.xcodeproj/project.pbxproj
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" Runner/Info.plist
+          # User-visible app name on the home screen + system menus
+          /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName CasaMio" Runner/Info.plist 2>/dev/null || \
+            /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string CasaMio" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleName CasaMio" Runner/Info.plist 2>/dev/null || \
+            /usr/libexec/PlistBuddy -c "Add :CFBundleName string CasaMio" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string VerhuurVakantiewoning heeft toegang nodig tot je camera om fotos te maken." Runner/Info.plist || true
           /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string VerhuurVakantiewoning wil fotos uit je bibliotheek gebruiken." Runner/Info.plist || true
           /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string VerhuurVakantiewoning wil fotos opslaan in je bibliotheek." Runner/Info.plist || true

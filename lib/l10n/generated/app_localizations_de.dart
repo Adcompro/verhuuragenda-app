@@ -3,7 +3,7 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([super.locale = 'de']);
 
   @override
-  String get appName => 'VerhuurAgenda';
+  String get appName => 'CasaMio';
   @override
   String get login => 'Anmelden';
   @override
@@ -93,7 +93,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get freeAccountFeature4 => 'Jederzeit auf Premium upgraden';
   @override
-  String get welcomeTitle => 'Willkommen bei VerhuurAgenda!';
+  String get welcomeTitle => 'Willkommen bei CasaMio!';
   @override
   String get accountCreated => 'Ihr Konto wurde erfolgreich erstellt.';
   @override
@@ -457,9 +457,9 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get helpDescription => 'FAQ, Kontakt und Tutorials';
   @override
-  String get aboutApp => 'Über VerhuurAgenda';
+  String get aboutApp => 'Über CasaMio';
   @override
-  String get aboutDescription => 'VerhuurAgenda ist die intelligente App für die Verwaltung von Ferienvermietungen. Verwalten Sie Ihre Buchungen, Gäste und Unterkünfte einfach von Ihrem Telefon aus.';
+  String get aboutDescription => 'CasaMio ist die intelligente App für die Verwaltung von Ferienvermietungen. Verwalten Sie Ihre Buchungen, Gäste und Unterkünfte einfach von Ihrem Telefon aus.';
   @override
   String get data => 'Daten';
   @override
@@ -1283,7 +1283,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get newsletterAndTipsNotification => 'Newsletter & Tipps';
   @override
-  String get newsletterAndTipsNotificationSubtitle => 'Tipps und Updates von VerhuurAgenda erhalten';
+  String get newsletterAndTipsNotificationSubtitle => 'Tipps und Updates von CasaMio erhalten';
   @override
   String get pushNotificationsInfo => 'Push-Benachrichtigungen werden an dieses Gerät gesendet. Stellen Sie sicher, dass Benachrichtigungen in Ihren Telefoneinstellungen aktiviert sind.';
   @override
@@ -1333,7 +1333,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get aboutTeamRoles => 'Über Teamrollen';
   @override
-  String get teamRolesInfo => 'Teammitglieder erhalten basierend auf ihrer Rolle Zugang zu Ihrer VerhuurAgenda. Sie melden sich mit ihrer eigenen E-Mail-Adresse und Passwort an.';
+  String get teamRolesInfo => 'Teammitglieder erhalten basierend auf ihrer Rolle Zugang zu Ihrer CasaMio. Sie melden sich mit ihrer eigenen E-Mail-Adresse und Passwort an.';
   @override
   String get activeToggle => 'Aktiv';
   @override
@@ -1511,13 +1511,13 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get officeHours => 'Verfügbar an Wochentagen von 9:00 - 17:00 Uhr';
   @override
-  String get aboutTitle => 'Über VerhuurAgenda';
+  String get aboutTitle => 'Über CasaMio';
   @override
   String get versionLabel => 'Version';
   @override
   String get developerLabel => 'Entwickler';
   @override
-  String get developerName => 'VerhuurAgenda B.V.';
+  String get developerName => 'CasaMio B.V.';
   @override
   String get contactLabel => 'Kontakt';
   @override
@@ -1525,11 +1525,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get rateApp => 'App bewerten';
   @override
-  String get rateAppDescription => 'Finden Sie VerhuurAgenda nützlich? Hinterlassen Sie eine Bewertung!';
+  String get rateAppDescription => 'Finden Sie CasaMio nützlich? Hinterlassen Sie eine Bewertung!';
   @override
   String get shareApp => 'App teilen';
   @override
-  String get shareAppMessage => 'Schauen Sie sich VerhuurAgenda an - die intelligente App für die Verwaltung von Ferienvermietungen!';
+  String get shareAppMessage => 'Schauen Sie sich CasaMio an - die intelligente App für die Verwaltung von Ferienvermietungen!';
   @override
   String get legalSection => 'Rechtliches';
   @override
@@ -1539,7 +1539,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get privacyTitle => 'Datenschutzrichtlinie';
   @override
-  String get privacyIntro => 'Bei VerhuurAgenda nehmen wir Ihre Privatsphäre ernst. Diese Richtlinie beschreibt, wie wir Ihre Daten sammeln, verwenden und schützen.';
+  String get privacyIntro => 'Bei CasaMio nehmen wir Ihre Privatsphäre ernst. Diese Richtlinie beschreibt, wie wir Ihre Daten sammeln, verwenden und schützen.';
   @override
   String get privacySection1Title => 'Welche Daten sammeln wir?';
   @override
@@ -1561,11 +1561,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get termsTitle => 'Allgemeine Geschäftsbedingungen';
   @override
-  String get termsIntro => 'Durch die Nutzung von VerhuurAgenda stimmen Sie diesen Bedingungen zu.';
+  String get termsIntro => 'Durch die Nutzung von CasaMio stimmen Sie diesen Bedingungen zu.';
   @override
   String get termsSection1Title => 'Nutzung des Dienstes';
   @override
-  String get termsSection1Content => 'VerhuurAgenda ist für die Verwaltung von Ferienvermietungen bestimmt. Sie sind für die Richtigkeit der von Ihnen eingegebenen Daten verantwortlich.';
+  String get termsSection1Content => 'CasaMio ist für die Verwaltung von Ferienvermietungen bestimmt. Sie sind für die Richtigkeit der von Ihnen eingegebenen Daten verantwortlich.';
   @override
   String get termsSection2Title => 'Konto und Sicherheit';
   @override
@@ -1577,7 +1577,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get termsSection4Title => 'Haftung';
   @override
-  String get termsSection4Content => 'VerhuurAgenda haftet nicht für Schäden, die aus der Nutzung der App entstehen. Wir tun unser Bestes, um den Dienst verfügbar und zuverlässig zu halten.';
+  String get termsSection4Content => 'CasaMio haftet nicht für Schäden, die aus der Nutzung der App entstehen. Wir tun unser Bestes, um den Dienst verfügbar und zuverlässig zu halten.';
   @override
   String get termsSection5Title => 'Änderungen';
   @override
@@ -1649,7 +1649,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get helpFaq2Question => 'Wie synchronisiere ich mit Airbnb oder Booking.com?';
   @override
-  String get helpFaq2Answer => 'Gehen Sie zu Ihren Unterkunftseinstellungen und fügen Sie die iCal-URL Ihrer externen Plattform hinzu. VerhuurAgenda ruft die Buchungen automatisch ab.';
+  String get helpFaq2Answer => 'Gehen Sie zu Ihren Unterkunftseinstellungen und fügen Sie die iCal-URL Ihrer externen Plattform hinzu. CasaMio ruft die Buchungen automatisch ab.';
   @override
   String get helpFaq3Question => 'Wie funktioniert das Gästeportal?';
   @override
@@ -1849,7 +1849,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String emailsBouncedCount(int count) => '$count E-Mails wurden nicht zugestellt (zurückgewiesen)';
   @override
-  String allRightsReservedFull(int year) => '© $year VerhuurAgenda. Alle Rechte vorbehalten.';
+  String allRightsReservedFull(int year) => '© $year CasaMio. Alle Rechte vorbehalten.';
   @override
   String privacyLastUpdated(String date) => 'Zuletzt aktualisiert: $date';
   @override
@@ -2189,7 +2189,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get moduleResetAll => 'Alle wieder aktivieren';
 
   @override
-  String get onboardingWelcomeTitle => 'Willkommen bei VerhuurAgenda!';
+  String get onboardingWelcomeTitle => 'Willkommen bei CasaMio!';
   @override
   String get onboardingWelcomeMessage => 'Lassen Sie uns Ihr erstes Ferienhaus einrichten. Das dauert weniger als eine Minute.';
   @override

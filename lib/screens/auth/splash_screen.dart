@@ -28,7 +28,7 @@ class SplashScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             const Text(
-              'VerhuurAgenda',
+              'CasaMio',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,

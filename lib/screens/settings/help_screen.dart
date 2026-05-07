@@ -295,7 +295,7 @@ class HelpScreen extends StatelessWidget {
     final uri = Uri(
       scheme: 'mailto',
       path: supportEmail,
-      query: 'subject=Support aanvraag VerhuurAgenda App',
+      query: 'subject=Support aanvraag CasaMio App',
     );
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
@@ -310,7 +310,7 @@ class HelpScreen extends StatelessWidget {
   }
 
   Future<void> _openWhatsApp(BuildContext context) async {
-    final uri = Uri.parse('https://wa.me/31683710971?text=Hallo,%20ik%20heb%20een%20vraag%20over%20VerhuurAgenda');
+    final uri = Uri.parse('https://wa.me/31683710971?text=Hallo,%20ik%20heb%20een%20vraag%20over%20CasaMio');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
@@ -320,7 +320,7 @@ class HelpScreen extends StatelessWidget {
     final uri = Uri(
       scheme: 'mailto',
       path: supportEmail,
-      query: 'subject=Feedback VerhuurAgenda App',
+      query: 'subject=Feedback CasaMio App',
     );
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);

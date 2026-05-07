@@ -207,9 +207,11 @@ class _OnboardingWizardScreenState
       // Adding another house: just close the wizard and go back.
       if (mounted) context.go('/accommodations');
     } else {
-      // First-time onboarding: remember that the user skipped.
+      // First-time onboarding: remember that the user skipped, and
+      // still show them the manual once before the dashboard so they
+      // know where to find things later.
       await ref.read(onboardingDismissedProvider.notifier).dismiss();
-      if (mounted) context.go('/dashboard');
+      if (mounted) context.go('/manual?first=1');
     }
   }
 
@@ -314,7 +316,10 @@ class _OnboardingWizardScreenState
             backgroundColor: Colors.green,
           ),
         );
-        context.go(addAnother ? '/accommodations' : '/dashboard');
+        // First-time onboarding: send the user through the manual
+        // before the dashboard, so they know how the app works.
+        // Adding-another flow goes straight to the list.
+        context.go(addAnother ? '/accommodations' : '/manual?first=1');
       }
     } catch (e) {
       if (mounted) {
