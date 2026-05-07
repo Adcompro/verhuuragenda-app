@@ -293,11 +293,22 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  // Title and accommodation
+                  // Accommodation (top) + title
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (task.accommodationName != null) ...[
+                          Text(
+                            task.accommodationName!,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                        ],
                         Text(
                           task.title,
                           style: const TextStyle(
@@ -305,14 +316,6 @@ class _MaintenanceListScreenState extends State<MaintenanceListScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        if (task.accommodationName != null)
-                          Text(
-                            task.accommodationName!,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey[600],
-                            ),
-                          ),
                       ],
                     ),
                   ),
@@ -681,6 +684,17 @@ class _TaskDetailSheet extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              if (task.accommodationName != null) ...[
+                                Text(
+                                  task.accommodationName!,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                              ],
                               Text(
                                 task.title,
                                 style: const TextStyle(
@@ -688,16 +702,6 @@ class _TaskDetailSheet extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              if (task.accommodationName != null) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  task.accommodationName!,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
                             ],
                           ),
                         ),
