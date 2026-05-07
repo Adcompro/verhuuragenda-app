@@ -1493,5 +1493,11 @@
   "poolGroupName": "Nombre de la piscina",
   "poolGroupNameHelp": "Opcional. Se muestra en la pestaña Piscina cuando varias propiedades comparten esta piscina.",
   "gardenGroupName": "Nombre del jardín",
-  "gardenGroupNameHelp": "Opcional. Se muestra en la pestaña Jardín cuando varias propiedades comparten este jardín."
+  "gardenGroupNameHelp": "Opcional. Se muestra en la pestaña Jardín cuando varias propiedades comparten este jardín.",
+
+  "revenueExportTitle": "Exportar ingresos de alquiler",
+  "revenueExportSubtitle": "Excel con fecha, huésped, pagado y pendiente",
+  "revenueExportPreparing": "Preparando archivo...",
+  "revenueExportFailed": "Exportación fallida. Inténtalo de nuevo.",
+  "revenueExportShareSubject": "Ingresos de alquiler"
 }

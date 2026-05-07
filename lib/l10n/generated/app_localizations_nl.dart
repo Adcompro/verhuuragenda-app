@@ -2303,4 +2303,15 @@ class AppLocalizationsNl extends AppLocalizations {
   String get gardenGroupName => 'Naam van de tuin';
   @override
   String get gardenGroupNameHelp => 'Optioneel. Wordt getoond in de Tuin-tab als er meerdere woningen deze tuin delen.';
+
+  @override
+  String get revenueExportTitle => 'Verhuuropbrengsten exporteren';
+  @override
+  String get revenueExportSubtitle => 'Excel met datum, gast, betaald en openstaand';
+  @override
+  String get revenueExportPreparing => 'Bestand wordt voorbereid...';
+  @override
+  String get revenueExportFailed => 'Exporteren is mislukt. Probeer het opnieuw.';
+  @override
+  String get revenueExportShareSubject => 'Verhuuropbrengsten';
 }

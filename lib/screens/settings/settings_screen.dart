@@ -1,7 +1,12 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../config/api_config.dart';
@@ -245,6 +250,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
 
           _SectionHeader(title: l10n.data),
+          _SettingsItem(
+            icon: Icons.table_chart_outlined,
+            title: l10n.revenueExportTitle,
+            subtitle: l10n.revenueExportSubtitle,
+            onTap: () => _exportRevenue(context, ref, l10n),
+          ),
           _SettingsItem(
             icon: Icons.download_outlined,
             title: l10n.exportData,
@@ -605,6 +616,47 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       await ref.read(authStateProvider.notifier).logout();
       if (context.mounted) {
         context.go('/login');
+      }
+    }
+  }
+
+  /// Download the bookings revenue Excel for the current year and
+  /// share it via the native iOS share sheet.
+  Future<void> _exportRevenue(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final year = DateTime.now().year;
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      SnackBar(content: Text(l10n.revenueExportPreparing)),
+    );
+
+    try {
+      final response = await ApiClient.instance.get(
+        '/exports/bookings-revenue?year=$year',
+        options: Options(responseType: ResponseType.bytes),
+      );
+      final bytes = response.data as List<int>;
+      final dir = await getTemporaryDirectory();
+      final filename = 'verhuuropbrengsten-$year.xlsx';
+      final file = File('${dir.path}/$filename');
+      await file.writeAsBytes(bytes);
+
+      // Share — iOS Files app can save it, Mail can attach it
+      await Share.shareXFiles(
+        [XFile(file.path, name: filename, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')],
+        subject: l10n.revenueExportShareSubject,
+      );
+    } catch (e) {
+      if (context.mounted) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(l10n.revenueExportFailed),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }

@@ -1489,5 +1489,11 @@
   "poolGroupName": "Name des Pools",
   "poolGroupNameHelp": "Optional. Wird im Pool-Tab angezeigt, wenn mehrere Unterkünfte diesen Pool teilen.",
   "gardenGroupName": "Name des Gartens",
-  "gardenGroupNameHelp": "Optional. Wird im Garten-Tab angezeigt, wenn mehrere Unterkünfte diesen Garten teilen."
+  "gardenGroupNameHelp": "Optional. Wird im Garten-Tab angezeigt, wenn mehrere Unterkünfte diesen Garten teilen.",
+
+  "revenueExportTitle": "Mieteinnahmen exportieren",
+  "revenueExportSubtitle": "Excel mit Datum, Gast, bezahlt und offen",
+  "revenueExportPreparing": "Datei wird vorbereitet...",
+  "revenueExportFailed": "Export fehlgeschlagen. Bitte erneut versuchen.",
+  "revenueExportShareSubject": "Mieteinnahmen"
 }

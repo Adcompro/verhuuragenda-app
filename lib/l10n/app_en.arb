@@ -1494,5 +1494,11 @@
   "poolGroupName": "Pool name",
   "poolGroupNameHelp": "Optional. Shown in the Pool tab when multiple properties share this pool.",
   "gardenGroupName": "Garden name",
-  "gardenGroupNameHelp": "Optional. Shown in the Garden tab when multiple properties share this garden."
+  "gardenGroupNameHelp": "Optional. Shown in the Garden tab when multiple properties share this garden.",
+
+  "revenueExportTitle": "Export rental revenue",
+  "revenueExportSubtitle": "Excel with date, guest, paid and outstanding",
+  "revenueExportPreparing": "Preparing file...",
+  "revenueExportFailed": "Export failed. Please try again.",
+  "revenueExportShareSubject": "Rental revenue"
 }

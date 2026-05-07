@@ -1197,6 +1197,13 @@ abstract class AppLocalizations {
   String get poolGroupNameHelp;
   String get gardenGroupName;
   String get gardenGroupNameHelp;
+
+  // Revenue export
+  String get revenueExportTitle;
+  String get revenueExportSubtitle;
+  String get revenueExportPreparing;
+  String get revenueExportFailed;
+  String get revenueExportShareSubject;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

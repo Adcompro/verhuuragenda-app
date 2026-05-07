@@ -1502,5 +1502,11 @@
   "poolGroupName": "Nom de la piscine",
   "poolGroupNameHelp": "Facultatif. Affiché dans l'onglet Piscine lorsque plusieurs propriétés partagent cette piscine.",
   "gardenGroupName": "Nom du jardin",
-  "gardenGroupNameHelp": "Facultatif. Affiché dans l'onglet Jardin lorsque plusieurs propriétés partagent ce jardin."
+  "gardenGroupNameHelp": "Facultatif. Affiché dans l'onglet Jardin lorsque plusieurs propriétés partagent ce jardin.",
+
+  "revenueExportTitle": "Exporter les revenus locatifs",
+  "revenueExportSubtitle": "Excel avec date, locataire, payé et impayé",
+  "revenueExportPreparing": "Préparation du fichier...",
+  "revenueExportFailed": "Échec de l'export. Réessayez.",
+  "revenueExportShareSubject": "Revenus locatifs"
 }

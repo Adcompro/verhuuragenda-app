@@ -2355,4 +2355,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get gardenGroupName => 'Nombre del jardín';
   @override
   String get gardenGroupNameHelp => 'Opcional. Se muestra en la pestaña Jardín cuando varias propiedades comparten este jardín.';
+
+  @override
+  String get revenueExportTitle => 'Exportar ingresos de alquiler';
+  @override
+  String get revenueExportSubtitle => 'Excel con fecha, huésped, pagado y pendiente';
+  @override
+  String get revenueExportPreparing => 'Preparando archivo...';
+  @override
+  String get revenueExportFailed => 'Exportación fallida. Inténtalo de nuevo.';
+  @override
+  String get revenueExportShareSubject => 'Ingresos de alquiler';
 }

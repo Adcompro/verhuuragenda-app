@@ -3309,4 +3309,15 @@ class AppLocalizationsIt extends AppLocalizations {
   String get gardenGroupName => 'Nome del giardino';
   @override
   String get gardenGroupNameHelp => 'Opzionale. Mostrato nella scheda Giardino quando più proprietà condividono questo giardino.';
+
+  @override
+  String get revenueExportTitle => 'Esporta entrate da affitto';
+  @override
+  String get revenueExportSubtitle => 'Excel con data, ospite, pagato e in sospeso';
+  @override
+  String get revenueExportPreparing => 'Preparazione del file...';
+  @override
+  String get revenueExportFailed => 'Esportazione non riuscita. Riprova.';
+  @override
+  String get revenueExportShareSubject => 'Entrate da affitto';
 }
