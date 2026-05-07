@@ -18,7 +18,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _guestTokenController = TextEditingController();
+  final _guestLastNameController = TextEditingController();
   final _guestPinController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = true;
@@ -65,7 +65,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _guestTokenController.dispose();
+    _guestLastNameController.dispose();
     _guestPinController.dispose();
     super.dispose();
   }
@@ -75,7 +75,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     if (_guestMode) {
       final ok = await ref.read(authStateProvider.notifier).loginGuest(
-            _guestTokenController.text,
+            _guestLastNameController.text,
             _guestPinController.text,
           );
       if (ok && mounted) context.go('/guest');
@@ -281,7 +281,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Gebruik de toegangscode en pincode uit de uitnodigingsmail van je verhuurder.',
+                            'Vul je achternaam en de 6-cijferige pincode uit de uitnodigingsmail in.',
                             style: TextStyle(color: Colors.blue[800], fontSize: 13),
                           ),
                         ),
@@ -289,17 +289,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   TextFormField(
-                    controller: _guestTokenController,
+                    controller: _guestLastNameController,
                     textInputAction: TextInputAction.next,
+                    textCapitalization: TextCapitalization.words,
                     decoration: const InputDecoration(
-                      labelText: 'Toegangscode',
-                      hintText: '64-tekens code uit je email',
-                      prefixIcon: Icon(Icons.vpn_key_outlined),
+                      labelText: 'Achternaam',
+                      hintText: 'Bijv. de Vries',
+                      prefixIcon: Icon(Icons.person_outline),
                     ),
                     validator: (value) {
                       if (!_guestMode) return null;
-                      if (value == null || value.trim().length < 10) {
-                        return 'Vul je toegangscode in';
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Vul je achternaam in';
                       }
                       return null;
                     },

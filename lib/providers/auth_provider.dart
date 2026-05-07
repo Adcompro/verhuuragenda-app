@@ -172,7 +172,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<bool> loginGuest(String token, String pin) async {
+  /// Authenticate as a guest using their last name + 6-digit PIN.
+  Future<bool> loginGuest(String lastName, String pin) async {
     state = const AuthState(isLoading: true);
 
     try {
@@ -182,7 +183,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final response = await ApiClient.instance.post(
         ApiConfig.guestLogin,
         data: {
-          'token': token.trim(),
+          'last_name': lastName.trim(),
           'pin': pin.trim(),
           'device_name': 'guest_app',
         },
