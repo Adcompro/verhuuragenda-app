@@ -2340,4 +2340,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accommodationAddManually => 'Enter manually';
   @override
   String get accommodationAddManuallyDesc => 'Directly fill out the full form';
+
+  @override
+  String get poolGroupName => 'Pool name';
+  @override
+  String get poolGroupNameHelp => 'Optional. Shown in the Pool tab when multiple properties share this pool.';
+  @override
+  String get gardenGroupName => 'Garden name';
+  @override
+  String get gardenGroupNameHelp => 'Optional. Shown in the Garden tab when multiple properties share this garden.';
 }

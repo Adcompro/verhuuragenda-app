@@ -1489,5 +1489,10 @@
   "accommodationAddViaWizard": "Met de wizard",
   "accommodationAddViaWizardDesc": "Stap-voor-stap, inclusief tarieven en seizoenen",
   "accommodationAddManually": "Handmatig invullen",
-  "accommodationAddManuallyDesc": "Direct het volledige formulier"
+  "accommodationAddManuallyDesc": "Direct het volledige formulier",
+
+  "poolGroupName": "Naam van het zwembad",
+  "poolGroupNameHelp": "Optioneel. Wordt getoond in de Zwembad-tab als er meerdere woningen dit zwembad delen.",
+  "gardenGroupName": "Naam van de tuin",
+  "gardenGroupNameHelp": "Optioneel. Wordt getoond in de Tuin-tab als er meerdere woningen deze tuin delen."
 }

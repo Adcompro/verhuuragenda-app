@@ -2294,4 +2294,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get accommodationAddManually => 'Handmatig invullen';
   @override
   String get accommodationAddManuallyDesc => 'Direct het volledige formulier';
+
+  @override
+  String get poolGroupName => 'Naam van het zwembad';
+  @override
+  String get poolGroupNameHelp => 'Optioneel. Wordt getoond in de Zwembad-tab als er meerdere woningen dit zwembad delen.';
+  @override
+  String get gardenGroupName => 'Naam van de tuin';
+  @override
+  String get gardenGroupNameHelp => 'Optioneel. Wordt getoond in de Tuin-tab als er meerdere woningen deze tuin delen.';
 }

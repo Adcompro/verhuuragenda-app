@@ -2346,4 +2346,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get accommodationAddManually => 'Introducir manualmente';
   @override
   String get accommodationAddManuallyDesc => 'Rellenar directamente el formulario completo';
+
+  @override
+  String get poolGroupName => 'Nombre de la piscina';
+  @override
+  String get poolGroupNameHelp => 'Opcional. Se muestra en la pestaña Piscina cuando varias propiedades comparten esta piscina.';
+  @override
+  String get gardenGroupName => 'Nombre del jardín';
+  @override
+  String get gardenGroupNameHelp => 'Opcional. Se muestra en la pestaña Jardín cuando varias propiedades comparten este jardín.';
 }

@@ -26,6 +26,8 @@ class Accommodation {
   final bool hasGarden;
   final int? sharedPoolWithId;
   final int? sharedGardenWithId;
+  final String? poolGroupName;
+  final String? gardenGroupName;
   final bool isActive;
   final bool isPublished;
   final String? address;
@@ -70,6 +72,8 @@ class Accommodation {
     this.hasGarden = false,
     this.sharedPoolWithId,
     this.sharedGardenWithId,
+    this.poolGroupName,
+    this.gardenGroupName,
     this.isActive = true,
     this.isPublished = false,
     this.address,
@@ -120,6 +124,8 @@ class Accommodation {
       sharedGardenWithId: json['shared_garden_with_id'] is int
           ? json['shared_garden_with_id'] as int
           : null,
+      poolGroupName: json['pool_group_name'] as String?,
+      gardenGroupName: json['garden_group_name'] as String?,
       isActive: json['is_active'] ?? true,
       isPublished: json['is_published'] ?? false,
       address: json['address'],

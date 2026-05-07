@@ -1484,5 +1484,10 @@
   "accommodationAddViaWizard": "Mit dem Assistenten",
   "accommodationAddViaWizardDesc": "Schritt für Schritt, inkl. Preise und Saisons",
   "accommodationAddManually": "Manuell ausfüllen",
-  "accommodationAddManuallyDesc": "Direkt das vollständige Formular"
+  "accommodationAddManuallyDesc": "Direkt das vollständige Formular",
+
+  "poolGroupName": "Name des Pools",
+  "poolGroupNameHelp": "Optional. Wird im Pool-Tab angezeigt, wenn mehrere Unterkünfte diesen Pool teilen.",
+  "gardenGroupName": "Name des Gartens",
+  "gardenGroupNameHelp": "Optional. Wird im Garten-Tab angezeigt, wenn mehrere Unterkünfte diesen Garten teilen."
 }

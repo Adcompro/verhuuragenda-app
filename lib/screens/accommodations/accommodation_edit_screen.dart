@@ -57,6 +57,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
   bool _hasGarden = false;
   int? _sharedPoolWithId;
   int? _sharedGardenWithId;
+  final _poolGroupNameController = TextEditingController();
+  final _gardenGroupNameController = TextEditingController();
   List<Accommodation> _otherPoolOwners = [];
   List<Accommodation> _otherGardenOwners = [];
 
@@ -137,6 +139,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
     _icalHoliduController.dispose();
     _icalBelvillaController.dispose();
     _icalOtherController.dispose();
+    _poolGroupNameController.dispose();
+    _gardenGroupNameController.dispose();
     super.dispose();
   }
 
@@ -179,6 +183,8 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
         _hasGarden = acc.hasGarden;
         _sharedPoolWithId = acc.sharedPoolWithId;
         _sharedGardenWithId = acc.sharedGardenWithId;
+        _poolGroupNameController.text = acc.poolGroupName ?? '';
+        _gardenGroupNameController.text = acc.gardenGroupName ?? '';
         _selectedColor = acc.color ?? '#3B82F6';
         _isActive = acc.isActive;
         _isLoadingData = false;
@@ -366,6 +372,20 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
                     setState(() => _sharedPoolWithId = v),
               ),
             ),
+          // Group name only relevant when this accommodation is the
+          // pool "owner" (not sharing with another).
+          if (_hasPool && _sharedPoolWithId == null)
+            Padding(
+              padding: const EdgeInsets.only(left: 56, bottom: 8),
+              child: TextFormField(
+                controller: _poolGroupNameController,
+                decoration: InputDecoration(
+                  labelText: l10n.poolGroupName,
+                  helperText: l10n.poolGroupNameHelp,
+                  isDense: true,
+                ),
+              ),
+            ),
           SwitchListTile(
             secondary: const Icon(Icons.yard_outlined),
             title: Text(l10n.onboardingHasGarden),
@@ -398,6 +418,18 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
                 ],
                 onChanged: (v) =>
                     setState(() => _sharedGardenWithId = v),
+              ),
+            ),
+          if (_hasGarden && _sharedGardenWithId == null)
+            Padding(
+              padding: const EdgeInsets.only(left: 56, bottom: 8),
+              child: TextFormField(
+                controller: _gardenGroupNameController,
+                decoration: InputDecoration(
+                  labelText: l10n.gardenGroupName,
+                  helperText: l10n.gardenGroupNameHelp,
+                  isDense: true,
+                ),
               ),
             ),
 
@@ -869,6 +901,14 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
         'has_garden': _hasGarden,
         'shared_pool_with_id': _hasPool ? _sharedPoolWithId : null,
         'shared_garden_with_id': _hasGarden ? _sharedGardenWithId : null,
+        'pool_group_name': (_hasPool && _sharedPoolWithId == null &&
+                _poolGroupNameController.text.trim().isNotEmpty)
+            ? _poolGroupNameController.text.trim()
+            : null,
+        'garden_group_name': (_hasGarden && _sharedGardenWithId == null &&
+                _gardenGroupNameController.text.trim().isNotEmpty)
+            ? _gardenGroupNameController.text.trim()
+            : null,
         'address': _addressController.text.trim().isNotEmpty ? _addressController.text.trim() : null,
         'city': _cityController.text.trim().isNotEmpty ? _cityController.text.trim() : null,
         'wifi_network': _wifiNetworkController.text.trim().isNotEmpty ? _wifiNetworkController.text.trim() : null,

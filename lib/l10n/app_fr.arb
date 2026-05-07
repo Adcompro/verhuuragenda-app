@@ -1497,5 +1497,10 @@
   "accommodationAddViaWizard": "Avec l'assistant",
   "accommodationAddViaWizardDesc": "Étape par étape, avec tarifs et saisons",
   "accommodationAddManually": "Saisir manuellement",
-  "accommodationAddManuallyDesc": "Remplir directement le formulaire complet"
+  "accommodationAddManuallyDesc": "Remplir directement le formulaire complet",
+
+  "poolGroupName": "Nom de la piscine",
+  "poolGroupNameHelp": "Facultatif. Affiché dans l'onglet Piscine lorsque plusieurs propriétés partagent cette piscine.",
+  "gardenGroupName": "Nom du jardin",
+  "gardenGroupNameHelp": "Facultatif. Affiché dans l'onglet Jardin lorsque plusieurs propriétés partagent ce jardin."
 }

@@ -1191,6 +1191,12 @@ abstract class AppLocalizations {
   String get accommodationAddViaWizardDesc;
   String get accommodationAddManually;
   String get accommodationAddManuallyDesc;
+
+  // Pool / garden group name
+  String get poolGroupName;
+  String get poolGroupNameHelp;
+  String get gardenGroupName;
+  String get gardenGroupNameHelp;
 }
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();

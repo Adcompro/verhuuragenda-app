@@ -43,10 +43,28 @@ class _PoolDashboardScreenState extends State<PoolDashboardScreen> {
         data = [];
       }
 
+      // Only show pool "owners": accommodations with has_pool=true
+      // and no shared_pool_with_id. Sharers point at an owner so
+      // their pool data lives on that owner — picking them in the
+      // dropdown would cause duplicates.
+      final owners = data.where((a) {
+        final hasPool = a['has_pool'] == true || a['has_pool'] == 1;
+        final isSharer = a['shared_pool_with_id'] != null;
+        return hasPool && !isSharer;
+      }).toList();
+
       setState(() {
-        _accommodations = data.map((a) => {
-          'id': a['id'],
-          'name': a['name'] ?? '',
+        _accommodations = owners.map((a) {
+          // Use the optional group name when set, otherwise just the
+          // accommodation name. This is what shows in the dropdown.
+          final groupName = a['pool_group_name'] as String?;
+          final fallback = a['name'] ?? '';
+          return {
+            'id': a['id'],
+            'name': (groupName != null && groupName.isNotEmpty)
+                ? groupName
+                : fallback,
+          };
         }).toList();
         if (_accommodations.isNotEmpty) {
           _selectedAccommodationId = _accommodations.first['id'];

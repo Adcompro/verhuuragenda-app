@@ -1489,5 +1489,10 @@
   "accommodationAddViaWizard": "Via the wizard",
   "accommodationAddViaWizardDesc": "Step by step, including pricing and seasons",
   "accommodationAddManually": "Enter manually",
-  "accommodationAddManuallyDesc": "Directly fill out the full form"
+  "accommodationAddManuallyDesc": "Directly fill out the full form",
+
+  "poolGroupName": "Pool name",
+  "poolGroupNameHelp": "Optional. Shown in the Pool tab when multiple properties share this pool.",
+  "gardenGroupName": "Garden name",
+  "gardenGroupNameHelp": "Optional. Shown in the Garden tab when multiple properties share this garden."
 }

@@ -41,8 +41,26 @@ class _GardenDashboardScreenState extends State<GardenDashboardScreen> {
       } else {
         data = [];
       }
+      // Only show garden "owners": accommodations with has_garden=true
+      // and no shared_garden_with_id. Sharers point at an owner so
+      // their garden data lives on that owner — picking them in the
+      // dropdown would cause duplicates.
+      final owners = data.where((a) {
+        final hasGarden = a['has_garden'] == true || a['has_garden'] == 1;
+        final isSharer = a['shared_garden_with_id'] != null;
+        return hasGarden && !isSharer;
+      }).toList();
       setState(() {
-        _accommodations = data.map((a) => {'id': a['id'], 'name': a['name']}).toList();
+        _accommodations = owners.map((a) {
+          final groupName = a['garden_group_name'] as String?;
+          final fallback = a['name'] ?? '';
+          return {
+            'id': a['id'],
+            'name': (groupName != null && groupName.isNotEmpty)
+                ? groupName
+                : fallback,
+          };
+        }).toList();
         if (_accommodations.isNotEmpty) {
           _selectedAccommodationId = _accommodations.first['id'];
           _loadDashboard();
