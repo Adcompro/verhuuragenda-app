@@ -12,6 +12,7 @@ import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/branding_provider.dart';
 import '../../providers/language_provider.dart';
 import 'subscription_screen.dart';
 import 'notifications_screen.dart';
@@ -166,6 +167,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             title: l10n.language,
             subtitle: _getLanguageSubtitle(ref, l10n),
             onTap: () => _showLanguageDialog(context, ref, l10n),
+          ),
+          _SettingsItem(
+            icon: Icons.badge_outlined,
+            title: 'App-naam',
+            subtitle: ref.watch(brandingProvider),
+            onTap: () => _showAppNameDialog(context, ref),
           ),
 
           _SectionHeader(title: l10n.management),
@@ -333,6 +340,61 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       default:
         return l10n.systemDefault;
     }
+  }
+
+  void _showAppNameDialog(BuildContext context, WidgetRef ref) {
+    final controller = TextEditingController(text: ref.read(brandingProvider));
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('App-naam'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Deze naam verschijnt in de app voor jou en je gasten.',
+              style: TextStyle(fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              autofocus: true,
+              maxLength: 60,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'CasaMio',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Annuleer'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final newName = controller.text.trim();
+              if (newName.isEmpty) return;
+              final ok = await ref
+                  .read(brandingProvider.notifier)
+                  .updateRemote(newName);
+              if (!context.mounted) return;
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(ok
+                      ? 'App-naam bijgewerkt naar "$newName"'
+                      : 'Bijwerken mislukt'),
+                ),
+              );
+            },
+            child: const Text('Opslaan'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showLanguageDialog(BuildContext context, WidgetRef ref, AppLocalizations l10n) {

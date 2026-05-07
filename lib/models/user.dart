@@ -4,6 +4,7 @@ class User {
   final String email;
   final String? role;
   final Host? host;
+  final String? brandingAppName;
 
   User({
     required this.id,
@@ -11,6 +12,7 @@ class User {
     required this.email,
     this.role,
     this.host,
+    this.brandingAppName,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -24,12 +26,19 @@ class User {
       host = null;
     }
 
+    String? brandingAppName;
+    final branding = json['branding'];
+    if (branding is Map && branding['app_name'] is String) {
+      brandingAppName = branding['app_name'] as String;
+    }
+
     return User(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       role: json['role'],
       host: host,
+      brandingAppName: brandingAppName,
     );
   }
 
@@ -40,6 +49,7 @@ class User {
       'email': email,
       'role': role,
       'host': host?.toJson(),
+      'branding': brandingAppName != null ? {'app_name': brandingAppName} : null,
     };
   }
 }

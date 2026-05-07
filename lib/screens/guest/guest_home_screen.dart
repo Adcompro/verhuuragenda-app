@@ -9,6 +9,7 @@ import '../../config/api_config.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/branding_provider.dart';
 
 class GuestHomeScreen extends ConsumerStatefulWidget {
   const GuestHomeScreen({super.key});
@@ -45,8 +46,14 @@ class _GuestHomeScreenState extends ConsumerState<GuestHomeScreen>
     try {
       final r = await ApiClient.instance.get(ApiConfig.guestBooking);
       if (!mounted) return;
+      final data = Map<String, dynamic>.from(r.data as Map);
+      // Surface host's brand name everywhere via the provider.
+      final brand = (data['branding'] as Map?)?['app_name'] as String?;
+      if (brand != null) {
+        ref.read(brandingProvider.notifier).set(brand);
+      }
       setState(() {
-        _data = Map<String, dynamic>.from(r.data as Map);
+        _data = data;
         _loading = false;
       });
     } catch (e) {

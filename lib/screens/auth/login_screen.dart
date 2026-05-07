@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/branding_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -124,7 +125,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
 
                 Text(
-                  l10n.appName,
+                  ref.watch(brandingProvider),
                   style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
