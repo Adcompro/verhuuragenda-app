@@ -33,6 +33,13 @@ class PushService {
   bool _initialized = false;
   bool _firebaseUp = false;
   String? _cachedToken;
+  String? _lastError;
+  String? _lastApnsToken;
+
+  bool get isFirebaseUp => _firebaseUp;
+  String? get currentToken => _cachedToken;
+  String? get apnsToken => _lastApnsToken;
+  String? get lastError => _lastError;
 
   /// Call once from main() before runApp. Idempotent.
   Future<void> initialize() async {
@@ -45,6 +52,7 @@ class PushService {
       );
       _firebaseUp = true;
     } catch (e) {
+      _lastError = 'Firebase.initializeApp: $e';
       debugPrint(
         'PushService: Firebase.initializeApp failed. '
         'firebase_options.dart still has placeholder values? '
@@ -113,13 +121,17 @@ class PushService {
       if (Platform.isIOS) {
         for (int i = 0; i < 10; i++) {
           final apns = await FirebaseMessaging.instance.getAPNSToken();
-          if (apns != null && apns.isNotEmpty) break;
+          if (apns != null && apns.isNotEmpty) {
+            _lastApnsToken = apns;
+            break;
+          }
           await Future.delayed(const Duration(milliseconds: 500));
         }
       }
 
       final token = await FirebaseMessaging.instance.getToken();
       if (token == null || token.isEmpty) {
+        _lastError = 'getToken returned null — relying on onTokenRefresh';
         debugPrint(
           'PushService: getToken returned null — '
           'will rely on onTokenRefresh.',
@@ -128,6 +140,7 @@ class PushService {
       }
       await _sendTokenToBackend(token);
     } catch (e) {
+      _lastError = 'registerToken: $e';
       debugPrint('PushService.registerToken failed: $e');
     }
   }
@@ -149,8 +162,10 @@ class PushService {
         ),
       );
       _cachedToken = token;
+      _lastError = null;
       debugPrint('PushService: token registered (${token.substring(0, 20)}…)');
     } catch (e) {
+      _lastError = 'register POST: $e';
       debugPrint('PushService: token register POST failed: $e');
     }
   }
