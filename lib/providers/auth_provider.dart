@@ -1,10 +1,14 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
-import 'dart:convert';
+
 import '../core/api/api_client.dart';
 import '../core/storage/secure_storage.dart';
 import '../config/api_config.dart';
 import '../models/user.dart';
+import '../services/push_service.dart';
 
 // Auth mode
 enum AuthMode { host, guest }
@@ -140,6 +144,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
         mode: AuthMode.host,
       );
 
+      // Register the device with FCM so the host gets push pings.
+      // Fire-and-forget — never block login.
+      unawaited(PushService.instance.registerToken());
+
       return true;
     } on DioException catch (e) {
       String errorMessage = 'Inloggen mislukt. Controleer je gegevens.';
@@ -233,6 +241,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> logout() async {
     final isGuest = state.mode == AuthMode.guest;
+    // Drop the FCM token from the backend so this device stops getting
+    // push pings for the now-logged-out account.
+    if (!isGuest) {
+      unawaited(PushService.instance.unregister());
+    }
     // Try to notify server first (while we still have the token)
     try {
       await ApiClient.instance.post(
