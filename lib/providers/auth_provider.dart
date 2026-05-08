@@ -96,6 +96,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
         isLoading: false,
         mode: AuthMode.host,
       );
+      // Make sure FCM gets a chance to (re-)register on every app
+      // launch — this triggers the OS notification permission popup
+      // the first time on a fresh install, and refreshes the device
+      // token on later launches.
+      unawaited(PushService.instance.registerToken());
     } catch (e) {
       await SecureStorage.deleteToken();
       state = const AuthState(isLoading: false);
