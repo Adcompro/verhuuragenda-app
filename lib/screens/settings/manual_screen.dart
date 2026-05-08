@@ -315,17 +315,137 @@ class ManualScreen extends StatelessWidget {
         ],
       ),
       _ManualSection(
+        icon: Icons.person_outline,
+        title: 'Voor je gasten — de gast-app',
+        children: [
+          _ManualParagraph(
+            'Je gasten kunnen dezelfde app gebruiken om hun verblijf te '
+            'beheren. Geef ze de app-link uit de App Store/Play Store '
+            'en hun pincode (die je per email krijgt verstuurd).',
+          ),
+          _ManualHeader('Hoe loggen ze in?'),
+          _ManualNumberedList([
+            'Open de app → tap "Gast" boven de inlogvelden',
+            'Vul achternaam + 6-cijferige pincode in',
+            'Klaar — geen wachtwoord, geen account-aanmaken',
+          ]),
+          _ManualHeader('Wat ziet de gast?'),
+          _ManualBulletList([
+            'Boeking: data, aantal gasten, status van de boeking',
+            'Verblijf: WiFi, alarmcode, check-in/uit, sleutelinstructies, '
+                'huisregels, lokale tips, noodcontacten',
+            'Betaling: totaal, betaald, openstaand + transactie-historie',
+            'Chat: rechtstreeks contact met jou als verhuurder',
+          ]),
+          _ManualHeader('Eenmalig: voorwaarden accepteren'),
+          _ManualParagraph(
+            'Bij de eerste login krijgt een gast een terms-scherm met '
+            'uitleg over welke gegevens we verwerken en links naar '
+            'jouw voorwaarden + privacybeleid. Ze moeten akkoord '
+            'klikken voordat ze toegang krijgen — net als jij dat '
+            'als verhuurder hebt gedaan.',
+          ),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.chat_bubble_outline,
+        title: 'Chatten met je gasten',
+        children: [
+          _ManualHeader('Inbox openen'),
+          _ManualParagraph(
+            'Tap het chat-bubbel-icoon rechtsboven op het dashboard, '
+            'of de "Chat"-tab in de onderbalk. Een rode badge toont '
+            'het aantal ongelezen berichten.',
+          ),
+          _ManualHeader('Wat kun je doen?'),
+          _ManualBulletList([
+            'Tekst berichten heen en weer sturen',
+            'Foto\'s bijvoegen — tap het foto-icoon naast het '
+                'tekstvak (camera of bibliotheek)',
+            'Read receipts: enkel vinkje = verzonden, dubbel '
+                'blauw vinkje = gelezen door gast',
+            'Typing indicator: als de ander aan het typen is zie je '
+                '… animatie onderaan',
+          ]),
+          _ManualParagraph(
+            'De inbox ververst zichzelf elke 15 sec, een open '
+            'conversatie elke 8 sec. Pull-to-refresh werkt ook.',
+          ),
+          _ManualHeader('Nieuwe-bericht-notificatie'),
+          _ManualParagraph(
+            'In de app krijg je direct een rode badge op het chat-icoon. '
+            'Push-notificaties op je vergrendelscherm vereisen extra '
+            'configuratie (Firebase) — werkt zodra die is opgezet.',
+          ),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.cloud_download_outlined,
+        title: 'Al je gegevens exporteren',
+        children: [
+          _ManualParagraph(
+            'Naast de jaaromzet-export kun je ook een complete '
+            'account-export maken — handig voor backup, accountant of '
+            'als je ooit wilt overstappen.',
+          ),
+          _ManualNumberedList([
+            'Instellingen → Gegevens exporteren',
+            'CasaMio bouwt een Excel met 6 tabbladen: Profiel, '
+                'Accommodaties, Boekingen, Gasten, Onderhoud, Betalingen',
+            'iOS share-sheet opent — kies Files, Mail, Drive, AirDrop',
+          ]),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.bug_report_outlined,
+        title: 'Bug melden of een idee delen',
+        children: [
+          _ManualParagraph(
+            'Werkt iets niet zoals verwacht? Of mis je een feature? '
+            'Stuur het direct via de app — sneller en preciezer dan '
+            'een email.',
+          ),
+          _ManualNumberedList([
+            'Instellingen → Feedback / Bug melden',
+            'Kies type: Bug, Idee, of Vraag',
+            'Korte titel + beschrijving',
+            'App-versie en platform worden automatisch meegestuurd',
+            'Verzenden — wij krijgen direct een email',
+          ]),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.badge_outlined,
+        title: 'App-naam aanpassen (eigen merk)',
+        children: [
+          _ManualParagraph(
+            'Heb je een eigen verhuurmerk? Pas de naam aan die jij en '
+            'je gasten in de app zien.',
+          ),
+          _ManualNumberedList([
+            'Instellingen → App-naam',
+            'Vul je merknaam in (max 60 tekens)',
+            'Opslaan → naam verschijnt in inlogscherm en gast-app',
+          ]),
+          _ManualParagraph(
+            'De technische app-naam onder je icoon (CasaMio) wijzigt '
+            'niet — daarvoor moet de app opnieuw door App Store review.',
+          ),
+        ],
+      ),
+      _ManualSection(
         icon: Icons.help_outline,
         title: 'Hulp nodig?',
         children: [
           _ManualBulletList([
-            'E-mail: support@casamio.app — binnen 24 uur reactie',
+            'In-app: Instellingen → Feedback / Bug melden',
+            'E-mail: support@verhuuragenda.nl — binnen 24 uur reactie',
             'Of via Instellingen → Hulp & Support',
           ]),
           _ManualParagraph(
-            'Geef bij een bugmelding zo veel mogelijk informatie: '
-            'welk scherm, welke knop, welke foutmelding. Een '
-            'screenshot helpt enorm.',
+            'Bij een bug-melding wordt automatisch je app-versie en '
+            'apparaat-info meegestuurd. Voeg vooral een beschrijving '
+            'toe van: welk scherm, welke knop, en wat je had verwacht.',
           ),
         ],
       ),
