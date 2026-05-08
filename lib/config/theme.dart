@@ -220,15 +220,28 @@ class AppTheme {
       // ── Switches / Checkboxes / Radios ─────────────────
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return Colors.white;
+          // White thumb in every state so it stays visible on the
+          // primary-coloured track when the switch is on.
+          if (states.contains(WidgetState.disabled)) {
+            return Colors.grey[300];
+          }
           return Colors.white;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return Colors.grey[200];
+          }
           if (states.contains(WidgetState.selected)) return primaryColor;
           return _hairline;
         }),
         trackOutlineColor:
             const WidgetStatePropertyAll(Colors.transparent),
+        // Suppress the M3 selected-thumb icon (a subtle check) which
+        // otherwise paints a primary-coloured glyph that visually
+        // disappears against the primary track.
+        thumbIcon: WidgetStateProperty.resolveWith(
+          (states) => null,
+        ),
       ),
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {

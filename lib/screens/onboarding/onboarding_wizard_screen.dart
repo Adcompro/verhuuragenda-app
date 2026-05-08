@@ -1348,7 +1348,6 @@ class _ModuleSwitch extends StatelessWidget {
         ),
         child: Icon(icon, color: AppTheme.primaryColor),
       ),
-      activeColor: AppTheme.primaryColor,
       contentPadding: EdgeInsets.zero,
     );
   }
