@@ -87,14 +87,15 @@ class ModuleVisibilityNotifier extends StateNotifier<ModuleVisibility> {
     await prefs.setBool(_key(module), enabled);
   }
 
-  /// Resets to the all-off baseline, the same default a brand-new
-  /// install starts with.
+  /// Re-enables every module — matches the "Alles weer aanzetten"
+  /// label. Persists each module as explicitly enabled so the choice
+  /// survives an app restart.
   Future<void> resetAll() async {
     final prefs = await SharedPreferences.getInstance();
     for (final m in AppModule.values) {
-      await prefs.remove(_key(m));
+      await prefs.setBool(_key(m), true);
     }
-    state = ModuleVisibility.allDisabled();
+    state = ModuleVisibility.allEnabled();
   }
 }
 
