@@ -165,6 +165,8 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      groups:
+        - firebase
       ios_signing:
         provisioning_profiles:
           - vakantiewoningverhuur
