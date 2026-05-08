@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 import '../core/api/api_client.dart';
+import '../firebase_options.dart';
 
 /// Top-level handler for messages received while the app is in the
 /// background or terminated. Firebase Messaging requires this to be
@@ -15,9 +16,10 @@ import '../core/api/api_client.dart';
 Future<void> firebaseBackgroundHandler(RemoteMessage message) async {
   // Initialize Firebase here too — the isolate is fresh.
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (_) {/* may already be initialized */}
-  // Nothing to do — iOS shows the system notification automatically.
 }
 
 /// Wraps Firebase Messaging setup. Designed to fail gracefully if
@@ -37,13 +39,15 @@ class PushService {
     _initialized = true;
 
     try {
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
       _firebaseUp = true;
     } catch (e) {
       debugPrint(
-        'PushService: Firebase.initializeApp failed — '
-        'GoogleService-Info.plist (iOS) or google-services.json '
-        '(Android) probably missing. Push disabled. ($e)',
+        'PushService: Firebase.initializeApp failed. '
+        'firebase_options.dart still has placeholder values? '
+        'Push disabled. ($e)',
       );
       return;
     }
