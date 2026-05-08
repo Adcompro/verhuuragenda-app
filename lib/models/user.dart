@@ -5,6 +5,8 @@ class User {
   final String? role;
   final Host? host;
   final String? brandingAppName;
+  final DateTime? termsAcceptedAt;
+  final String? termsVersion;
 
   User({
     required this.id,
@@ -13,7 +15,11 @@ class User {
     this.role,
     this.host,
     this.brandingAppName,
+    this.termsAcceptedAt,
+    this.termsVersion,
   });
+
+  bool get hasAcceptedTerms => termsAcceptedAt != null;
 
   factory User.fromJson(Map<String, dynamic> json) {
     Host? host;
@@ -32,6 +38,13 @@ class User {
       brandingAppName = branding['app_name'] as String;
     }
 
+    DateTime? termsAcceptedAt;
+    if (json['terms_accepted_at'] != null) {
+      try {
+        termsAcceptedAt = DateTime.parse(json['terms_accepted_at']);
+      } catch (_) {/* ignore */}
+    }
+
     return User(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
@@ -39,6 +52,8 @@ class User {
       role: json['role'],
       host: host,
       brandingAppName: brandingAppName,
+      termsAcceptedAt: termsAcceptedAt,
+      termsVersion: json['terms_version'] as String?,
     );
   }
 

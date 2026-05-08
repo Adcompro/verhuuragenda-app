@@ -6,6 +6,7 @@ import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
 import '../screens/auth/splash_screen.dart';
+import '../screens/auth/terms_acceptance_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/calendar/calendar_screen.dart';
 import '../screens/bookings/bookings_list_screen.dart';
@@ -60,8 +61,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         return isGuestRoute ? null : '/guest';
       }
 
-      // Host: away from /guest and the splash/auth routes
-      if (isGuestRoute || isSplash || isAuthRoute) return '/dashboard';
+      // Host but hasn't accepted terms yet → force terms screen.
+      final user = authState.user;
+      final mustAcceptTerms = user != null && !user.hasAcceptedTerms;
+      final isTermsRoute = path == '/terms';
+      if (mustAcceptTerms) {
+        return isTermsRoute ? null : '/terms';
+      }
+
+      // Host: away from /guest, /terms and the splash/auth routes
+      if (isGuestRoute || isTermsRoute || isSplash || isAuthRoute) {
+        return '/dashboard';
+      }
       return null;
     },
     routes: [
@@ -99,6 +110,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/guest',
         builder: (context, state) => const GuestHomeScreen(),
+      ),
+
+      // Terms acceptance (mandatory after first login)
+      GoRoute(
+        path: '/terms',
+        builder: (context, state) => const TermsAcceptanceScreen(),
       ),
 
       // Standalone manual route used right after onboarding (so the
