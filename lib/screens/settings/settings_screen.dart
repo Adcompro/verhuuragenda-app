@@ -518,32 +518,61 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
-              try {
-                await ApiClient.instance.post('${ApiConfig.profile}/export');
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.exportRequested),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.exportFailed),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              }
+              await _downloadFullAccountExport(context, l10n);
             },
             child: Text(l10n.exportData),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _downloadFullAccountExport(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      SnackBar(content: Text(l10n.revenueExportPreparing)),
+    );
+
+    try {
+      final response = await ApiClient.instance.get(
+        '/exports/full-account',
+        options: Options(responseType: ResponseType.bytes),
+      );
+      final bytes = response.data as List<int>;
+      final dir = await getTemporaryDirectory();
+      final filename =
+          'casamio-account-export-${DateTime.now().toIso8601String().substring(0, 10)}.xlsx';
+      final file = File('${dir.path}/$filename');
+      await file.writeAsBytes(bytes);
+
+      final box = context.findRenderObject() as RenderBox?;
+      await Share.shareXFiles(
+        [
+          XFile(
+            file.path,
+            name: filename,
+            mimeType:
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          ),
+        ],
+        subject: l10n.exportData,
+        sharePositionOrigin: box != null
+            ? box.localToGlobal(Offset.zero) & box.size
+            : const Rect.fromLTWH(0, 0, 100, 100),
+      );
+    } catch (e) {
+      if (context.mounted) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(l10n.exportFailed),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _showDeleteAccountDialog(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
