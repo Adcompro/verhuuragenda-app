@@ -14,6 +14,7 @@ import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/branding_provider.dart';
+import 'guest_terms_screen.dart';
 
 class GuestHomeScreen extends ConsumerStatefulWidget {
   const GuestHomeScreen({super.key});
@@ -71,6 +72,40 @@ class _GuestHomeScreenState extends ConsumerState<GuestHomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return const Scaffold(
+          body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, color: Colors.red[400], size: 48),
+                const SizedBox(height: 12),
+                Text(_error!),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: _load,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Opnieuw proberen'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // First-login terms gate for guests.
+    final hasAccepted = _data?['terms_accepted_at'] != null;
+    if (!hasAccepted) {
+      return GuestTermsScreen(onAccepted: _load);
+    }
+
     final acc = _data?['accommodation'] as Map<String, dynamic>?;
     final accName = acc?['name'] as String? ?? 'Mijn verblijf';
 
@@ -98,38 +133,18 @@ class _GuestHomeScreenState extends ConsumerState<GuestHomeScreen>
           ],
         ),
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline,
-                          color: Colors.red[400], size: 48),
-                      const SizedBox(height: 12),
-                      Text(_error!),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                        onPressed: _load,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Opnieuw proberen'),
-                      ),
-                    ],
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _load,
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _BookingTab(data: _data!),
-                      _StayInfoTab(data: _data!),
-                      _PaymentTab(data: _data!),
-                      const _ChatTab(),
-                    ],
-                  ),
-                ),
+      body: RefreshIndicator(
+        onRefresh: _load,
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            _BookingTab(data: _data!),
+            _StayInfoTab(data: _data!),
+            _PaymentTab(data: _data!),
+            const _ChatTab(),
+          ],
+        ),
+      ),
     );
   }
 }

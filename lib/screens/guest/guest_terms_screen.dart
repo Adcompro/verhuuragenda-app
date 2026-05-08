@@ -4,24 +4,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../config/api_config.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/branding_provider.dart';
 
-/// Mandatory terms-acceptance screen shown after first login (and any
-/// time the host has not accepted the current terms version yet).
-class TermsAcceptanceScreen extends ConsumerStatefulWidget {
-  const TermsAcceptanceScreen({super.key});
+/// Mandatory terms-acceptance screen for guests on first login.
+class GuestTermsScreen extends ConsumerStatefulWidget {
+  /// Callback fired when the guest successfully accepted the terms,
+  /// so the parent (GuestHomeScreen) can refresh and continue.
+  final VoidCallback onAccepted;
+
+  const GuestTermsScreen({super.key, required this.onAccepted});
 
   @override
-  ConsumerState<TermsAcceptanceScreen> createState() =>
-      _TermsAcceptanceScreenState();
+  ConsumerState<GuestTermsScreen> createState() => _GuestTermsScreenState();
 }
 
-class _TermsAcceptanceScreenState
-    extends ConsumerState<TermsAcceptanceScreen> {
+class _GuestTermsScreenState extends ConsumerState<GuestTermsScreen> {
   bool _checked = false;
   bool _busy = false;
 
@@ -29,12 +29,10 @@ class _TermsAcceptanceScreenState
     if (!_checked || _busy) return;
     setState(() => _busy = true);
     try {
-      await ApiClient.instance.post('/terms/accept', data: {'version': 'v1'});
-      // Refresh user so the router knows about the new state
-      await ref.read(authStateProvider.notifier).refreshUser();
+      await ApiClient.instance.post('/guest/terms/accept');
       if (!mounted) return;
-      context.go('/dashboard');
-    } catch (e) {
+      widget.onAccepted();
+    } on DioException {
       if (!mounted) return;
       setState(() => _busy = false);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -42,6 +40,8 @@ class _TermsAcceptanceScreenState
           content: Text('Kon acceptatie niet opslaan. Probeer opnieuw.'),
         ),
       );
+    } finally {
+      if (mounted && _busy) setState(() => _busy = false);
     }
   }
 
@@ -79,7 +79,7 @@ class _TermsAcceptanceScreenState
                         color: AppTheme.primaryColor,
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: const Icon(Icons.description_outlined,
+                      child: const Icon(Icons.privacy_tip_outlined,
                           color: Colors.white, size: 30),
                     ),
                     const SizedBox(height: 16),
@@ -92,7 +92,7 @@ class _TermsAcceptanceScreenState
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Voor we beginnen vragen we je akkoord te geven met onze voorwaarden en privacybeleid.',
+                      'Even kort hoe we omgaan met je gegevens — voordat je aan je verblijf begint.',
                       style: TextStyle(
                           color: Colors.grey[700], fontSize: 15, height: 1.4),
                     ),
@@ -114,35 +114,37 @@ class _TermsAcceptanceScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _SectionTitle('Wat doet $brand?'),
+                          _SectionTitle('Wat zie je in deze app?'),
                           const Text(
-                            'Een beheersysteem voor vakantieverhuur: kalender, '
-                            'boekingen, gastenportaal, schoonmaak- en '
-                            'onderhoudsplanning, betalingen en chat met je '
-                            'gasten.',
+                            'Je boekingsdetails, contactgegevens van je '
+                            'verhuurder, WiFi en check-in info, betalingen die '
+                            'open staan, en een chat met je verhuurder.',
                           ),
                           const SizedBox(height: 16),
                           _SectionTitle('Welke gegevens verwerken we?'),
                           const Text(
-                            '• Jouw account- en bedrijfsgegevens\n'
-                            '• Boekingen, gasten en betalingen die je invoert\n'
-                            '• Foto\'s die je uploadt voor onderhoud of chat\n'
-                            '• Pushtokens voor notificaties (als je toestemt)',
+                            '• Je naam, e-mail en telefoonnummer (door je '
+                            'verhuurder ingevoerd)\n'
+                            '• De gegevens van je boeking\n'
+                            '• Berichten en foto\'s die je in de chat stuurt\n'
+                            '• Indien je inchekt: paspoort/identiteits-info '
+                            'die je vrijwillig deelt',
                           ),
                           const SizedBox(height: 16),
-                          _SectionTitle('Hoe verwerken we het?'),
+                          _SectionTitle('Hoe gebruiken we het?'),
                           const Text(
-                            'Alle data wordt versleuteld over HTTPS verzonden '
-                            'en opgeslagen op servers in de EU. We delen je '
-                            'gegevens niet met derden buiten wettelijke '
-                            'verplichtingen of jouw expliciete toestemming.',
+                            'Alleen om jouw verblijf goed te laten verlopen. '
+                            'Je verhuurder is verantwoordelijk voor je '
+                            'gegevens. Wij delen ze niet met derden buiten '
+                            'wettelijke verplichtingen.',
                           ),
                           const SizedBox(height: 16),
                           _SectionTitle('Jouw rechten'),
                           const Text(
-                            'Je kunt op ieder moment je gegevens inzien, '
-                            'exporteren of verwijderen via Instellingen → '
-                            'Gegevens exporteren of Account verwijderen.',
+                            'Je kunt op ieder moment vragen welke gegevens er '
+                            'over je zijn opgeslagen, of vragen ze te '
+                            'verwijderen. Neem daarvoor contact op met je '
+                            'verhuurder.',
                           ),
                           const SizedBox(height: 24),
                           Wrap(
@@ -157,8 +159,8 @@ class _TermsAcceptanceScreenState
                               OutlinedButton.icon(
                                 icon: const Icon(Icons.open_in_new, size: 16),
                                 label: const Text('Privacybeleid'),
-                                onPressed: () =>
-                                    _openUrl('https://verhuuragenda.nl/privacy'),
+                                onPressed: () => _openUrl(
+                                    'https://verhuuragenda.nl/privacy'),
                               ),
                             ],
                           ),
@@ -182,7 +184,7 @@ class _TermsAcceptanceScreenState
                       value: _checked,
                       onChanged: (v) => setState(() => _checked = v ?? false),
                       title: const Text(
-                        'Ik ga akkoord met de algemene voorwaarden en het privacybeleid.',
+                        'Ik ga akkoord met de voorwaarden en het privacybeleid.',
                         style: TextStyle(fontSize: 14),
                       ),
                     ),
