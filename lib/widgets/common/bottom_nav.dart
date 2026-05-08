@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../providers/module_visibility_provider.dart';
 import '../../utils/responsive.dart';
+import 'messages_action_button.dart' show unreadMessagesProvider;
 
 class BottomNavShell extends ConsumerWidget {
   final Widget child;
@@ -51,8 +52,9 @@ class BottomNavShell extends ConsumerWidget {
       _NavItem(
         icon: Icons.chat_bubble_outline,
         selectedIcon: Icons.chat_bubble,
-        label: 'Berichten',
+        label: 'Chat',
         route: '/conversations',
+        showUnreadBadge: true,
       ),
       if (visibility.isEnabled(AppModule.cleaning))
         _NavItem(
@@ -210,6 +212,7 @@ class BottomNavShell extends ConsumerWidget {
                   label: item.label,
                   isSelected: isSelected,
                   isCompact: isLandscape,
+                  showUnreadBadge: item.showUnreadBadge,
                   onTap: () => context.go(item.route),
                 );
               },
@@ -229,6 +232,7 @@ class _NavItem {
   final IconData? railSelectedIcon;
   final String? railLabel;
   final String route;
+  final bool showUnreadBadge;
 
   const _NavItem({
     required this.icon,
@@ -238,14 +242,16 @@ class _NavItem {
     this.railIcon,
     this.railSelectedIcon,
     this.railLabel,
+    this.showUnreadBadge = false,
   });
 }
 
-class _ScrollableNavItem extends StatelessWidget {
+class _ScrollableNavItem extends ConsumerWidget {
   final IconData icon;
   final String label;
   final bool isSelected;
   final bool isCompact;
+  final bool showUnreadBadge;
   final VoidCallback onTap;
 
   const _ScrollableNavItem({
@@ -254,14 +260,16 @@ class _ScrollableNavItem extends StatelessWidget {
     required this.isSelected,
     required this.isCompact,
     required this.onTap,
+    this.showUnreadBadge = false,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final color = isSelected
         ? theme.colorScheme.primary
         : theme.colorScheme.onSurface.withOpacity(0.6);
+    final unread = showUnreadBadge ? ref.watch(unreadMessagesProvider) : 0;
 
     return InkWell(
       onTap: onTap,
@@ -275,10 +283,42 @@ class _ScrollableNavItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: color,
-              size: isCompact ? 22 : 24,
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  icon,
+                  color: color,
+                  size: isCompact ? 22 : 24,
+                ),
+                if (unread > 0)
+                  Positioned(
+                    right: -6,
+                    top: -4,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 1),
+                      constraints:
+                          const BoxConstraints(minWidth: 16, minHeight: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(8),
+                        border:
+                            Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      child: Text(
+                        unread > 99 ? '99+' : '$unread',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          height: 1.1,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             if (!isCompact) ...[
               const SizedBox(height: 4),
