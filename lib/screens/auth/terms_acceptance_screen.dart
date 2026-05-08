@@ -151,8 +151,8 @@ class _TermsAcceptanceScreenState
                               OutlinedButton.icon(
                                 icon: const Icon(Icons.open_in_new, size: 16),
                                 label: const Text('Volledige voorwaarden'),
-                                onPressed: () =>
-                                    _openUrl('https://verhuuragenda.nl/voorwaarden'),
+                                onPressed: () => _openUrl(
+                                    'https://verhuuragenda.nl/algemene-voorwaarden'),
                               ),
                               OutlinedButton.icon(
                                 icon: const Icon(Icons.open_in_new, size: 16),
