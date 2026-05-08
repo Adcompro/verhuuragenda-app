@@ -242,7 +242,10 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
+        # Upload only — internal testers can install immediately without
+        # external beta review. Avoids the "Another build in same train
+        # is already in beta review" 422 that blocks the whole pipeline.
+        submit_to_testflight: false
 
   # Android workflow (Debug/Test only)
   android-debug-workflow:
