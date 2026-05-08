@@ -18,6 +18,7 @@ import 'subscription_screen.dart';
 import 'notifications_screen.dart';
 import 'about_screen.dart';
 import 'help_screen.dart';
+import 'feedback_screen.dart';
 import 'profile_edit_screen.dart';
 import '../seasons/seasons_list_screen.dart';
 import '../team/team_list_screen.dart';
@@ -241,6 +242,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const HelpScreen()),
+              );
+            },
+          ),
+          _SettingsItem(
+            icon: Icons.bug_report_outlined,
+            title: 'Feedback / Bug melden',
+            subtitle: 'Stuur ons je idee, vraag of een probleem',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const FeedbackScreen()),
               );
             },
           ),

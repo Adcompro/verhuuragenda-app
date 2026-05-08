@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -583,9 +584,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final appleSubscription = _subscription['apple_subscription'];
     final isAppleSubscription = appleSubscription != null;
 
-    // Debug info for iOS (always show for testing)
+    // Debug info for iOS — only in debug builds, never in TestFlight/release
     Widget? iapDebugWidget;
-    if (Platform.isIOS) {
+    if (Platform.isIOS && kDebugMode) {
       iapDebugWidget = Container(
         padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.only(bottom: 16),
@@ -758,45 +759,51 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             if (Platform.isIOS && _iapInitialized && _iapProducts.isNotEmpty) ...[
               _buildIAPPurchaseOptions(),
             ] else if (Platform.isIOS) ...[
-              // Show debug info and fallback
-              Container(
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: Colors.orange[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange[200]!),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.info_outline, color: Colors.orange[700], size: 20),
-                        const SizedBox(width: 8),
-                        Text(
-                          'In-App Purchase Status',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange[900]),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Store beschikbaar: ${_iapInitialized ? "Ja" : "Nee"}\n'
-                      'Producten geladen: ${_iapProducts.length}',
-                      style: TextStyle(fontSize: 12, color: Colors.orange[800]),
-                    ),
-                    if (!_iapInitialized) ...[
+              // Show debug info only in debug builds
+              if (kDebugMode)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.orange[50],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.orange[200]!),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.info_outline,
+                              color: Colors.orange[700], size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            'In-App Purchase Status',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange[900]),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 8),
                       Text(
-                        'Controleer: In-App Purchase capability in Xcode, '
-                        'sandbox tester account, of draai op een echt device.',
-                        style: TextStyle(fontSize: 11, color: Colors.orange[700]),
+                        'Store beschikbaar: ${_iapInitialized ? "Ja" : "Nee"}\n'
+                        'Producten geladen: ${_iapProducts.length}',
+                        style:
+                            TextStyle(fontSize: 12, color: Colors.orange[800]),
                       ),
+                      if (!_iapInitialized) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          'Controleer: In-App Purchase capability in Xcode, '
+                          'sandbox tester account, of draai op een echt device.',
+                          style: TextStyle(
+                              fontSize: 11, color: Colors.orange[700]),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
               // Fallback to static pricing display with web link
               Row(
                 children: [
