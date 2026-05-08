@@ -168,10 +168,8 @@ workflows:
       groups:
         - firebase
       ios_signing:
-        provisioning_profiles:
-          - vakantiewoningverhuur
-        certificates:
-          - vakantiewoningverhuur_nieuw
+        distribution_type: app_store
+        bundle_identifier: nl.verhuurvakantiewoning.app
 
     scripts:
       - name: Create Flutter project structure
