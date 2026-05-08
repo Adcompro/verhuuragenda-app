@@ -1,3 +1,4 @@
+// ignore_for_file: unused_element
 import 'dart:async';
 import 'dart:io';
 
@@ -81,16 +82,61 @@ class PushService {
   /// Get the current FCM token and POST it to the backend so the
   /// server can address this device. Call after a successful host or
   /// guest login. Re-runs are cheap and idempotent.
+  ///
+  /// On iOS, the APNs device token may not be available the first
+  /// few seconds after install; getToken() then returns null silently.
+  /// We retry briefly and ALSO subscribe to onTokenRefresh so a
+  /// late-arriving token still gets registered.
   Future<void> registerToken() async {
     if (!_firebaseUp) return;
+
+    // Always set the listener so a refresh / first-arrival registers
+    // even if the immediate getToken() below returns null.
+    if (!_refreshSubscribed) {
+      _refreshSubscribed = true;
+      FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+        debugPrint('PushService: onTokenRefresh fired');
+        unawaited(_sendTokenToBackend(newToken));
+      });
+    }
+
     try {
       final granted = await requestPermission();
-      if (!granted) return;
+      if (!granted) {
+        debugPrint('PushService: notification permission not granted');
+        return;
+      }
+
+      // On iOS, wait for the APNs token to be available before asking
+      // FCM for its token. getAPNSToken() can take a couple of seconds
+      // after the very first install.
+      if (Platform.isIOS) {
+        for (int i = 0; i < 10; i++) {
+          final apns = await FirebaseMessaging.instance.getAPNSToken();
+          if (apns != null && apns.isNotEmpty) break;
+          await Future.delayed(const Duration(milliseconds: 500));
+        }
+      }
 
       final token = await FirebaseMessaging.instance.getToken();
-      if (token == null || token.isEmpty) return;
-      if (token == _cachedToken) return;
+      if (token == null || token.isEmpty) {
+        debugPrint(
+          'PushService: getToken returned null — '
+          'will rely on onTokenRefresh.',
+        );
+        return;
+      }
+      await _sendTokenToBackend(token);
+    } catch (e) {
+      debugPrint('PushService.registerToken failed: $e');
+    }
+  }
 
+  bool _refreshSubscribed = false;
+
+  Future<void> _sendTokenToBackend(String token) async {
+    if (token == _cachedToken) return;
+    try {
       await ApiClient.instance.post(
         '/notifications/register',
         data: {
@@ -103,23 +149,9 @@ class PushService {
         ),
       );
       _cachedToken = token;
-
-      // Re-register if FCM rotates the token mid-session.
-      FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
-        if (newToken == _cachedToken) return;
-        try {
-          await ApiClient.instance.post(
-            '/notifications/register',
-            data: {
-              'token': newToken,
-              'platform': Platform.isIOS ? 'ios' : 'android',
-            },
-          );
-          _cachedToken = newToken;
-        } catch (_) {/* ignore */}
-      });
+      debugPrint('PushService: token registered (${token.substring(0, 20)}…)');
     } catch (e) {
-      debugPrint('PushService.registerToken failed: $e');
+      debugPrint('PushService: token register POST failed: $e');
     }
   }
 
