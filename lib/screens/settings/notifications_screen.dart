@@ -256,7 +256,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
       value: value,
       onChanged: onChanged,
-      activeColor: AppTheme.primaryColor,
     );
   }
 }

@@ -75,7 +75,6 @@ class ModuleSettingsScreen extends ConsumerWidget {
                     size: 22,
                   ),
                 ),
-                activeColor: AppTheme.primaryColor,
               )),
           const SizedBox(height: 16),
           const Divider(),
