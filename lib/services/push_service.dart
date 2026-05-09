@@ -35,11 +35,13 @@ class PushService {
   String? _cachedToken;
   String? _lastError;
   String? _lastApnsToken;
+  String? _lastAuthStatus;
 
   bool get isFirebaseUp => _firebaseUp;
   String? get currentToken => _cachedToken;
   String? get apnsToken => _lastApnsToken;
   String? get lastError => _lastError;
+  String? get lastAuthStatus => _lastAuthStatus;
 
   /// Call once from main() before runApp. Idempotent.
   Future<void> initialize() async {
@@ -83,6 +85,7 @@ class PushService {
       sound: true,
       provisional: false,
     );
+    _lastAuthStatus = settings.authorizationStatus.toString();
     return settings.authorizationStatus == AuthorizationStatus.authorized ||
         settings.authorizationStatus == AuthorizationStatus.provisional;
   }
@@ -115,11 +118,10 @@ class PushService {
         return;
       }
 
-      // On iOS, wait for the APNs token to be available before asking
-      // FCM for its token. getAPNSToken() can take a couple of seconds
-      // after the very first install.
+      // On iOS, wait up to 30 seconds for the APNs token. On a slow
+      // network or first-install Apple can take longer to hand it back.
       if (Platform.isIOS) {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 60; i++) {
           final apns = await FirebaseMessaging.instance.getAPNSToken();
           if (apns != null && apns.isNotEmpty) {
             _lastApnsToken = apns;

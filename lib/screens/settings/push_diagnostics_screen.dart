@@ -62,6 +62,14 @@ class _PushDiagnosticsScreenState extends State<PushDiagnosticsScreen> {
             ok: fcm != null && fcm.isNotEmpty,
             detail: fcm == null ? null : '${fcm.substring(0, fcm.length.clamp(0, 24))}…',
           ),
+          if (svc.lastAuthStatus != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 34, top: 4),
+              child: Text(
+                'iOS authorization: ${svc.lastAuthStatus}',
+                style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+              ),
+            ),
           if (err != null) ...[
             const SizedBox(height: 16),
             Container(
