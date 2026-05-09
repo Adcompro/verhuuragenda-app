@@ -286,6 +286,54 @@ void main() {
         filled: Icons.settings,
         label: 'settings')) {
       await snap('09_settings');
+
+      // ==== Team member form ========================================
+      // Settings → Team → + → form. Showcases per-menu visibility.
+      try {
+        final teamTile = find.text('Team');
+        if (teamTile.evaluate().isNotEmpty) {
+          // ignore: avoid_print
+          print('SCREENSHOT TEST: opening Team list');
+          await tester.tap(teamTile.first);
+          await wait(tester, 4);
+          // tap the "+" FAB or AppBar action to open the form
+          final addBtn = find.byIcon(Icons.add);
+          if (addBtn.evaluate().isNotEmpty) {
+            // ignore: avoid_print
+            print('SCREENSHOT TEST: opening team member form');
+            await tester.tap(addBtn.first);
+            await wait(tester, 4);
+            // Type a sample name to make the form look populated
+            try {
+              final fields = find.byType(TextFormField);
+              if (fields.evaluate().length >= 2) {
+                await tester.enterText(fields.at(0), 'Anna van Dijk');
+                await tester.pump(const Duration(milliseconds: 200));
+                await tester.enterText(fields.at(1), 'anna@altena.digital');
+                await wait(tester, 1);
+              }
+            } catch (_) {/* ignore */}
+            // Scroll down a bit so menu rights section is visible
+            try {
+              await tester.drag(
+                find.byType(ListView).first,
+                const Offset(0, -300),
+              );
+              await wait(tester, 2);
+            } catch (_) {/* ignore */}
+            await snap('10_team_member');
+          } else {
+            // ignore: avoid_print
+            print('SCREENSHOT TEST: × no + icon to open team form');
+          }
+        } else {
+          // ignore: avoid_print
+          print('SCREENSHOT TEST: × Team tile not found');
+        }
+      } catch (e) {
+        // ignore: avoid_print
+        print('SCREENSHOT TEST: × team flow threw: $e');
+      }
     }
 
     // ignore: avoid_print
