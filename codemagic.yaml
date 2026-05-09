@@ -89,34 +89,34 @@ workflows:
 
       - name: Patch AppDelegate for flutter_apns_only
         script: |
-          # Same patch as ios-workflow: flutter_apns_only crashes the
-          # debug build at startup if AppDelegate doesn't set the
-          # UNUserNotificationCenter delegate. Without it the
-          # screenshot integration test never reaches takeScreenshot.
-          APP_DELEGATE=ios/Runner/AppDelegate.swift
-          if grep -q "UNUserNotificationCenter.current().delegate" "$APP_DELEGATE"; then
-            echo "✓ AppDelegate already sets UN center delegate"
-          else
-            python3 - <<'PY'
-          import pathlib
-          p = pathlib.Path('ios/Runner/AppDelegate.swift')
-          src = p.read_text()
-          if 'import UserNotifications' not in src:
-              src = src.replace(
-                  'import Flutter',
-                  'import Flutter\nimport UserNotifications',
-              )
-          src = src.replace(
-              'GeneratedPluginRegistrant.register(with: self)',
-              'GeneratedPluginRegistrant.register(with: self)\n'
-              '    if #available(iOS 10.0, *) {\n'
-              '      UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate\n'
-              '    }'
-          )
-          p.write_text(src)
-          print("✓ AppDelegate patched in ipad-preview workflow")
-          PY
-          fi
+          # Overwrite AppDelegate.swift entirely. flutter_apns_only
+          # crashes the debug build with an assertion if the
+          # UNUserNotificationCenter delegate isn't set, and screen-
+          # scraping the default file with replace() proved fragile —
+          # writing a known-good file is hermetic.
+          cat > ios/Runner/AppDelegate.swift <<'SWIFT'
+          import Flutter
+          import UIKit
+          import UserNotifications
+
+          @main
+          @objc class AppDelegate: FlutterAppDelegate {
+            override func application(
+              _ application: UIApplication,
+              didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+            ) -> Bool {
+              GeneratedPluginRegistrant.register(with: self)
+              if #available(iOS 10.0, *) {
+                UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+              }
+              return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+            }
+          }
+          SWIFT
+          echo "✓ AppDelegate.swift rewritten with UN center delegate"
+          echo "----- AppDelegate.swift -----"
+          cat ios/Runner/AppDelegate.swift
+          echo "-----------------------------"
 
       - name: Boot iPad Pro Simulator
         script: |
@@ -245,34 +245,28 @@ workflows:
 
       - name: Patch AppDelegate for flutter_apns_only
         script: |
-          # flutter_apns_only asserts that AppDelegate sets the
-          # UNUserNotificationCenter delegate. In release builds the
-          # assert is stripped but in debug (CI integration test) it
-          # crashes the app at launch. Inject the required line.
-          APP_DELEGATE=ios/Runner/AppDelegate.swift
-          if grep -q "UNUserNotificationCenter.current().delegate" "$APP_DELEGATE"; then
-            echo "✓ AppDelegate already sets UN center delegate"
-          else
-            python3 - <<'PY'
-          import pathlib
-          p = pathlib.Path('ios/Runner/AppDelegate.swift')
-          src = p.read_text()
-          if 'import UserNotifications' not in src:
-              src = src.replace(
-                  'import Flutter',
-                  'import Flutter\nimport UserNotifications',
-              )
-          src = src.replace(
-              'GeneratedPluginRegistrant.register(with: self)',
-              'GeneratedPluginRegistrant.register(with: self)\n'
-              '    if #available(iOS 10.0, *) {\n'
-              '      UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate\n'
-              '    }'
-          )
-          p.write_text(src)
-          print("✓ AppDelegate now sets UNUserNotificationCenter delegate")
-          PY
-          fi
+          # Overwrite AppDelegate.swift entirely so flutter_apns_only's
+          # assertion can never crash the app at startup.
+          cat > ios/Runner/AppDelegate.swift <<'SWIFT'
+          import Flutter
+          import UIKit
+          import UserNotifications
+
+          @main
+          @objc class AppDelegate: FlutterAppDelegate {
+            override func application(
+              _ application: UIApplication,
+              didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+            ) -> Bool {
+              GeneratedPluginRegistrant.register(with: self)
+              if #available(iOS 10.0, *) {
+                UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+              }
+              return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+            }
+          }
+          SWIFT
+          echo "✓ AppDelegate.swift rewritten with UN center delegate"
 
       - name: Add Push entitlements
         script: |
