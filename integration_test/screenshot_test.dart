@@ -1,125 +1,161 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:verhuuragenda_app/main.dart' as app;
 
+/// Drives the app through every key screen and saves a screenshot
+/// for each. Used by the Codemagic ios-ipad-preview workflow which
+/// runs on an iPad Pro simulator and uploads the PNGs as build
+/// artifacts that go straight into App Store Connect.
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Screenshot Tests', () {
-    testWidgets('Take screenshots of all main screens', (tester) async {
-      // Start the app
+  Future<void> snap(IntegrationTestWidgetsFlutterBinding b, String name) async {
+    try {
+      await b.takeScreenshot(name);
+      // ignore: avoid_print
+      print('✓ screenshot: $name');
+    } catch (e) {
+      // ignore: avoid_print
+      print('✗ screenshot $name failed: $e');
+    }
+  }
+
+  Future<void> settle(WidgetTester t, [int seconds = 2]) async {
+    await t.pumpAndSettle(Duration(seconds: seconds));
+  }
+
+  Future<void> tapIcon(
+    WidgetTester t, {
+    required IconData outlined,
+    required IconData filled,
+  }) async {
+    var f = find.byIcon(outlined);
+    if (f.evaluate().isEmpty) f = find.byIcon(filled);
+    if (f.evaluate().isEmpty) return;
+    try {
+      await t.ensureVisible(f.first);
+    } catch (_) {
+      try {
+        await t.dragUntilVisible(
+          f.first,
+          find.byType(ListView).first,
+          const Offset(-200, 0),
+        );
+      } catch (_) {}
+    }
+    await t.pumpAndSettle();
+    await t.tap(f.first);
+    await settle(t);
+  }
+
+  group('App Store Screenshot tour', () {
+    testWidgets('Host: dashboard, calendar, bookings, accommodations, chat, cleaning',
+        (tester) async {
       app.main();
+      await settle(tester, 4);
 
-      // Wait for app to initialize
-      await tester.pumpAndSettle(const Duration(seconds: 3));
-
-      // Check if we're on login screen
-      final emailField = find.byType(TextField).first;
-      final isLoginScreen = emailField.evaluate().isNotEmpty;
-
-      if (isLoginScreen) {
-        print('Login screen detected, logging in...');
-
-        // Find email and password fields
-        final textFields = find.byType(TextField);
-        expect(textFields, findsWidgets);
-
-        // Enter email
+      // ==== Login as host ============================================
+      final textFields = find.byType(TextField);
+      if (textFields.evaluate().isNotEmpty) {
+        // ignore: avoid_print
+        print('Login screen detected, signing in as Apple Review host…');
         await tester.enterText(textFields.at(0), 'review@apple.com');
         await tester.pumpAndSettle();
-
-        // Enter password
         await tester.enterText(textFields.at(1), 'Review123!');
         await tester.pumpAndSettle();
 
-        // Find and tap login button
-        final loginButton = find.widgetWithText(ElevatedButton, 'Inloggen');
-        if (loginButton.evaluate().isNotEmpty) {
-          await tester.tap(loginButton);
+        final loginBtn = find.widgetWithText(ElevatedButton, 'Inloggen');
+        if (loginBtn.evaluate().isNotEmpty) {
+          await tester.tap(loginBtn.first);
         } else {
-          // Try finding any elevated button
-          final anyButton = find.byType(ElevatedButton).first;
-          await tester.tap(anyButton);
+          final any = find.byType(ElevatedButton);
+          if (any.evaluate().isNotEmpty) await tester.tap(any.first);
         }
-
-        // Wait for login to complete
-        await tester.pumpAndSettle(const Duration(seconds: 5));
+        await settle(tester, 6);
       }
 
-      // Wait for dashboard to fully load
-      await tester.pumpAndSettle(const Duration(seconds: 3));
-
-      // Create screenshots directory
-      final screenshotDir = Directory('screenshots');
-      if (!screenshotDir.existsSync()) {
-        screenshotDir.createSync(recursive: true);
+      // The terms screen may appear on first login — auto-accept.
+      final acceptCheckbox = find.byType(Checkbox);
+      if (acceptCheckbox.evaluate().isNotEmpty) {
+        await tester.tap(acceptCheckbox.first);
+        await settle(tester);
+        final cta = find.widgetWithText(FilledButton, 'Akkoord & doorgaan');
+        if (cta.evaluate().isNotEmpty) {
+          await tester.tap(cta.first);
+          await settle(tester, 4);
+        }
       }
 
-      // Define screens with their navigation icons
-      final screens = [
-        ('01_dashboard', Icons.dashboard_outlined, Icons.dashboard, 'Dashboard'),
-        ('02_calendar', Icons.calendar_month_outlined, Icons.calendar_month, 'Kalender'),
-        ('03_bookings', Icons.book_outlined, Icons.book, 'Boekingen'),
-        ('04_accommodations', Icons.home_work_outlined, Icons.home_work, 'Accommodaties'),
-        ('05_guests', Icons.people_outline, Icons.people, 'Gasten'),
-        ('06_cleaning', Icons.cleaning_services_outlined, Icons.cleaning_services, 'Schoonmaak'),
-        ('07_maintenance', Icons.build_outlined, Icons.build, 'Onderhoud'),
-        ('08_pool', Icons.pool_outlined, Icons.pool, 'Zwembad'),
-        ('09_garden', Icons.yard_outlined, Icons.yard, 'Tuin'),
-        ('10_campaigns', Icons.campaign_outlined, Icons.campaign, 'Campagnes'),
-        ('11_statistics', Icons.bar_chart_outlined, Icons.bar_chart, 'Statistieken'),
-        ('12_settings', Icons.settings_outlined, Icons.settings, 'Instellingen'),
-      ];
+      // ==== 01: Dashboard ============================================
+      await snap(binding, '01_dashboard');
 
-      for (final screen in screens) {
-        final (filename, outlinedIcon, filledIcon, label) = screen;
-        print('Navigating to $label...');
+      // ==== 02: Calendar =============================================
+      await tapIcon(tester,
+          outlined: Icons.calendar_month_outlined,
+          filled: Icons.calendar_month);
+      await snap(binding, '02_calendar');
 
-        // Try to find and tap the navigation icon
-        var iconFinder = find.byIcon(outlinedIcon);
-        if (iconFinder.evaluate().isEmpty) {
-          iconFinder = find.byIcon(filledIcon);
-        }
+      // ==== 03: Bookings list ========================================
+      await tapIcon(tester, outlined: Icons.book_outlined, filled: Icons.book);
+      await snap(binding, '03_bookings');
 
-        if (iconFinder.evaluate().isNotEmpty) {
-          // Scroll to make icon visible if needed
-          try {
-            await tester.ensureVisible(iconFinder.first);
-            await tester.pumpAndSettle();
-          } catch (e) {
-            // Try scrolling horizontally
-            try {
-              await tester.dragUntilVisible(
-                iconFinder.first,
-                find.byType(ListView).first,
-                const Offset(-200, 0),
-              );
-              await tester.pumpAndSettle();
-            } catch (e2) {
-              print('Could not scroll to $label: $e2');
-            }
-          }
-
-          await tester.tap(iconFinder.first);
-          await tester.pumpAndSettle(const Duration(seconds: 2));
+      // ==== 04: Booking detail (tap the first card) ==================
+      final bookingCard = find.byType(Card);
+      if (bookingCard.evaluate().isNotEmpty) {
+        await tester.tap(bookingCard.first);
+        await settle(tester, 3);
+        await snap(binding, '04_booking_detail');
+        // Back to bookings list
+        final back = find.byTooltip('Back');
+        if (back.evaluate().isNotEmpty) {
+          await tester.tap(back.first);
+          await settle(tester);
         } else {
-          print('Icon not found for $label, skipping...');
-          continue;
-        }
-
-        // Take screenshot
-        print('Taking screenshot: $filename');
-        try {
-          await binding.takeScreenshot(filename);
-          print('Screenshot saved: $filename');
-        } catch (e) {
-          print('Failed to take screenshot $filename: $e');
+          // Try generic back via Navigator
+          await tester.pageBack();
+          await settle(tester);
         }
       }
 
-      print('All screenshots completed!');
+      // ==== 05: Accommodations =======================================
+      await tapIcon(tester,
+          outlined: Icons.home_work_outlined, filled: Icons.home_work);
+      await snap(binding, '05_accommodations');
+
+      // ==== 06: Chat inbox ===========================================
+      await tapIcon(tester,
+          outlined: Icons.chat_bubble_outline, filled: Icons.chat_bubble);
+      await snap(binding, '06_chat_inbox');
+
+      // ==== 07: Chat thread (tap first conversation) =================
+      final convoTiles = find.byType(ListTile);
+      if (convoTiles.evaluate().isNotEmpty) {
+        await tester.tap(convoTiles.first);
+        await settle(tester, 3);
+        await snap(binding, '07_chat_thread');
+        await tester.pageBack();
+        await settle(tester);
+      }
+
+      // ==== 08: Cleaning =============================================
+      await tapIcon(tester,
+          outlined: Icons.cleaning_services_outlined,
+          filled: Icons.cleaning_services);
+      await snap(binding, '08_cleaning');
+
+      // ==== 09: Maintenance ==========================================
+      await tapIcon(tester,
+          outlined: Icons.build_outlined, filled: Icons.build);
+      await snap(binding, '09_maintenance');
+
+      // ==== 10: Settings =============================================
+      await tapIcon(tester,
+          outlined: Icons.settings_outlined, filled: Icons.settings);
+      await snap(binding, '10_settings');
+
+      // ignore: avoid_print
+      print('All host screenshots captured.');
     });
   });
 }
