@@ -204,6 +204,44 @@ workflows:
           /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string CasaMio wil fotos opslaan in je bibliotheek." Runner/Info.plist || true
           /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" Runner/Info.plist || true
 
+      - name: Add Push entitlements
+        script: |
+          # `flutter create` generates an iOS project without
+          # Runner.entitlements. Without aps-environment iOS never
+          # registers the device for APNs, so getAPNSToken() returns
+          # nil and FirebaseMessaging.getToken() throws
+          # apns-token-not-set. We create the file and wire it into
+          # the Xcode project so the IPA carries the entitlement.
+          cat > ios/Runner/Runner.entitlements <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>aps-environment</key>
+              <string>production</string>
+          </dict>
+          </plist>
+          PLIST
+          # Reference the entitlements file in every build config of the
+          # Runner target, and add the file as a project group child so
+          # Xcode picks it up.
+          cd ios
+          /usr/bin/ruby <<'RUBY'
+          require 'xcodeproj'
+          project = Xcodeproj::Project.open('Runner.xcodeproj')
+          target  = project.targets.find { |t| t.name == 'Runner' }
+          # Add file to the Runner group if not already there.
+          runner_group = project.main_group['Runner']
+          unless runner_group.files.any? { |f| f.path == 'Runner.entitlements' }
+            runner_group.new_file('Runner/Runner.entitlements')
+          end
+          target.build_configurations.each do |config|
+            config.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Runner.entitlements'
+          end
+          project.save
+          puts "✓ Runner.entitlements wired into all build configs"
+          RUBY
+
       - name: Inject Firebase config
         script: |
           # GOOGLE_SERVICE_INFO_PLIST_BASE64 must be set in Codemagic
