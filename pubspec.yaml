@@ -3,7 +3,7 @@ description: CasaMio - Vakantieverhuur Beheer App
 
 publish_to: 'none'
 
-version: 2.0.0+170
+version: 2.0.0+171
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
@@ -66,7 +66,7 @@ dependencies:
   in_app_purchase: ^3.1.13
 
   # Push notifications (direct APNs, no Firebase)
-  flutter_apns_only: ^1.7.0
+  flutter_apns_only: ^1.6.0
 
 dev_dependencies:
   flutter_test:
