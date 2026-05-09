@@ -3,6 +3,7 @@ class User {
   final String name;
   final String email;
   final String? role;
+  final List<String> permissions;
   final Host? host;
   final String? brandingAppName;
   final DateTime? termsAcceptedAt;
@@ -13,6 +14,7 @@ class User {
     required this.name,
     required this.email,
     this.role,
+    this.permissions = const [],
     this.host,
     this.brandingAppName,
     this.termsAcceptedAt,
@@ -20,6 +22,33 @@ class User {
   });
 
   bool get hasAcceptedTerms => termsAcceptedAt != null;
+
+  /// Whether this user is allowed to see the menu item identified by [key].
+  /// Admin always wins. Otherwise the role table below decides.
+  bool canAccessMenu(String key) {
+    final r = role ?? 'host';
+    if (r == 'admin') return true;
+    // Mapping: which roles see which menu key.
+    const allowedByRole = <String, Set<String>>{
+      'dashboard':     {'host', 'manager', 'viewer'},
+      'calendar':      {'host', 'manager', 'viewer'},
+      'bookings':      {'host', 'manager', 'viewer'},
+      'accommodations':{'host', 'manager', 'viewer'},
+      'guests':        {'manager', 'viewer'}, // host doesn't manage other guests
+      'chat':          {'host', 'manager', 'viewer'},
+      'cleaning':      {'host', 'manager'},
+      'maintenance':   {'host', 'manager'},
+      'pool':          {'host', 'manager'},
+      'garden':        {'host', 'manager'},
+      'campaigns':     <String>{}, // admin only
+      'statistics':    {'manager'},
+      'settings':      {'host', 'manager', 'viewer'},
+    };
+    return allowedByRole[key]?.contains(r) ?? true;
+  }
+
+  bool hasPermission(String permission) =>
+      permissions.contains(permission) || role == 'admin';
 
   factory User.fromJson(Map<String, dynamic> json) {
     Host? host;
@@ -45,11 +74,17 @@ class User {
       } catch (_) {/* ignore */}
     }
 
+    final rawPerms = json['permissions'];
+    final perms = rawPerms is List
+        ? rawPerms.map((e) => e.toString()).toList()
+        : <String>[];
+
     return User(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       role: json['role'],
+      permissions: perms,
       host: host,
       brandingAppName: brandingAppName,
       termsAcceptedAt: termsAcceptedAt,

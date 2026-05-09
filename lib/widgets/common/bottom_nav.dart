@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../models/user.dart';
+import '../../providers/auth_provider.dart';
 import '../../providers/module_visibility_provider.dart';
 import '../../utils/responsive.dart';
 import 'messages_action_button.dart' show unreadMessagesProvider;
@@ -14,9 +16,11 @@ class BottomNavShell extends ConsumerWidget {
   List<_NavItem> _buildItems(
     AppLocalizations l10n,
     ModuleVisibility visibility,
+    User? user,
   ) {
-    final items = <_NavItem>[
+    final all = <_NavItem>[
       _NavItem(
+        menuKey: 'dashboard',
         icon: Icons.home_outlined,
         selectedIcon: Icons.home,
         label: l10n.home,
@@ -26,30 +30,35 @@ class BottomNavShell extends ConsumerWidget {
         route: '/dashboard',
       ),
       _NavItem(
+        menuKey: 'calendar',
         icon: Icons.calendar_month_outlined,
         selectedIcon: Icons.calendar_month,
         label: l10n.calendar,
         route: '/calendar',
       ),
       _NavItem(
+        menuKey: 'bookings',
         icon: Icons.book_outlined,
         selectedIcon: Icons.book,
         label: l10n.bookings,
         route: '/bookings',
       ),
       _NavItem(
+        menuKey: 'accommodations',
         icon: Icons.home_work_outlined,
         selectedIcon: Icons.home_work,
         label: l10n.accommodations,
         route: '/accommodations',
       ),
       _NavItem(
+        menuKey: 'guests',
         icon: Icons.people_outline,
         selectedIcon: Icons.people,
         label: l10n.guests,
         route: '/guests',
       ),
       _NavItem(
+        menuKey: 'chat',
         icon: Icons.chat_bubble_outline,
         selectedIcon: Icons.chat_bubble,
         label: 'Chat',
@@ -58,6 +67,7 @@ class BottomNavShell extends ConsumerWidget {
       ),
       if (visibility.isEnabled(AppModule.cleaning))
         _NavItem(
+          menuKey: 'cleaning',
           icon: Icons.cleaning_services_outlined,
           selectedIcon: Icons.cleaning_services,
           label: l10n.cleaning,
@@ -65,6 +75,7 @@ class BottomNavShell extends ConsumerWidget {
         ),
       if (visibility.isEnabled(AppModule.maintenance))
         _NavItem(
+          menuKey: 'maintenance',
           icon: Icons.build_outlined,
           selectedIcon: Icons.build,
           label: l10n.maintenance,
@@ -72,6 +83,7 @@ class BottomNavShell extends ConsumerWidget {
         ),
       if (visibility.isEnabled(AppModule.pool))
         _NavItem(
+          menuKey: 'pool',
           icon: Icons.pool_outlined,
           selectedIcon: Icons.pool,
           label: l10n.poolMaintenance,
@@ -79,6 +91,7 @@ class BottomNavShell extends ConsumerWidget {
         ),
       if (visibility.isEnabled(AppModule.garden))
         _NavItem(
+          menuKey: 'garden',
           icon: Icons.yard_outlined,
           selectedIcon: Icons.yard,
           label: l10n.gardenMaintenance,
@@ -86,6 +99,7 @@ class BottomNavShell extends ConsumerWidget {
         ),
       if (visibility.isEnabled(AppModule.campaigns))
         _NavItem(
+          menuKey: 'campaigns',
           icon: Icons.campaign_outlined,
           selectedIcon: Icons.campaign,
           label: l10n.campaigns,
@@ -93,19 +107,24 @@ class BottomNavShell extends ConsumerWidget {
         ),
       if (visibility.isEnabled(AppModule.statistics))
         _NavItem(
+          menuKey: 'statistics',
           icon: Icons.bar_chart_outlined,
           selectedIcon: Icons.bar_chart,
           label: l10n.statistics,
           route: '/statistics',
         ),
       _NavItem(
+        menuKey: 'settings',
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings,
         label: l10n.settings,
         route: '/settings',
       ),
     ];
-    return items;
+
+    // Filter out items the user's role isn't allowed to see.
+    if (user == null) return all;
+    return all.where((it) => user.canAccessMenu(it.menuKey)).toList();
   }
 
   int _selectedIndex(BuildContext context, List<_NavItem> items) {
@@ -118,7 +137,8 @@ class BottomNavShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final visibility = ref.watch(moduleVisibilityProvider);
-    final items = _buildItems(l10n, visibility);
+    final user = ref.watch(currentUserProvider);
+    final items = _buildItems(l10n, visibility, user);
     final selectedIndex = _selectedIndex(context, items);
 
     final shortestSide = MediaQuery.of(context).size.shortestSide;
@@ -225,6 +245,7 @@ class BottomNavShell extends ConsumerWidget {
 }
 
 class _NavItem {
+  final String menuKey;
   final IconData icon;
   final IconData selectedIcon;
   final String label;
@@ -235,6 +256,7 @@ class _NavItem {
   final bool showUnreadBadge;
 
   const _NavItem({
+    required this.menuKey,
     required this.icon,
     required this.selectedIcon,
     required this.label,

@@ -123,6 +123,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             color: Colors.grey[600],
                           ),
                         ),
+                        if (user.role != null) ...[
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: _roleColor(user.role!).withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: _roleColor(user.role!).withOpacity(0.4),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(_roleIcon(user.role!),
+                                    size: 12,
+                                    color: _roleColor(user.role!)),
+                                const SizedBox(width: 4),
+                                Text(
+                                  _roleLabel(user.role!),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: _roleColor(user.role!),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -341,6 +373,51 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  String _roleLabel(String role) {
+    switch (role) {
+      case 'admin':
+        return 'Beheerder';
+      case 'manager':
+        return 'Manager';
+      case 'host':
+        return 'Verhuurder';
+      case 'viewer':
+        return 'Lezer';
+      default:
+        return role;
+    }
+  }
+
+  Color _roleColor(String role) {
+    switch (role) {
+      case 'admin':
+        return const Color(0xFFDC2626); // red-600
+      case 'manager':
+        return const Color(0xFF2563EB); // blue-600
+      case 'host':
+        return const Color(0xFF059669); // emerald-600
+      case 'viewer':
+        return const Color(0xFF6B7280); // gray-500
+      default:
+        return Colors.grey;
+    }
+  }
+
+  IconData _roleIcon(String role) {
+    switch (role) {
+      case 'admin':
+        return Icons.shield_outlined;
+      case 'manager':
+        return Icons.supervisor_account_outlined;
+      case 'host':
+        return Icons.home_work_outlined;
+      case 'viewer':
+        return Icons.visibility_outlined;
+      default:
+        return Icons.person_outline;
+    }
   }
 
   String _getLanguageSubtitle(WidgetRef ref, AppLocalizations l10n) {

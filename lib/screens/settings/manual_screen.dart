@@ -476,6 +476,57 @@ class ManualScreen extends StatelessWidget {
         ],
       ),
       _ManualSection(
+        icon: Icons.shield_outlined,
+        title: 'Rollen en menu-rechten',
+        children: [
+          _ManualParagraph(
+            'CasaMio kent vier rollen, elk met hun eigen menu en '
+            'rechten. Welke rol je hebt zie je als gekleurd label '
+            'naast je naam in Instellingen.',
+          ),
+          _ManualHeader('Beheerder (admin)'),
+          _ManualParagraph(
+            'Volledige toegang. Ziet alle menu\'s, kan andere gebruikers '
+            'aanmaken, hun rol wijzigen en data van iedereen exporteren. '
+            'Alleen voor systeembeheerders.',
+          ),
+          _ManualHeader('Verhuurder (host)'),
+          _ManualParagraph(
+            'De standaardrol. Beheert eigen woningen, boekingen, kalender, '
+            'chat met gasten, schoonmaak en onderhoud. Geen toegang tot '
+            'gasten-database van anderen of tot statistieken.',
+          ),
+          _ManualHeader('Manager'),
+          _ManualParagraph(
+            'Voor mensen die voor meerdere verhuurders werken — bv. een '
+            'beheerkantoor. Ziet alle boekingen, gasten, schoonmaak en '
+            'statistieken; maar mag geen woningen verwijderen of '
+            'gebruikers beheren.',
+          ),
+          _ManualHeader('Lezer (viewer)'),
+          _ManualParagraph(
+            'Alleen-lezen toegang voor bv. een boekhouder of accountant. '
+            'Ziet dashboard, kalender, boekingen, gasten en betalingen, '
+            'maar kan niets wijzigen.',
+          ),
+          _ManualHeader('Welke menu\'s zie ik?'),
+          _ManualBulletList([
+            'Beheerder: alles, inclusief Mailings en Statistieken',
+            'Verhuurder: dashboard, kalender, boekingen, woningen, chat, '
+                'schoonmaak, onderhoud, zwembad/tuin',
+            'Manager: idem als verhuurder + gasten + statistieken',
+            'Lezer: dashboard, kalender, boekingen, woningen, gasten '
+                '(alleen-lezen)',
+          ]),
+          _ManualHeader('Rol wijzigen'),
+          _ManualParagraph(
+            'Een rol wijzigen kan alleen een beheerder doen. Vraag '
+            'support@verhuuragenda.nl als je een andere rol nodig '
+            'hebt — kort uitleggen waarom volstaat meestal.',
+          ),
+        ],
+      ),
+      _ManualSection(
         icon: Icons.person_outline,
         title: 'Je profiel bewerken',
         children: [
