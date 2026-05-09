@@ -27,15 +27,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    // Auto-login in debug mode (simulator) for screenshots
-    if (kDebugMode) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _autoLoginForScreenshots();
-      });
-    }
+    // Auto-login disabled: it raced with the integration_test driver
+    // (which types its own credentials) and prevented the Codemagic
+    // ipad-preview screenshot workflow from progressing past login.
   }
 
-  Future<void> _autoLoginForScreenshots() async {
+  Future<void> _autoLoginForScreenshotsLegacy() async {
     try {
       // Wait a moment for the UI to render (for login screenshot)
       await Future.delayed(const Duration(seconds: 2));
