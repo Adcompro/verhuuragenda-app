@@ -296,8 +296,10 @@ void main() {
           print('SCREENSHOT TEST: opening Team list');
           await tester.tap(teamTile.first);
           await wait(tester, 4);
-          // tap the "+" FAB or AppBar action to open the form
-          final addBtn = find.byIcon(Icons.add);
+          // tap the FAB / + button — TeamListScreen uses person_add,
+          // other screens use plain add. Try both.
+          var addBtn = find.byIcon(Icons.person_add);
+          if (addBtn.evaluate().isEmpty) addBtn = find.byIcon(Icons.add);
           if (addBtn.evaluate().isNotEmpty) {
             // ignore: avoid_print
             print('SCREENSHOT TEST: opening team member form');
