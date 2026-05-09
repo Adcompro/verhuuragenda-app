@@ -55,6 +55,8 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      groups:
+        - screenshot_demo
 
     scripts:
       - name: Create Flutter project structure
@@ -107,10 +109,15 @@ workflows:
 
           mkdir -p screenshots
 
-          # Run flutter drive with integration test
+          # Run flutter drive with integration test. Credentials are
+          # passed via --dart-define and originate from the
+          # 'screenshot_demo' Codemagic environment variable group, so
+          # the values stay encrypted at rest and never reach git.
           flutter drive \
             --driver=test_driver/integration_test.dart \
             --target=integration_test/screenshot_test.dart \
+            --dart-define=SCREENSHOT_LOGIN_EMAIL="${SCREENSHOT_LOGIN_EMAIL:-review@apple.com}" \
+            --dart-define=SCREENSHOT_LOGIN_PASSWORD="${SCREENSHOT_LOGIN_PASSWORD:-Review123!}" \
             -d "$IPAD_UDID" \
             --no-pub \
             || echo "Flutter drive completed (may have warnings)"

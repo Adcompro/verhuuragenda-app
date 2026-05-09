@@ -56,13 +56,26 @@ void main() {
       await settle(tester, 4);
 
       // ==== Login as host ============================================
+      // Credentials come from --dart-define so we never commit them.
+      // See codemagic.yaml ios-ipad-preview workflow: it forwards
+      // SCREENSHOT_LOGIN_EMAIL / SCREENSHOT_LOGIN_PASSWORD via flutter
+      // drive's --dart-define flags.
+      const email = String.fromEnvironment(
+        'SCREENSHOT_LOGIN_EMAIL',
+        defaultValue: 'review@apple.com',
+      );
+      const password = String.fromEnvironment(
+        'SCREENSHOT_LOGIN_PASSWORD',
+        defaultValue: 'Review123!',
+      );
+
       final textFields = find.byType(TextField);
       if (textFields.evaluate().isNotEmpty) {
         // ignore: avoid_print
-        print('Login screen detected, signing in as Apple Review host…');
-        await tester.enterText(textFields.at(0), 'review@apple.com');
+        print('Login screen detected, signing in as $email…');
+        await tester.enterText(textFields.at(0), email);
         await tester.pumpAndSettle();
-        await tester.enterText(textFields.at(1), 'Review123!');
+        await tester.enterText(textFields.at(1), password);
         await tester.pumpAndSettle();
 
         final loginBtn = find.widgetWithText(ElevatedButton, 'Inloggen');
