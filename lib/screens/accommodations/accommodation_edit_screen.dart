@@ -1,6 +1,10 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
@@ -61,6 +65,10 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
   final _gardenGroupNameController = TextEditingController();
   List<Accommodation> _otherPoolOwners = [];
   List<Accommodation> _otherGardenOwners = [];
+
+  // Photos
+  List<Map<String, dynamic>> _photos = [];
+  bool _photoUploading = false;
 
   bool get isEditing => widget.accommodationId != null;
 
@@ -151,8 +159,18 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
       final response = await ApiClient.instance.get('${ApiConfig.accommodations}/${widget.accommodationId}');
       final acc = Accommodation.fromJson(response.data);
 
+      // Extract raw photo objects (with id) — Accommodation model only keeps urls
+      final rawPhotos = response.data['photos'];
+      final photoList = rawPhotos is List
+          ? rawPhotos
+              .whereType<Map>()
+              .map<Map<String, dynamic>>((p) => Map<String, dynamic>.from(p))
+              .toList()
+          : <Map<String, dynamic>>[];
+
       setState(() {
         _accommodation = acc;
+        _photos = photoList;
         _nameController.text = acc.name;
         _maxGuestsController.text = acc.maxGuests?.toString() ?? '';
         _bedroomsController.text = acc.bedrooms?.toString() ?? '';
@@ -432,6 +450,13 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
                 ),
               ),
             ),
+
+          const SizedBox(height: 24),
+
+          // Photos section
+          _buildSectionHeader('Foto\'s', Icons.photo_library),
+          const SizedBox(height: 12),
+          _buildPhotosSection(),
 
           const SizedBox(height: 24),
 
@@ -800,6 +825,213 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
           const SizedBox(height: 80), // Space for bottom button
         ],
       ),
+    );
+  }
+
+  Future<void> _pickAndUploadPhoto() async {
+    if (!isEditing || widget.accommodationId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sla de accommodatie eerst op voordat je foto\'s toevoegt.')),
+      );
+      return;
+    }
+
+    final picker = ImagePicker();
+    final XFile? picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 2400,
+      maxHeight: 2400,
+      imageQuality: 85,
+    );
+    if (picked == null) return;
+
+    setState(() => _photoUploading = true);
+    try {
+      final formData = FormData.fromMap({
+        'photo': await MultipartFile.fromFile(
+          picked.path,
+          filename: picked.name,
+        ),
+      });
+      final response = await ApiClient.instance.post(
+        '${ApiConfig.accommodations}/${widget.accommodationId}/photos',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+      setState(() {
+        _photos.add(Map<String, dynamic>.from(response.data as Map));
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Upload mislukt: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _photoUploading = false);
+    }
+  }
+
+  Future<void> _deletePhoto(int photoId) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Foto verwijderen?'),
+        content: const Text('Deze actie kan niet ongedaan gemaakt worden.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuleren')),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Verwijderen'),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true) return;
+
+    try {
+      await ApiClient.instance.delete(
+        '${ApiConfig.accommodations}/${widget.accommodationId}/photos/$photoId',
+      );
+      setState(() => _photos.removeWhere((p) => p['id'] == photoId));
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Verwijderen mislukt: $e')),
+        );
+      }
+    }
+  }
+
+  Widget _buildPhotosSection() {
+    if (!isEditing) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey[300]!),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.info_outline, color: Colors.grey[600], size: 20),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Sla de accommodatie eerst op om foto\'s toe te voegen.',
+                style: TextStyle(fontSize: 13),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 110,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: _photos.length + 1,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          if (index == _photos.length) {
+            return _buildAddPhotoTile();
+          }
+          final photo = _photos[index];
+          return _buildPhotoTile(photo);
+        },
+      ),
+    );
+  }
+
+  Widget _buildAddPhotoTile() {
+    return InkWell(
+      onTap: _photoUploading ? null : _pickAndUploadPhoto,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: 110,
+        height: 110,
+        decoration: BoxDecoration(
+          color: AppTheme.primaryColor.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: AppTheme.primaryColor.withOpacity(0.4),
+            style: BorderStyle.solid,
+            width: 1.5,
+          ),
+        ),
+        child: Center(
+          child: _photoUploading
+              ? const CircularProgressIndicator(strokeWidth: 2)
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add_a_photo,
+                        color: AppTheme.primaryColor, size: 28),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Foto\ntoevoegen',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhotoTile(Map<String, dynamic> photo) {
+    final url = photo['url'] as String? ?? '';
+    final id = photo['id'] as int?;
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: CachedNetworkImage(
+            imageUrl: url,
+            width: 110,
+            height: 110,
+            fit: BoxFit.cover,
+            placeholder: (_, __) => Container(
+              width: 110,
+              height: 110,
+              color: Colors.grey[200],
+              child: const Center(
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+            errorWidget: (_, __, ___) => Container(
+              width: 110,
+              height: 110,
+              color: Colors.grey[200],
+              child: Icon(Icons.broken_image, color: Colors.grey[500]),
+            ),
+          ),
+        ),
+        if (id != null)
+          Positioned(
+            top: 4,
+            right: 4,
+            child: Material(
+              color: Colors.black54,
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () => _deletePhoto(id),
+                child: const Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Icon(Icons.close, color: Colors.white, size: 16),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 

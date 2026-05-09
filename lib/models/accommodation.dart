@@ -143,7 +143,14 @@ class Accommodation {
       localTips: json['local_tips'],
       thumbnailUrl: json['thumbnail_url'] ?? json['primary_photo'],
       photos: json['photos'] != null
-          ? List<String>.from(json['photos'])
+          ? (json['photos'] as List)
+              .map<String>((p) {
+                if (p is String) return p;
+                if (p is Map) return (p['url'] ?? '') as String;
+                return '';
+              })
+              .where((u) => u.isNotEmpty)
+              .toList()
           : [],
       icalAirbnbUrl: json['ical_airbnb_url'],
       icalBookingUrl: json['ical_booking_url'],
