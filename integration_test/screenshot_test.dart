@@ -24,9 +24,12 @@ void main() {
   }
 
   /// Wait for the given duration without requiring all animations to
-  /// stop. Survives spinners.
+  /// stop. Survives spinners. Pumps repeatedly so widgets actually rebuild.
   Future<void> wait(WidgetTester t, [int seconds = 2]) async {
-    await t.pump(Duration(seconds: seconds));
+    final frames = seconds * 10; // 100ms per pump
+    for (var i = 0; i < frames; i++) {
+      await t.pump(const Duration(milliseconds: 100));
+    }
   }
 
   Future<bool> tapIcon(
@@ -85,30 +88,64 @@ void main() {
     );
 
     try {
-      final fields = find.byType(TextField);
+      // Wait extra long for the login form to actually mount (iPad cold
+      // boot + Riverpod auth provider hydration takes a while).
+      await wait(tester, 6);
+
+      // TextFormField is more reliable than TextField — the latter is
+      // an internal child of the former and can race with form mount.
+      var fields = find.byType(TextFormField);
+      var attempt = 0;
+      while (fields.evaluate().length < 2 && attempt < 6) {
+        await wait(tester, 2);
+        fields = find.byType(TextFormField);
+        attempt++;
+      }
       // ignore: avoid_print
-      print('SCREENSHOT TEST: found ${fields.evaluate().length} TextFields');
+      print('SCREENSHOT TEST: found ${fields.evaluate().length} TextFormFields after $attempt retries');
+
+      if (fields.evaluate().length < 2) {
+        // Fallback: maybe it's just plain TextField
+        final fallback = find.byType(EditableText);
+        // ignore: avoid_print
+        print('SCREENSHOT TEST: fallback EditableText count = ${fallback.evaluate().length}');
+        if (fallback.evaluate().length >= 2) fields = fallback;
+      }
+
       if (fields.evaluate().length >= 2) {
         // ignore: avoid_print
         print('SCREENSHOT TEST: typing credentials for $email');
+        await tester.tap(fields.at(0));
+        await wait(tester, 1);
         await tester.enterText(fields.at(0), email);
-        await tester.pump(const Duration(milliseconds: 200));
+        await wait(tester, 1);
+        await tester.tap(fields.at(1));
+        await wait(tester, 1);
         await tester.enterText(fields.at(1), password);
-        await tester.pump(const Duration(milliseconds: 200));
+        await wait(tester, 1);
 
-        final btn = find.byType(ElevatedButton);
+        // Find any tappable button with login text
+        var btn = find.byType(ElevatedButton);
+        if (btn.evaluate().isEmpty) btn = find.byType(FilledButton);
         if (btn.evaluate().isNotEmpty) {
           // ignore: avoid_print
           print('SCREENSHOT TEST: tapping login button');
           await tester.tap(btn.first);
-          await wait(tester, 8); // wait for network call + navigation
+          await wait(tester, 10); // wait for network call + navigation
         } else {
           // ignore: avoid_print
-          print('SCREENSHOT TEST: × no ElevatedButton on login screen');
+          print('SCREENSHOT TEST: × no login button found');
         }
       } else {
         // ignore: avoid_print
-        print('SCREENSHOT TEST: × not enough TextFields, skipping login');
+        print('SCREENSHOT TEST: × not enough text fields, skipping login');
+        // Diagnostic: list visible widget types
+        try {
+          final scaffolds = find.byType(Scaffold).evaluate().length;
+          final texts = find.byType(Text).evaluate().length;
+          // ignore: avoid_print
+          print('SCREENSHOT TEST: diag — Scaffold=$scaffolds Text=$texts');
+        } catch (_) {}
       }
     } catch (e) {
       // ignore: avoid_print
