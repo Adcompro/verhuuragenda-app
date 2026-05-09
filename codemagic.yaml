@@ -212,6 +212,37 @@ workflows:
           /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string CasaMio wil fotos opslaan in je bibliotheek." Runner/Info.plist || true
           /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" Runner/Info.plist || true
 
+      - name: Patch AppDelegate for flutter_apns_only
+        script: |
+          # flutter_apns_only asserts that AppDelegate sets the
+          # UNUserNotificationCenter delegate. In release builds the
+          # assert is stripped but in debug (CI integration test) it
+          # crashes the app at launch. Inject the required line.
+          APP_DELEGATE=ios/Runner/AppDelegate.swift
+          if grep -q "UNUserNotificationCenter.current().delegate" "$APP_DELEGATE"; then
+            echo "✓ AppDelegate already sets UN center delegate"
+          else
+            python3 - <<'PY'
+          import pathlib
+          p = pathlib.Path('ios/Runner/AppDelegate.swift')
+          src = p.read_text()
+          if 'import UserNotifications' not in src:
+              src = src.replace(
+                  'import Flutter',
+                  'import Flutter\nimport UserNotifications',
+              )
+          src = src.replace(
+              'GeneratedPluginRegistrant.register(with: self)',
+              'GeneratedPluginRegistrant.register(with: self)\n'
+              '    if #available(iOS 10.0, *) {\n'
+              '      UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate\n'
+              '    }'
+          )
+          p.write_text(src)
+          print("✓ AppDelegate now sets UNUserNotificationCenter delegate")
+          PY
+          fi
+
       - name: Add Push entitlements
         script: |
           # `flutter create` generates an iOS project without
