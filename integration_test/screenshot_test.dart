@@ -102,7 +102,38 @@ void main() {
       }
     }
 
+    // ==== Enable all modules so cleaning/maintenance tabs appear ====
+    // Module visibility defaults to "all disabled" on a fresh install
+    // — so the simulator hides Cleaning/Maintenance/etc. icons until
+    // we go to Settings → Modules and reset.
+    if (await tapIcon(tester,
+        outlined: Icons.settings_outlined,
+        filled: Icons.settings,
+        label: 'settings (pre-tour)')) {
+      final modulesTile = find.text('Modules');
+      if (modulesTile.evaluate().isNotEmpty) {
+        await tester.tap(modulesTile.first);
+        await settle(tester, 2);
+        // Tap "Alles weer aanzetten" / "Enable all again" / variants
+        final resetCta = find.byType(OutlinedButton);
+        if (resetCta.evaluate().isNotEmpty) {
+          // The reset button is the only OutlinedButton on this screen
+          await tester.tap(resetCta.first);
+          await settle(tester, 2);
+        }
+        await tester.pageBack();
+        await settle(tester);
+      }
+      await tester.pageBack();
+      await settle(tester);
+    }
+
     // ==== 01: Dashboard ===============================================
+    // Make sure we're on the dashboard after the modules detour.
+    await tapIcon(tester,
+        outlined: Icons.home_outlined,
+        filled: Icons.home,
+        label: 'home');
     await snap('01_dashboard');
 
     // ==== 02: Calendar ================================================
