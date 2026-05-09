@@ -22,11 +22,15 @@ class _PushDiagnosticsScreenState extends State<PushDiagnosticsScreen> {
     if (!mounted) return;
     setState(() => _refreshing = false);
     final ok = PushService.instance.currentToken != null;
+    final err = PushService.instance.lastError;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        duration: const Duration(seconds: 6),
         content: Text(ok
             ? 'Token geregistreerd ✓'
-            : 'Geen token. Zie status hieronder.'),
+            : (err != null && err.length < 80
+                ? 'Geen token: $err'
+                : 'Geen token — scroll omhoog voor status')),
         backgroundColor: ok ? Colors.green : Colors.orange,
       ),
     );

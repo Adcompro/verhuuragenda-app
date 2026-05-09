@@ -206,6 +206,40 @@ workflows:
           /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryAddUsageDescription string CasaMio wil fotos opslaan in je bibliotheek." Runner/Info.plist || true
           /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" Runner/Info.plist || true
 
+      - name: Patch AppDelegate for explicit APNs registration
+        script: |
+          # Ensure AppDelegate.swift requests an APNs token explicitly
+          # in didFinishLaunchingWithOptions, even if Firebase's
+          # method-swizzling doesn't kick in fast enough on first launch.
+          APP_DELEGATE=ios/Runner/AppDelegate.swift
+          if grep -q "registerForRemoteNotifications" "$APP_DELEGATE"; then
+            echo "✓ AppDelegate already explicitly registers for remote notifications"
+          else
+            python3 - <<'PY'
+          import pathlib, re
+          p = pathlib.Path('ios/Runner/AppDelegate.swift')
+          src = p.read_text()
+          # Insert UNUserNotificationCenter delegate + registerForRemoteNotifications
+          # right after GeneratedPluginRegistrant.register call.
+          patched = src.replace(
+              'GeneratedPluginRegistrant.register(with: self)',
+              'GeneratedPluginRegistrant.register(with: self)\n'
+              '    if #available(iOS 10.0, *) {\n'
+              '      UNUserNotificationCenter.current().delegate = self\n'
+              '    }\n'
+              '    application.registerForRemoteNotifications()'
+          )
+          # Also add UserNotifications import so the delegate type resolves.
+          if 'import UserNotifications' not in patched:
+              patched = patched.replace(
+                  'import Flutter',
+                  'import Flutter\nimport UserNotifications',
+              )
+          p.write_text(patched)
+          print("✓ AppDelegate patched for explicit APNs registration")
+          PY
+          fi
+
       - name: Add Push entitlements
         script: |
           # `flutter create` generates an iOS project without
