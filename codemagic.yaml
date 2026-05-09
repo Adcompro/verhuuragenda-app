@@ -104,51 +104,50 @@ workflows:
 
       - name: Run Flutter Drive test for screenshots
         script: |
+          set -x  # echo each command for debug
           IPAD_UDID=$(cat /tmp/ipad_udid.txt)
+          PROJECT_DIR=$(pwd)
+          SHOTS_DIR="$PROJECT_DIR/screenshots"
           echo "Using iPad UDID: $IPAD_UDID"
+          echo "Project dir:   $PROJECT_DIR"
+          echo "Shots dir:     $SHOTS_DIR"
 
-          mkdir -p screenshots
+          mkdir -p "$SHOTS_DIR"
 
           # Run flutter drive with integration test. Credentials are
           # passed via --dart-define and originate from the
-          # 'screenshot_demo' Codemagic environment variable group, so
-          # the values stay encrypted at rest and never reach git.
+          # 'screenshot_demo' Codemagic environment variable group.
           flutter drive \
             --driver=test_driver/integration_test.dart \
             --target=integration_test/screenshot_test.dart \
             --dart-define=SCREENSHOT_LOGIN_EMAIL="${SCREENSHOT_LOGIN_EMAIL:-review@apple.com}" \
             --dart-define=SCREENSHOT_LOGIN_PASSWORD="${SCREENSHOT_LOGIN_PASSWORD:-Review123!}" \
             -d "$IPAD_UDID" \
-            --no-pub \
-            || echo "Flutter drive completed (may have warnings)"
+            --verbose \
+            2>&1 | tail -200 || echo "Flutter drive completed (may have warnings)"
 
-          # Check for screenshots in various locations
-          find . -name "*.png" -type f 2>/dev/null | head -20
+          echo "===== files anywhere named *.png ====="
+          find "$PROJECT_DIR" -name "*.png" -type f 2>/dev/null | grep -v -E "\\.(dart_tool|build|symlinks|Pods)/" | head -30
 
-          # Move any screenshots to the screenshots folder
-          mv *.png screenshots/ 2>/dev/null || true
+          # Move any stray PNGs at project root into shots dir
+          mv "$PROJECT_DIR"/*.png "$SHOTS_DIR/" 2>/dev/null || true
 
-          # If no screenshots from integration test, build and take manual screenshots
-          if [ -z "$(ls -A screenshots 2>/dev/null)" ]; then
-            echo "No screenshots from integration test, using fallback..."
+          # ===== Fallback: if integration test produced nothing =====
+          if [ -z "$(ls -A "$SHOTS_DIR" 2>/dev/null)" ]; then
+            echo "No screenshots from integration test, using fallback…"
 
-            # Build the app
             flutter build ios --debug --simulator
 
-            # Install and launch
-            xcrun simctl install "$IPAD_UDID" build/ios/iphonesimulator/Runner.app
-            BUNDLE_ID=$(defaults read "$(pwd)/build/ios/iphonesimulator/Runner.app/Info.plist" CFBundleIdentifier)
-
+            xcrun simctl install "$IPAD_UDID" "$PROJECT_DIR/build/ios/iphonesimulator/Runner.app"
+            BUNDLE_ID=$(defaults read "$PROJECT_DIR/build/ios/iphonesimulator/Runner.app/Info.plist" CFBundleIdentifier)
             echo "Launching app: $BUNDLE_ID"
             xcrun simctl launch "$IPAD_UDID" "$BUNDLE_ID"
             sleep 20
 
-            # Take dashboard screenshot at minimum
-            echo "Taking fallback screenshot..."
-            xcrun simctl io "$IPAD_UDID" screenshot "screenshots/01_dashboard.png"
-
-            # Use UI automation via appium or XCUITest would be ideal here
-            # For now, just take the dashboard
+            # Use absolute path so simctl io's "folder doesn't exist"
+            # error can't bite us.
+            echo "Taking fallback screenshot to $SHOTS_DIR/01_dashboard.png …"
+            xcrun simctl io "$IPAD_UDID" screenshot "$SHOTS_DIR/01_dashboard.png"
           fi
 
           echo "===== SCREENSHOTS ====="
