@@ -30,7 +30,44 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
   bool _isSaving = false;
   bool _obscurePassword = true;
 
+  // Per-menu visibility overrides for this team member.
+  // Starts as a copy of the role's defaults; host can toggle.
+  final Map<String, bool> _menuVisibility = {};
+  final Map<String, bool> _menuDefaults = {};
+
   bool get _isEditing => widget.member != null;
+
+  static const _menuLabels = <String, String>{
+    'dashboard': 'Dashboard',
+    'calendar': 'Kalender',
+    'bookings': 'Boekingen',
+    'accommodations': 'Accommodaties',
+    'guests': 'Gasten',
+    'chat': 'Chat',
+    'cleaning': 'Schoonmaak',
+    'maintenance': 'Onderhoud',
+    'pool': 'Zwembad',
+    'garden': 'Tuin',
+    'campaigns': 'Mailings',
+    'statistics': 'Statistieken',
+    'settings': 'Instellingen',
+  };
+
+  static const _menuIcons = <String, IconData>{
+    'dashboard': Icons.home_outlined,
+    'calendar': Icons.calendar_month_outlined,
+    'bookings': Icons.book_outlined,
+    'accommodations': Icons.home_work_outlined,
+    'guests': Icons.people_outline,
+    'chat': Icons.chat_bubble_outline,
+    'cleaning': Icons.cleaning_services_outlined,
+    'maintenance': Icons.build_outlined,
+    'pool': Icons.pool_outlined,
+    'garden': Icons.yard_outlined,
+    'campaigns': Icons.campaign_outlined,
+    'statistics': Icons.bar_chart_outlined,
+    'settings': Icons.settings_outlined,
+  };
 
   @override
   void initState() {
@@ -40,9 +77,63 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
       _emailController.text = widget.member!.email;
       _selectedRole = widget.member!.role;
       _isActive = widget.member!.isActive;
+      _menuVisibility.addAll(widget.member!.menuVisibility);
+      _menuDefaults.addAll(widget.member!.menuDefaults);
     } else if (widget.availableRoles.isNotEmpty) {
       _selectedRole = widget.availableRoles.first.value;
+      _seedMenuVisibilityFromRole(_selectedRole!);
     }
+  }
+
+  /// When a role changes (and no member yet exists), seed menu defaults.
+  void _seedMenuVisibilityFromRole(String role) {
+    const roleDefaults = <String, Map<String, bool>>{
+      'eigenaar': {
+        'dashboard': true, 'calendar': true, 'bookings': true,
+        'accommodations': true, 'guests': true, 'chat': true,
+        'cleaning': true, 'maintenance': true, 'pool': true,
+        'garden': true, 'campaigns': true, 'statistics': true,
+        'settings': true,
+      },
+      'manager': {
+        'dashboard': true, 'calendar': true, 'bookings': true,
+        'accommodations': true, 'guests': true, 'chat': true,
+        'cleaning': true, 'maintenance': true, 'pool': true,
+        'garden': true, 'campaigns': true, 'statistics': true,
+        'settings': true,
+      },
+      'medewerker': {
+        'dashboard': true, 'calendar': true, 'bookings': true,
+        'accommodations': true, 'guests': true, 'chat': true,
+        'cleaning': true, 'maintenance': true, 'pool': false,
+        'garden': false, 'campaigns': false, 'statistics': false,
+        'settings': true,
+      },
+      'schoonmaker': {
+        'dashboard': true, 'calendar': true, 'bookings': false,
+        'accommodations': false, 'guests': false, 'chat': false,
+        'cleaning': true, 'maintenance': true, 'pool': true,
+        'garden': true, 'campaigns': false, 'statistics': false,
+        'settings': true,
+      },
+      'alleen-lezen': {
+        'dashboard': true, 'calendar': true, 'bookings': true,
+        'accommodations': true, 'guests': true, 'chat': false,
+        'cleaning': true, 'maintenance': true, 'pool': false,
+        'garden': false, 'campaigns': false, 'statistics': true,
+        'settings': true,
+      },
+    };
+    final defaults = roleDefaults[role] ??
+        {for (final k in _menuLabels.keys) k: true};
+    setState(() {
+      _menuDefaults
+        ..clear()
+        ..addAll(defaults);
+      _menuVisibility
+        ..clear()
+        ..addAll(defaults);
+    });
   }
 
   @override
@@ -67,11 +158,18 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
     setState(() => _isSaving = true);
 
     try {
-      final data = {
+      // Compute overrides = entries where current value differs from default.
+      final overrides = <String, bool>{};
+      _menuVisibility.forEach((k, v) {
+        if (_menuDefaults[k] != v) overrides[k] = v;
+      });
+
+      final data = <String, dynamic>{
         'name': _nameController.text.trim(),
         'email': _emailController.text.trim(),
         'role': _selectedRole,
         'is_active': _isActive,
+        'menu_overrides': overrides,
       };
 
       // Password required for new users
@@ -195,6 +293,10 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
             ...widget.availableRoles.map((role) => _buildRoleOption(role)),
             const SizedBox(height: 24),
 
+            // Menu rights — per-menu visibility
+            _buildMenuRightsSection(),
+            const SizedBox(height: 24),
+
             // Active toggle
             SwitchListTile(
               title: Text(l10n.activeToggle),
@@ -265,7 +367,13 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
     final color = _getRoleColor(role.color);
 
     return GestureDetector(
-      onTap: () => setState(() => _selectedRole = role.value),
+      onTap: () {
+        setState(() => _selectedRole = role.value);
+        // When the user picks a different role, reset the menu visibility
+        // to that role's defaults — but only for new members, so we don't
+        // wipe out an existing member's customised overrides.
+        if (!_isEditing) _seedMenuVisibilityFromRole(role.value);
+      },
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(16),
@@ -319,6 +427,104 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMenuRightsSection() {
+    if (_menuVisibility.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
+            child: Row(
+              children: [
+                Icon(Icons.tune, size: 18, color: Colors.grey[700]),
+                const SizedBox(width: 8),
+                const Text(
+                  'Menu-rechten',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _menuVisibility
+                        ..clear()
+                        ..addAll(_menuDefaults);
+                    });
+                  },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    minimumSize: const Size(0, 32),
+                  ),
+                  child: const Text('Reset'),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Text(
+              'Bepaal welke menu\'s dit teamlid ziet. Defaults volgen de '
+              'gekozen rol; je mag per item afwijken.',
+              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+            ),
+          ),
+          ...(() {
+            // Stable order: keys from _menuLabels.
+            final keys = _menuLabels.keys
+                .where((k) => _menuVisibility.containsKey(k))
+                .toList();
+            return keys.map((k) => _buildMenuToggle(k));
+          })(),
+          const SizedBox(height: 4),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuToggle(String key) {
+    final value = _menuVisibility[key] ?? true;
+    final defaultVal = _menuDefaults[key];
+    final overridden = defaultVal != null && defaultVal != value;
+    return SwitchListTile(
+      contentPadding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+      dense: true,
+      value: value,
+      onChanged: (v) => setState(() => _menuVisibility[key] = v),
+      secondary: Icon(_menuIcons[key] ?? Icons.dashboard_outlined,
+          color: value ? AppTheme.primaryColor : Colors.grey),
+      title: Row(
+        children: [
+          Text(_menuLabels[key] ?? key),
+          if (overridden) ...[
+            const SizedBox(width: 6),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+              decoration: BoxDecoration(
+                color: Colors.amber[100],
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                'aangepast',
+                style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.amber[800],
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

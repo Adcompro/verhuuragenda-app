@@ -3,7 +3,9 @@ class User {
   final String name;
   final String email;
   final String? role;
+  final String? teamRole;
   final List<String> permissions;
+  final Map<String, bool>? menuVisibility;
   final Host? host;
   final String? brandingAppName;
   final DateTime? termsAcceptedAt;
@@ -14,7 +16,9 @@ class User {
     required this.name,
     required this.email,
     this.role,
+    this.teamRole,
     this.permissions = const [],
+    this.menuVisibility,
     this.host,
     this.brandingAppName,
     this.termsAcceptedAt,
@@ -24,23 +28,29 @@ class User {
   bool get hasAcceptedTerms => termsAcceptedAt != null;
 
   /// Whether this user is allowed to see the menu item identified by [key].
-  /// Admin always wins. Otherwise the role table below decides.
+  /// 1. If the host has set per-team-member menu visibility for this user,
+  ///    that wins.
+  /// 2. Otherwise admin sees everything; system-role table decides for
+  ///    self-served hosts.
   bool canAccessMenu(String key) {
+    // Server-curated map (host customised this team member's menus)
+    final mv = menuVisibility;
+    if (mv != null && mv.containsKey(key)) return mv[key]!;
+
     final r = role ?? 'host';
     if (r == 'admin') return true;
-    // Mapping: which roles see which menu key.
     const allowedByRole = <String, Set<String>>{
       'dashboard':     {'host', 'manager', 'viewer'},
       'calendar':      {'host', 'manager', 'viewer'},
       'bookings':      {'host', 'manager', 'viewer'},
       'accommodations':{'host', 'manager', 'viewer'},
-      'guests':        {'manager', 'viewer'}, // host doesn't manage other guests
+      'guests':        {'manager', 'viewer'},
       'chat':          {'host', 'manager', 'viewer'},
       'cleaning':      {'host', 'manager'},
       'maintenance':   {'host', 'manager'},
       'pool':          {'host', 'manager'},
       'garden':        {'host', 'manager'},
-      'campaigns':     <String>{}, // admin only
+      'campaigns':     <String>{},
       'statistics':    {'manager'},
       'settings':      {'host', 'manager', 'viewer'},
     };
@@ -79,12 +89,23 @@ class User {
         ? rawPerms.map((e) => e.toString()).toList()
         : <String>[];
 
+    Map<String, bool>? mv;
+    final rawMv = json['menu_visibility'];
+    if (rawMv is Map) {
+      mv = <String, bool>{};
+      rawMv.forEach((k, v) {
+        mv![k.toString()] = v == true;
+      });
+    }
+
     return User(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       role: json['role'],
+      teamRole: json['team_role'] as String?,
       permissions: perms,
+      menuVisibility: mv,
       host: host,
       brandingAppName: brandingAppName,
       termsAcceptedAt: termsAcceptedAt,

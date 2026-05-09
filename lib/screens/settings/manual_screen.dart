@@ -476,6 +476,60 @@ class ManualScreen extends StatelessWidget {
         ],
       ),
       _ManualSection(
+        icon: Icons.group_outlined,
+        title: 'Teamleden — eigen medewerkers toevoegen',
+        children: [
+          _ManualParagraph(
+            'Heb je een schoonmaker, manager of administratief mede-'
+            'werker? Geef ze een eigen account zodat ze in de app zien '
+            'wat voor hén relevant is, en niets meer.',
+          ),
+          _ManualParagraph(
+            'Premium-abonnement nodig — gratis-accounts kunnen geen '
+            'teamleden uitnodigen.',
+          ),
+          _ManualHeader('Een teamlid toevoegen'),
+          _ManualNumberedList([
+            'Instellingen → Team',
+            'Tap op + (rechtsboven)',
+            'Vul naam, e-mailadres en een tijdelijk wachtwoord in',
+            'Kies een rol: Manager, Medewerker, Schoonmaker of '
+                'Alleen-lezen',
+            'Bekijk onder "Menu-rechten" welke menu\'s dit teamlid ziet '
+                '— pas individueel aan met de schakelaars',
+            'Bewaar — je teamlid kan direct inloggen met het opgegeven '
+                'wachtwoord',
+          ]),
+          _ManualHeader('Wat doen de standaard rollen?'),
+          _ManualBulletList([
+            'Manager — alle menu\'s aan, kan alles beheren',
+            'Medewerker — boekingen, gasten, schoonmaak, onderhoud; '
+                'geen statistieken of mailings',
+            'Schoonmaker — alleen schoonmaak, onderhoud en kalender',
+            'Alleen-lezen — kijken mag, wijzigen niet',
+          ]),
+          _ManualHeader('Per teamlid afwijken'),
+          _ManualParagraph(
+            'Onder "Menu-rechten" zie je per menu een schakelaar. '
+            'Wijk je af van de rol-default? Dan verschijnt een geel '
+            '"aangepast" labeltje achter de naam. Met de Reset-knop '
+            'rechts bovenin zet je alles terug naar de rol-default.',
+          ),
+          _ManualParagraph(
+            'Voorbeeld: een schoonmaker die ook een gastbericht moet '
+            'kunnen lezen? Open zijn profiel → zet "Chat" aan onder '
+            'Menu-rechten → bewaar. Hij ziet voortaan ook de chat-tab.',
+          ),
+          _ManualHeader('Wijzigen of verwijderen'),
+          _ManualParagraph(
+            'Tap op een teamlid in de lijst → bewerk en bewaar. Of veeg '
+            'naar links voor verwijderen — het account wordt losgekoppeld '
+            'maar de inlog blijft gewoon werken (met dezelfde rechten '
+            'totdat je hem opnieuw uitnodigt).',
+          ),
+        ],
+      ),
+      _ManualSection(
         icon: Icons.shield_outlined,
         title: 'Rollen en menu-rechten',
         children: [
