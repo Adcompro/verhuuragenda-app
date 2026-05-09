@@ -457,7 +457,7 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
                   crossAxisCount: Responsive.isDesktop(context) ? 3 : 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 0.85,
+                  childAspectRatio: 0.78,
                 ),
                 itemCount: pendingTasks.length,
                 itemBuilder: (context, index) => _CleaningTaskCard(
@@ -483,7 +483,7 @@ class _CleaningScreenState extends State<CleaningScreen> with SingleTickerProvid
                   crossAxisCount: Responsive.isDesktop(context) ? 3 : 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 0.85,
+                  childAspectRatio: 0.78,
                 ),
                 itemCount: completedTasks.length,
                 itemBuilder: (context, index) => _CleaningTaskCard(
