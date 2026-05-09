@@ -155,7 +155,8 @@ workflows:
             --dart-define=SCREENSHOT_LOGIN_PASSWORD="${SCREENSHOT_LOGIN_PASSWORD:-Review123!}" \
             -d "$IPAD_UDID" \
             --verbose \
-            2>&1 | tail -200 || echo "Flutter drive completed (may have warnings)"
+            2>&1 | grep -E "SCREENSHOT TEST:|flutter:|Error|✓|✗|×" | tail -200 \
+            || echo "Flutter drive completed (may have warnings)"
 
           echo "===== files anywhere named *.png ====="
           find "$PROJECT_DIR" -name "*.png" -type f 2>/dev/null | grep -v -E "\\.(dart_tool|build|symlinks|Pods)/" | head -30

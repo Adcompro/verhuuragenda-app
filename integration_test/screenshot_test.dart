@@ -4,9 +4,13 @@ import 'package:integration_test/integration_test.dart';
 import 'package:verhuuragenda_app/main.dart' as app;
 
 /// App Store screenshot tour. Drives the host app through the
-/// most-important screens and saves a screenshot per scene. Runs on
-/// Codemagic's ios-ipad-preview workflow against an iPad Pro 12.9"
-/// simulator.
+/// most-important screens and saves a screenshot per scene.
+///
+/// Important: spinners (CircularProgressIndicator) on the dashboard
+/// and other API-driven screens cause pumpAndSettle to time out (it
+/// waits for *all* animations to stop, which a spinner never does).
+/// We use plain `pump(Duration)` for time advances and only call
+/// pumpAndSettle right after a stable user action like enterText.
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -19,8 +23,10 @@ void main() {
     print('SCREENSHOT TEST: ✓ $name captured');
   }
 
-  Future<void> settle(WidgetTester t, [int seconds = 2]) async {
-    await t.pumpAndSettle(Duration(seconds: seconds));
+  /// Wait for the given duration without requiring all animations to
+  /// stop. Survives spinners.
+  Future<void> wait(WidgetTester t, [int seconds = 2]) async {
+    await t.pump(Duration(seconds: seconds));
   }
 
   Future<bool> tapIcon(
@@ -33,7 +39,7 @@ void main() {
     if (f.evaluate().isEmpty) f = find.byIcon(filled);
     if (f.evaluate().isEmpty) {
       // ignore: avoid_print
-      print('SCREENSHOT TEST: × icon not found ${label ?? outlined}');
+      print('SCREENSHOT TEST: × icon not found ${label ?? outlined.codePoint}');
       return false;
     }
     try {
@@ -47,9 +53,15 @@ void main() {
         );
       } catch (_) {}
     }
-    await t.pumpAndSettle();
-    await t.tap(f.first);
-    await settle(t);
+    await wait(t, 1);
+    try {
+      await t.tap(f.first);
+    } catch (e) {
+      // ignore: avoid_print
+      print('SCREENSHOT TEST: × tap failed for ${label ?? "icon"}: $e');
+      return false;
+    }
+    await wait(t, 3);
     return true;
   }
 
@@ -57,7 +69,7 @@ void main() {
     // ignore: avoid_print
     print('SCREENSHOT TEST: launching app');
     app.main();
-    await settle(tester, 5);
+    await wait(tester, 5);
 
     // ==== Login screen screenshot ===================================
     await snap('00_login');
@@ -72,71 +84,89 @@ void main() {
       defaultValue: 'Review123!',
     );
 
-    final fields = find.byType(TextField);
-    if (fields.evaluate().length >= 2) {
+    try {
+      final fields = find.byType(TextField);
       // ignore: avoid_print
-      print('SCREENSHOT TEST: typing credentials for $email');
-      await tester.enterText(fields.at(0), email);
-      await settle(tester);
-      await tester.enterText(fields.at(1), password);
-      await settle(tester);
+      print('SCREENSHOT TEST: found ${fields.evaluate().length} TextFields');
+      if (fields.evaluate().length >= 2) {
+        // ignore: avoid_print
+        print('SCREENSHOT TEST: typing credentials for $email');
+        await tester.enterText(fields.at(0), email);
+        await tester.pump(const Duration(milliseconds: 200));
+        await tester.enterText(fields.at(1), password);
+        await tester.pump(const Duration(milliseconds: 200));
 
-      final btn = find.byType(ElevatedButton);
-      if (btn.evaluate().isNotEmpty) {
-        await tester.tap(btn.first);
-        await settle(tester, 8);
+        final btn = find.byType(ElevatedButton);
+        if (btn.evaluate().isNotEmpty) {
+          // ignore: avoid_print
+          print('SCREENSHOT TEST: tapping login button');
+          await tester.tap(btn.first);
+          await wait(tester, 8); // wait for network call + navigation
+        } else {
+          // ignore: avoid_print
+          print('SCREENSHOT TEST: × no ElevatedButton on login screen');
+        }
+      } else {
+        // ignore: avoid_print
+        print('SCREENSHOT TEST: × not enough TextFields, skipping login');
       }
+    } catch (e) {
+      // ignore: avoid_print
+      print('SCREENSHOT TEST: × login flow threw: $e');
     }
 
     // ==== Auto-accept terms screen if it appears =====================
-    final cb = find.byType(Checkbox);
-    if (cb.evaluate().isNotEmpty) {
-      // ignore: avoid_print
-      print('SCREENSHOT TEST: accepting terms');
-      await tester.tap(cb.first);
-      await settle(tester);
-      final cta = find.widgetWithText(FilledButton, 'Akkoord & doorgaan');
-      if (cta.evaluate().isNotEmpty) {
-        await tester.tap(cta.first);
-        await settle(tester, 6);
+    try {
+      final cb = find.byType(Checkbox);
+      if (cb.evaluate().isNotEmpty) {
+        // ignore: avoid_print
+        print('SCREENSHOT TEST: accepting terms');
+        await tester.tap(cb.first);
+        await wait(tester, 1);
+        final cta = find.widgetWithText(FilledButton, 'Akkoord & doorgaan');
+        if (cta.evaluate().isNotEmpty) {
+          await tester.tap(cta.first);
+          await wait(tester, 6);
+        }
       }
+    } catch (e) {
+      // ignore: avoid_print
+      print('SCREENSHOT TEST: × terms flow threw: $e');
     }
 
-    // ==== Enable all modules so cleaning/maintenance tabs appear ====
-    // Module visibility defaults to "all disabled" on a fresh install
-    // — so the simulator hides Cleaning/Maintenance/etc. icons until
-    // we go to Settings → Modules and reset.
-    if (await tapIcon(tester,
-        outlined: Icons.settings_outlined,
-        filled: Icons.settings,
-        label: 'settings (pre-tour)')) {
-      final modulesTile = find.text('Modules');
-      if (modulesTile.evaluate().isNotEmpty) {
-        await tester.tap(modulesTile.first);
-        await settle(tester, 2);
-        // Tap "Alles weer aanzetten" / "Enable all again" / variants
-        final resetCta = find.byType(OutlinedButton);
-        if (resetCta.evaluate().isNotEmpty) {
-          // The reset button is the only OutlinedButton on this screen
-          await tester.tap(resetCta.first);
-          await settle(tester, 2);
+    // ==== Enable all modules so cleaning/maintenance show ============
+    try {
+      if (await tapIcon(tester,
+          outlined: Icons.settings_outlined,
+          filled: Icons.settings,
+          label: 'settings')) {
+        await wait(tester, 2);
+        final modulesTile = find.text('Modules');
+        if (modulesTile.evaluate().isNotEmpty) {
+          await tester.tap(modulesTile.first);
+          await wait(tester, 2);
+          final resetBtn = find.byType(OutlinedButton);
+          if (resetBtn.evaluate().isNotEmpty) {
+            await tester.tap(resetBtn.first);
+            await wait(tester, 2);
+          }
+          await tester.pageBack();
+          await wait(tester, 1);
         }
         await tester.pageBack();
-        await settle(tester);
+        await wait(tester, 2);
       }
-      await tester.pageBack();
-      await settle(tester);
+    } catch (e) {
+      // ignore: avoid_print
+      print('SCREENSHOT TEST: × module enable threw: $e');
     }
 
-    // ==== 01: Dashboard ===============================================
-    // Make sure we're on the dashboard after the modules detour.
+    // ==== Dashboard ===================================================
     await tapIcon(tester,
-        outlined: Icons.home_outlined,
-        filled: Icons.home,
-        label: 'home');
+        outlined: Icons.home_outlined, filled: Icons.home, label: 'home');
     await snap('01_dashboard');
 
-    // ==== 02: Calendar ================================================
+    // ==== Calendar ====================================================
     if (await tapIcon(tester,
         outlined: Icons.calendar_month_outlined,
         filled: Icons.calendar_month,
@@ -144,7 +174,7 @@ void main() {
       await snap('02_calendar');
     }
 
-    // ==== 03: Bookings list ==========================================
+    // ==== Bookings list ==============================================
     if (await tapIcon(tester,
         outlined: Icons.book_outlined,
         filled: Icons.book,
@@ -152,7 +182,7 @@ void main() {
       await snap('03_bookings');
     }
 
-    // ==== 04: Accommodations =========================================
+    // ==== Accommodations =============================================
     if (await tapIcon(tester,
         outlined: Icons.home_work_outlined,
         filled: Icons.home_work,
@@ -160,25 +190,29 @@ void main() {
       await snap('04_accommodations');
     }
 
-    // ==== 05: Chat inbox =============================================
+    // ==== Chat inbox =================================================
     if (await tapIcon(tester,
         outlined: Icons.chat_bubble_outline,
         filled: Icons.chat_bubble,
         label: 'chat')) {
       await snap('05_chat_inbox');
 
-      // ==== 06: Open first conversation thread =======================
-      final tiles = find.byType(ListTile);
-      if (tiles.evaluate().isNotEmpty) {
-        await tester.tap(tiles.first);
-        await settle(tester, 3);
-        await snap('06_chat_thread');
-        await tester.pageBack();
-        await settle(tester);
+      try {
+        final tiles = find.byType(ListTile);
+        if (tiles.evaluate().isNotEmpty) {
+          await tester.tap(tiles.first);
+          await wait(tester, 3);
+          await snap('06_chat_thread');
+          await tester.pageBack();
+          await wait(tester, 1);
+        }
+      } catch (e) {
+        // ignore: avoid_print
+        print('SCREENSHOT TEST: × chat thread threw: $e');
       }
     }
 
-    // ==== 07: Cleaning ===============================================
+    // ==== Cleaning ===================================================
     if (await tapIcon(tester,
         outlined: Icons.cleaning_services_outlined,
         filled: Icons.cleaning_services,
@@ -186,7 +220,7 @@ void main() {
       await snap('07_cleaning');
     }
 
-    // ==== 08: Maintenance ============================================
+    // ==== Maintenance ================================================
     if (await tapIcon(tester,
         outlined: Icons.build_outlined,
         filled: Icons.build,
@@ -194,7 +228,7 @@ void main() {
       await snap('08_maintenance');
     }
 
-    // ==== 09: Settings ===============================================
+    // ==== Settings ===================================================
     if (await tapIcon(tester,
         outlined: Icons.settings_outlined,
         filled: Icons.settings,
