@@ -108,6 +108,40 @@ class ManualScreen extends StatelessWidget {
         ],
       ),
       _ManualSection(
+        icon: Icons.photo_library_outlined,
+        title: 'Foto\'s toevoegen aan een woning',
+        children: [
+          _ManualParagraph(
+            'Mooie foto\'s zorgen ervoor dat jij én je gasten meteen '
+            'weten over welke woning het gaat. Je kunt zoveel foto\'s '
+            'toevoegen als je wilt; de eerste wordt automatisch de '
+            'hoofdfoto.',
+          ),
+          _ManualNumberedList([
+            'Accommodaties → kies de woning → Bewerken',
+            'Scroll naar de sectie "Foto\'s"',
+            'Tap op de tegel "Foto toevoegen"',
+            'Kies een foto uit je bibliotheek — de app verkleint en '
+                'comprimeert automatisch naar een efficiënt formaat',
+            'Wachten tot de upload klaar is — de foto verschijnt direct '
+                'in de strip',
+          ]),
+          _ManualHeader('Foto verwijderen'),
+          _ManualParagraph(
+            'Tap op het ronde × icoontje rechtsboven op een foto. '
+            'Bevestig in het pop-upscherm — de foto wordt direct '
+            'verwijderd. Was dit de hoofdfoto, dan promoveert de '
+            'volgende foto automatisch.',
+          ),
+          _ManualHeader('Eerst opslaan'),
+          _ManualParagraph(
+            'Bij een gloednieuwe woning moet je eerst de basisgegevens '
+            'opslaan voordat je foto\'s kan toevoegen — de app heeft '
+            'namelijk een woning-ID nodig om de foto aan te koppelen.',
+          ),
+        ],
+      ),
+      _ManualSection(
         icon: Icons.book_outlined,
         title: 'Een boeking maken',
         children: [
@@ -374,8 +408,16 @@ class ManualScreen extends StatelessWidget {
           _ManualHeader('Nieuwe-bericht-notificatie'),
           _ManualParagraph(
             'In de app krijg je direct een rode badge op het chat-icoon. '
-            'Push-notificaties op je vergrendelscherm vereisen extra '
-            'configuratie (Firebase) — werkt zodra die is opgezet.',
+            'Daarnaast krijg je ook een push-notificatie op je '
+            'vergrendelscherm — werkt automatisch zodra je de app '
+            'voor het eerst toestemming hebt gegeven om notificaties '
+            'te tonen.',
+          ),
+          _ManualParagraph(
+            'Geen notificaties ontvangen? Check Instellingen → '
+            'Notificaties (in de iOS-instellingen) of CasaMio '
+            'toestemming heeft. Of in de app: Instellingen → Push '
+            'diagnostics om te zien of je device geregistreerd is.',
           ),
         ],
       ),
@@ -430,6 +472,122 @@ class ManualScreen extends StatelessWidget {
           _ManualParagraph(
             'De technische app-naam onder je icoon (CasaMio) wijzigt '
             'niet — daarvoor moet de app opnieuw door App Store review.',
+          ),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.person_outline,
+        title: 'Je profiel bewerken',
+        children: [
+          _ManualParagraph(
+            'Je profiel bevat de gegevens die je gasten zien — je naam, '
+            'e-mailadres en eventueel telefoon. Houd dit up-to-date zodat '
+            'gasten je makkelijk kunnen bereiken.',
+          ),
+          _ManualNumberedList([
+            'Instellingen → Profiel bewerken',
+            'Pas naam, e-mailadres of telefoon aan',
+            'Wachtwoord wijzigen kan in dezelfde view (huidig + nieuw)',
+            'Opslaan',
+          ]),
+          _ManualParagraph(
+            'Je e-mailadres is ook je inloggegevens; verander je het, '
+            'log dan voortaan in met het nieuwe adres.',
+          ),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.credit_card_outlined,
+        title: 'Abonnement en limieten',
+        children: [
+          _ManualParagraph(
+            'CasaMio is gratis voor één woning. Beheer je meerdere '
+            'woningen, dan heb je een Premium-abonnement nodig — '
+            'maandelijks of jaarlijks via In-App Purchase.',
+          ),
+          _ManualHeader('Wat zit er in Premium?'),
+          _ManualBulletList([
+            'Onbeperkt aantal accommodaties',
+            'Volledige iCal sync (Airbnb, Booking, VRBO, etc.)',
+            'Mailings/campagnes naar je gasten',
+            'Statistieken-dashboard',
+            'Export van alle data (Excel, jaaroverzicht)',
+          ]),
+          _ManualHeader('Upgraden'),
+          _ManualNumberedList([
+            'Instellingen → Abonnement',
+            'Kies Maandelijks of Jaarlijks (jaarlijks is voordeliger)',
+            'iOS toont het Apple-betaalscherm — bevestig met Face ID',
+            'Direct na betaling staat alles open',
+          ]),
+          _ManualHeader('Stoppen of wisselen'),
+          _ManualParagraph(
+            'Abonnement opzeggen of wijzigen doe je via iOS-instellingen '
+            '→ Apple ID → Abonnementen. CasaMio kan dat zelf niet — dat '
+            'beheert Apple voor je.',
+          ),
+          _ManualParagraph(
+            'Aankopen herstellen na een nieuwe telefoon of opnieuw '
+            'installeren? Instellingen → Abonnement → Aankopen herstellen.',
+          ),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.account_balance_wallet_outlined,
+        title: 'Boekjaar instellen',
+        children: [
+          _ManualParagraph(
+            'Voor exports en statistieken bepaal je zelf welke periode '
+            'je boekjaar dekt. Voor de meesten is dat 1 januari t/m 31 '
+            'december, maar je kunt het ook anders kiezen.',
+          ),
+          _ManualNumberedList([
+            'Instellingen → Boekjaar',
+            'Kies start- en eindmaand (bv. apr → mrt voor zakelijk '
+                'boekjaar)',
+            'Opslaan',
+          ]),
+          _ManualParagraph(
+            'De export "Verhuuropbrengsten" gebruikt vanaf nu jouw '
+            'boekjaar in plaats van het kalenderjaar.',
+          ),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.language_outlined,
+        title: 'Taal wijzigen',
+        children: [
+          _ManualParagraph(
+            'CasaMio ondersteunt Nederlands, Engels, Duits, Frans, '
+            'Italiaans en Spaans. De app volgt standaard de taal van '
+            'je apparaat, maar je kunt handmatig kiezen.',
+          ),
+          _ManualNumberedList([
+            'Instellingen → Taal',
+            'Kies de gewenste taal of "Volg apparaat"',
+            'Wijziging direct zichtbaar — geen herstart nodig',
+          ]),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.shield_outlined,
+        title: 'Privacy en gegevens verwijderen',
+        children: [
+          _ManualParagraph(
+            'Wij verwerken alleen wat nodig is om de app te laten '
+            'werken. Je hebt op elk moment het recht om je gegevens '
+            'in te zien of te laten verwijderen.',
+          ),
+          _ManualBulletList([
+            'Inzage: Instellingen → Gegevens exporteren (Excel met '
+                'alles)',
+            'Verwijderen: Instellingen → Privacy → Account verwijderen — '
+                'definitief, kan niet ongedaan',
+            'Volledige privacyverklaring: Instellingen → Privacybeleid',
+          ]),
+          _ManualParagraph(
+            'Je gasten kunnen zich los van jou afmelden voor mailings '
+            '(unsubscribe-link in iedere campagne-mail).',
           ),
         ],
       ),
