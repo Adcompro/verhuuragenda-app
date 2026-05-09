@@ -168,8 +168,10 @@ workflows:
       groups:
         - firebase
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: nl.verhuurvakantiewoning.app
+        provisioning_profiles:
+          - casamio_apstore
+        certificates:
+          - vakantiewoningverhuur_nieuw
 
     scripts:
       - name: Create Flutter project structure
@@ -306,34 +308,13 @@ workflows:
         script: |
           dart run flutter_launcher_icons
 
-      - name: Set up code signing
-        script: |
-          # Init keychain so app-store-connect can save the cert it
-          # creates. Without this, --create fails with
-          # "Cannot save Signing Certificates without certificate
-          # private key".
-          keychain initialize
-
-          # Wipe any leftover profile from the agent's local store so we
-          # don't accidentally reuse a stale "verhuuragenda apstore"
-          # profile that was created before Push Notifications was
-          # enabled on the App ID.
-          rm -rf ~/Library/MobileDevice/Provisioning\ Profiles/* || true
-
-          # --create forces a fresh certificate + profile via App Store
-          # Connect API with all current App ID capabilities
-          # (including Push Notifications).
-          app-store-connect fetch-signing-files \
-            nl.verhuurvakantiewoning.app \
-            --type IOS_APP_STORE \
-            --create
-
-          # Add the freshly fetched certificate to the keychain so
-          # codesign can use it during the Xcode archive step.
-          keychain add-certificates
-
       - name: Generate export_options.plist
         script: |
+          # Manual signing via ios_signing installs the cert and
+          # profile, but does not generate export_options.plist.
+          # xcode-project use-profiles reads the installed profiles
+          # (casamio_apstore) and writes ~/export_options.plist that
+          # the next "flutter build ipa" step needs.
           xcode-project use-profiles
 
       - name: Build iOS App
