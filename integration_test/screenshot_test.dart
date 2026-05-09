@@ -36,10 +36,18 @@ void main() {
     WidgetTester t, {
     required IconData outlined,
     required IconData filled,
+    IconData? altOutlined,
+    IconData? altFilled,
     String? label,
   }) async {
     var f = find.byIcon(outlined);
     if (f.evaluate().isEmpty) f = find.byIcon(filled);
+    if (f.evaluate().isEmpty && altOutlined != null) {
+      f = find.byIcon(altOutlined);
+    }
+    if (f.evaluate().isEmpty && altFilled != null) {
+      f = find.byIcon(altFilled);
+    }
     if (f.evaluate().isEmpty) {
       // ignore: avoid_print
       print('SCREENSHOT TEST: × icon not found ${label ?? outlined.codePoint}');
@@ -199,8 +207,15 @@ void main() {
     }
 
     // ==== Dashboard ===================================================
+    // On iPad the NavigationRail uses dashboard_outlined; on phone the
+    // bottom nav uses home_outlined. Try both.
     await tapIcon(tester,
-        outlined: Icons.home_outlined, filled: Icons.home, label: 'home');
+        outlined: Icons.dashboard_outlined,
+        filled: Icons.dashboard,
+        altOutlined: Icons.home_outlined,
+        altFilled: Icons.home,
+        label: 'home/dashboard');
+    await wait(tester, 4); // give dashboard time to load API data
     await snap('01_dashboard');
 
     // ==== Calendar ====================================================
