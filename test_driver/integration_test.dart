@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:integration_test/integration_test_driver.dart';
+// onScreenshot is only exposed via the *extended* driver entry-point.
+import 'package:integration_test/integration_test_driver_extended.dart';
 
 Future<void> main() => integrationDriver(
       onScreenshot: (String name, List<int> bytes, [Map<String, Object?>? args]) async {

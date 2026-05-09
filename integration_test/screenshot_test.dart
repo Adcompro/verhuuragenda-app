@@ -12,6 +12,9 @@ void main() {
 
   Future<void> snap(IntegrationTestWidgetsFlutterBinding b, String name) async {
     try {
+      // iOS requires Flutter's surface to be converted to a UIImage
+      // before takeScreenshot() can grab actual pixels.
+      await b.convertFlutterSurfaceToImage();
       await b.takeScreenshot(name);
       // ignore: avoid_print
       print('✓ screenshot: $name');
