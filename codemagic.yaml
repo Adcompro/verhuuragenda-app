@@ -87,6 +87,37 @@ workflows:
           /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:0 integer 1" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UIDeviceFamily:1 integer 2" Runner/Info.plist
 
+      - name: Patch AppDelegate for flutter_apns_only
+        script: |
+          # Same patch as ios-workflow: flutter_apns_only crashes the
+          # debug build at startup if AppDelegate doesn't set the
+          # UNUserNotificationCenter delegate. Without it the
+          # screenshot integration test never reaches takeScreenshot.
+          APP_DELEGATE=ios/Runner/AppDelegate.swift
+          if grep -q "UNUserNotificationCenter.current().delegate" "$APP_DELEGATE"; then
+            echo "✓ AppDelegate already sets UN center delegate"
+          else
+            python3 - <<'PY'
+          import pathlib
+          p = pathlib.Path('ios/Runner/AppDelegate.swift')
+          src = p.read_text()
+          if 'import UserNotifications' not in src:
+              src = src.replace(
+                  'import Flutter',
+                  'import Flutter\nimport UserNotifications',
+              )
+          src = src.replace(
+              'GeneratedPluginRegistrant.register(with: self)',
+              'GeneratedPluginRegistrant.register(with: self)\n'
+              '    if #available(iOS 10.0, *) {\n'
+              '      UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate\n'
+              '    }'
+          )
+          p.write_text(src)
+          print("✓ AppDelegate patched in ipad-preview workflow")
+          PY
+          fi
+
       - name: Boot iPad Pro Simulator
         script: |
           # Find iPad Pro 12.9 inch for best screenshots
