@@ -222,25 +222,24 @@ workflows:
           </dict>
           </plist>
           PLIST
-          # Reference the entitlements file in every build config of the
-          # Runner target, and add the file as a project group child so
-          # Xcode picks it up.
-          cd ios
-          /usr/bin/ruby <<'RUBY'
-          require 'xcodeproj'
-          project = Xcodeproj::Project.open('Runner.xcodeproj')
-          target  = project.targets.find { |t| t.name == 'Runner' }
-          # Add file to the Runner group if not already there.
-          runner_group = project.main_group['Runner']
-          unless runner_group.files.any? { |f| f.path == 'Runner.entitlements' }
-            runner_group.new_file('Runner/Runner.entitlements')
-          end
-          target.build_configurations.each do |config|
-            config.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Runner.entitlements'
-          end
-          project.save
-          puts "✓ Runner.entitlements wired into all build configs"
-          RUBY
+          # Reference the entitlements file in project.pbxproj using
+          # Python (preinstalled on macOS, no extra gems required).
+          python3 - <<'PY'
+          import re, pathlib
+          p = pathlib.Path('ios/Runner.xcodeproj/project.pbxproj')
+          src = p.read_text()
+          if 'CODE_SIGN_ENTITLEMENTS' in src:
+              print('✓ CODE_SIGN_ENTITLEMENTS already present')
+          else:
+              new = re.sub(
+                  r'(PRODUCT_BUNDLE_IDENTIFIER = nl\.verhuurvakantiewoning\.app;)',
+                  r'\1\n\t\t\t\tCODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;',
+                  src,
+              )
+              p.write_text(new)
+              hits = new.count('CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;')
+              print(f'✓ CODE_SIGN_ENTITLEMENTS added to {hits} build config(s)')
+          PY
 
       - name: Inject Firebase config
         script: |
