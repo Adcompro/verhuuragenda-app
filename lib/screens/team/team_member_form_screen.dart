@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../config/theme.dart';
@@ -197,14 +198,48 @@ class _TeamMemberFormScreenState extends State<TeamMemberFormScreen> {
     } catch (e) {
       setState(() => _isSaving = false);
       if (mounted) {
+        // Extract the actual server error from a Dio response so the
+        // host can see what went wrong (too short password, email
+        // already in use, etc) instead of a generic "could not save".
         String errorMessage = l10n.couldNotSave;
-        if (e.toString().contains('email')) {
-          errorMessage = l10n.emailInUse;
+        if (e is DioException && e.response?.data is Map) {
+          final data = e.response!.data as Map;
+          final errors = data['errors'];
+          if (errors is Map && errors.isNotEmpty) {
+            final lines = <String>[];
+            errors.forEach((field, msgs) {
+              if (msgs is List && msgs.isNotEmpty) {
+                lines.add('${_fieldLabel(field.toString())}: ${msgs.first}');
+              }
+            });
+            if (lines.isNotEmpty) errorMessage = lines.join('\n');
+          } else if (data['message'] is String) {
+            errorMessage = data['message'] as String;
+          }
         }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
         );
       }
+    }
+  }
+
+  String _fieldLabel(String field) {
+    switch (field) {
+      case 'name':
+        return 'Naam';
+      case 'email':
+        return 'E-mail';
+      case 'password':
+        return 'Wachtwoord';
+      case 'role':
+        return 'Rol';
+      default:
+        return field;
     }
   }
 
