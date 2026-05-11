@@ -287,6 +287,28 @@ void main() {
         label: 'settings')) {
       await snap('09_settings');
 
+      // ==== Subscription screen =====================================
+      // Apple wants a screenshot of where the subscription is offered
+      // for the IAP review. Tap the Abonnement tile, snap.
+      try {
+        final subTile = find.text('Abonnement');
+        if (subTile.evaluate().isNotEmpty) {
+          // ignore: avoid_print
+          print('SCREENSHOT TEST: opening subscription screen');
+          await tester.tap(subTile.first);
+          await wait(tester, 5);
+          await snap('11_subscription');
+          await tester.pageBack();
+          await wait(tester, 2);
+        } else {
+          // ignore: avoid_print
+          print('SCREENSHOT TEST: × Abonnement tile not found');
+        }
+      } catch (e) {
+        // ignore: avoid_print
+        print('SCREENSHOT TEST: × subscription flow threw: $e');
+      }
+
       // ==== Team member form ========================================
       // Settings → Team → + → form. Showcases per-menu visibility.
       try {
