@@ -37,7 +37,11 @@ class User {
     final mv = menuVisibility;
     if (mv != null && mv.containsKey(key)) return mv[key]!;
 
-    final r = role ?? 'host';
+    // Treat unknown / missing roles as 'host' — safer default than
+    // hiding every menu (which would happen with the empty fallback).
+    var r = role ?? 'host';
+    const knownRoles = {'admin', 'host', 'manager', 'viewer'};
+    if (!knownRoles.contains(r)) r = 'host';
     if (r == 'admin') return true;
     const allowedByRole = <String, Set<String>>{
       'dashboard':     {'host', 'manager', 'viewer'},
