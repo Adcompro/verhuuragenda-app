@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:verhuuragenda_app/main.dart' as app;
 
 /// App Store screenshot tour. Drives the host app through the
@@ -77,13 +78,30 @@ void main() {
   }
 
   testWidgets('App Store tour', (tester) async {
+    // Apply preferred language BEFORE app.main() so the app launches
+    // already in the right locale. The language code comes from the
+    // SCREENSHOT_LANG dart-define passed by the codemagic pipeline
+    // (one run per language).
+    const lang = String.fromEnvironment('SCREENSHOT_LANG', defaultValue: '');
+    if (lang.isNotEmpty) {
+      SharedPreferences.setMockInitialValues({'preferred_language': lang});
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('preferred_language', lang);
+      // ignore: avoid_print
+      print('SCREENSHOT TEST: preferred_language set to $lang');
+    }
+
+    final langPrefix = lang.isEmpty ? '' : '${lang}_';
+
+    Future<void> snapL(String name) => snap('$langPrefix$name');
+
     // ignore: avoid_print
     print('SCREENSHOT TEST: launching app');
     app.main();
-    await wait(tester, 5);
+    await wait(tester, 6);
 
     // ==== Login screen screenshot ===================================
-    await snap('00_login');
+    await snapL('00_login');
 
     // ==== Sign in ====================================================
     const email = String.fromEnvironment(
@@ -216,14 +234,14 @@ void main() {
         altFilled: Icons.home,
         label: 'home/dashboard');
     await wait(tester, 4); // give dashboard time to load API data
-    await snap('01_dashboard');
+    await snapL('01_dashboard');
 
     // ==== Calendar ====================================================
     if (await tapIcon(tester,
         outlined: Icons.calendar_month_outlined,
         filled: Icons.calendar_month,
         label: 'calendar')) {
-      await snap('02_calendar');
+      await snapL('02_calendar');
     }
 
     // ==== Bookings list ==============================================
@@ -231,7 +249,7 @@ void main() {
         outlined: Icons.book_outlined,
         filled: Icons.book,
         label: 'bookings')) {
-      await snap('03_bookings');
+      await snapL('03_bookings');
     }
 
     // ==== Accommodations =============================================
@@ -239,7 +257,7 @@ void main() {
         outlined: Icons.home_work_outlined,
         filled: Icons.home_work,
         label: 'accommodations')) {
-      await snap('04_accommodations');
+      await snapL('04_accommodations');
     }
 
     // ==== Chat inbox =================================================
@@ -247,14 +265,14 @@ void main() {
         outlined: Icons.chat_bubble_outline,
         filled: Icons.chat_bubble,
         label: 'chat')) {
-      await snap('05_chat_inbox');
+      await snapL('05_chat_inbox');
 
       try {
         final tiles = find.byType(ListTile);
         if (tiles.evaluate().isNotEmpty) {
           await tester.tap(tiles.first);
           await wait(tester, 3);
-          await snap('06_chat_thread');
+          await snapL('06_chat_thread');
           await tester.pageBack();
           await wait(tester, 1);
         }
@@ -269,7 +287,7 @@ void main() {
         outlined: Icons.cleaning_services_outlined,
         filled: Icons.cleaning_services,
         label: 'cleaning')) {
-      await snap('07_cleaning');
+      await snapL('07_cleaning');
     }
 
     // ==== Maintenance ================================================
@@ -277,7 +295,7 @@ void main() {
         outlined: Icons.build_outlined,
         filled: Icons.build,
         label: 'maintenance')) {
-      await snap('08_maintenance');
+      await snapL('08_maintenance');
     }
 
     // ==== Settings ===================================================
@@ -285,7 +303,7 @@ void main() {
         outlined: Icons.settings_outlined,
         filled: Icons.settings,
         label: 'settings')) {
-      await snap('09_settings');
+      await snapL('09_settings');
 
       // ==== Subscription screen =====================================
       // Apple wants a screenshot of where the subscription is offered
@@ -297,7 +315,7 @@ void main() {
           print('SCREENSHOT TEST: opening subscription screen');
           await tester.tap(subTile.first);
           await wait(tester, 5);
-          await snap('11_subscription');
+          await snapL('11_subscription');
           await tester.pageBack();
           await wait(tester, 2);
         } else {
@@ -345,7 +363,7 @@ void main() {
               );
               await wait(tester, 2);
             } catch (_) {/* ignore */}
-            await snap('10_team_member');
+            await snapL('10_team_member');
           } else {
             // ignore: avoid_print
             print('SCREENSHOT TEST: × no + icon to open team form');

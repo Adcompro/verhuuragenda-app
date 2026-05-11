@@ -148,11 +148,17 @@ workflows:
           # Run flutter drive with integration test. Credentials are
           # passed via --dart-define and originate from the
           # 'screenshot_demo' Codemagic environment variable group.
+          # SCREENSHOT_LANG (nl/en/de/fr/it/es) prefixes the filenames
+          # and switches the app to that locale before login. Default
+          # is empty = system default (Dutch).
+          LANG_CODE="${SCREENSHOT_LANG:-}"
+          echo "Running screenshot tour for language: ${LANG_CODE:-default}"
           flutter drive \
             --driver=test_driver/integration_test.dart \
             --target=integration_test/screenshot_test.dart \
             --dart-define=SCREENSHOT_LOGIN_EMAIL="${SCREENSHOT_LOGIN_EMAIL:-review@apple.com}" \
             --dart-define=SCREENSHOT_LOGIN_PASSWORD="${SCREENSHOT_LOGIN_PASSWORD:-Review123!}" \
+            --dart-define=SCREENSHOT_LANG="$LANG_CODE" \
             -d "$IPAD_UDID" \
             --verbose \
             2>&1 | grep -E "SCREENSHOT TEST:|flutter:|Error|✓|✗|×" | tail -200 \
