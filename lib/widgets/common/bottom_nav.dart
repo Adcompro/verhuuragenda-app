@@ -123,8 +123,14 @@ class BottomNavShell extends ConsumerWidget {
     ];
 
     // Filter out items the user's role isn't allowed to see.
+    // Exception: settings tab is always shown — when the host has
+    // disabled it, the screen still surfaces a limited view (manual,
+    // notifications, language, help) so the user can fix language or
+    // read the manual.
     if (user == null) return all;
-    return all.where((it) => user.canAccessMenu(it.menuKey)).toList();
+    return all
+        .where((it) => it.menuKey == 'settings' || user.canAccessMenu(it.menuKey))
+        .toList();
   }
 
   int _selectedIndex(BuildContext context, List<_NavItem> items) {

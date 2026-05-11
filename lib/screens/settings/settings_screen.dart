@@ -58,6 +58,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final user = ref.watch(currentUserProvider);
 
+    // When the host has turned off "settings" for this team member,
+    // we still want to keep the basics (notifications, language, manual,
+    // help & support) reachable. fullSettings = false hides the rest.
+    final fullSettings = user?.canAccessMenu('settings') ?? true;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.settings),
@@ -162,17 +167,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
 
           _SectionHeader(title: l10n.profile),
-          _SettingsItem(
-            icon: Icons.person_outline,
-            title: l10n.editProfile,
-            subtitle: l10n.nameAndContact,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ProfileEditScreen()),
-              );
-            },
-          ),
+          if (fullSettings)
+            _SettingsItem(
+              icon: Icons.person_outline,
+              title: l10n.editProfile,
+              subtitle: l10n.nameAndContact,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProfileEditScreen()),
+                );
+              },
+            ),
           _SettingsItem(
             icon: Icons.notifications_outlined,
             title: l10n.notifications,
@@ -184,75 +190,81 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               );
             },
           ),
-          _SettingsItem(
-            icon: Icons.credit_card_outlined,
-            title: l10n.subscription,
-            subtitle: l10n.viewPlanAndLimits,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
-              );
-            },
-          ),
+          if (fullSettings)
+            _SettingsItem(
+              icon: Icons.credit_card_outlined,
+              title: l10n.subscription,
+              subtitle: l10n.viewPlanAndLimits,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
+                );
+              },
+            ),
           _SettingsItem(
             icon: Icons.language_outlined,
             title: l10n.language,
             subtitle: _getLanguageSubtitle(ref, l10n),
             onTap: () => _showLanguageDialog(context, ref, l10n),
           ),
-          _SettingsItem(
-            icon: Icons.badge_outlined,
-            title: 'App-naam',
-            subtitle: ref.watch(brandingProvider),
-            onTap: () => _showAppNameDialog(context, ref),
-          ),
+          if (fullSettings)
+            _SettingsItem(
+              icon: Icons.badge_outlined,
+              title: 'App-naam',
+              subtitle: ref.watch(brandingProvider),
+              onTap: () => _showAppNameDialog(context, ref),
+            ),
 
-          _SectionHeader(title: l10n.management),
-          _SettingsItem(
-            icon: Icons.calendar_month_outlined,
-            title: l10n.seasons,
-            subtitle: l10n.seasonsDescription,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const SeasonsListScreen()),
-              );
-            },
-          ),
-          _SettingsItem(
-            icon: Icons.account_balance_wallet_outlined,
-            title: l10n.financialYear,
-            subtitle: l10n.financialYearDescription,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const FinancialYearScreen()),
-              );
-            },
-          ),
-          _SettingsItem(
-            icon: Icons.group_outlined,
-            title: l10n.team,
-            subtitle: l10n.teamDescription,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const TeamListScreen()),
-              );
-            },
-          ),
-          _SettingsItem(
-            icon: Icons.tune_outlined,
-            title: l10n.modules,
-            subtitle: l10n.modulesDescription,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ModuleSettingsScreen()),
-              );
-            },
-          ),
+          if (fullSettings) _SectionHeader(title: l10n.management),
+          if (fullSettings)
+            _SettingsItem(
+              icon: Icons.calendar_month_outlined,
+              title: l10n.seasons,
+              subtitle: l10n.seasonsDescription,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SeasonsListScreen()),
+                );
+              },
+            ),
+          if (fullSettings)
+            _SettingsItem(
+              icon: Icons.account_balance_wallet_outlined,
+              title: l10n.financialYear,
+              subtitle: l10n.financialYearDescription,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const FinancialYearScreen()),
+                );
+              },
+            ),
+          if (fullSettings)
+            _SettingsItem(
+              icon: Icons.group_outlined,
+              title: l10n.team,
+              subtitle: l10n.teamDescription,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const TeamListScreen()),
+                );
+              },
+            ),
+          if (fullSettings)
+            _SettingsItem(
+              icon: Icons.tune_outlined,
+              title: l10n.modules,
+              subtitle: l10n.modulesDescription,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ModuleSettingsScreen()),
+                );
+              },
+            ),
 
           _SectionHeader(title: l10n.support),
           _SettingsItem(
@@ -300,30 +312,33 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
 
-          _SectionHeader(title: l10n.data),
-          _SettingsItem(
-            icon: Icons.table_chart_outlined,
-            title: l10n.revenueExportTitle,
-            subtitle: l10n.revenueExportSubtitle,
-            onTap: () => _exportRevenue(context, ref, l10n),
-          ),
-          _SettingsItem(
-            icon: Icons.download_outlined,
-            title: l10n.exportData,
-            subtitle: l10n.exportDescription,
-            onTap: () {
-              _showExportDialog(context, l10n);
-            },
-          ),
-          _SettingsItem(
-            icon: Icons.delete_outline,
-            title: l10n.deleteAccount,
-            subtitle: l10n.deleteAccountDescription,
-            textColor: Colors.red,
-            onTap: () {
-              _showDeleteAccountDialog(context, ref, l10n);
-            },
-          ),
+          if (fullSettings) _SectionHeader(title: l10n.data),
+          if (fullSettings)
+            _SettingsItem(
+              icon: Icons.table_chart_outlined,
+              title: l10n.revenueExportTitle,
+              subtitle: l10n.revenueExportSubtitle,
+              onTap: () => _exportRevenue(context, ref, l10n),
+            ),
+          if (fullSettings)
+            _SettingsItem(
+              icon: Icons.download_outlined,
+              title: l10n.exportData,
+              subtitle: l10n.exportDescription,
+              onTap: () {
+                _showExportDialog(context, l10n);
+              },
+            ),
+          if (fullSettings)
+            _SettingsItem(
+              icon: Icons.delete_outline,
+              title: l10n.deleteAccount,
+              subtitle: l10n.deleteAccountDescription,
+              textColor: Colors.red,
+              onTap: () {
+                _showDeleteAccountDialog(context, ref, l10n);
+              },
+            ),
 
           const SizedBox(height: 8),
           const Divider(),

@@ -178,6 +178,59 @@ class ManualScreen extends StatelessWidget {
         ],
       ),
       _ManualSection(
+        icon: Icons.people_outline,
+        title: 'Gastenbeheer',
+        children: [
+          _ManualParagraph(
+            'Iedere boeking is aan een gast gekoppeld. Gasten beheer je '
+            'via het tab "Gasten" in de onderbalk — je houdt er hun '
+            'contactgegevens, herkomst en geschiedenis bij.',
+          ),
+          _ManualHeader('Nieuwe gast aanmaken'),
+          _ManualNumberedList([
+            'Gasten → + → vul voornaam en e-mail in (rest is optioneel)',
+            'Of: bij het aanmaken van een boeking → "+ Nieuwe gast" — '
+                'na opslaan is hij direct gekoppeld',
+          ]),
+          _ManualHeader('Wat houdt CasaMio bij?'),
+          _ManualBulletList([
+            'Naam, e-mail, telefoon en (optioneel) adres',
+            'Land — handig voor mailings en statistieken',
+            'Aantal boekingen — "terugkerende gast" badge na 2e verblijf',
+            'Notities — privé memo\'s alleen zichtbaar voor jou',
+            'Of de gast zich heeft afgemeld voor mailings',
+          ]),
+          _ManualParagraph(
+            'Tip: tap op een gast om een lijst te zien van al hun '
+            'boekingen bij jou. Handig voor terugkerende verhuurders.',
+          ),
+        ],
+      ),
+      _ManualSection(
+        icon: Icons.bar_chart_outlined,
+        title: 'Statistieken (Premium)',
+        children: [
+          _ManualParagraph(
+            'Zie hoe je verhuur draait per maand, per accommodatie '
+            'en per bron — handig om te zien of Airbnb of Booking.com '
+            'meer omzet bracht, of in welke maand de meeste boekingen '
+            'binnenkwamen.',
+          ),
+          _ManualHeader('Wat zie je?'),
+          _ManualBulletList([
+            'Totale omzet voor het boekjaar',
+            'Aantal boekingen per maand (grafiek)',
+            'Bezettingsgraad per accommodatie',
+            'Verdeling per boekingsbron (Direct, Airbnb, Booking, …)',
+            'Top-3 best presterende woningen',
+          ]),
+          _ManualParagraph(
+            'De getoonde periode volgt je ingestelde boekjaar — '
+            'wijzig dat via Instellingen → Boekjaar.',
+          ),
+        ],
+      ),
+      _ManualSection(
         icon: Icons.euro_outlined,
         title: 'Tarieven en seizoenen',
         children: [
@@ -387,9 +440,9 @@ class ManualScreen extends StatelessWidget {
         children: [
           _ManualHeader('Inbox openen'),
           _ManualParagraph(
-            'Tap het chat-bubbel-icoon rechtsboven op het dashboard, '
-            'of de "Chat"-tab in de onderbalk. Een rode badge toont '
-            'het aantal ongelezen berichten.',
+            'Tap de "Chat"-tab in de onderbalk — die staat direct '
+            'naast Dashboard. Een rode badge toont het aantal '
+            'ongelezen berichten.',
           ),
           _ManualHeader('Wat kun je doen?'),
           _ManualBulletList([
@@ -414,10 +467,10 @@ class ManualScreen extends StatelessWidget {
             'te tonen.',
           ),
           _ManualParagraph(
-            'Geen notificaties ontvangen? Check Instellingen → '
-            'Notificaties (in de iOS-instellingen) of CasaMio '
-            'toestemming heeft. Of in de app: Instellingen → Push '
-            'diagnostics om te zien of je device geregistreerd is.',
+            'Geen notificaties ontvangen? Check in de iOS-instellingen '
+            '(Instellingen → Meldingen → CasaMio) of de app toestemming '
+            'heeft, en open in de app Instellingen → Notificaties om '
+            'je voorkeuren per type bericht in te stellen.',
           ),
         ],
       ),
@@ -526,6 +579,28 @@ class ManualScreen extends StatelessWidget {
             'naar links voor verwijderen — het account wordt losgekoppeld '
             'maar de inlog blijft gewoon werken (met dezelfde rechten '
             'totdat je hem opnieuw uitnodigt).',
+          ),
+          _ManualHeader('E-mail en wachtwoord'),
+          _ManualParagraph(
+            'E-mailadressen worden automatisch lowercase opgeslagen — '
+            'iOS\'s "eerste letter hoofdletter" is geen probleem meer. '
+            'Het wachtwoord dat jij instelt is wat het teamlid gebruikt '
+            'om in te loggen; ze kunnen het later zelf wijzigen via '
+            'Profiel.',
+          ),
+          _ManualParagraph(
+            'Wachtwoord moet minimaal 8 tekens zijn. Als de validatie '
+            'faalt, zie je per veld een rode foutmelding in het '
+            'opslaan-bericht.',
+          ),
+          _ManualHeader('Instellingen niet zichtbaar?'),
+          _ManualParagraph(
+            'Zelfs als je "Instellingen" uitschakelt onder Menu-rechten, '
+            'blijven de basis-onderdelen altijd bereikbaar voor het '
+            'teamlid: Notificaties, Taal, Handleiding en Hulp & '
+            'support. Zo kunnen ze altijd zelf hun taal aanpassen of '
+            'de handleiding lezen — alleen woningen, abonnement, team '
+            'en seizoenen verdwijnen uit zicht.',
           ),
         ],
       ),
