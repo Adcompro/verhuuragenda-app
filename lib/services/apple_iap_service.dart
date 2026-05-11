@@ -19,9 +19,10 @@ class AppleIAPService {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   StreamSubscription<List<PurchaseDetails>>? _subscription;
 
-  // Product IDs - moeten overeenkomen met App Store Connect
-  static const String productMonthly = 'nl.vakantiewoningverhuur.premium.monthly';
-  static const String productYearly = 'nl.vakantiewoningverhuur.premium.yearly';
+  // Product IDs - moeten overeenkomen met App Store Connect.
+  // Prefix matches the CasaMio bundle id (nl.verhuurvakantiewoning.app).
+  static const String productMonthly = 'nl.verhuurvakantiewoning.app.premium.monthly';
+  static const String productYearly = 'nl.verhuurvakantiewoning.app.premium.yearly';
 
   static const Set<String> _productIds = {productMonthly, productYearly};
 
