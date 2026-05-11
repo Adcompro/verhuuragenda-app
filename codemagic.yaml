@@ -57,6 +57,10 @@ workflows:
       cocoapods: default
       groups:
         - screenshot_demo
+      vars:
+        # Change to 'nl', 'en', 'de', 'fr', 'it' or 'es' before
+        # triggering each per-language screenshot run.
+        SCREENSHOT_LANG: "es"
 
     scripts:
       - name: Create Flutter project structure
