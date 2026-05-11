@@ -30,6 +30,14 @@ class BottomNavShell extends ConsumerWidget {
         route: '/dashboard',
       ),
       _NavItem(
+        menuKey: 'chat',
+        icon: Icons.chat_bubble_outline,
+        selectedIcon: Icons.chat_bubble,
+        label: 'Chat',
+        route: '/conversations',
+        showUnreadBadge: true,
+      ),
+      _NavItem(
         menuKey: 'calendar',
         icon: Icons.calendar_month_outlined,
         selectedIcon: Icons.calendar_month,
@@ -56,14 +64,6 @@ class BottomNavShell extends ConsumerWidget {
         selectedIcon: Icons.people,
         label: l10n.guests,
         route: '/guests',
-      ),
-      _NavItem(
-        menuKey: 'chat',
-        icon: Icons.chat_bubble_outline,
-        selectedIcon: Icons.chat_bubble,
-        label: 'Chat',
-        route: '/conversations',
-        showUnreadBadge: true,
       ),
       if (visibility.isEnabled(AppModule.cleaning))
         _NavItem(

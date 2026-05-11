@@ -19,7 +19,6 @@ import 'notifications_screen.dart';
 import 'about_screen.dart';
 import 'help_screen.dart';
 import 'feedback_screen.dart';
-import 'push_diagnostics_screen.dart';
 import 'profile_edit_screen.dart';
 import '../seasons/seasons_list_screen.dart';
 import '../team/team_list_screen.dart';
@@ -286,17 +285,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const FeedbackScreen()),
-              );
-            },
-          ),
-          _SettingsItem(
-            icon: Icons.notifications_active_outlined,
-            title: 'Push diagnostics',
-            subtitle: 'Status van pushmeldingen op dit apparaat',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const PushDiagnosticsScreen()),
               );
             },
           ),
