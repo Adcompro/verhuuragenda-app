@@ -57,6 +57,7 @@ workflows:
       cocoapods: default
       groups:
         - screenshot_demo
+        - screenshot_lang
 
     scripts:
       - name: Create Flutter project structure
