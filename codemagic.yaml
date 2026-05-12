@@ -60,7 +60,7 @@ workflows:
       vars:
         # Change to 'nl', 'en', 'de', 'fr', 'it' or 'es' before
         # triggering each per-language screenshot run.
-        SCREENSHOT_LANG: "it"
+        SCREENSHOT_LANG: ""
 
     scripts:
       - name: Create Flutter project structure
