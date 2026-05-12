@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:verhuuragenda_app/main.dart' as app;
+import 'package:verhuuragenda_app/screens/guest/guest_home_screen.dart'
+    show ChatBubble;
 
 /// App Store screenshot tour. Drives the host app through the
 /// most-important screens and saves a screenshot per scene.
@@ -182,6 +184,18 @@ void main() {
     try {
       final cb = find.byType(Checkbox);
       if (cb.evaluate().isNotEmpty) {
+        // Scroll the card to the "Gedragsregels in de chat" section so
+        // the screenshot proves the EULA contains the UGC zero-tolerance
+        // language Apple Guideline 1.2 requires.
+        try {
+          await tester.dragUntilVisible(
+            find.textContaining('Gedragsregels'),
+            find.byType(SingleChildScrollView).first,
+            const Offset(0, -200),
+          );
+        } catch (_) {/* fall back to top of card */}
+        await wait(tester, 2);
+        await snapL('12_terms');
         // ignore: avoid_print
         print('SCREENSHOT TEST: accepting terms');
         await tester.tap(cb.first);
@@ -273,6 +287,55 @@ void main() {
           await tester.tap(tiles.first);
           await wait(tester, 3);
           await snapL('06_chat_thread');
+
+          // ==== Report bottom sheet (Apple Guideline 1.2 demo) =====
+          try {
+            // Long-press the first GestureDetector that wraps a peer's
+            // ChatBubble. Find a bubble and trigger long-press on its
+            // parent.
+            final bubbles = find.byType(ChatBubble);
+            if (bubbles.evaluate().isNotEmpty) {
+              await tester.longPress(bubbles.first);
+              await wait(tester, 2);
+              await snapL('13_report');
+              // Close the bottom sheet
+              final cancel = find.text('Annuleren');
+              if (cancel.evaluate().isNotEmpty) {
+                await tester.tap(cancel.first);
+                await wait(tester, 1);
+              } else {
+                // dismiss by tapping outside / pressing back
+                await tester.tapAt(const Offset(20, 20));
+                await wait(tester, 1);
+              }
+            } else {
+              // ignore: avoid_print
+              print('SCREENSHOT TEST: × no ChatBubble found for report');
+            }
+          } catch (e) {
+            // ignore: avoid_print
+            print('SCREENSHOT TEST: × report flow threw: $e');
+          }
+
+          // ==== Block menu popup (Apple Guideline 1.2 demo) ========
+          try {
+            final more = find.byIcon(Icons.more_vert);
+            if (more.evaluate().isNotEmpty) {
+              await tester.tap(more.first);
+              await wait(tester, 2);
+              await snapL('14_block');
+              // Dismiss the popup menu without selecting
+              await tester.tapAt(const Offset(20, 20));
+              await wait(tester, 1);
+            } else {
+              // ignore: avoid_print
+              print('SCREENSHOT TEST: × no more_vert icon for block');
+            }
+          } catch (e) {
+            // ignore: avoid_print
+            print('SCREENSHOT TEST: × block menu threw: $e');
+          }
+
           await tester.pageBack();
           await wait(tester, 1);
         }
