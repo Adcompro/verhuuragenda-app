@@ -804,6 +804,99 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     });
   }
 
+  /// Long-press menu — Apple Guideline 1.2 requires a flag mechanism
+  /// for user-generated content.
+  void _showMessageActions(BuildContext context, int messageId) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (c) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.flag_outlined, color: Colors.orange[700]),
+              title: const Text('Bericht melden'),
+              subtitle: const Text('Markeer als ongepaste inhoud'),
+              onTap: () {
+                Navigator.pop(c);
+                _reportMessage(messageId);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.close),
+              title: const Text('Annuleren'),
+              onTap: () => Navigator.pop(c),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _reportMessage(int messageId) async {
+    final reason = await showDialog<String>(
+      context: context,
+      builder: (c) {
+        String? selected;
+        return StatefulBuilder(
+          builder: (c2, setState) => AlertDialog(
+            title: const Text('Waarom meld je dit bericht?'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final r in const [
+                  'Haatdragende of beledigende taal',
+                  'Spam of misleidend',
+                  'Bedreigingen of intimidatie',
+                  'Anders',
+                ])
+                  RadioListTile<String>(
+                    value: r,
+                    groupValue: selected,
+                    title: Text(r, style: const TextStyle(fontSize: 14)),
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    onChanged: (v) => setState(() => selected = v),
+                  ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(c2),
+                  child: const Text('Annuleren')),
+              FilledButton(
+                onPressed: selected == null
+                    ? null
+                    : () => Navigator.pop(c2, selected),
+                child: const Text('Melden'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (reason == null) return;
+
+    try {
+      await ApiClient.instance.post(
+        '/messages/$messageId/report',
+        data: {'reason': reason},
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'Bedankt — we bekijken je melding binnen 24 uur en verwijderen ongepaste inhoud direct.')),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Melden mislukt: $e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) return const Center(child: CircularProgressIndicator());
@@ -824,13 +917,19 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                     }
                     final m = _messages[i];
                     final isMe = m['sender_type'] == widget.whoami;
-                    return ChatBubble(
-                      body: m['body']?.toString() ?? '',
-                      attachmentUrl: m['attachment_url']?.toString(),
-                      timestamp: m['created_at']?.toString(),
-                      isMe: isMe,
-                      read: (m['read'] as bool?) ?? false,
-                      otherIcon: widget.otherIcon,
+                    final msgId = m['id'] as int?;
+                    return GestureDetector(
+                      onLongPress: (isMe || msgId == null)
+                          ? null
+                          : () => _showMessageActions(context, msgId),
+                      child: ChatBubble(
+                        body: m['body']?.toString() ?? '',
+                        attachmentUrl: m['attachment_url']?.toString(),
+                        timestamp: m['created_at']?.toString(),
+                        isMe: isMe,
+                        read: (m['read'] as bool?) ?? false,
+                        otherIcon: widget.otherIcon,
+                      ),
                     );
                   },
                 ),

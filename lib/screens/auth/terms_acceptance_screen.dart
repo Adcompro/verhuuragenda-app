@@ -29,7 +29,7 @@ class _TermsAcceptanceScreenState
     if (!_checked || _busy) return;
     setState(() => _busy = true);
     try {
-      await ApiClient.instance.post('/terms/accept', data: {'version': 'v1'});
+      await ApiClient.instance.post('/terms/accept', data: {'version': 'v2-ugc-rules'});
       // Refresh user so the router knows about the new state
       await ref.read(authStateProvider.notifier).refreshUser();
       if (!mounted) return;
@@ -143,6 +143,19 @@ class _TermsAcceptanceScreenState
                             'Je kunt op ieder moment je gegevens inzien, '
                             'exporteren of verwijderen via Instellingen → '
                             'Gegevens exporteren of Account verwijderen.',
+                          ),
+                          const SizedBox(height: 16),
+                          _SectionTitle('Gedragsregels in de chat'),
+                          const Text(
+                            'CasaMio hanteert een nultolerantie voor '
+                            'ongepaste, beledigende, haatdragende, '
+                            'bedreigende of intimiderende inhoud. Dergelijke '
+                            'berichten worden verwijderd en de verantwoordelijke '
+                            'wordt direct uit het platform geweerd.\n\n'
+                            '• Houd een bericht ingedrukt om het te melden.\n'
+                            '• Open een gesprek → menu rechtsboven → '
+                            '"Gast blokkeren" om iemand te blokkeren.\n'
+                            '• Meldingen worden binnen 24 uur beoordeeld.',
                           ),
                           const SizedBox(height: 24),
                           Wrap(

@@ -146,6 +146,17 @@ class _GuestTermsScreenState extends ConsumerState<GuestTermsScreen> {
                             'verwijderen. Neem daarvoor contact op met je '
                             'verhuurder.',
                           ),
+                          const SizedBox(height: 16),
+                          _SectionTitle('Gedragsregels in de chat'),
+                          const Text(
+                            'CasaMio hanteert een nultolerantie voor '
+                            'ongepaste, beledigende, haatdragende, '
+                            'bedreigende of intimiderende inhoud. Dergelijke '
+                            'berichten worden verwijderd en de verantwoordelijke '
+                            'wordt direct uit het platform geweerd.\n\n'
+                            '• Houd een bericht ingedrukt om het te melden.\n'
+                            'Meldingen worden binnen 24 uur beoordeeld.',
+                          ),
                           const SizedBox(height: 24),
                           Wrap(
                             spacing: 8,

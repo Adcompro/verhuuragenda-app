@@ -25,7 +25,12 @@ class User {
     this.termsVersion,
   });
 
-  bool get hasAcceptedTerms => termsAcceptedAt != null;
+  /// Current required terms version. Bumped to v2 to introduce the
+  /// user-generated-content rules Apple required for chat.
+  static const String currentTermsVersion = 'v2-ugc-rules';
+
+  bool get hasAcceptedTerms =>
+      termsAcceptedAt != null && termsVersion == currentTermsVersion;
 
   /// Whether this user is allowed to see the menu item identified by [key].
   /// 1. If the host has set per-team-member menu visibility for this user,
