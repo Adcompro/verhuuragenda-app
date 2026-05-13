@@ -921,6 +921,29 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     final showEmpty = _messages.isEmpty && !_otherTyping;
     return Column(
       children: [
+        // Apple Guideline 1.2 — persistent UGC safety banner so the
+        // flag-mechanism is discoverable without any gesture.
+        Container(
+          width: double.infinity,
+          color: Colors.orange[50],
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            children: [
+              Icon(Icons.flag, size: 16, color: Colors.orange[800]),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Zie je iets ongepasts? Tik op het 🏳️ icoon naast een bericht om het te melden. We reageren binnen 24 uur.',
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: Colors.orange[900],
+                    height: 1.3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
         Expanded(
           child: showEmpty
               ? _emptyState()
@@ -951,7 +974,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                       ),
                     );
                     if (!canReport) return bubble;
-                    // Apple Guideline 1.2 — render a visible flag button
+                    // Apple Guideline 1.2 — visible, prominent flag button
                     // next to every other-party message so users (and the
                     // App Review reviewer) can find the report action
                     // without having to discover the long-press gesture.
@@ -959,17 +982,28 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(child: bubble),
-                        IconButton(
-                          icon: Icon(Icons.flag_outlined,
-                              size: 18, color: Colors.grey[500]),
-                          tooltip: 'Bericht melden',
-                          visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.all(4),
-                          constraints: const BoxConstraints(
-                              minWidth: 32, minHeight: 32),
-                          onPressed: () =>
-                              _showMessageActions(context, msgId),
+                        Tooltip(
+                          message: 'Meld dit bericht als ongepast',
+                          child: Material(
+                            color: Colors.orange[50],
+                            shape: const CircleBorder(
+                              side: BorderSide(
+                                  color: Color(0xFFFFB74D), width: 1),
+                            ),
+                            child: InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () =>
+                                  _showMessageActions(context, msgId),
+                              child: Padding(
+                                padding: const EdgeInsets.all(7),
+                                child: Icon(Icons.flag,
+                                    size: 18,
+                                    color: Colors.orange[800]),
+                              ),
+                            ),
+                          ),
                         ),
+                        const SizedBox(width: 4),
                       ],
                     );
                   },
