@@ -111,7 +111,7 @@ class _ConversationDetailScreenState
       builder: (c) => AlertDialog(
         title: const Text('Bericht melden'),
         content: const Text(
-          'Houd een bericht ingedrukt om het te melden als ongepast. We bekijken meldingen binnen 24 uur en verwijderen ongepaste inhoud direct.\n\n'
+          'Tik op het 🏳️ vlag-icoon naast een gastbericht — of houd het bericht ingedrukt — om het te melden als ongepast. We bekijken meldingen binnen 24 uur en verwijderen ongepaste inhoud direct.\n\n'
           'CasaMio heeft een nultolerantie voor haatdragende, beledigende of intimiderende inhoud.',
         ),
         actions: [

@@ -936,10 +936,11 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                     final m = _messages[i];
                     final isMe = m['sender_type'] == widget.whoami;
                     final msgId = m['id'] as int?;
-                    return GestureDetector(
-                      onLongPress: (isMe || msgId == null)
-                          ? null
-                          : () => _showMessageActions(context, msgId),
+                    final canReport = !isMe && msgId != null;
+                    final bubble = GestureDetector(
+                      onLongPress: canReport
+                          ? () => _showMessageActions(context, msgId)
+                          : null,
                       child: ChatBubble(
                         body: m['body']?.toString() ?? '',
                         attachmentUrl: m['attachment_url']?.toString(),
@@ -948,6 +949,28 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                         read: (m['read'] as bool?) ?? false,
                         otherIcon: widget.otherIcon,
                       ),
+                    );
+                    if (!canReport) return bubble;
+                    // Apple Guideline 1.2 — render a visible flag button
+                    // next to every other-party message so users (and the
+                    // App Review reviewer) can find the report action
+                    // without having to discover the long-press gesture.
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(child: bubble),
+                        IconButton(
+                          icon: Icon(Icons.flag_outlined,
+                              size: 18, color: Colors.grey[500]),
+                          tooltip: 'Bericht melden',
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(
+                              minWidth: 32, minHeight: 32),
+                          onPressed: () =>
+                              _showMessageActions(context, msgId),
+                        ),
+                      ],
                     );
                   },
                 ),
