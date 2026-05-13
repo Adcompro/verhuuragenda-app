@@ -755,8 +755,26 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _sending = false);
+      // Surface the server's validation message (e.g. profanity filter,
+      // blocked thread) instead of a generic fallback.
+      String message = 'Bericht kon niet verzonden worden';
+      if (e is DioException) {
+        final data = e.response?.data;
+        if (data is Map) {
+          final errors = data['errors'];
+          if (errors is Map && errors['body'] is List && (errors['body'] as List).isNotEmpty) {
+            message = (errors['body'] as List).first.toString();
+          } else if (data['message'] is String && (data['message'] as String).isNotEmpty) {
+            message = data['message'] as String;
+          }
+        }
+      }
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bericht kon niet verzonden worden')),
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red[700],
+          duration: const Duration(seconds: 5),
+        ),
       );
     }
   }
