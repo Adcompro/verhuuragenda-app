@@ -25,9 +25,10 @@ class User {
     this.termsVersion,
   });
 
-  /// Current required terms version. Bumped to v2 to introduce the
-  /// user-generated-content rules Apple required for chat.
-  static const String currentTermsVersion = 'v2-ugc-rules';
+  /// Current required terms version. Bumped to v3 so all existing
+  /// accounts (including the App Review reviewer's test account)
+  /// re-see the EULA + UGC rules on next login.
+  static const String currentTermsVersion = 'v3-ugc-rules';
 
   bool get hasAcceptedTerms =>
       termsAcceptedAt != null && termsVersion == currentTermsVersion;

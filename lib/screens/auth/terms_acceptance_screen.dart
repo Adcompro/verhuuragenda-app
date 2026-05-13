@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../config/api_config.dart';
 import '../../config/theme.dart';
 import '../../core/api/api_client.dart';
+import '../../models/user.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/branding_provider.dart';
 
@@ -29,7 +30,7 @@ class _TermsAcceptanceScreenState
     if (!_checked || _busy) return;
     setState(() => _busy = true);
     try {
-      await ApiClient.instance.post('/terms/accept', data: {'version': 'v2-ugc-rules'});
+      await ApiClient.instance.post('/terms/accept', data: {'version': User.currentTermsVersion});
       // Refresh user so the router knows about the new state
       await ref.read(authStateProvider.notifier).refreshUser();
       if (!mounted) return;

@@ -90,6 +90,28 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       ],
                     ),
                   ),
+                const PopupMenuDivider(),
+                PopupMenuItem(
+                  value: 'report',
+                  child: Row(
+                    children: [
+                      Icon(Icons.flag_outlined, size: 20, color: Colors.orange[700]),
+                      const SizedBox(width: 12),
+                      const Text('Gast melden…'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'block',
+                  child: Row(
+                    children: [
+                      Icon(Icons.block, size: 20, color: Colors.red[700]),
+                      const SizedBox(width: 12),
+                      const Text('Gast blokkeren'),
+                    ],
+                  ),
+                ),
+                const PopupMenuDivider(),
                 PopupMenuItem(
                   value: 'delete',
                   child: Row(
@@ -711,9 +733,117 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       case 'portal':
         _sharePortal();
         break;
+      case 'report':
+        _showReportDialog();
+        break;
+      case 'block':
+        _confirmBlockGuest();
+        break;
       case 'delete':
         _confirmDelete();
         break;
+    }
+  }
+
+  void _showReportDialog() {
+    final reasonCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('Gast melden'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Beschrijf kort waarom je deze gast wilt melden. We bekijken meldingen binnen 24 uur en verwijderen ongepaste inhoud direct. CasaMio heeft een nultolerantie voor haatdragende, beledigende of intimiderende inhoud.',
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: reasonCtrl,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Reden (bv. ongepaste berichten, spam, intimidatie)',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(c),
+            child: const Text('Annuleren'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final reason = reasonCtrl.text.trim();
+              if (reason.isEmpty) return;
+              Navigator.pop(c);
+              try {
+                await ApiClient.instance.post(
+                  '${ApiConfig.bookings}/${widget.bookingId}/report',
+                  data: {'reason': reason},
+                );
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Melding verstuurd. We reageren binnen 24 uur.'),
+                  ),
+                );
+              } catch (e) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Versturen mislukt: $e')),
+                );
+              }
+            },
+            child: const Text('Melden'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmBlockGuest() async {
+    final guest = _booking?.guest;
+    final guestName = guest == null
+        ? 'deze gast'
+        : [guest.firstName, guest.lastName].whereType<String>().join(' ').trim().isEmpty
+            ? 'deze gast'
+            : [guest.firstName, guest.lastName].whereType<String>().join(' ').trim();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('$guestName blokkeren?'),
+        content: const Text(
+          'Geblokkeerde gasten kunnen geen berichten meer naar je sturen en hun berichten zijn niet meer zichtbaar. Je kunt dit altijd weer opheffen via de conversatie.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(c, false),
+            child: const Text('Annuleren'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(c, true),
+            child: const Text('Blokkeren'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await ApiClient.instance.post(
+        '${ApiConfig.conversations}/${widget.bookingId}/block',
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$guestName is geblokkeerd.')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Blokkeren mislukt: $e')),
+      );
     }
   }
 
