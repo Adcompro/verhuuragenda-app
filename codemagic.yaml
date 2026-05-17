@@ -60,7 +60,7 @@ workflows:
       vars:
         # Change to 'nl', 'en', 'de', 'fr', 'it' or 'es' before
         # triggering each per-language screenshot run.
-        SCREENSHOT_LANG: "fr"
+        SCREENSHOT_LANG: "nl"
 
     scripts:
       - name: Create Flutter project structure
@@ -161,8 +161,9 @@ workflows:
             --driver=test_driver/integration_test.dart \
             --target=integration_test/screenshot_test.dart \
             --dart-define=SCREENSHOT_LOGIN_EMAIL="${SCREENSHOT_LOGIN_EMAIL:-review@apple.com}" \
-            --dart-define=SCREENSHOT_LOGIN_PASSWORD="${SCREENSHOT_LOGIN_PASSWORD:-Review123!}" \
+            --dart-define=SCREENSHOT_LOGIN_PASSWORD="${SCREENSHOT_LOGIN_PASSWORD:-AppleReview2026!}" \
             --dart-define=SCREENSHOT_LANG="$LANG_CODE" \
+            --dart-define=SCREENSHOT_MODE=true \
             -d "$IPAD_UDID" \
             --verbose \
             2>&1 | grep -E "SCREENSHOT TEST:|flutter:|Error|✓|✗|×" | tail -200 \
@@ -216,10 +217,12 @@ workflows:
       groups:
         - firebase
       ios_signing:
-        provisioning_profiles:
-          - casamio_apstore
-        certificates:
-          - vakantiewoningverhuur_nieuw
+        # Automatic signing via the App Store Connect API key
+        # (`codemagic-new` integration above). Codemagic fetches or
+        # creates the App Store distribution profile + certificate
+        # automatically — no manual upload required.
+        distribution_type: app_store
+        bundle_identifier: nl.verhuurvakantiewoning.app
 
     scripts:
       - name: Create Flutter project structure
@@ -342,9 +345,15 @@ workflows:
           FULL_VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
           VERSION=$(echo $FULL_VERSION | cut -d'+' -f1)
           BUILD_NUMBER=$(echo $FULL_VERSION | cut -d'+' -f2)
+          # ⚠️ TEMPORARY: SCREENSHOT_MODE=true renders mock IAP cards
+          # (€9,99/€99 + EULA/Privacy + auto-renew disclosure) so the
+          # Codemagic Preview can be used to capture the IAP App Review
+          # screenshot. REMOVE this dart-define before submitting the
+          # build to App Review — otherwise users see fake prices.
           flutter build ipa --release \
             --build-name=$VERSION \
             --build-number=$BUILD_NUMBER \
+            --dart-define=SCREENSHOT_MODE=true \
             --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:

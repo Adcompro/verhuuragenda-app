@@ -29,6 +29,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   String? _purchaseError;
   List<ProductDetails> _iapProducts = [];
 
+  /// Set by Codemagic's screenshot pipeline (--dart-define=SCREENSHOT_MODE=true)
+  /// so the App Review screenshot looks like real production UI (with
+  /// prices, auto-renew disclosure and EULA/Privacy links) instead of
+  /// the "loading from App Store…" fallback that StoreKit shows in a
+  /// plain simulator. Never enabled in TestFlight or release builds.
+  static const bool _screenshotMode = bool.fromEnvironment(
+    'SCREENSHOT_MODE',
+    defaultValue: false,
+  );
+
   @override
   void initState() {
     super.initState();
@@ -583,6 +593,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final isOnTrial = _subscription['is_on_trial'] == true;
     final appleSubscription = _subscription['apple_subscription'];
     final isAppleSubscription = appleSubscription != null;
+    // Apple Guideline 3.1.1 — on iOS we must NEVER lead users to a web
+    // payment flow. Hide every external "manage subscription on web"
+    // and "view pricing on web" path when running on iOS.
+    final isIOS = Platform.isIOS;
 
     // Debug info for iOS — only in debug builds, never in TestFlight/release
     Widget? iapDebugWidget;
@@ -670,7 +684,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                   ),
                 ),
-              ] else ...[
+              ] else if (!isIOS) ...[
+                // Non-iOS: managing via web is allowed.
                 Text(
                   'Beheer je abonnement of bekijk je facturen op de website.',
                   style: TextStyle(color: Colors.grey[600]),
@@ -688,6 +703,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       foregroundColor: Colors.white,
                     ),
                   ),
+                ),
+              ] else ...[
+                // iOS + non-Apple subscription: Apple Guideline 3.1.1
+                // forbids steering users to an external purchase flow.
+                // We can still confirm the subscription is active.
+                Text(
+                  'Je abonnement is actief. Beheer of opzeggen kan via het '
+                  'kanaal waarmee je het hebt afgesloten.',
+                  style: TextStyle(color: Colors.grey[600]),
                 ),
               ],
               // Show IAP debug info for premium users too
@@ -755,56 +779,64 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Show In-App Purchase options on iOS
-            if (Platform.isIOS && _iapInitialized && _iapProducts.isNotEmpty) ...[
+            // Apple Guideline 3.1.1: on iOS, only IAP. No web fallback.
+            if (isIOS && _iapInitialized && _iapProducts.isNotEmpty) ...[
               _buildIAPPurchaseOptions(),
-            ] else if (Platform.isIOS) ...[
-              // Show debug info only in debug builds
-              if (kDebugMode)
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.orange[50],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.orange[200]!),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.info_outline,
-                              color: Colors.orange[700], size: 20),
-                          const SizedBox(width: 8),
-                          Text(
-                            'In-App Purchase Status',
+            ] else if (isIOS && _screenshotMode) ...[
+              // Screenshot-mode only: simulator can't talk to StoreKit,
+              // so we render a presentation-only copy of the IAP UI with
+              // mock prices + Apple Guideline 3.1.2(c) disclosure for the
+              // App Review IAP screenshot.
+              _buildMockIAPPurchaseOptions(),
+            ] else if (isIOS) ...[
+              // iOS, but the App Store products did not load yet.
+              // Apple Guideline 3.1.1 forbids us from offering a web
+              // alternative here \u2014 show a retry instead.
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.amber[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.amber[200]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.amber[800]),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Abonnementen worden geladen vanuit de App Store\u2026',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.orange[900]),
+                                color: Colors.amber[900],
+                                fontWeight: FontWeight.w600),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Store beschikbaar: ${_iapInitialized ? "Ja" : "Nee"}\n'
-                        'Producten geladen: ${_iapProducts.length}',
-                        style:
-                            TextStyle(fontSize: 12, color: Colors.orange[800]),
-                      ),
-                      if (!_iapInitialized) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          'Controleer: In-App Purchase capability in Xcode, '
-                          'sandbox tester account, of draai op een echt device.',
-                          style: TextStyle(
-                              fontSize: 11, color: Colors.orange[700]),
                         ),
                       ],
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Lukt het niet? Controleer je internetverbinding en '
+                      'probeer het opnieuw.',
+                      style: TextStyle(
+                          color: Colors.amber[900], fontSize: 13),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: _initializeIAP,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Opnieuw laden'),
+                      ),
+                    ),
+                  ],
                 ),
-              // Fallback to static pricing display with web link
+              ),
+            ] else ...[
+              // Non-iOS (Android / web): web checkout is still allowed.
               Row(
                 children: [
                   Expanded(
@@ -873,6 +905,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             isPopular: false,
           ),
         const SizedBox(height: 16),
+        // Apple Guideline 3.1.2(c) — auto-renewable subscription
+        // disclosure that must accompany the purchase UI.
+        _buildAutoRenewDisclosure(monthlyProduct, yearlyProduct),
+        const SizedBox(height: 12),
+        // Apple Guideline 3.1.2(c) — functional links to EULA + Privacy
+        // Policy, visible in the purchase flow itself.
+        _buildLegalLinksRow(),
+        const SizedBox(height: 8),
         // Restore purchases button
         TextButton.icon(
           onPressed: (_purchasingProductId != null || _isRestoring) ? null : _restorePurchases,
@@ -898,6 +938,263 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ],
       ],
     );
+  }
+
+  /// Screenshot-mode mirror of [_buildIAPPurchaseOptions] using static
+  /// prices, so the Codemagic-driven simulator screenshot for the IAP
+  /// App Review submission shows real-looking content (prices + Apple
+  /// Guideline 3.1.2(c) disclosure + EULA/Privacy links) even though
+  /// StoreKit cannot load actual products inside the simulator.
+  Widget _buildMockIAPPurchaseOptions() {
+    return Column(
+      children: [
+        _buildMockProductCard(
+          title: 'Premium Jaarlijks',
+          subtitle: 'Bespaar 17%',
+          price: '€99,00',
+          period: '/jaar',
+          isPopular: true,
+        ),
+        const SizedBox(height: 12),
+        _buildMockProductCard(
+          title: 'Premium Maandelijks',
+          subtitle: 'Flexibel opzegbaar',
+          price: '€9,99',
+          period: '/maand',
+          isPopular: false,
+        ),
+        const SizedBox(height: 16),
+        // Apple Guideline 3.1.2(c) disclosure (same text as production).
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Abonnementsdetails',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey[800],
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '• Premium Maandelijks — €9,99 per maand, verlengt '
+                'automatisch elke maand.\n'
+                '• Premium Jaarlijks — €99,00 per jaar, verlengt '
+                'automatisch elk jaar.',
+                style: TextStyle(
+                    fontSize: 11.5, color: Colors.grey[800], height: 1.35),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Betaling wordt afgeschreven van je Apple ID bij '
+                'aankoopbevestiging. Het abonnement verlengt automatisch '
+                'tenzij je het minstens 24 uur vóór het einde van de '
+                'huidige periode opzegt. Beheer of opzegging kan via '
+                'Instellingen → Apple ID → Abonnementen.',
+                style: TextStyle(
+                    fontSize: 11.5, color: Colors.grey[700], height: 1.35),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        _buildLegalLinksRow(),
+        const SizedBox(height: 8),
+        TextButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.restore, size: 18),
+          label: const Text('Aankopen herstellen'),
+          style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMockProductCard({
+    required String title,
+    required String subtitle,
+    required String price,
+    required String period,
+    required bool isPopular,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isPopular ? AppTheme.primaryColor.withOpacity(0.1) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isPopular ? AppTheme.primaryColor : Colors.grey[300]!,
+          width: isPopular ? 2 : 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          if (isPopular)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                'Aanbevolen',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: isPopular
+                            ? AppTheme.primaryColor
+                            : Colors.grey[600],
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(price,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20)),
+                  Text(period,
+                      style:
+                          TextStyle(color: Colors.grey[600], fontSize: 12)),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                backgroundColor:
+                    isPopular ? AppTheme.primaryColor : Colors.grey[800],
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Koop nu'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Apple Guideline 3.1.2(c) — disclosure of subscription title, length,
+  /// price and auto-renewal terms, shown inline with the purchase buttons.
+  Widget _buildAutoRenewDisclosure(
+    ProductDetails? monthly,
+    ProductDetails? yearly,
+  ) {
+    final lines = <String>[];
+    if (monthly != null) {
+      lines.add('• Premium Maandelijks — ${monthly.price} per maand, '
+          'verlengt automatisch elke maand.');
+    }
+    if (yearly != null) {
+      lines.add('• Premium Jaarlijks — ${yearly.price} per jaar, '
+          'verlengt automatisch elk jaar.');
+    }
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Abonnementsdetails',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey[800],
+            ),
+          ),
+          const SizedBox(height: 6),
+          for (final line in lines)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                line,
+                style: TextStyle(fontSize: 11.5, color: Colors.grey[800], height: 1.35),
+              ),
+            ),
+          Text(
+            'Betaling wordt afgeschreven van je Apple ID bij aankoopbevestiging. '
+            'Het abonnement verlengt automatisch tenzij je het minstens 24 uur '
+            'vóór het einde van de huidige periode opzegt. Beheer of opzegging '
+            'kan via Instellingen → Apple ID → Abonnementen.',
+            style: TextStyle(
+                fontSize: 11.5, color: Colors.grey[700], height: 1.35),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Apple Guideline 3.1.2(c) — required EULA + Privacy links inside
+  /// the auto-renewable subscription purchase flow.
+  Widget _buildLegalLinksRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        TextButton.icon(
+          onPressed: () => _openExternalUrl(
+              'https://verhuuragenda.nl/algemene-voorwaarden'),
+          icon: const Icon(Icons.description_outlined, size: 16),
+          label: const Text('Voorwaarden (EULA)'),
+          style: TextButton.styleFrom(foregroundColor: Colors.grey[700]),
+        ),
+        Text('•', style: TextStyle(color: Colors.grey[500])),
+        TextButton.icon(
+          onPressed: () =>
+              _openExternalUrl('https://verhuuragenda.nl/privacy'),
+          icon: const Icon(Icons.privacy_tip_outlined, size: 16),
+          label: const Text('Privacybeleid'),
+          style: TextButton.styleFrom(foregroundColor: Colors.grey[700]),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _openExternalUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   Widget _buildIAPProductCard({

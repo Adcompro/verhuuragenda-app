@@ -112,7 +112,7 @@ void main() {
     );
     const password = String.fromEnvironment(
       'SCREENSHOT_LOGIN_PASSWORD',
-      defaultValue: 'Review123!',
+      defaultValue: 'AppleReview2026!',
     );
 
     try {
