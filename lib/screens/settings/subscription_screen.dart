@@ -8,6 +8,8 @@ import '../../config/theme.dart';
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
 import '../../services/apple_iap_service.dart';
+import 'terms_screen.dart';
+import 'privacy_screen.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
@@ -1172,29 +1174,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         TextButton.icon(
-          onPressed: () => _openExternalUrl(
-              'https://verhuuragenda.nl/algemene-voorwaarden'),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const TermsScreen()),
+          ),
           icon: const Icon(Icons.description_outlined, size: 16),
           label: const Text('Voorwaarden (EULA)'),
           style: TextButton.styleFrom(foregroundColor: Colors.grey[700]),
         ),
         Text('•', style: TextStyle(color: Colors.grey[500])),
         TextButton.icon(
-          onPressed: () =>
-              _openExternalUrl('https://verhuuragenda.nl/privacy'),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const PrivacyScreen()),
+          ),
           icon: const Icon(Icons.privacy_tip_outlined, size: 16),
           label: const Text('Privacybeleid'),
           style: TextButton.styleFrom(foregroundColor: Colors.grey[700]),
         ),
       ],
     );
-  }
-
-  Future<void> _openExternalUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
   }
 
   Widget _buildIAPProductCard({

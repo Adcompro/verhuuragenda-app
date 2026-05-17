@@ -10,6 +10,8 @@ import '../../core/api/api_client.dart';
 import '../../models/user.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/branding_provider.dart';
+import '../settings/terms_screen.dart';
+import '../settings/privacy_screen.dart';
 
 /// Mandatory terms-acceptance screen shown after first login (and any
 /// time the host has not accepted the current terms version yet).
@@ -163,16 +165,24 @@ class _TermsAcceptanceScreenState
                             spacing: 8,
                             children: [
                               OutlinedButton.icon(
-                                icon: const Icon(Icons.open_in_new, size: 16),
+                                icon: const Icon(Icons.description_outlined,
+                                    size: 16),
                                 label: const Text('Volledige voorwaarden'),
-                                onPressed: () => _openUrl(
-                                    'https://verhuuragenda.nl/algemene-voorwaarden'),
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const TermsScreen()),
+                                ),
                               ),
                               OutlinedButton.icon(
-                                icon: const Icon(Icons.open_in_new, size: 16),
+                                icon: const Icon(Icons.privacy_tip_outlined,
+                                    size: 16),
                                 label: const Text('Privacybeleid'),
-                                onPressed: () =>
-                                    _openUrl('https://verhuuragenda.nl/privacy'),
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const PrivacyScreen()),
+                                ),
                               ),
                             ],
                           ),
