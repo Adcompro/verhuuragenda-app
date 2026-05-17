@@ -1175,6 +1175,28 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
         );
         context.pop(true); // Return true to indicate changes were made
       }
+    } on DioException catch (e) {
+      if (!mounted) return;
+      // Free-tier limit reached → friendly dialog with Upgrade CTA
+      // instead of a raw "Error: 403" snackbar.
+      final data = e.response?.data;
+      if (e.response?.statusCode == 403 &&
+          data is Map &&
+          data['upgrade_required'] == true) {
+        _showUpgradeDialog(
+          data['message']?.toString() ??
+              'Je hebt het maximale aantal accommodaties bereikt '
+                  'voor het gratis abonnement.',
+        );
+      } else {
+        final l10n = AppLocalizations.of(context)!;
+        final msg = (data is Map && data['message'] is String)
+            ? data['message'] as String
+            : '$e';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${l10n.error}: $msg')),
+        );
+      }
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
@@ -1185,6 +1207,34 @@ class _AccommodationEditScreenState extends State<AccommodationEditScreen> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  void _showUpgradeDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: Icon(Icons.star_rounded, color: Colors.amber[700], size: 40),
+        title: const Text('Limiet gratis abonnement bereikt'),
+        content: Text(
+          '$message\n\nUpgrade naar Premium voor onbeperkt accommodaties, '
+          'boekingen en teamleden.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Later'),
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.push('/subscription');
+            },
+            icon: const Icon(Icons.rocket_launch),
+            label: const Text('Bekijk Premium'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _confirmDelete() {

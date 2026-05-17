@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
@@ -1236,6 +1237,25 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           context.go('/bookings/$bookingId');
         }
       }
+    } on DioException catch (e) {
+      if (!mounted) return;
+      final data = e.response?.data;
+      if (e.response?.statusCode == 403 &&
+          data is Map &&
+          data['upgrade_required'] == true) {
+        _showUpgradeDialog(
+          data['message']?.toString() ??
+              'Je hebt het maximale aantal boekingen bereikt '
+                  'voor het gratis abonnement.',
+        );
+      } else {
+        final msg = (data is Map && data['message'] is String)
+            ? data['message'] as String
+            : e.toString();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.errorWithMessage(msg))),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1247,6 +1267,34 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  void _showUpgradeDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: Icon(Icons.star_rounded, color: Colors.amber[700], size: 40),
+        title: const Text('Limiet gratis abonnement bereikt'),
+        content: Text(
+          '$message\n\nUpgrade naar Premium voor onbeperkt accommodaties, '
+          'boekingen en teamleden.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Later'),
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.push('/subscription');
+            },
+            icon: const Icon(Icons.rocket_launch),
+            label: const Text('Bekijk Premium'),
+          ),
+        ],
+      ),
+    );
   }
 
   String _formatDate(DateTime date) {
