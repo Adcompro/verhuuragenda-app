@@ -345,15 +345,9 @@ workflows:
           FULL_VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
           VERSION=$(echo $FULL_VERSION | cut -d'+' -f1)
           BUILD_NUMBER=$(echo $FULL_VERSION | cut -d'+' -f2)
-          # ⚠️ TEMPORARY: SCREENSHOT_MODE=true renders mock IAP cards
-          # (€9,99/€99 + EULA/Privacy + auto-renew disclosure) so the
-          # Codemagic Preview can be used to capture the IAP App Review
-          # screenshot. REMOVE this dart-define before submitting the
-          # build to App Review — otherwise users see fake prices.
           flutter build ipa --release \
             --build-name=$VERSION \
             --build-number=$BUILD_NUMBER \
-            --dart-define=SCREENSHOT_MODE=true \
             --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:
