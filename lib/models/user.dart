@@ -25,10 +25,11 @@ class User {
     this.termsVersion,
   });
 
-  /// Current required terms version. Bumped to v3 so all existing
-  /// accounts (including the App Review reviewer's test account)
-  /// re-see the EULA + UGC rules on next login.
-  static const String currentTermsVersion = 'v3-ugc-rules';
+  /// Current required terms version. v4 switches the in-app EULA
+  /// from CasaMio's custom terms to Apple's Standard EULA (matching
+  /// what is declared in App Store Connect), so all existing
+  /// accounts re-see the new flow on next login.
+  static const String currentTermsVersion = 'v4-apple-stdeula';
 
   bool get hasAcceptedTerms =>
       termsAcceptedAt != null && termsVersion == currentTermsVersion;
